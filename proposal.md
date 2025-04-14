@@ -57,17 +57,17 @@
    - 學生上傳作業
    - 評分與回饋
 
-## 專案預計分工(by feature)
+## 專案預計分工:Sprint 1
 
-- 課程資料: 3人
+- 課程資料管理: 3人
 - 行事曆: 2人
-- 討論版: 3人
-- UI/UX: 1人
+- 討論版: 2人
+- 使用者管理: 2人
 
 ## 專案技術限制
 
 - 前端:React
-- 後端:Express JS + MongoDB
+- 後端:Express JS + MongoDB + MySQL
 
 ## 指標
 
@@ -111,34 +111,29 @@
 
 1. commit message 的標準寫法，中括號 + 大寫
    - Mainly Used Commit types:
-     - [Feat] introduce / start offa new feature
+     - [Feat] introduce / start new feature
      - [Fix] patches a bug or issue
      - [Refactor] code change that is neither feat or fix
-     - [Chore] update dependencies / piugins that does not relate to fix or feat and does not modify src or test files
+     - [Chore] update dependencies / plugins that does not relate to fix or feat and does not modify src or test files
      - [docs] updates the documentation or introduce documentation
      - [Style] updates the formatting of code
      - [Test] add/remove/update tests
      - [Revert] reverts one or many previous commits
      - [Perf] improve performance
 2. Branch type:
-   - 主系分之 (通常一份專案只有一條):
+   - 主系分支
      - main branch
-     - develop branch
-       - 用來當 main 分枝的前置分之
-       - 是所有 feature branch 併入的分支
-       - 大專案才用，我們的用 main 就夠了
      - release branch
        - 用來發布實際上對外的版本
        - 使用者看到的每個版笨號都記在這上面
        - 多從 develope 分出，常有 hotfix 出沒
-   - 旁系分支:
+   - 旁系分支
      - feature 系列
-       - 太常見了，不多贅述
      - hotfix 系列
-       - 用來做及時錯誤修正，優先權高於其他旁系分之
+       - 用來做及時錯誤修正，優先權高於其他旁系分支
        - file restructure 也屬於這類
      - intergration 系列
-       - 顧名思義用來整合 feature 分支
+       - 整合 feature 分支
      - library 系列
        - 當出現大家要共用的套件，或函式庫時使用
        - 優先權僅次於 hotfix
@@ -146,15 +141,14 @@
    - [variable] camelCase
    - [class] CamelCase
    - [global] UPPER_CASE
-   - No Simplified Chinese comment
-   - comment is required for every function
+   - 禁止簡體中文註解
    - if use JS, only async / await
 4. PR 文的清楚撰寫，須包含:
    1. feature Outline
    2. 列點說明新增功能，以檔案為單位的 change explanation
-   3. 前端，後端，DB，快取間的 workflow (如果有大改動再提即可)
-   4. file structure (如果有大改動再提即可)
-   5. 新增功能若需安裝的 Instruction Steps (如果有再提即可)
-   6. Reminder (如果有再提即可)
+   3. 前端，後端，DB，快取間的 workflow（如果有大改動再提即可）
+   4. file structure
+   5. 新增功能若需安裝新套件，請列出Instruction Steps
+   6. Reminder
 5. PR 須經過至少一人的 Approve，若是有特定功能相關的開發者，請 assign 給他
 6. 當使用 js 的時候，禁止使用 `var`
