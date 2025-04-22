@@ -6,6 +6,9 @@ node_modules
 .DS_Store
 .idea
 
+# for Windos WSL
+*Zone.Identifier
+
 # for Redis
 dump.rdb
 
