@@ -1,0 +1,13 @@
+# for nodejs
+node_modules
+.env
+
+# for Mac
+.DS_Store
+.idea
+
+# for Redis
+dump.rdb
+
+# for custom
+test.js
