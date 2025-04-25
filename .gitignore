@@ -1,0 +1,16 @@
+# for nodejs
+node_modules
+.env
+
+# for Mac
+.DS_Store
+.idea
+
+# for Windos WSL
+*Zone.Identifier
+
+# for Redis
+dump.rdb
+
+# for custom
+test.js
