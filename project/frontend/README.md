@@ -13,9 +13,15 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Set-up instruction
 
+### for the first time
+
 1. `npm i`
 2. set your `.env` file according to `.env.example`
 3. `npm run dev`
+
+### after init set up
+
+1. `npm run dev`
 
 ## File Structure
 
