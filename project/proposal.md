@@ -148,12 +148,31 @@
    - [global] UPPER_CASE
    - 禁止簡體中文註解
    - if use JS, only async / await
-4. PR 文的清楚撰寫，須包含:
+4. PR 文的清楚撰寫，須包含: (模板請看[下方連結](#pr-文模板))
    1. feature Outline
    2. 列點說明新增功能，以檔案為單位的 change explanation
    3. 前端，後端，DB，快取間的 workflow（如果有大改動再提即可）
    4. file structure
-   5. 新增功能若需安裝新套件，請列出Instruction Steps
+   5. 新增功能若需安裝新套件，請列出 Instruction Steps
    6. Reminder
 5. PR 須經過至少一人的 Approve，若是有特定功能相關的開發者，請 assign 給他
 6. 當使用 js 的時候，禁止使用 `var`
+
+#### PR 文模板
+
+```
+# PR content
+
+## Feature Outline in less then 3 sentences
+
+## Features list
+
+## Workflow
+
+## File Structure
+
+## Installation Instructions for New Packages
+
+## Reminders and Important Notes
+
+```
