@@ -1,7 +1,12 @@
-// import db from "@/database.js";
+import ExampleModel from "#src/models/example_model.js";
 
 async function Example() {
-    const result = "the result queried from mongoDB"; // use async / await
+    let result;
+    try {
+        result = await ExampleModel.find()
+    } catch (err) {
+        console.log(err);
+    }
 
     return result;
 }

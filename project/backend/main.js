@@ -7,7 +7,12 @@ import dotenv from 'dotenv';
 // Initialize environment variables
 dotenv.config();
 
-// Start initialization
+// start initializing database server
+import TestDBConnection from '#src/database.js';
+
+TestDBConnection();
+
+// Start initializing express server
 const app = express();
 const PORT = process.env.PORT;
 
