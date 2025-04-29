@@ -451,27 +451,32 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
 
 # # # Generate mailbox data
 def generate_mailbox(users, max_messages_per_user=10):
-    """Generate fake data for mailboxes."""
+    """Generate fake data for the mailbox collection."""
     mailboxes = []
+    mail_id = 1  # Start mail IDs from 1
+
     for user in users:
-        user_id = user["user_id"]
+        receiver_id = user["user_id"]
         num_messages = random.randint(1, max_messages_per_user)  # Each user can have 1 to max_messages_per_user messages
-        messages = []
+
         for _ in range(num_messages):
             sender_id = random.randint(1, len(users))  # Random sender ID
-            while sender_id == user_id:
-                sender_id = random.randint(1, len(users))  # Ensure sender is not the same as the recipient
-            message_time = random_date(datetime(2020, 1, 1), datetime(2023, 12, 31))  # Random message time
-            messages.append({
+            while sender_id == receiver_id:
+                sender_id = random.randint(1, len(users))  # Ensure sender is not the same as the receiver
+
+            send_date = random_date(datetime(2020, 1, 1), datetime(2023, 12, 31))  # Random send date
+
+            mailboxes.append({
+                "mail_id": mail_id,
                 "sender_id": sender_id,
-                "link": f"http://example.com/message/{random.randint(1, 1000)}",
-                "description": f"This is a message from User {sender_id} to User {user_id}.",
-                "time": f'ISODate("{message_time.isoformat()}")'  # Convert time to ISODate format
+                "receiver_id": receiver_id,
+                "subject": f"Subject of Mail {mail_id}",
+                "content": f"This is the content of mail {mail_id} from User {sender_id} to User {receiver_id}.",
+                "send_date": f'ISODate("{send_date.isoformat()}")'  # Convert send_date to ISODate format
             })
-        mailboxes.append({
-            "user_id": user_id,
-            "messages": messages
-        })
+
+            mail_id += 1
+
     return mailboxes
 
 def write_seed_file():
