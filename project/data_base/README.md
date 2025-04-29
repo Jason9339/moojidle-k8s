@@ -12,7 +12,13 @@
     - Please first search online for a tutorial on how to install MongoDB on Ubuntu
 
 ## Instrcution steps
-### Use Terminal
+
+**important**: refer to this [youtube video](https://www.youtube.com/watch?v=DZBGEVgL2eE), to download:
+- mongoDB server + shell:
+    - [mongoDB for ubuntu](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/)
+    - [mongoDB for mac](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
+
+### Use Terminal To Command
 1. `sudo systemctl start mongod`
 2. `mongosh`
 3. `load("the path of Schema.js")`
