@@ -369,4 +369,73 @@ db.createCollection("post", {
         }
     }
 });
+
+db.createCollection("post", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["post_id", "post_by_user_id", "post_user_custom_tag", "description", "post_date", "public"],
+            properties: {
+                post_id: {
+                    bsonType: "int",
+                    description: "Primary key: Unique identifier for the post"
+                },
+                post_by_user_id: {
+                    bsonType: "int",
+                    description: "Foreign key: User ID of the post creator"
+                },
+                post_user_custom_tag: {
+                    bsonType: "string",
+                    description: "Custom tag for the user who created the post"
+                },
+                description: {
+                    bsonType: "string",
+                    description: "Content of the post"
+                },
+                post_date: {
+                    bsonType: "date",
+                    description: "Date when the post was created"
+                },
+                public: {
+                    bsonType: "bool",
+                    description: "Indicates whether the post is public or private"
+                },
+                comments:{
+                    bsonType: "array",
+                    items: {
+                        bsonType: "object",
+                        properties: {
+                            comment_id: { bsonType: "int" },
+                            comment_by_user_id: { bsonType: "int" },
+                            comment_user_custom_tag: { bsonType: "string" },
+                            comment_date: { bsonType: "date" },
+                            description: { bsonType: "string" }
+                        }
+                    },
+                    description: "Comments on the post (optional)"
+                },
+                in_b_id: {
+                    bsonType: "int",
+                    description: "Foreign key: Board ID where the post belongs"
+                },
+                post_tags: {
+                    bsonType: "array",
+                    items: {
+                        bsonType: "object",
+                        properties: {
+                            tag_id: { bsonType: "int" },
+                            tag_name: { bsonType: "string" }
+                        }
+                    },
+                    description: "Tags associated with the post (optional)"
+                }
+            }
+        }
+    }
+});
   
+db.createCollection("mailbox",
+    {
+
+    }
+)

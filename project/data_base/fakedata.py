@@ -44,7 +44,8 @@ def generate_courses(n=5):
             "name": f"Course {i}",
             "description": f"This is the description for course {i}.",
             "create_date": create_date,  # 保留為 datetime 對象
-            "syllabus": f"Syllabus for course {i}"
+            "syllabus": f"Syllabus for course {i}",
+            "invite_link": f"http://example.com/course_{i}/invite",
         })
     return courses
 
@@ -415,7 +416,14 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
             posts.append({
                 "post_id": post_id,
                 "post_by_user_id": user_id,
-                "post_user_custom_tag": f"CustomTag_{random.randint(1, 100)}",
+                "title": f"Post title {post_id} in Board {board_id}",
+                "post_user_custom_tag": [
+                    {
+                        "tag_id": random.randint(1, 100),
+                        "tag_name": f"Tag_{random.randint(1, 100)}"
+                    }
+                    for _ in range(random.randint(0, 3))
+                ],
                 "description": f"This is the content of post {post_id} in board {board_id}.",
                 "post_date": f'ISODate("{post_date.isoformat()}")',  # Convert post_date to ISODate format
                 "public": random.choice([True, False]),  # Randomly set the post as public or private
@@ -441,8 +449,33 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
             post_id += 1
     return posts
 
+# # # Generate mailbox data
+def generate_mailbox(users, max_messages_per_user=10):
+    """Generate fake data for mailboxes."""
+    mailboxes = []
+    for user in users:
+        user_id = user["user_id"]
+        num_messages = random.randint(1, max_messages_per_user)  # Each user can have 1 to max_messages_per_user messages
+        messages = []
+        for _ in range(num_messages):
+            sender_id = random.randint(1, len(users))  # Random sender ID
+            while sender_id == user_id:
+                sender_id = random.randint(1, len(users))  # Ensure sender is not the same as the recipient
+            message_time = random_date(datetime(2020, 1, 1), datetime(2023, 12, 31))  # Random message time
+            messages.append({
+                "sender_id": sender_id,
+                "link": f"http://example.com/message/{random.randint(1, 1000)}",
+                "description": f"This is a message from User {sender_id} to User {user_id}.",
+                "time": f'ISODate("{message_time.isoformat()}")'  # Convert time to ISODate format
+            })
+        mailboxes.append({
+            "user_id": user_id,
+            "messages": messages
+        })
+    return mailboxes
+
 def write_seed_file():
-    role_tracker = set()  # 用於追蹤 (user_id, course_id) 的組合，防止重複
+    role_tracker = set()  # Track (user_id, course_id) combinations to avoid duplicates
     users = generate_users()
     courses = generate_courses()
     teach_in = generate_teach_in(role_tracker=role_tracker)
@@ -457,6 +490,7 @@ def write_seed_file():
     posts = generate_posts(discussion_boards, users)
     custom_tags = generate_custom_tags(len(users))  # Generate custom tags
     course_tags = generate_course_tags(len(users), len(courses))  # Generate course tags
+    mailboxes = generate_mailbox(users)  # Generate mailbox data
 
     seed_data = {
         "user": users,
@@ -471,15 +505,16 @@ def write_seed_file():
         "assignments": assignments,
         "submitted_ass": submitted_assignments,
         "post": posts,
-        "custom_tag": custom_tags,  # Add custom tags
-        "course_tag": course_tags,  # Add course tags
+        "custom_tag": custom_tags,
+        "course_tag": course_tags,
+        "mailbox": mailboxes  # Add mailbox data
     }
 
-    output_dir = "@/moojidle/project/data_base/"
+    output_dir = "/home/nonohuang/moojidle/project/data_base/"
     output_file = os.path.join(output_dir, "Seed.js")
 
     def convert_datetime_to_iso(data):
-        """遞歸地將所有 datetime 對象轉換為 ISODate 格式"""
+        """Recursively convert all datetime objects to ISODate format."""
         if isinstance(data, list):
             return [convert_datetime_to_iso(item) for item in data]
         elif isinstance(data, dict):
@@ -491,7 +526,7 @@ def write_seed_file():
 
     with open(output_file, "w") as f:
         for collection, data in seed_data.items():
-            if collection in ["course", "announcement", "exams", "materials", "assignments", "submitted_ass", "post", "user", "custom_tag", "course_tag"]:  # 特殊處理需要 ISODate 的集合
+            if collection in ["course", "announcement", "exams", "materials", "assignments", "submitted_ass", "post", "user", "custom_tag", "course_tag", "mailbox"]:  # Handle collections with ISODate
                 collection_data = json.dumps(convert_datetime_to_iso(data), indent=2)
                 collection_data = collection_data.replace('"ISODate(', 'ISODate(').replace(')"', ')')
                 f.write(f"db.{collection}.insertMany({collection_data});\n\n")
@@ -499,6 +534,7 @@ def write_seed_file():
                 f.write(f"db.{collection}.insertMany({json.dumps(data, indent=2)});\n\n")
 
     print(f"Seed.js has been successfully generated at \n{output_file}!")
+    
 # Execute the script
 if __name__ == "__main__":
     write_seed_file()
