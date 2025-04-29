@@ -1,9 +1,10 @@
-import ExampleModel from "#src/models/example_model.js";
+import mongoose from "mongoose"
 
+// for example purpose, querying all users
 async function Example() {
     let result;
     try {
-        result = await ExampleModel.find()
+        result = await mongoose.connection.db.collection('user').find().toArray();
     } catch (err) {
         console.log(err);
     }
