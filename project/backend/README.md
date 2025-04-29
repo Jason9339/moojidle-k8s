@@ -16,12 +16,10 @@
 ## File Structure
 
 ```
-.
+backend
 ├── src
 │   ├── controllers
 │   │   └── example_controller.js
-│   ├── models
-│   │   └── example_model.js
 │   ├── routes
 │   │   └── example_route.js
 │   ├── services
