@@ -6,7 +6,7 @@
 
 1. `npm i`
 2. set your `.env` file according to `.env.example`
-3. open your MongoDB, paste the content in `Seed.bson`
+3. make sure you load the schema and seed to mongoDB
 4. `npm run dev`
 
 ### after init set up
