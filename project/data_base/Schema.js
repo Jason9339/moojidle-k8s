@@ -119,7 +119,8 @@ db.createCollection("course", {
                 name: { bsonType: "string" },
                 description: { bsonType: "string" },
                 create_date: { bsonType: "date" },
-                syllabus: { bsonType: "string" }
+                syllabus: { bsonType: "string" },
+                invite_link: { bsonType: "string" }
             } 
         }
     }
