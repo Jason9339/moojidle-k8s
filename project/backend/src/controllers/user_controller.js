@@ -61,7 +61,11 @@ async function Register(req, res) {
             res.status(500).send({ message: "Failed to register user" });
         }
     } catch (err) {
-        res.status(500).send({ message: "An error occurred", error: err.message });
+        if (err.message === "Email already exists") {
+            res.status(409).send({ message: "Email already exists. Please use a different email." }); // 409 Conflict
+        } else {
+            res.status(500).send({ message: "An error occurred", error: err.message });
+        }
     }
 }
 
