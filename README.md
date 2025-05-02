@@ -38,31 +38,29 @@
 ## Relative Develope Tool
 
 - [Jira](https://jingxiang0405.atlassian.net/jira/software/projects/MOOJ/summary)
+- [Figma](https://www.figma.com/design/UvvTw9rywMQHDQPJkJ6cKW/Moojidle?node-id=4-7958&t=cq4aI4kPpL3vjyHu-1)
 - Discord
 
 ## Requirement
 
+- nodejs >= v20.17.0
+- npm >= 11.3.0
+- mongoDB >= v8.0.8
+
 ## Instructions
 
-## Brief File Structures
+1. `cd database`
+2. follow the `README.md`'s instructions
+3. `cd backend`
+4. follow the `README.md`'s instructions
+5. `cd frontend`
+6. follow the `README.md`'s instructions
 
-<details>
-<summary>sprint 0</summary>
+## Brief File Structures
 
 ```
 project-root/
 ├── frontend/
-│   ├── src/
-│   └── main.js
 ├── backend/
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── controllers/
-│   │   └── services/
-│   └── main.js
 └── data_base/
-    ├── Seed.sql
-    ├── Schema.sql
-    └── Schema.js
 ```
-</details>
