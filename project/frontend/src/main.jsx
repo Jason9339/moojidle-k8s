@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "@/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "@/Layout";
-import NotFoundPage from "@/NotFoundPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DishboardList";
