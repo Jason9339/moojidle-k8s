@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Turn in Homework",
+    "course": "Biology 102",
+    "points": 100,
+    "due": "Nov 21 at 11:59pm"
+  },
+  {
+    "title": "Read Chapter 5",
+    "course": "Computer Graphics",
+    "points": 20,
+    "due": "Nov 22 at 10:00am"
+  }
+]

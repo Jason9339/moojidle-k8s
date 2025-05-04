@@ -1,0 +1,57 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  padding: 24px;
+  width: 100%;
+  gap: 24px;
+}
+
+.dashboard-left {
+  flex: 2;
+}
+
+.dashboard-left {
+  flex: 2;
+}
+
+.dashboard-right {
+  flex: 1;
+  padding-left: 16px;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.course-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dashboard-heading {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.add-course-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-course-btn:hover {
+  background-color: #0056b3;
+}
