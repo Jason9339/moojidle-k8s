@@ -6,22 +6,20 @@ import Layout from "@/Layout";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
-import DiscussionBoardList from "@/pages/DiscussionBoardList";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "discussion", element: <DiscussionBoardList /> },
-      { path: "discussion/:id", element: <DiscussionBoard /> },
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { path: "dashboard", element: <Dashboard /> },
+            { path: "discussion/:param", element: <DiscussionBoard /> },
+            { path: "*", element: <NotFoundPage /> },
+        ],
+    },
 ]);
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+    <StrictMode>
+        <RouterProvider router={router} />
+    </StrictMode>
 );

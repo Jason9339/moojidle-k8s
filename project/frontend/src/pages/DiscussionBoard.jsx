@@ -1,16 +1,16 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-
-function DiscussionBoard(){
-
-    const {id} = useParams();
+import BoardSideBar from "@/components/discussion-board/BoardSideBar";
+function DiscussionBoard() {
+    const { param } = useParams();
+    const isNumeric = /^\d+$/.test(param);
 
     return (
         <>
-            {id}
+            <BoardSideBar />
+            {param}
         </>
-
-    )
+    );
 }
 
 export default DiscussionBoard;

@@ -12,5 +12,5 @@ export const leftBarNavItems = [
     {label : "小組" , icon : FaUserGroup, path : "/group"},
     {label : "行事曆", icon : FaRegCalendarDays, path : "/calendar" },
     {label : "通知", icon : MdOutlineMailOutline, path : "/inbox"},
-    {label : "討論版", icon : GoCommentDiscussion , path : "/discussion"},
+    {label : "討論版", icon : GoCommentDiscussion , path : "/discussion/all"},
 ];
