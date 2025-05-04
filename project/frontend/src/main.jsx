@@ -8,6 +8,7 @@ import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
 import CoursePage from "@/pages/CoursePage";
+import CourseDetail from "@/pages/CourseDetail";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Dashboard /> },
       { path: "course", element: <CoursePage /> },
+      { path: "course/:courseId", element: <CourseDetail /> },
       { path: "discussion", element: <DiscussionBoardList /> },
       { path: "discussion/:id", element: <DiscussionBoard /> },
       { path: "*", element: <NotFoundPage /> },

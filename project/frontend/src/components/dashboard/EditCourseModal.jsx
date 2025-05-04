@@ -15,8 +15,11 @@ function EditCourseModal({ course, onClose }) {
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
+    <div className="modal-backdrop" onClick={onClose}>
+      <div
+        className="modal"
+        onClick={(e) => e.stopPropagation()}  
+      >
         <h3>編輯課程</h3>
         <input value={newName} onChange={(e) => setNewName(e.target.value)} />
         <div className="modal-btn-group">
