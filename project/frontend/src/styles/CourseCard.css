@@ -1,20 +1,18 @@
 .course-card {
-  position: relative;
   width: 200px;
   height: 200px;
   border-radius: 12px;
   padding: 12px;
   color: #fff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: box-shadow 0.2s ease;
 }
 
 .course-card:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); 
-  cursor: pointer; 
+  transform: scale(1.03);
 }
 
 .course-id {
@@ -47,18 +45,4 @@
 
 .course-footer svg:hover {
   transform: scale(1.2);
-}
-
-.edit-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 4px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  z-index: 10;
-  pointer-events: auto;
 }

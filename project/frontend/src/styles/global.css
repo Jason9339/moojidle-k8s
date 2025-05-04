@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background-color: #eff2f5;
+  background-color: #f4f6f8;
   color: #222;
 }
 
@@ -11,13 +11,11 @@ h3 {
 }
 
 h2.dashboard-heading {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.dashboard-heading-divider {
-  border-top: 2px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
   margin-bottom: 20px;
 }
 

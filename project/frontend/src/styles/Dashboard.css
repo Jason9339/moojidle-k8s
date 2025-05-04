@@ -10,8 +10,10 @@
   flex: 2;
 }
 
-.dashboard-left {
-  flex: 2;
+.dashboard-left h2 {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .dashboard-right {
@@ -28,30 +30,4 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-}
-
-.dashboard-heading-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.dashboard-heading {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.add-course-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.add-course-btn:hover {
-  background-color: #0056b3;
 }
