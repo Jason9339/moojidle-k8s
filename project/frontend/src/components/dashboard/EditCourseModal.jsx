@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '@/styles/Modal.css';
+import { deleteCourse } from '@/services/DashboardApi';
 
 function EditCourseModal({ course, onClose }) {
   const [newName, setNewName] = useState(course.title);
@@ -9,9 +10,15 @@ function EditCourseModal({ course, onClose }) {
     onClose();
   };
 
-  const handleDelete = () => {
-    console.log('刪除課程:', course.courseId);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      console.log('刪除課程:', course);
+      await deleteCourse(course.course_id);
+      console.log('刪除課程成功:', course.course_id);
+      onClose();
+    } catch (error) {
+      console.error('刪除課程失敗:', error);
+    }
   };
 
   return (

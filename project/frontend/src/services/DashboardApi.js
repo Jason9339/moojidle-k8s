@@ -36,3 +36,14 @@ export const addCourse = async (coursePayload) => {
     throw error; // Re-throw error for the component to handle
   }
 };
+
+export const deleteCourse = async (courseId) => {
+  try {
+    const response = await axios.delete(`/course/delete/${courseId}`);
+    console.log("Deleted course:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting course:", error.response?.data || error.message);
+    throw error;
+  }
+};

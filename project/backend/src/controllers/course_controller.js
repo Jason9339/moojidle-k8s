@@ -25,6 +25,7 @@ async function DeleteCourse(req, res) {
     try {
         // 1. 從路由參數獲取課程 ID
         const { id } = req.params;
+        console.log("DeleteCourse ID:", req.params);
 
         // 2. 驗證 ID 是否存在
         if (!id) {
