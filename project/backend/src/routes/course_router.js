@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { CreateCourse,DeleteCourse } from '#src/controllers/course_controller.js';
+import { CreateCourse,DeleteCourse,ReadCourse } from '#src/controllers/course_controller.js';
 
 // the route address start from:
 // http://localhost:PORT/course
@@ -40,5 +40,6 @@ router.get("/", async (req, res) => {
 })
 router.post("/create", CreateCourse);
 router.delete("/delete/:id", DeleteCourse);
+router.get("/read", ReadCourse);
 
 export default router;
