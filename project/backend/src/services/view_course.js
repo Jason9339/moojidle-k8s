@@ -40,11 +40,10 @@ async function GetTeachIn(userId) {
     // console.log(`[GetTeachIn] Attempting to fetch courses taught by user ID: ${userId}`);
     try {
         // 1. Validate and convert userId to integer
-        // const userIdInt = parseInt(userId, 10);
-        // if (isNaN(userIdInt)) {
-        //     throw new Error("Invalid user ID format. User ID must be an integer.");
-        // }
-        const userIdInt = userId
+        const userIdInt = parseInt(userId, 10);
+        if (isNaN(userIdInt)) {
+            throw new Error("Invalid user ID format. User ID must be an integer.");
+        }
 
         // 2. Find course_ids the user teaches from 'teach_in' collection
         const teachInCollection = mongoose.connection.db.collection('teach_in');

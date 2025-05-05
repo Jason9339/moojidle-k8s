@@ -20,9 +20,9 @@ export const getComingUpList = async () => {
 };
 
 export const getTeachIn = async (userId) => {
-  return (await tempApiClient.get(`/mock/teach_in.json?user_id=${userId}`)).data;
+  // return (await tempApiClient.get(`/mock/teach_in.json?user_id=${userId}`)).data;
   // ⚠️ 注意：這裡是 mock 資料，真正串接 API 請改為正式 API 路徑
-  // return (await axios.get(`/teachin?user_id=${userId}`)).data;
+  return (await axios.get(`/course/read/teach_in?user_id=${userId}`)).data;
 };
 
 export const addCourse = async (coursePayload) => {

@@ -82,7 +82,7 @@ async function ReadTeachIn(req, res) {
     try {
         console.log("[TeachIn] Request received to fetch courses.");
         // Call the service function to get formatted courses
-        const teach_in = await (GetTeachIn(req.body.userId));
+        const teach_in = await (GetTeachIn(req.query.user_id));
 
         // Send the courses back to the client with a 200 OK status
         res.status(200).json(teach_in); // Use .json() to correctly set Content-Type

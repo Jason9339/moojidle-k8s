@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
 router.post("/create", CreateCourse);
 router.delete("/delete/:id", DeleteCourse);
 router.get("/read", ReadCourse);
-router.post("/read/teach_in", ReadTeachIn);
+router.get("/read/teach_in", ReadTeachIn);
 
 
 export default router;
