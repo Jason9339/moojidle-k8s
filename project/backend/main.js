@@ -24,21 +24,11 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
-import courseRoute from "#src/routes/course_route.js";
-import assignmentRoute from "#src/routes/assignment_route.js";
-import examRoute from "#src/routes/exam_route.js";
+import courseRoute from "#src/routes/course_router.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
-
-// 掛載課程相關 API
-app.use("/api/courses", courseRoute);
-
-// 掛載作業相關 API
-app.use("/api/assignments", assignmentRoute);
-
-// 掛載考試相關 API
-app.use("/api/exams", examRoute);
+app.use("/course", courseRoute);
 
 // Routes ends --------------------------------------------------------------------------
 

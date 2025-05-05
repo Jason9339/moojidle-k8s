@@ -28,12 +28,12 @@ If you are developing a production application, we recommend using TypeScript wi
 ```
 frontend
 ├── public
-│   └── vite.svg
 ├── src
-│   ├── assets
-│   │   └── react.svg
-│   ├── App.css
-│   ├── App.jsx
+│   ├── components
+│   ├── constants
+│   ├── pages
+│   ├── services
+│   ├── Layout.jsx
 │   ├── index.css
 │   └── main.jsx
 ├── README.md

@@ -1,15 +1,15 @@
 import { Outlet } from "react-router-dom";
-import LeftBar from "@/components/LeftBar";
+import LeftBar from "@/components/LeftBar/LeftBar";
 
 function Layout() {
-  return (
-    <div style={{ display: "flex" }}>
-      <LeftBar />
-      <main style={{ flex: 1 }}>
-        <Outlet />
-      </main>
-    </div>
-  );
+    return (
+        <div style={{ display: "flex" }}>
+            <LeftBar />
+            <main style={{ flex: 1 }}>
+                <Outlet />
+            </main>
+        </div>
+    );
 }
 
 export default Layout;
