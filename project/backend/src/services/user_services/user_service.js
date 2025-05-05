@@ -6,6 +6,7 @@ async function FindOneUserById(user_id) {
     
     try {
         result = await mongoose.connection.db.collection('user').findOne(
+            // { _id: mongoose.Types.ObjectId.createFromHexString(user_id) }
             { user_id: parseInt(user_id) }
         );
     } catch (err) {
