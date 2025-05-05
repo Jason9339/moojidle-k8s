@@ -8,46 +8,6 @@ async function AllUserData() {
     return result;
 }
 
-// Get user profile data by user ID
-// Example response format:
-// {
-//     "name": "User 1",
-//     "contact_ways": [
-//       {
-//         "approach": "phone",
-//         "details": "555-3791"
-//       }
-//     ],
-//     "path_to_profile_pic": "/profiles/1.jpg",
-//     "email": "user1@example.com",
-//     "create_date": "2022-08-14T05:41:30.000Z"
-//   }
-async function UserProfileData(userId) {
-    let result;
-    
-    result = await mongoose.connection.db.collection('user').findOne(
-        { user_id: parseInt(userId) },
-        { projection: { name: 1, contact_ways: 1, path_to_profile_pic: 1, email: 1, create_date: 1 } }
-    );
-
-    return result;
-}
-// In Postman send this json format in the body
-// {
-//     "newPassword": "your_new_password"
-// }
-async function UserUpdatePassword(userId, newPassword) {
-    let result;
-    
-    // Update the user's password in the database
-    result = await mongoose.connection.db.collection('user').updateOne(
-        { user_id: parseInt(userId) },
-        { $set: { pw: newPassword } }
-    );
-
-    return result;
-}
-
 // Register a new user in the database
 // In Postman send this json format in the body
 // {
@@ -114,10 +74,23 @@ async function LoginUser(email, password) {
     return result; // Return the user document if found, otherwise null
 }
 
+// Delete a user by user ID
+async function DeleteUser(userId) {
+    let result;
+
+    try {
+        // Delete the user from the database
+        result = await mongoose.connection.db.collection('user').deleteOne({ user_id: parseInt(userId) });
+    } catch (err) {
+        console.log(err); // Log any errors that occur
+    }
+
+    return result; // Return the result of the delete operation
+}
+
 export {
     AllUserData,
-    UserProfileData,
-    UserUpdatePassword,
     RegisterUser,
-    LoginUser
+    LoginUser,
+    DeleteUser
 }

@@ -1,48 +1,15 @@
 import { 
     AllUserData,
-    UserProfileData,
-    UserUpdatePassword,
     RegisterUser,
-    LoginUser
-} from "#src/services/user_service.js";
+    LoginUser,
+    DeleteUser
+} from "#src/services/user_services/user_service.js";
 
 async function GetAllUserData(req, res) {
     let result = await AllUserData();
 
     res.status(200).send(result);
    
-}
-
-async function GetUserProfileData(req, res) {
-    const userId = req.params.id;
-    let result = await UserProfileData(userId);
-
-    if (result) {
-        res.status(200).send(result);
-    } else {
-        res.status(404).send({ message: "User not found" });
-    }
-}
-
-async function UpdateUserPassword(req, res) {
-    const userId = req.params.id; 
-    const { newPassword } = req.body; 
-
-    if (!newPassword) {
-        return res.status(400).send({ message: "New password is required" });
-    }
-
-    try {
-        const result = await UserUpdatePassword(userId, newPassword);
-
-        if (result.modifiedCount > 0) {
-            res.status(200).send({ message: "Password updated successfully" });
-        } else {
-            res.status(404).send({ message: "User not found or password not updated" });
-        }
-    } catch (err) {
-        res.status(500).send({ message: "An error occurred", error: err.message });
-    }
 }
 
 async function Register(req, res) {
@@ -96,15 +63,25 @@ async function Login(req, res) {
     }
 }
 
-async function Logout(req, res) {
-    res.status(200).send({ message: "Logged out successfully" });
-}
+// Delete user data by user ID 
+async function Delete(req, res) {
+    const userId = req.params.id;
 
+    try {
+        const result = await DeleteUser(userId);
+
+        if (result.deletedCount > 0) {
+            res.status(200).send({ message: "User deleted successfully" });
+        } else {
+            res.status(404).send({ message: "User not found" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
 export {
     GetAllUserData,
-    GetUserProfileData,
-    UpdateUserPassword,
     Register,
     Login,
-    Logout
+    Delete
 }
