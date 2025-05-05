@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Computer Graphics",
+    "courseId": "CG_2025",
+    "color": "#4A90E2"
+  },
+  {
+    "title": "Biology 101",
+    "courseId": "BIO_101",
+    "color": "#2ECC71"
+  }
+]

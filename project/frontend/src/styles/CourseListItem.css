@@ -1,0 +1,28 @@
+.course-list-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.course-color-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.course-title {
+  flex: 1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.course-id {
+  width: 150px; 
+  text-align: left;
+  color: #555;
+  font-size: 14px;
+}
