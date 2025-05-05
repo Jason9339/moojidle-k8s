@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getPostContentFake} from "@/services/PostApi/PostAPI";
+import { getPostContent, getUserName, getBoardName } from "@/services/PostApi/PostAPI";
 
 function DiscussionPostView({ postId }) {
     const [post, setPost] = useState(null);
+    const [postAuthorName, setPostAuthorName] = useState("");
+    const [boardName, setBoardName] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState("");
@@ -11,8 +13,27 @@ function DiscussionPostView({ postId }) {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const data = await getPostContentFake(postId);
-                setPost(data[0]);
+                const data = await getPostContent(postId);
+
+                // 發文者名稱
+                const postAuthor = await getUserName(data.post_by_user_id);
+                setPostAuthorName(postAuthor.name);
+
+                const postBoard = await getBoardName(data.in_b_id);
+                setBoardName(postBoard.name);
+
+                // 留言者名稱
+                const commentsWithNames = await Promise.all(
+                    (data.comments || []).map(async (comment) => {
+                        const userData = await getUserName(comment.comment_by_user_id);
+                        return {
+                            ...comment,
+                            comment_user_display_name: userData.name,
+                        };
+                    })
+                );
+
+                setPost({ ...data, comments: commentsWithNames });
             } catch (err) {
                 setError("載入貼文失敗：" + (err.message || "未知錯誤"));
             } finally {
@@ -26,25 +47,52 @@ function DiscussionPostView({ postId }) {
     const handleCommentSubmit = () => {
         if (!newComment.trim()) return;
 
-        // 這裡你可以改成實際送出 API
-        console.log("送出留言：", newComment);
+        const newCommentObj = {
+            comment_id: Date.now(),
+            comment_by_user_id: 999,
+            comment_user_custom_tag: "訪客",
+            comment_user_display_name: "User999",
+            comment_date: new Date().toISOString(),
+            description: newComment,
+        };
+
+        setPost((prev) => ({
+            ...prev,
+            comments: [...(prev.comments || []), newCommentObj],
+        }));
+
         setNewComment("");
     };
 
-    if (loading) return <p>Loading post...</p>;
+    const formatDate = (dateObj) => {
+        const date = new Date(dateObj?.$date || dateObj);
+        return isNaN(date) ? "無效日期" : date.toLocaleString();
+    };
+
+    if (loading) return <p>⏳ 載入中...</p>;
     if (error) return <p>{error}</p>;
     if (!post) return <p>找不到貼文</p>;
 
     return (
         <PostContainer>
             <PostHeader>
-                <Title>{post.in_b_id} / {post.title}</Title>
+                <Title>{boardName} / {post.title}</Title>
                 <Info>
-                    發文者：{post.post_by_user_id} | 發文時間：
-                    {new Date(post.post_date).toLocaleString()}
-                </Info> 
+                    發文者：{postAuthorName}（{post.post_by_user_id}） | 發文時間：{formatDate(post.post_date)}
+                </Info>
             </PostHeader>
+
             <Description>{post.description}</Description>
+
+            <TagList>
+                {post.post_tags && post.post_tags.length > 0 ? (
+                    post.post_tags.map((tag) => (
+                        <Tag key={tag.tag_id}>{tag.tag_name}</Tag>
+                    ))
+                ) : (
+                    <Tag>(無標籤)</Tag>
+                )}
+            </TagList>
 
             <CommentSection>
                 <CommentTitle>留言：</CommentTitle>
@@ -59,14 +107,14 @@ function DiscussionPostView({ postId }) {
                     <CommentButton onClick={handleCommentSubmit}>送出留言</CommentButton>
                 </CommentInputWrapper>
 
-                {post.comments.length === 0 ? (
+                {!post.comments || post.comments.length === 0 ? (
                     <p>目前尚無留言。</p>
                 ) : (
                     post.comments.map((comment) => (
                         <CommentCard key={comment.comment_id}>
                             <CommentInfo>
-                                使用者 {comment.comment_by_user_id}（{comment.comment_user_custom_tag}） 於{" "}
-                                {new Date(comment.comment_date).toLocaleString()}：
+                                使用者 {comment.comment_user_display_name}（{comment.comment_user_custom_tag}）於{" "}
+                                {formatDate(comment.comment_date)}：
                             </CommentInfo>
                             <CommentText>{comment.description}</CommentText>
                         </CommentCard>
@@ -79,6 +127,8 @@ function DiscussionPostView({ postId }) {
 
 export default DiscussionPostView;
 
+
+// ======================= styled-components =======================
 
 const PostContainer = styled.div`
     background-color: #f0f2f5;
@@ -95,7 +145,6 @@ const Title = styled.h2`
     color: #2e3e6e;
     margin-bottom: 8px;
     font-size: 40px;
-
 `;
 
 const Info = styled.p`
@@ -105,7 +154,22 @@ const Info = styled.p`
 
 const Description = styled.pre`
     font-size: 25px;
+    margin-bottom: 16px;
+`;
+
+const TagList = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-bottom: 24px;
+`;
+
+const Tag = styled.span`
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
 `;
 
 const CommentSection = styled.div`
@@ -165,4 +229,3 @@ const CommentButton = styled.button`
         background-color: #1f2a50;
     }
 `;
-
