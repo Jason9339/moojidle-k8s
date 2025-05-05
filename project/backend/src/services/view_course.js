@@ -20,7 +20,7 @@ async function ViewCourses() {
         // Map the database results to the desired frontend format
         const formattedCourses = courses.map(course => ({
             title: course.name,       // Map name to title
-            courseId: course.course_id, // Use the integer course_id
+            course_id: course.course_id, // Use the integer course_id
             // WARN: Just a temporary solution for isTeacher and color
             color:"#2ECC71",
             // 'color' field is not available in the database schema
