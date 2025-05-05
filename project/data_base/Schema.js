@@ -384,19 +384,44 @@ db.createCollection("post", {
 });
   
 db.createCollection("mailbox", {
-        validator: {
-            $jsonSchema: {
-                bsonType: "object",
-                required: ["mail_id", "sender_id", "receiver_id", "subject", "content", "send_date"],
-                properties: {
-                    mail_id: { bsonType: "int" },
-                    sender_id: { bsonType: "int" },
-                    receiver_id: { bsonType: "int" },
-                    subject: { bsonType: "string" },
-                    content: { bsonType: "string" },
-                    send_date: { bsonType: "date" }
-                }
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["mail_id", "sender_id", "receiver_id", "subject", "content", "send_date"],
+            properties: {
+                mail_id: { bsonType: "int" },
+                sender_id: { bsonType: "int" },
+                receiver_id: { bsonType: "int" },
+                subject: { bsonType: "string" },
+                content: { bsonType: "string" },
+                send_date: { bsonType: "date" }
             }
         }
     }
-)
+});
+
+db.createCollection("counter", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                announcement: {bsonType: "int"},
+                assignments: {bsonType: "int"},
+                assist_in: {bsonType: "int"},
+                counter: {bsonType: "int"},
+                course: {bsonType: "int"},
+                course_tag: {bsonType: "int"},
+                custom_tag: {bsonType: "int"},
+                discussion_board: {bsonType: "int"},
+                exams: {bsonType: "int"},
+                mailbox: {bsonType: "int"},
+                materials: {bsonType: "int"},
+                post: {bsonType: "int"},
+                study_in: {bsonType: "int"},
+                submitted_ass: {bsonType: "int"},
+                teach_in: {bsonType: "int"},
+                user: {bsonType: "int"}
+            }
+        }
+    }
+});

@@ -3,6 +3,23 @@ from datetime import datetime, timedelta
 import json
 import os
 
+# DATE = ISODate("2021-11-17T19:41:13")
+USER_NUM = 15
+COURSE_NUM = 5
+TEACH_IN = 0
+ASSIST_IN = 0
+STUDYING_IN = 0
+ANNOUNCEMENT_NUM = 0
+BOARD_NUM = 0
+CUSTOM_TAG_NUM = 0
+COURSE_TAG_NUM = 0
+EXAM_NUM = 0
+MAT_NUM = 0
+ASSIGNMENT_NUM = 0
+SUBMITTED_ASSIGNMENT_NUM = 0
+POST_NUM = 0
+MAIL_NUM = 0
+
 def random_date(start, end):
     return start + timedelta(
         seconds=random.randint(0, int((end - start).total_seconds()))
@@ -46,6 +63,8 @@ def generate_courses(n=5):
             "create_date": create_date,  # 保留為 datetime 對象
             "syllabus": f"Syllabus for course {i}",
             "invite_link": f"http://example.com/course_{i}/invite",
+            "weeek_num": 16,
+            "color": "#FFFFFF"
         })
     return courses
 
@@ -62,6 +81,8 @@ def generate_teach_in(user_count=15, course_count=5, role_tracker=None):
                 "user_id": user_id,
                 "course_id": course_id
             })
+            global TEACH_IN
+            TEACH_IN += 1
             if role_tracker is not None:
                 role_tracker.add((user_id, course_id))
     return teach_in
@@ -79,6 +100,8 @@ def generate_assist_in(user_count=15, course_count=5, role_tracker=None):
                 "user_id": user_id,
                 "course_id": course_id
             })
+            global ASSIST_IN
+            ASSIST_IN += 1
             if role_tracker is not None:
                 role_tracker.add((user_id, course_id))
     return assist_in
@@ -97,6 +120,8 @@ def generate_study_in(user_count=15, course_count=5, role_tracker=None):
                 "course_id": course_id,
                 "student_id": random.randint(1000, 9999)  # Random student ID
             })
+            global STUDYING_IN
+            STUDYING_IN += 1
             if role_tracker is not None:
                 role_tracker.add((user_id, course_id))
     return study_in
@@ -114,6 +139,8 @@ def generate_announcements(user_count=15, course_count=5, n=20):
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
             "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
         })
+        global ANNOUNCEMENT_NUM
+        ANNOUNCEMENT_NUM += 1
     return announcements
 
 # # Generate discussion_board data
@@ -131,6 +158,8 @@ def generate_discussion_boards(course_count=5, max_boards_per_course=3):
                 "name": f"Discussion Board {board_id} for Course {course_id}"
             })
             board_id += 1
+            global BOARD_NUM
+            BOARD_NUM += 1
     return discussion_boards
 
 # # Generate custom_tag data
@@ -145,28 +174,47 @@ def generate_custom_tags(user_count=15, max_tags_per_user=3):
                 "user_id": user_id,
                 "user_tag": f"CustomTag_{random.randint(1, 100)}"
             })
+            global CUSTOM_TAG_NUM
+            CUSTOM_TAG_NUM += 1
     return custom_tags
 
 # # Generate course_tag data
-def generate_course_tags(user_count=15, course_count=5, max_tags_per_user=3):
+def generate_course_tags(user_count=15, course_count=5, role_tracker=None):
     """Generate fake data for course tags"""
     course_tags = []
     for user_id in range(1, user_count + 1):
-        # Each user can have tags for 1 to max_tags_per_user courses
-        num_tags = random.randint(1, max_tags_per_user)
-        courses = random.sample(range(1, course_count + 1), num_tags)
-        for course_id in courses:
-            course_tags.append({
-                "user_id": user_id,
-                "course_id": course_id,
-                "course_tag": f"CourseTag_{random.randint(1, 100)}"
-            })
+        for course_id in range(1, course_count + 1):
+            if role_tracker and (user_id, course_id) in role_tracker:
+                course_tags.append({
+                    "user_id": user_id,
+                    "course_id": course_id,
+                    "course_tag": f"CourseTag_{random.randint(1, 100)}"
+                })
+                global COURSE_TAG_NUM
+                COURSE_TAG_NUM += 1
     return course_tags
 
-def generate_exams(courses, user_count=15, max_exams_per_course=3, max_attachments_per_exam=3):
+def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_course=3, max_attachments_per_exam=3):
     """生成考試數據"""
     exams = []
     exam_id = 1  # 開始的考試 ID
+    
+    # Create a mapping of course_id to eligible users (teachers and assistants)
+    eligible_users = {}
+    for entry in teach_in:
+        course_id = entry["course_id"]
+        user_id = entry["user_id"]
+        if course_id not in eligible_users:
+            eligible_users[course_id] = set()
+        eligible_users[course_id].add(user_id)
+        
+    for entry in assist_in:
+        course_id = entry["course_id"]
+        user_id = entry["user_id"]
+        if course_id not in eligible_users:
+            eligible_users[course_id] = set()
+        eligible_users[course_id].add(user_id)
+    
     for course in courses:
         course_id = course["course_id"]
         # 確保 course["create_date"] 是 datetime 對象
@@ -188,10 +236,16 @@ def generate_exams(courses, user_count=15, max_exams_per_course=3, max_attachmen
                 }
                 for i in range(num_attachments)
             ]
+            # Select a random eligible user for this course
+            if course_id in eligible_users and eligible_users[course_id]:
+                create_by_user_id = random.choice(list(eligible_users[course_id]))
+            else:
+                # If no eligible users, skip this material
+                continue
             exams.append({
                 "exam_id": exam_id,
                 "in_course_id": course_id,
-                "create_by_user_id": random.randint(1, user_count),  # 隨機生成創建者
+                "create_by_user_id": create_by_user_id,
                 "exam_name": f"Exam {exam_id} for Course {course_id}",
                 "exam_date": f'ISODate("{exam_date.isoformat()}")',  # 將 exam_date 轉換為 ISODate 格式
                 "create_date": f'ISODate("{random_date(course_create_date, exam_date).isoformat()}")',  # 將 create_date 轉換為 ISODate 格式
@@ -199,6 +253,8 @@ def generate_exams(courses, user_count=15, max_exams_per_course=3, max_attachmen
                 "attachments": attachments
             })
             exam_id += 1
+            global EXAM_NUM
+            EXAM_NUM += 1
     return exams
 
 # # Generate materials data
@@ -245,11 +301,13 @@ def generate_materials(courses, teach_in, assist_in, max_materials_per_course=5)
                 "create_by_user_id": create_by_user_id,
                 "m_name": f"Material {material_id} for Course {course_id}",
                 "create_date": f'ISODate("{create_date.isoformat()}")',  # 將 create_date 轉換為 ISODate 格式
-                "path_to_file": f"/materials/course_{course_id}/material_{material_id}.pdf",
+                # "path_to_file": f"/materials/course_{course_id}/material_{material_id}.pdf",
                 "url": f"http://example.com/materials/course_{course_id}/material_{material_id}.pdf",
-                "description": f"This is the description for Material {material_id}."
+                # "description": f"This is the description for Material {material_id}."
             })
             material_id += 1
+            global MAT_NUM
+            MAT_NUM += 1
     return materials
 
 # # # Generate assignments data
@@ -316,6 +374,8 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "attachments": attachments
             })
             assignment_id += 1
+            global ASSIGNMENT_NUM
+            ASSIGNMENT_NUM += 1
     return assignments
 
 def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, max_submissions_per_assignment=5):
@@ -389,6 +449,8 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
                 "description": f"This is the submission for Assignment {ass_id} by User {submit_by_user_id}."
             })
             submission_id += 1
+            global SUBMITTED_ASSIGNMENT_NUM
+            SUBMITTED_ASSIGNMENT_NUM += 1
 
     return submitted_assignments
 
@@ -447,6 +509,8 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
                 ]
             })
             post_id += 1
+            global POST_NUM
+            POST_NUM += 1
     return posts
 
 # # # Generate mailbox data
@@ -476,6 +540,8 @@ def generate_mailbox(users, max_messages_per_user=10):
             })
 
             mail_id += 1
+            global MAIL_NUM
+            MAIL_NUM += 1
 
     return mailboxes
 
@@ -488,13 +554,13 @@ def write_seed_file():
     study_in = generate_study_in(role_tracker=role_tracker)
     announcements = generate_announcements()
     discussion_boards = generate_discussion_boards()
-    exams = generate_exams(courses)
+    exams = generate_exams(courses, teach_in, assist_in)
     materials = generate_materials(courses, teach_in, assist_in)
     assignments = generate_assignments(courses, teach_in, assist_in)
     submitted_assignments = generate_submitted_assignments(assignments, study_in, teach_in, assist_in)
     posts = generate_posts(discussion_boards, users)
     custom_tags = generate_custom_tags(len(users))  # Generate custom tags
-    course_tags = generate_course_tags(len(users), len(courses))  # Generate course tags
+    course_tags = generate_course_tags(role_tracker=role_tracker)  # Generate course tags
     mailboxes = generate_mailbox(users)  # Generate mailbox data
 
     seed_data = {
@@ -515,7 +581,7 @@ def write_seed_file():
         "mailbox": mailboxes  # Add mailbox data
     }
 
-    output_dir = "/home/nonohuang/moojidle/project/data_base/"
+    output_dir = "./"
     output_file = os.path.join(output_dir, "Seed.js")
 
     def convert_datetime_to_iso(data):
@@ -537,6 +603,25 @@ def write_seed_file():
                 f.write(f"db.{collection}.insertMany({collection_data});\n\n")
             else:
                 f.write(f"db.{collection}.insertMany({json.dumps(data, indent=2)});\n\n")
+        
+        counter_data = {
+            "announcement": ANNOUNCEMENT_NUM,
+            "assignments": ASSIGNMENT_NUM,
+            "assist_in": ASSIST_IN,
+            "course": COURSE_NUM,
+            "course_tag": COURSE_TAG_NUM,
+            "custom_tag": CUSTOM_TAG_NUM,
+            "discussion_board": BOARD_NUM,
+            "exams": EXAM_NUM,
+            "mailbox": MAIL_NUM,
+            "materials": MAT_NUM,
+            "post": POST_NUM,
+            "study_in": STUDYING_IN,
+            "submitted_ass": SUBMITTED_ASSIGNMENT_NUM,
+            "teach_in": TEACH_IN,
+            "user": USER_NUM
+        }
+        f.write(f"db.counter.insertOne({json.dumps(counter_data, indent=2)});\n\n")
 
     print(f"Seed.js has been successfully generated at \n{output_file}!")
     
