@@ -2,6 +2,7 @@ import Course from '#src/models/course.js';
 import Announcement from '#src/models/Announcement.js';
 import Material from '#src/models/Material.js';
 import Assignment from '#src/models/Assignment.js';
+import mongoose from 'mongoose';
 
 // 取得所有課程列表
 export const getAllCourses = async (req, res) => {
@@ -249,8 +250,79 @@ async function ReadCourse(req, res) {
     }
 }
 
+// 獲取課程詳細資訊
+async function GetCourseDetails(req, res) {
+    try {
+        const { courseId } = req.params;
+        
+        // 查詢課程基本資訊
+        const course = await Course.findOne({ course_id: parseInt(courseId) });
+        if (!course) {
+            return res.status(404).json({ message: '找不到課程' });
+        }
+        
+        // 整合所有課程信息到一個物件中返回
+        res.status(200).json({
+            id: course.course_id,
+            title: course.name,
+            description: course.description,
+            syllabus: course.syllabus || "",
+            createDate: course.create_date,
+            inviteLink: course.invite_link || ""
+        });
+    } catch (error) {
+        console.error("獲取課程詳情錯誤:", error);
+        res.status(500).json({ message: "伺服器錯誤", error: error.message });
+    }
+}
+
+// 獲取用戶教授的課程
+async function GetTeachingCourses(req, res) {
+    try {
+        const { userId } = req.query;
+        
+        if (!userId) {
+            return res.status(400).json({ message: '缺少用戶ID參數' });
+        }
+        
+        // 從 teach_in 集合中查詢用戶授課的所有課程ID
+        const teachInRecords = await mongoose.connection.db.collection('teach_in')
+            .find({ user_id: parseInt(userId) })
+            .toArray();
+        
+        // 如果沒有找到任何教授記錄
+        if (!teachInRecords || teachInRecords.length === 0) {
+            return res.json([]); // 返回空數組
+        }
+        
+        // 提取所有課程ID
+        const courseIds = teachInRecords.map(record => record.course_id);
+        
+        // 查詢這些課程的詳細資訊
+        const courses = await Course.find({ course_id: { $in: courseIds } });
+        
+        // 將課程資訊轉換為前端需要的格式
+        const formattedCourses = courses.map(course => ({
+            title: course.name,
+            courseId: course.course_id,
+            description: course.description,
+            color: "#4A90E2", // 預設顏色
+            isTeacher: true
+        }));
+        
+        res.json(formattedCourses);
+    } catch (error) {
+        console.error("獲取教師課程錯誤:", error);
+        res.status(500).json({ message: "伺服器錯誤", error: error.message });
+    }
+}
+
 export {
     CreateCourse,
     DeleteCourse,
-    ReadCourse
+    ReadCourse,
+    GetCourseDetails,
+    GetTeachingCourses
+    // 所有其他控制器函數 (getCourseFiles、getCourseAssignments、getCourseAnnouncements、getCourseSyllabus) 
+    // 已在前面通過 export const 方式導出，這裡不需要重複導出
 }
