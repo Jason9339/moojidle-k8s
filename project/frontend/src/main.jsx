@@ -1,10 +1,31 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "@/index.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "@/Layout";
+import NotFoundPage from "@/pages/NotFoundPage";
+import DiscussionBoard from "@/pages/DiscussionBoard";
+import Dashboard from "@/pages/Dashboard";
+import DiscussionBoardList from "@/pages/DiscussionBoardList";
+import CoursePage from "@/pages/CoursePage";
+import CourseDetail from "@/pages/CourseDetail";
 
-createRoot(document.getElementById('root')).render(
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { path: "", element: <Dashboard /> },
+      { path: "course", element: <CoursePage /> },
+      { path: "course/:courseId", element: <CourseDetail /> },
+      { path: "discussion", element: <DiscussionBoardList /> },
+      { path: "discussion/:id", element: <DiscussionBoard /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+]);
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <RouterProvider router={router} />
+  </StrictMode>
+);
