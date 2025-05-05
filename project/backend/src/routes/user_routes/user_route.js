@@ -5,7 +5,6 @@ import {
     GetAllUserData,
     Register,
     Login,
-    Logout,
     Delete
 } from '#src/controllers/user_controllers/user_controller.js';
 
