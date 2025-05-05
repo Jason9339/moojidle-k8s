@@ -1,10 +1,17 @@
 import mongoose from "mongoose";
 
-async function FetchNavbarData() {
+async function FetchCourseData(user_id) {
     try {
         const db = mongoose.connection.db;
+        const parsedUserId = parseInt(user_id);
 
         const result = await db.collection("user").aggregate([
+            // Filter by user_id
+            {
+                $match: {
+                    user_id: parsedUserId
+                }
+            },
             // Join with the study_in collection
             {
                 $lookup: {
@@ -51,4 +58,4 @@ async function FetchNavbarData() {
     }
 }
 
-export { FetchNavbarData, aggregateUserStudyCourse };
+export { FetchCourseData };
