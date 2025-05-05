@@ -9,7 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
 
 // pages for user related
-import UserProfile from "@/pages/user_pages/UserProfile.jsx";
+import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 
 const router = createBrowserRouter([
     {
