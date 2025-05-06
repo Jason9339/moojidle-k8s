@@ -100,7 +100,7 @@ db.createCollection("announcement", {
             required: ["a_id", "create_date", "context", "user_id", "course_id"],
             properties: {
                 a_id: { bsonType: "int" },
-                create_date: { bsonType: "date" },
+                create_date: { bsonType: "string" },
                 context: { bsonType: "string" },
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int"},
@@ -118,7 +118,7 @@ db.createCollection("course", {
                 course_id: { bsonType: "int" },
                 name: { bsonType: "string" },
                 description: { bsonType: "string" },
-                create_date: { bsonType: "date" },
+                create_date: { bsonType: "string" },
                 syllabus: { bsonType: "string" },
                 invite_link: { bsonType: "string" }
             } 
@@ -177,8 +177,8 @@ db.createCollection("exams", {
                 in_course_id: { bsonType: "int", description: "Foreign key: ID of the course the exam belongs to" },
                 create_by_user_id: { bsonType: "int", description: "Foreign key: User ID of the creator" },
                 exam_name: { bsonType: "string", description: "Name of the exam" },
-                exam_date: { bsonType: "date", description: "Date when the exam will be held" },
-                create_date: { bsonType: "date", description: "Date when the exam was created" },
+                exam_date: { bsonType: "string", description: "Date when the exam will be held" },
+                create_date: { bsonType: "string", description: "Date when the exam was created" },
                 description: { bsonType: "string", description: "Description of the exam" },
                 attachments: {
                     bsonType: "array",
@@ -206,7 +206,7 @@ db.createCollection("materials", {
                 in_course_id: { bsonType: "int" },
                 create_by_user_id: { bsonType: "int" },
                 m_name: { bsonType: "string" },
-                create_date: { bsonType: "date" },
+                create_date: { bsonType: "string" },
                 path_to_file: { bsonType: "string" },
                 url: { bsonType: "string" },
                 description: { bsonType: "string" }
@@ -219,7 +219,7 @@ db.createCollection("assignments", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date"],
+            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "end_date"],
             properties: {
                 ass_id: {
                     bsonType: "int",
@@ -238,11 +238,11 @@ db.createCollection("assignments", {
                     description: "Name of the assignment"
                 },
                 create_date: {
-                    bsonType: "date",
+                    bsonType: "string",
                     description: "Date when the assignment was created"
                 },
                 end_date: {
-                    bsonType: "date",
+                    bsonType: "string",
                     description: "Deadline for the assignment"
                 },
                 description: {
@@ -287,7 +287,7 @@ db.createCollection("submitted_ass", {
                     description: "Tag identifying the submitter in the course"
                 },
                 submit_date: {
-                    bsonType: "date",
+                    bsonType: "string",
                     description: "Date of submission"
                 },
                 points: {
@@ -341,7 +341,7 @@ db.createCollection("post", {
                     description: "Content of the post"
                 },
                 post_date: {
-                    bsonType: "date",
+                    bsonType: "string",
                     description: "Date when the post was created"
                 },
                 public: {
@@ -355,7 +355,7 @@ db.createCollection("post", {
                         properties: {
                             comment_by_user_id: { bsonType: "int" },
                             comment_user_custom_tag: { bsonType: "string" },
-                            comment_date: { bsonType: "date" },
+                            comment_date: { bsonType: "string" },
                             description: { bsonType: "string" }
                         },
                         required: ["comment_by_user_id", "comment_user_custom_tag", "comment_date", "description"]
@@ -394,7 +394,7 @@ db.createCollection("mailbox", {
                 receiver_id: { bsonType: "int" },
                 subject: { bsonType: "string" },
                 content: { bsonType: "string" },
-                send_date: { bsonType: "date" }
+                send_date: { bsonType: "string" }
             }
         }
     }
