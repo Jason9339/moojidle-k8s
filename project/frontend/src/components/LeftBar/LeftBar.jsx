@@ -7,15 +7,17 @@ import './LeftBar.css'
 
 function LeftBar() {
     return (
-        <Sidebar className="left-bar">
-            <Menu>
-                {leftBarNavItems.map((item) => {
-                    return <MenuItem key={item.path} icon=<item.icon /> 
-                        component={<Link to={item.path} className="link" />}>{item.label}
-                    </MenuItem>
-                })}
-            </Menu>
-        </Sidebar>
+        <div className="left-bar">
+            <Sidebar>
+                <Menu>
+                    {leftBarNavItems.map((item) => {
+                        return <MenuItem key={item.path} icon=<item.icon /> 
+                            component={<Link to={item.path} className="link" />}>{item.label}
+                        </MenuItem>
+                    })}
+                </Menu>
+            </Sidebar>
+        </div>
     );
 }
 

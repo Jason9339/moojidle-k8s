@@ -4,15 +4,28 @@
 }
 
 .category {
-    display: inline;
+    display: block;
     font-size: 5vh;
 }
 
 hr {
     display: block;
     height: 1px;
+    width: 100vw - 250px;
     border: 0;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #666666;
     margin: 1em 0;
     padding: 0;
+
+    z-index: 100;
+}
+
+.layout-flexbox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+    background-color: rgba(218, 218, 218, 0.5);
 }
