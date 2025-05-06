@@ -515,7 +515,7 @@ def write_seed_file():
         "mailbox": mailboxes  # Add mailbox data
     }
 
-    output_dir = "/home/nonohuang/moojidle/project/data_base/"
+    output_dir = "/home/nonohuang/moojidle/project/database/"
     output_file = os.path.join(output_dir, "Seed.js")
 
     def convert_datetime_to_iso(data):
