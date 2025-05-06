@@ -1,11 +1,32 @@
 import React, { useState } from 'react';
-import "./SecondaryLayout.css"
+import styles from "./SecondaryLayout.module.css"
 
-function SecondaryLayout() {
+// asset
+import editIcon from "@/../public/icons/pencil.png"
 
+function SecondaryLayout({ user_tags }) {
     return (
         <>
-            
+            <div className={styles.container}>
+                <h2 className={styles.h2}>
+                    Your tags:
+                </h2>
+
+                <button className={styles["edit-button"]}>
+                    <img src={editIcon} className={styles["edit-icon"]} alt="Edit" />
+                    編輯個人 tags
+                </button>
+
+                {user_tags && user_tags.length > 0 ? (
+                    <ul>
+                        {user_tags.map((tag, index) => (
+                            <li className={styles.li} key={index}>{tag.user_tag}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No custom tags yet.</p>
+                )}
+            </div>
         </>
     );
 }

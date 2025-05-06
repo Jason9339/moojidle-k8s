@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GetUserDataById } from '@/services/user_api/UserApi.js';
-import "./UserProfile.css"
+import styles from "./UserProfile.module.css"
 
 // for components
 import MainLayout from '@/components/user_components/user_profile/MainLayout/MainLayout.jsx';
@@ -30,19 +30,19 @@ function UserProfile() {
     // page content
     return (
         <>
-            <div className='content'>
-                <header className='category'>
+            <div className={styles.content}>
+                <header className={styles.category}>
                     Profile
                 </header>
                 <hr />
 
-                <div className='layout-flexbox'>
+                <div className={styles["layout-flexbox"]}>
                     <MainLayout pfp_path={data.path_to_profile_pic}
                                 name={data.name} 
                                 email={data.email}
                                 contact_ways={data.contact_ways} />
 
-                    <SecondaryLayout  />
+                    <SecondaryLayout user_tags={data.user_tags} />
                 </div>
             </div>
         </>
