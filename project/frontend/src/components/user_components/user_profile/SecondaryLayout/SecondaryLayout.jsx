@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./SecondaryLayout.module.css"
 
-// asset
-import editIcon from "@/../public/icons/pencil.png"
 
 function SecondaryLayout({ user_tags }) {
     return (
@@ -13,7 +11,7 @@ function SecondaryLayout({ user_tags }) {
                 </h2>
 
                 <button className={styles["edit-button"]}>
-                    <img src={editIcon} className={styles["edit-icon"]} alt="Edit" />
+                    <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
                     編輯個人 tags
                 </button>
 

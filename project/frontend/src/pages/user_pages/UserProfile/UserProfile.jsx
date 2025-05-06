@@ -9,10 +9,13 @@ import SecondaryLayout from '@/components/user_components/user_profile/Secondary
 function UserProfile() {
     const [data, setData] = useState(null);
 
+    // faka data
+    let userId = 1;
+
     // fetching data from api services
     useEffect(() => {
         async function fetchData() {
-            const result = await GetUserDataById(2);
+            const result = await GetUserDataById(userId);
             setData(result);
         }
 
@@ -22,7 +25,9 @@ function UserProfile() {
     if (!data) {
         return (
             <>
-                loding....
+                <p className={styles.loading}>
+                    loding....
+                </p>
             </>
         );
     }

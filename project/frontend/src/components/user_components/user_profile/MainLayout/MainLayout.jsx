@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import styles from "./MainLayout.module.css";
 
-// assets
-import defaultPFP from "@/../public/user_pfp/default.png";
-import editIcon from "@/../public/icons/pencil.png";
-
 function MainLayout({ pfp_path, name, email, contact_ways }) {
-    const [imgSrc, setImgSrc] = useState(pfp_path || defaultPFP);
+    const [imgSrc, setImgSrc] = useState(pfp_path || "/user_pfp/default.png");
 
     return (
         <>
             <div className={styles["info-flexbox"]}>
                 <img
                     src={imgSrc}
-                    onError={() => setImgSrc(defaultPFP)}
+                    onError={() => setImgSrc("/user_pfp/default.png")}
                     className={styles.pfp}
                     alt="profile"
                 />
@@ -48,7 +44,7 @@ function MainLayout({ pfp_path, name, email, contact_ways }) {
             </div>
 
             <button className={styles["edit-button"]}>
-                <img src={editIcon} className={styles["edit-icon"]} alt="Edit" />
+                <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
                 編輯基本個人檔案
             </button>
 
