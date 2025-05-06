@@ -24,11 +24,13 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
-import courseRoute from "#src/routes/course_router.js"
+import courseRouter from "#src/routes/course_router.js"
+import dashboardRoute from "#src/routes/dashboard_route.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
-app.use("/course", courseRoute);
+app.use("/course", courseRouter);
+app.use("/dashboard", dashboardRoute);
 
 // Routes ends --------------------------------------------------------------------------
 
