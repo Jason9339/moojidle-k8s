@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 async function FetchUpcomingExams(user_id) {
     try {
         const db = mongoose.connection.db;
+        // user_id is of type string
         const parsedUserId = parseInt(user_id);
 
         // Define a fixed current time for testing
