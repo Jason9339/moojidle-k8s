@@ -58,6 +58,21 @@ async function generateInviteLink(course_id) {
     return inviteLinkBase + course_id;
 }
 
+async function AddTeachIn(userId, courseId) {
+    try {
+        const newTeachInDocument = {
+            user_id: userId,
+            course_id: courseId,
+        };
+        const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
+        // console.log("Inserted document ID:", result.insertedId);
+        return result.insertedId;
+    } catch (err) {
+        console.error("Error adding teach_in entry:", err);
+        throw new Error(`Failed to add teach_in entry: ${err.message}`);
+    }
+}
+
 
 // Service to remove a course by its course_id
 async function RemoveCourse(id) {
@@ -130,6 +145,7 @@ async function RemoveCourseRelationships(courseIdInt) {
 
 export {
     AddCourse, 
+    AddTeachIn,
     RemoveCourse,
     RemoveCourseRelationships,
 

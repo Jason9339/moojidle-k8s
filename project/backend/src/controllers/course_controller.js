@@ -1,4 +1,4 @@
-import { AddCourse, RemoveCourse, RemoveCourseRelationships } from "#src/services/modify_course.js";
+import { AddCourse, AddTeachIn, RemoveCourse, RemoveCourseRelationships } from "#src/services/modify_course.js";
 import { ViewCourses, GetTeachIn } from "#src/services/view_course.js";
 
 
@@ -13,6 +13,7 @@ async function CreateCourse(req, res) {
         }
         console.log("courseData", courseData);
         const newCourse = await AddCourse(courseData);
+        const newTeachIn = await AddTeachIn(courseData);
         res.status(201).send(newCourse); // 返回新增的課程物件
 
     } catch (error) {
