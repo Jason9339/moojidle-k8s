@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
-import { getUserInvolveCourseFake } from "@/services/UserApi/UserAPI";
 import { Link } from "react-router-dom";
 const Item = ({ title, icon, selected, setSelected, link }) => (
     <MenuItem
@@ -28,9 +27,13 @@ function BoardSideBar() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                // TODO get user's id
-                const userId = 0;
-                setCourses(await getUserInvolveCourseFake(userId));
+                // TODO get user involved courses.
+                const courses = [
+                    { course_id: 1, name: "電腦圖學" },
+                    { course_id: 2, name: "圖論" },
+                    { course_id: 3, name: "軟體工程" },
+                ];
+                setCourses(courses);
             } catch (err) {
                 setError(err.message);
             } finally {
