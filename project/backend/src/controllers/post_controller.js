@@ -1,4 +1,5 @@
 import { GetPost, GetUserName,GetBoardName } from '#src/services/post_service.js';
+import { GetPostByCourse } from '#src/services/post_service.js';
 
 async function GetPostData(req, res, next) {
     try {
@@ -56,9 +57,24 @@ async function GetBoardData(req, res, next) {
         next(err); // 讓全域 error handler 處理
     }
 }
+async function GetPostListByCourse(req, res, next) {
+    try {
+        const courseId = parseInt(req.params.id);
+        if (isNaN(courseId)) {
+            return res.status(400).send({ error: "Invalid course_id" });
+        }
+
+        const posts = await GetPostByCourse(courseId);
+
+        res.status(200).send(posts);
+    } catch (err) {
+        next(err);
+    }
+}
 
 export {
     GetPostData, 
     GetUserData,
-    GetBoardData
+    GetBoardData,
+    GetPostListByCourse
 };

@@ -1,4 +1,5 @@
 import apiClient from "@/services/apiClient";
+import axios from "axios";
 
 async function getCourseDiscussionBoardFake(course_id) {
   const fakeData = {
@@ -60,9 +61,23 @@ async function getCourseDiscussionBoardFake(course_id) {
       }
     ]
   };
+
   const key = `course_${String(course_id).padStart(3, "0")}`;
   
   return fakeData[key] || [];
 }
 
 export {getCourseDiscussionBoardFake};
+
+async function getCoursePosts(courseId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/post/course/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch course posts:", error.message);
+    throw error;
+  }
+}
+
+export {getCoursePosts};
+
