@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "@/styles/Modal.css";
+import "./AddCourseModal";
 
 function AddCourseModal({ onClose, onAddCourse }) {
   const [title, setTitle] = useState("");

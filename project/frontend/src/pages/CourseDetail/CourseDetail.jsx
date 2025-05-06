@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import "@/styles/CourseDetail.css";
+import "./CourseDetail.css";
 
 function CourseDetail() {
     const { courseId } = useParams();

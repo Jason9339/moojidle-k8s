@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "@/styles/CourseCard.css";
+import "./CourseCard.css";
 import { useNavigate } from "react-router-dom";
 import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
-import EditCourseModal from "./EditCourseModal";
+import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({ title, courseId, color, isTeacher }) {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React from 'react';
-import DashboardContent from '@/components/dashboard/DashboardContent.jsx';
-import '@/styles/global.css';
+import DashboardContent from '@/components/dashboard/DashboardContent/DashboardContent.jsx';
+import './Dashboard.css';
 
 function Dashboard() {
   return (
