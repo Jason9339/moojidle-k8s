@@ -1,9 +1,9 @@
 import React from 'react';
-import LeftBar from '@/components/LeftBar.jsx'
+import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 function Dashboard() {
-  return (
-    <LeftBar />
-  );
+    return (
+        <LeftBar />
+    );
 }
 
 export default Dashboard;
