@@ -16,6 +16,21 @@ async function FindOneUserById(user_id) {
     return result;
 }
 
+async function FindOnesTagById(user_id) {
+    let result;
+    
+    try {
+        result = await mongoose.connection.db.collection('custom_tag').find(
+            { user_id: parseInt(user_id) }
+        ).toArray();
+    } catch (err) {
+        console.log(err);
+    }
+
+    return result;
+}
+
 export {
     FindOneUserById,
+    FindOnesTagById
 }

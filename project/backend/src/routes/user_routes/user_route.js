@@ -12,14 +12,26 @@ import {
 // axios are expected to get an object:
 //          
 // {
-//     _id: ObjectId('6810d7fdbd1eb7784fd861e1'),
-//     user_id: 2,
-//     name: 'User 2',
-//     contact_ways: [ { approach: 'social_media', details: '@user39' } ],
-//     path_to_profile_pic: '/profiles/2.jpg',
-//     email: 'user2@example.com',
-//     pw: 'hashed_password_2',
-//     create_date: ISODate('2023-12-01T23:02:43.000Z')
+//     "_id": "6819fb8f1575974c1ed861e1",
+//     "user_id": 2,
+//     "name": "User 2",
+//     "contact_ways": [
+//         {
+//             "approach": "phone",
+//             "details": "555-7694"
+//         }
+//     ],
+//     "path_to_profile_pic": "/profiles/2.jpg",
+//     "email": "user2@example.com",
+//     "pw": "hashed_password_2",
+//     "create_date": "2025-01-01T00:00:00",
+//     "user_tags": [
+//         {
+//             "_id": "6819fb8f1575974c1ed862c4",
+//             "user_id": 2,
+//             "user_tag": "CustomTag_25"
+//         }
+//     ]
 // }
 
 router.get("/get-user-by-id/:userId", GetUserData);
