@@ -40,9 +40,19 @@ async function GetPostByCourse(courseId) {
         throw new Error("Failed to fetch posts by course: " + err.message);
     }
 }
+
+async function GetCourseNameById(courseId) {
+    try {
+        return await mongoose.connection.db.collection("course").findOne({ course_id: courseId });
+    } catch (err) {
+        throw new Error("Failed to fetch course name: " + err.message);
+    }
+}
+
 export {
     GetPost,
     GetUserName,
     GetBoardName,
-    GetPostByCourse
+    GetPostByCourse,
+    GetCourseNameById
 };

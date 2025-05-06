@@ -71,10 +71,29 @@ async function GetPostListByCourse(req, res, next) {
         next(err);
     }
 }
+async function GetCourseName(req, res, next) {
+    try {
+        const courseId = parseInt(req.params.id);
+        if (isNaN(courseId)) {
+            return res.status(400).send({ error: "Invalid course_id" });
+        }
+
+        const result = await GetCourseNameById(courseId);
+        if (!result) {
+            return res.status(404).send({ error: "Course not found" });
+        }
+
+        res.status(200).send(result);
+    } catch (err) {
+        next(err);
+    }
+}
+
 
 export {
     GetPostData, 
     GetUserData,
     GetBoardData,
-    GetPostListByCourse
+    GetPostListByCourse,
+    GetCourseName
 };

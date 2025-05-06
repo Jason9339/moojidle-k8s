@@ -7,6 +7,7 @@ async function getCourseDiscussionBoardFake(course_id) {
       {
         post_id: 1,
         post_by_user_id: 101,
+        name:"電腦圖學",
         title: "第一週的作業有問題嗎？",
         post_user_custom_tag: [
           { tag_id: 1, tag_name: "資工系" },
@@ -32,6 +33,7 @@ async function getCourseDiscussionBoardFake(course_id) {
       {
         post_id: 2,
         post_by_user_id: 103,
+        name:"電腦圖學",
         title: "下次報告是什麼時候？",
         post_user_custom_tag: [{ tag_id: 3, tag_name: "通識" }],
         description: "有人記得老師有改時間嗎？",
@@ -49,6 +51,7 @@ async function getCourseDiscussionBoardFake(course_id) {
         post_id: 3,
         post_by_user_id: 104,
         title: "期中考會考哪些章節？",
+        name:"圖論",
         post_user_custom_tag: [{ tag_id: 5, tag_name: "修課" }],
         description: "有沒有人整理期中範圍？",
         post_date: new Date("2024-05-03T09:00:00Z"),
@@ -67,7 +70,7 @@ async function getCourseDiscussionBoardFake(course_id) {
   return fakeData[key] || [];
 }
 
-export {getCourseDiscussionBoardFake};
+
 
 async function getCoursePosts(courseId) {
   try {
@@ -79,5 +82,29 @@ async function getCoursePosts(courseId) {
   }
 }
 
-export {getCoursePosts};
+async function getCourseName(courseId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/post-course/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch course name:", error.message);
+    throw error;
+  }
+}
+
+async function getCourse(courseId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/course/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch course data:", error.message);
+    throw error;
+  }
+}
+export {
+  getCoursePosts,
+  getCourseDiscussionBoardFake,
+  getCourseName,
+  getCourse
+};
 

@@ -4,6 +4,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+//我加的
+import post_course_router from "#src/routes/post/post_course_route.js";
+
 // Initialize environment variables
 dotenv.config();
 
@@ -15,6 +18,8 @@ TestDBConnection();
 // Start initializing express server
 const app = express();
 const PORT = process.env.PORT;
+
+app.use("/post-course", post_course_router);
 
 // Middle Ware
 app.use(bodyParser.json());

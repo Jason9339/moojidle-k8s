@@ -5,7 +5,9 @@ import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
 
 function DiscussionBoard() {
     const { param } = useParams();
+    console.log("目前 param：", param);
     const [posts, setPosts] = useState([]);
+    const [courseName, setCourseName] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -13,7 +15,10 @@ function DiscussionBoard() {
         const fetchPosts = async () => {
             try {
                 const data = await getCourseDiscussionBoardFake(param);
+                //const courseData = await getCourse(param); 
                 setPosts(data);
+                //setCourseName(courseData.name || `課程 ${param}`);
+                setError(null);
             } catch (err) {
                 setError("無法載入討論資料");
             } finally {
@@ -28,11 +33,10 @@ function DiscussionBoard() {
         <div style={{ display: "flex" }}>
             <BoardSideBar />
             <div style={{ padding: "20px", flex: 1 }}>
-                <h2>課程 {param} 討論版</h2>
+                <h2>課程{param}討論版</h2>
                 {loading && <p>載入中...</p>}
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
-
                 {posts.map((post) => (
                     <div
                         key={post.post_id}
