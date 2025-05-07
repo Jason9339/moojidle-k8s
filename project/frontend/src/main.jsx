@@ -7,7 +7,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
-import GithubCommentEditor from "@/components/TextEditor"
+import TextEditor from "./components/text-editor/TextEditor"; "@/components/textEditor/TextEditor"
 
 const router = createBrowserRouter([
     {
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
             { path: "dashboard", element: <Dashboard /> },
             { path: "discussion", element: <DiscussionBoardList /> },
             { path: "discussion/:id", element: <DiscussionBoard /> },
-            { path: "text", element: <GithubCommentEditor /> },
+            { path: "text", element: <TextEditor /> },
             { path: "*", element: <NotFoundPage /> },
         ],
     },
