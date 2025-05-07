@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "@/services/login_register_api/RegisterApi";
+import { loginUser } from "@/services/login_register_api/LoginApi";
 
 const Register = () => {
     const [formData, setFormData] = useState({
-        username: "",
+        name: "",
         email: "",
         password: "",
     });
@@ -19,8 +20,20 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // 註冊使用者
             await registerUser(formData);
-            navigate("/dashboard"); // Redirect to dashboard after successful registration
+
+            // 自動登入
+            const loginResponse = await loginUser({
+                email: formData.email,
+                password: formData.password,
+            });
+
+            if (loginResponse) {
+                // 儲存登入狀態 (例如 token)
+                localStorage.setItem("user", JSON.stringify(loginResponse.user));
+                navigate("/dashboard"); // 導向主畫面
+            }
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
         }
@@ -31,12 +44,12 @@ const Register = () => {
             <h1>Register</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="username">Username:</label>
+                    <label htmlFor="name">Name:</label>
                     <input
                         type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
                         required
                     />

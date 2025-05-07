@@ -1,5 +1,4 @@
 import api from "@/services/apiClient";
-import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
 async function Register(userData) {
     try{

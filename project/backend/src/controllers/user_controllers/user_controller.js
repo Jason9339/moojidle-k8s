@@ -43,7 +43,12 @@ async function Register(req, res) {
         }
     }
 }
-
+ // If a matching user is found, return the user data
+//  {
+//     "user_id": 2,
+//     "name": "User 2",
+//     "email": "user2@example.com"
+// }
 async function Login(req, res) {
     if (!req.body.email || !req.body.pw) {
         return res.status(400).send({ message: "Email and password are required" });
@@ -53,17 +58,12 @@ async function Login(req, res) {
         const user = await LoginUser(req.body.email, req.body.pw);
 
         if (user) {
-            // If a matching user is found, return the user data
             res.status(200).send({
-                message: "Login successful",
-                user: {
-                    user_id: user.user_id,
-                    name: user.name,
-                    email: user.email
-                }
+                user_id: user.user_id,
+                name: user.name,
+                email: user.email
             });
         } else {
-            // If no matching user is found, return an error
             res.status(401).send({ message: "Invalid email or password" });
         }
     } catch (err) {

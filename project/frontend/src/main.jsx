@@ -7,7 +7,16 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
-import Register from "@/pages/login_register_pages/Register.jsx";
+// import Register from "@/pages/login_register_pages/Register.jsx";
+import Login from "@/pages/login_register_pages/Login.jsx";
+
+const isAuthenticated = () => {
+    return localStorage.getItem("user") !== null; // Check if user is logged in
+};
+
+const ProtectedRoute = ({ element }) => {
+    return isAuthenticated() ? element : <Navigate to="/login" replace />;
+};
 
 const router = createBrowserRouter([
     {
@@ -19,10 +28,9 @@ const router = createBrowserRouter([
             { path: "discussion/:id", element: <DiscussionBoard /> },
             { path: "*", element: <NotFoundPage /> },
 
-            //create a new user
-            {path: "register", element: <Register />},
         ],
     },
+    { path: "/login", element: <Login /> }
 ]);
 createRoot(document.getElementById("root")).render(
     <StrictMode>

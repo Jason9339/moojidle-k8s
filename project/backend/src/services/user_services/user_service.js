@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 // Fetch all user data from the database
 async function AllUserData() {
     
-    result = await mongoose.connection.db.collection('user').find().toArray();
+    let result = await mongoose.connection.db.collection('user').find().toArray();
 
     return result;
 }
