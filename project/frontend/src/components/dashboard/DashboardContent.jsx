@@ -19,7 +19,7 @@ function DashboardContent() {
   const [dashboardData, setDashboardData] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // 🔁 取得所有資料（courses、todo、comingUp、teach_in）
+  // 取得所有資料（courses、todo、comingUp、teach_in）
   const fetchAll = async () => {
     try {
       const [courses, todoList, comingUpList, teachInList] =
@@ -47,12 +47,20 @@ function DashboardContent() {
     }
   };
 
-  // 🚀 初始畫面載入時呼叫
+  const handleDeleteCourse = async (courseId) => {
+    try {
+      await fetchAll(); // 重新抓資料，讓畫面刷新
+    } catch (error) {
+      console.error("刪除課程後重新抓取資料失敗：", error);
+    }
+  };
+
+  // 初始畫面載入時呼叫
   useEffect(() => {
     fetchAll();
   }, []);
 
-  // 🆕 新增課程後重新抓資料
+  // 新增課程後重新抓資料
   const handleAddCourse = async () => {
     await fetchAll();
   };
@@ -72,7 +80,7 @@ function DashboardContent() {
 
         <div className="course-grid">
           {courses.map((course, index) => (
-            <CourseCard key={index} {...course} />
+            <CourseCard key={index} {...course} onDeleteCourse={handleDeleteCourse} />
           ))}
         </div>
       </div>

@@ -2,22 +2,26 @@ import React, { useState } from 'react';
 import '@/styles/Modal.css';
 import { deleteCourse } from '@/services/DashboardApi';
 
-function EditCourseModal({ course, onClose }) {
+function EditCourseModal({ course, onClose, onDeleteCourse }) {
   const [newName, setNewName] = useState(course.title);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSave = () => {
     console.log('修改課程:', { courseId: course.courseId, newName });
-    onClose();
+    onClose(); // 編輯功能尚未實作
   };
 
   const handleDelete = async () => {
     try {
-      console.log('刪除課程:', course);
+      setIsDeleting(true);
+      console.log('刪除課程:', course.courseId);
       await deleteCourse(course.courseId);
-      console.log('刪除課程成功:', course.course_id);
+      await onDeleteCourse(course.courseId); // 通知外層重新 fetch
       onClose();
     } catch (error) {
       console.error('刪除課程失敗:', error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -25,14 +29,20 @@ function EditCourseModal({ course, onClose }) {
     <div className="modal-backdrop" onClick={onClose}>
       <div
         className="modal"
-        onClick={(e) => e.stopPropagation()}  
+        onClick={(e) => e.stopPropagation()}
       >
         <h3>編輯課程</h3>
-        <input value={newName} onChange={(e) => setNewName(e.target.value)} />
+        <input
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          disabled={isDeleting}
+        />
         <div className="modal-btn-group">
-          <button onClick={handleSave}>儲存修改</button>
-          <button onClick={handleDelete} className="danger">刪除課程</button>
-          <button onClick={onClose}>取消</button>
+          <button onClick={handleSave} disabled={isDeleting}>儲存修改</button>
+          <button onClick={handleDelete} className="danger" disabled={isDeleting}>
+            {isDeleting ? "刪除中..." : "刪除課程"}
+          </button>
+          <button onClick={onClose} disabled={isDeleting}>取消</button>
         </div>
       </div>
     </div>

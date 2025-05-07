@@ -6,7 +6,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("#4A90E2");
-  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ 狀態控制
+  const [isSubmitting, setIsSubmitting] = useState(false); // 狀態控制
 
   const handleAdd = async () => {
     if (!title) {
