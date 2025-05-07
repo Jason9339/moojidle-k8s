@@ -98,6 +98,11 @@ async function GetUserData(req, res) {
     }
 }
 
+// Update user password by user ID
+// In Postman send this json format in the body
+// {
+//     "password": "new_secure_password"
+// }
 async function UpdatePassword(req, res) {
     const userId = req.params.id;
     const newPassword = req.body.password;
