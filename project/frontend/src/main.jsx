@@ -7,6 +7,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
+import LeftBar from "./components/LeftBar/LeftBar";
 
 const router = createBrowserRouter([
     {
