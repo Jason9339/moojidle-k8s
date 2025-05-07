@@ -101,23 +101,35 @@ async function GetUserData(req, res) {
 // Update user password by user ID
 // In Postman send this json format in the body
 // {
-//     "password": "new_secure_password"
+//     "currentPassword": "old_password",
+//     "newPassword": "new_secure_password"
 // }
 async function UpdatePassword(req, res) {
     const userId = req.params.id;
-    const newPassword = req.body.password;
+    const { currentPassword, newPassword } = req.body;
 
-    if (!newPassword) {
-        return res.status(400).send({ message: "New password is required" });
+    if (!currentPassword || !newPassword) {
+        return res.status(400).send({ message: "Current password and new password are required" });
     }
 
     try {
-        const result = await UpdateUserPassword(userId, newPassword);
+        // check if user exists
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
 
+        // authenticate current password
+        if (user.pw !== currentPassword) {
+            return res.status(401).send({ message: "Current password is incorrect" });
+        }
+
+        // update password
+        const result = await UpdateUserPassword(userId, newPassword);
         if (result.modifiedCount > 0) {
             res.status(200).send({ message: "Password updated successfully" });
         } else {
-            res.status(404).send({ message: "User not found or password not changed" });
+            res.status(500).send({ message: "Failed to update password" });
         }
     } catch (err) {
         res.status(500).send({ message: "An error occurred", error: err.message });
