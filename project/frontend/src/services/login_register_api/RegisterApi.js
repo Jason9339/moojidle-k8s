@@ -1,6 +1,17 @@
-import apiClient from "@/services/apiClient";
+import api from "@/services/apiClient";
+import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
-export const registerUser = async (userData) => {
-    const response = await apiClient.post("/register", userData);
-    return response.data;
+async function Register(userData) {
+    try{
+        const response = await api.post("/register", userData);
+
+        return response.data;
+    }catch (error) {
+        console.error(error);
+    }
+
 };
+
+export{
+    Register
+}
