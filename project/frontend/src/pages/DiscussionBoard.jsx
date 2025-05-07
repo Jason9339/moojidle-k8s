@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import BoardSideBar from "@/components/discussion-board/BoardSideBar";
 import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
 import PostPreview from "@/components/discussion-board/PostPreview";
+
+
 
 function DiscussionBoard() {
     const { param } = useParams();
@@ -39,7 +41,27 @@ function DiscussionBoard() {
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
                 {posts.map((post) => (
-                    <PostPreview post={post} />
+                    <Link
+                        key={post.post_id}
+                        to={`/post/${post.post_id}`}
+                        style={{
+                            textDecoration: "none",
+                            color: "inherit",
+                            display: "block",
+                            borderRadius: "8px",
+                            transition: "box-shadow 0.2s, background-color 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#f9f9f9";
+                            e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "white";
+                            e.currentTarget.style.boxShadow = "none";
+                        }}
+                    >
+                        <PostPreview post={post} />
+                    </Link>
                 ))}
             </div>
         </div>
