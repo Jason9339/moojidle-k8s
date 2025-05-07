@@ -4,8 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-//我加的
-import post_course_router from "#src/routes/post/post_course_route.js";
+
 
 // Initialize environment variables
 dotenv.config();
@@ -19,7 +18,7 @@ TestDBConnection();
 const app = express();
 const PORT = process.env.PORT;
 
-app.use("/post-course", post_course_router);
+
 
 // Middle Ware
 app.use(bodyParser.json());
@@ -29,6 +28,11 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+
+//我加的
+import post_course_router from "#src/routes/post/post_course_route.js";
+
+app.use("/post-course", post_course_router);
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
