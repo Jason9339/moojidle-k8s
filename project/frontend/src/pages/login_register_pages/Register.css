@@ -19,6 +19,7 @@
     margin-bottom: 1.5rem;
     text-align: center;
     color: #333;
+    font-weight: bold;
 }
 
 .form-group {
@@ -52,7 +53,7 @@
 }
 
 .register-button:hover {
-    background-color: #218838;
+    background-color: #0056b3;
 }
 
 .error-message {
@@ -60,4 +61,15 @@
     font-size: 0.875rem;
     margin-bottom: 1rem;
     text-align: center;
+}
+
+.additional-options a {
+    color: #007bff;
+    font-weight: bold; 
+    text-decoration: underline;
+}
+
+.additional-options a:hover {
+    color: #0056b3; 
+    text-decoration: underline; 
 }

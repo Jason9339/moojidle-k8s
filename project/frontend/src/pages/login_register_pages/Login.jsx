@@ -68,10 +68,12 @@ const Login = () => {
                 </div>
                 <div className="social-login">
                     <p>Or log in with</p>
-                    <button type="button" className="google-login-button" onClick={handleGoogleLogin}>
-                        <img src="/google-icon.png" alt="Google Icon" className="google-icon" />
-                        Log in with Google
-                    </button>
+                    <img
+                        src="/icons/GoogleLogo.jpg"
+                        alt="Google Login"
+                        className="google-login"
+                        onClick={handleGoogleLogin}
+                    />
                 </div>
             </form>
         </div>
