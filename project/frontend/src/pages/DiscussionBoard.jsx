@@ -8,7 +8,6 @@ import PostPreview from "@/components/discussion-board/PostPreview";
 
 function DiscussionBoard() {
     const { param } = useParams();
-    console.log("目前 param：", param);
     const [posts, setPosts] = useState([]);
     const [courseName, setCourseName] = useState("");
     const [loading, setLoading] = useState(true);

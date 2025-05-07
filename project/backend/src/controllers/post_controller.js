@@ -1,5 +1,5 @@
-import { GetPost, GetUserName,GetBoardName } from '#src/services/post_service.js';
-import { GetPostByCourse,GetCourseNameById, GetCourseName} from '#src/services/post_service.js';
+import { GetPost, GetUserName, GetBoardName } from '#src/services/post_service.js';
+import { GetPostByCourse, GetCourseNameById } from '#src/services/post_service.js';
 
 
 async function GetPostData(req, res, next) {
@@ -92,7 +92,7 @@ async function GetCourseName(req, res, next) {
 
 
 export {
-    GetPostData, 
+    GetPostData,
     GetUserData,
     GetBoardData,
     GetPostListByCourse,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getPostContent, getUserName, getBoardName } from "@/services/PostApi/PostAPI";
 
-function DiscussionPostView({ postId }) {
+function PostContent(props) {
     const [post, setPost] = useState(null);
     const [postAuthorName, setPostAuthorName] = useState("");
     const [boardName, setBoardName] = useState("");
@@ -10,6 +10,7 @@ function DiscussionPostView({ postId }) {
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState("");
 
+    const postId = props.postId;
     useEffect(() => {
         const fetchPost = async () => {
             try {
@@ -125,7 +126,7 @@ function DiscussionPostView({ postId }) {
     );
 }
 
-export default DiscussionPostView;
+export default PostContent;
 
 
 // ======================= styled-components =======================
