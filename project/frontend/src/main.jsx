@@ -13,7 +13,7 @@ import LeftBar from "./components/LeftBar/LeftBar";
 
 // pages for user related
 import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
-
+import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 const isAuthenticated = () => {
     return localStorage.getItem("user") !== null; // Check if user is logged in
 };
@@ -33,7 +33,8 @@ const router = createBrowserRouter([
             { path: "*", element: <NotFoundPage /> },
 
             // user related
-            { path: "user/profile", element: <UserProfile /> }
+            { path: "user/profile", element: <UserProfile /> },
+            { path: "user/update-password", element: <UpadatePassword /> }
         ],
     },
     { path: "/login", element: <Login /> },

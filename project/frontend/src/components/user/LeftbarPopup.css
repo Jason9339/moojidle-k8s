@@ -1,0 +1,61 @@
+.popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+    padding: 1rem;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px; /* 增加按鈕寬度 */
+    height: 40px; /* 增加按鈕高度 */
+    background: none;
+    border: none;
+    font-size: 1.5rem; /* 增大文字大小 */
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.popup-close:hover {
+    transform: scale(1.2); /* 懸停時放大效果 */
+    color: #007bff; /* 懸停時改變顏色 */
+}
+
+.popup-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.popup-menu li {
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.popup-menu li:hover {
+    background-color: #f5f5f5;
+}
+
+.popup-menu li:last-child {
+    border-bottom: none;
+}
