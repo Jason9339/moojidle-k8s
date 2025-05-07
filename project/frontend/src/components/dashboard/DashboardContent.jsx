@@ -19,37 +19,42 @@ function DashboardContent() {
   const [dashboardData, setDashboardData] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // 🔁 取得所有資料（courses、todo、comingUp、teach_in）
+  const fetchAll = async () => {
+    try {
+      const [courses, todoList, comingUpList, teachInList] =
+        await Promise.all([
+          getCourses(),
+          getTodoList(),
+          getComingUpList(),
+          getTeachIn(currentUserId),
+        ]);
+
+      const teacherCourseIds = teachInList.map((entry) => entry.courseId);
+
+      const coursesWithRole = courses.map((course) => ({
+        ...course,
+        isTeacher: teacherCourseIds.includes(course.courseId),
+      }));
+
+      setDashboardData({
+        courses: coursesWithRole,
+        todoList,
+        comingUpList,
+      });
+    } catch (err) {
+      console.error("Failed to fetch dashboard data:", err);
+    }
+  };
+
+  // 🚀 初始畫面載入時呼叫
   useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const [courses, todoList, comingUpList, teachInList] =
-          await Promise.all([
-            getCourses(),
-            getTodoList(),
-            getComingUpList(),
-            getTeachIn(currentUserId),
-          ]);
-
-        const teacherCourseIds = teachInList.map((entry) => entry.courseId);
-
-        const coursesWithRole = courses.map((course) => ({
-          ...course,
-          isTeacher: teacherCourseIds.includes(course.courseId),
-        }));
-
-        setDashboardData({ courses: coursesWithRole, todoList, comingUpList });
-      } catch (err) {
-        console.error("Failed to fetch dashboard data:", err);
-      }
-    };
     fetchAll();
   }, []);
 
-  const handleAddCourse = (newCourse) => {
-    setDashboardData((prev) => ({
-      ...prev,
-      courses: [...prev.courses, newCourse],
-    }));
+  // 🆕 新增課程後重新抓資料
+  const handleAddCourse = async () => {
+    await fetchAll();
   };
 
   if (!dashboardData) return <p>Loading...</p>;
@@ -83,7 +88,8 @@ function DashboardContent() {
       {showAddModal && (
         <AddCourseModal
           onClose={() => setShowAddModal(false)}
-          onAddCourse={handleAddCourse}
+          onAddCourse={handleAddCourse} // 不再傳入 newCourse，直接重新 fetchAll
+          currentUserId={currentUserId}
         />
       )}
     </div>
