@@ -171,7 +171,7 @@ const toMarkdown = nodes =>
 
 /* Main component */
 const initialValue = [{ type: "paragraph", children: [{ text: "" }] }];
-export default function GitHubCommentEditor({ onSubmit }) {
+export default function GitHubCommentEditor({ onSubmit, onTextChange }) {
     const [preview, setPreview] = useState(false);
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     editor.isPreview = preview;
@@ -188,7 +188,7 @@ export default function GitHubCommentEditor({ onSubmit }) {
     return (
         <Card className="w-full max-w-3xl flex flex-col h-screen">
             <CardContent className="p-0 flex-1 overflow-auto">
-                <Slate editor={editor} initialValue={value} onChange={setValue}>
+                <Slate editor={editor} initialValue={value} onChange={(value) => { setValue(value); onTextChange(value); }}>
                     <Toolbar />
                     {!preview ? (
                         <Editable
