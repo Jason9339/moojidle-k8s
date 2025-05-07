@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion-board/BoardSideBar";
 import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
+import PostPreview from "@/components/discussion-board/PostPreview";
 
 function DiscussionBoard() {
     const { param } = useParams();
@@ -38,21 +39,7 @@ function DiscussionBoard() {
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
                 {posts.map((post) => (
-                    <div
-                        key={post.post_id}
-                        style={{
-                            border: "1px solid #ccc",
-                            borderRadius: "8px",
-                            padding: "12px",
-                            marginBottom: "12px"
-                        }}
-                    >
-                        <h3>{post.title}</h3>
-                        <p><strong>發文者：</strong>{post.post_by_user_id}</p>
-                        <p><strong>時間：</strong>{new Date(post.post_date).toLocaleString()}</p>
-                        <p>{post.description}</p>
-                        <p><strong>留言數：</strong>{post.comments?.length ?? 0}</p>
-                    </div>
+                    <PostPreview post={post} />
                 ))}
             </div>
         </div>
