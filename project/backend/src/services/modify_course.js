@@ -142,11 +142,34 @@ async function RemoveCourseRelationships(courseIdInt) {
     }
 }
 
+// Service to change the course name and return the updated course
+async function ChangeCourseName(courseId, newName) {
+    try {
+        const result = await mongoose.connection.db.collection('course').updateOne(
+            { course_id: courseId }, // Filter by course_id
+            { $set: { name: newName } } // Update the name field
+        );
+
+
+        if (result.matchedCount === 0) {
+            throw new Error(`Course with ID ${courseId} not found.`);
+        }
+
+        // Fetch the updated course
+        const updatedCourse = await mongoose.connection.db.collection('course').findOne({ course_id: courseId });
+        console.log("Updated course:", updatedCourse);
+        return updatedCourse; // Return the updated course
+    } catch (err) {
+        console.error("Error updating course name:", err);
+        throw new Error(`Failed to update course name: ${err.message}`); 
+    }
+}
+
 
 export {
     AddCourse, 
     AddTeachIn,
     RemoveCourse,
     RemoveCourseRelationships,
-
+    ChangeCourseName,
 }

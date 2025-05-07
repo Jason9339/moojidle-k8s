@@ -1,4 +1,4 @@
-import { AddCourse, AddTeachIn, RemoveCourse, RemoveCourseRelationships } from "#src/services/modify_course.js";
+import { AddCourse, AddTeachIn, RemoveCourse, RemoveCourseRelationships, ChangeCourseName } from "#src/services/modify_course.js";
 import { ViewCourses, GetTeachIn } from "#src/services/view_course.js";
 
 
@@ -96,9 +96,26 @@ async function ReadTeachIn(req, res) {
     }
 }
 
+async function EditCourse(req, res) {
+    try {
+        const updateData = req.body
+        const courseId = parseInt(req.params.id, 10);
+        if (!updateData || Object.keys(updateData).length === 0) {
+            return res.status(400).send({ message: "Lack of update Data." });
+        }
+        const updatedData = await ChangeCourseName(courseId, updateData.name);
+        res.status(200).send(updatedData); // 返回更新的課程物件
+
+    } catch (error) {
+        console.error("Failed to Edit course", error);
+        res.status(500).send({ message: "Failed to Edit course", error: error.message });
+    }
+}
+
 export {
     CreateCourse,
     DeleteCourse,
     ReadCourse,
-    ReadTeachIn
+    ReadTeachIn,
+    EditCourse
 }
