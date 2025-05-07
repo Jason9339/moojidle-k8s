@@ -5,7 +5,8 @@ import {
     GetUserData,
     Register,
     Login,
-    Delete
+    Delete,
+    UpdatePassword
 } from '#src/controllers/user_controllers/user_controller.js';
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
@@ -42,5 +43,7 @@ router.post("/register", Register);
 router.post("/login", Login);
 
 router.delete("/delete/:id", Delete);
+
+router.put("/update-password/:id", UpdatePassword) 
 
 export default router;

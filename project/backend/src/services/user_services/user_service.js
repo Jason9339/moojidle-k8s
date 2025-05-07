@@ -103,10 +103,27 @@ async function FindOnesTagById(user_id) {
     return result;
 }
 
+async function UpdateUserPassword(userId, newPassword) {
+    let result;
+
+    try {
+        // Update the user's password in the database
+        result = await mongoose.connection.db.collection('user').updateOne(
+            { user_id: parseInt(userId) },
+            { $set: { pw: newPassword } }
+        );
+    } catch (err) {
+        console.log(err); // Log any errors that occur
+    }
+
+    return result; // Return the result of the update operation
+}
+
 export {
     RegisterUser,
     LoginUser,
     DeleteUser,
     FindOneUserById,
-    FindOnesTagById
+    FindOnesTagById,
+    UpdateUserPassword
 }

@@ -3,7 +3,8 @@ import {
     LoginUser,
     DeleteUser,
     FindOneUserById,
-    FindOnesTagById
+    FindOnesTagById,
+    UpdateUserPassword
 } from "#src/services/user_services/user_service.js";
 
 // Register a new user in the database
@@ -97,11 +98,32 @@ async function GetUserData(req, res) {
     }
 }
 
+async function UpdatePassword(req, res) {
+    const userId = req.params.id;
+    const newPassword = req.body.password;
+
+    if (!newPassword) {
+        return res.status(400).send({ message: "New password is required" });
+    }
+
+    try {
+        const result = await UpdateUserPassword(userId, newPassword);
+
+        if (result.modifiedCount > 0) {
+            res.status(200).send({ message: "Password updated successfully" });
+        } else {
+            res.status(404).send({ message: "User not found or password not changed" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
 export {
     Register,
     Login,
     Delete,
     GetUserData,
+    UpdatePassword
 }
 
 
