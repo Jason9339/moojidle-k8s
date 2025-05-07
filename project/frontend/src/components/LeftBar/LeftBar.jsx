@@ -1,32 +1,44 @@
 import React from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { leftBarNavItems } from "@/constants/LeftBarNavItems";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+
+// Icon
+import { GoCommentDiscussion } from "react-icons/go";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { FaUser, FaBook } from "react-icons/fa";
+import { FaUserGroup, FaRegCalendarDays } from "react-icons/fa6";
+import { MdOutlineMailOutline } from "react-icons/md";
+import LeftbarPopup from "../user/LeftbarPopup";
 
 function LeftBar() {
     const [show, setShow] = useState(true);
+    const [showUser, setShowUser] = useState(false);
+    const navigate = useNavigate();
+
+    const toggleShowUser = () => {
+        setShowUser(!showUser);
+    }
+
     return (
         <>
             {show ? <div className="!h-screen w-3xs"></div>
                 : <></>}
+            {showUser ? <LeftbarPopup className="fixed" /> : <></>}
             <div className="fixed top-0 left-0 z-50 !h-screen w-3xs">
                 <Sidebar className="!h-full w-3xs">
                     <Menu>
-                        {leftBarNavItems.map((item) => (
-                            <MenuItem
-                                key={item.path}
-                                icon={<item.icon />}
-                                component={<Link to={item.path} />}
-                                className="py-3 px-5 font-bold"
-                                activeClassName="!text-[#5961d4]"
-                            >
-                                {item.label}
-                            </MenuItem>
-                        ))}
+                        <MenuItem icon=<FaUser /> onClick={toggleShowUser}>使用者</MenuItem>
+
+                        <MenuItem icon=<MdOutlineSpaceDashboard onClick={() => navigate("/")} />>儀表板</MenuItem>
+                        <MenuItem icon=<FaBook /> onClick={() => navigate("/course")}>課程</MenuItem>
+                        <MenuItem icon=<FaUserGroup /> onClick={() => navigate("/group")}>小組</MenuItem>
+                        <MenuItem icon=<FaRegCalendarDays /> onClick={() => navigate("/calendar")}>行事曆</MenuItem>
+                        <MenuItem icon=<MdOutlineMailOutline /> onClick={() => navigate("/inbox")}>通知</MenuItem>
+                        <MenuItem icon=<GoCommentDiscussion /> onClick={() => navigate("/discussion")}>討論版</MenuItem>
                     </Menu>
                 </Sidebar>
-            </div>
+            </div >
 
         </>
     );
