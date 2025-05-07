@@ -13,7 +13,7 @@ async function CreateCourse(req, res) {
         }
         console.log("courseData", courseData);
         const newCourse = await AddCourse(courseData);
-        const newTeachIn = await AddTeachIn(courseData);
+        const newTeachIn = await AddTeachIn(courseData.user_id, newCourse.course_id);
         res.status(201).send(newCourse); // 返回新增的課程物件
 
     } catch (error) {
