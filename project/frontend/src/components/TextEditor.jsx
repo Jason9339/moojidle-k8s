@@ -11,14 +11,14 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 /* Basic UI components */
 const Card = ({ className = "", ...props }) => (
-    <div {...props} className={`border rounded-2xl shadow bg-white dark:bg-zinc-900 ${className}`} />
+    <div {...props} className={`border rounded-2xl shadow bg-white ${className}`} />
 );
 const CardContent = ({ className = "", ...props }) => <div {...props} className={`p-4 ${className}`} />;
 const Button = forwardRef(({ variant = "default", size = "default", className = "", children, ...props }, ref) => {
     const variantClass = {
         default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-        secondary: "bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-50 focus:ring-zinc-500",
-        ghost: "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50",
+        secondary: "bg-zinc-200 hover:bg-zinc-300 text-zinc-900 focus:ring-zinc-500",
+        ghost: "hover:bg-zinc-100 text-zinc-900 ",
     }[variant];
     const sizeClass = size === "icon" ? "h-9 w-9 p-0" : "h-9 px-4 py-2 min-w-[72px]";
     return (
@@ -67,7 +67,7 @@ const Element = ({ attributes, children, element }) => {
             return React.createElement(`h${element.level || 2}`, { ...attributes, className: "font-semibold my-2" }, children);
         case "quote":
             return (
-                <blockquote {...attributes} className="border-l-2 pl-4 my-2 italic text-zinc-500 dark:text-zinc-400">
+                <blockquote {...attributes} className="border-l-2 pl-4 my-2 italic text-zinc-500 ">
                     {children}
                 </blockquote>
             );
@@ -96,7 +96,7 @@ const Element = ({ attributes, children, element }) => {
 const Leaf = ({ attributes, children, leaf }) => {
     if (leaf.bold) children = <strong className="font-bold">{children}</strong>;
     if (leaf.italic) children = <em className="italic">{children}</em>;
-    if (leaf.code) children = <code className="px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-sm font-mono">{children}</code>;
+    if (leaf.code) children = <code className="px-1 py-0.5 rounded bg-zinc-100 text-sm font-mono">{children}</code>;
     return <span {...attributes}>{children}</span>;
 };
 
@@ -121,7 +121,7 @@ const ToolbarButton = ({ format, icon: Icon }) => {
 const Toolbar = () => (
     <motion.div
         layout
-        className="flex gap-1 px-2 py-2 border-b sticky top-0 bg-white dark:bg-zinc-900 z-10"
+        className="flex gap-1 px-2 py-2 border-b sticky top-0 bg-white z-10"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
     >
@@ -195,13 +195,13 @@ export default function GitHubCommentEditor({ onSubmit, onTextChange }) {
                             renderElement={renderElement}
                             renderLeaf={renderLeaf}
                             placeholder="Leave a comment…"
-                            className="prose dark:prose-invert p-4 outline-none h-full max-h-full overflow-auto"
+                            className="prose outline-none h-full max-h-full overflow-auto"
                             spellCheck
                             autoFocus
                             onKeyDown={handleKeyDown}
                         />
                     ) : (
-                        <div className="prose dark:prose-invert p-4 overflow-auto">
+                        <div className="prose p-4 overflow-auto">
                             <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{toMarkdown(value)}</Markdown>
                         </div>
                     )}
