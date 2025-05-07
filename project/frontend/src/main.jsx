@@ -7,6 +7,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
+import LeftBar from "./components/LeftBar/LeftBar";
 
 // pages for user related
 import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
