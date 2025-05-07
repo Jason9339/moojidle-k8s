@@ -30,9 +30,7 @@ function DashboardContent() {
             getTeachIn(),
           ]);
 
-        const teacherCourseIds = teachInList
-          .filter((entry) => entry.user_id === currentUserId)
-          .map((entry) => entry.course_id);
+        const teacherCourseIds = teachInList.map((entry) => entry.course_id);
 
         const coursesWithRole = courses.map((course) => ({
           ...course,
