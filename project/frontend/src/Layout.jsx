@@ -3,12 +3,12 @@ import LeftBar from "@/components/LeftBar/LeftBar";
 
 function Layout() {
     return (
-        <div className="flex">
+        <div style={{ display: "flex" }}>
             <LeftBar />
-            <main className="flex-1">
+            <main style={{ flex: 1 }}>
                 <Outlet />
             </main>
-        </div >
+        </div>
     );
 }
 
