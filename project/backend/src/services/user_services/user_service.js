@@ -107,16 +107,15 @@ async function UpdateUserPassword(userId, newPassword) {
     let result;
 
     try {
-        // Update the user's password in the database
         result = await mongoose.connection.db.collection('user').updateOne(
             { user_id: parseInt(userId) },
             { $set: { pw: newPassword } }
         );
     } catch (err) {
-        console.log(err); // Log any errors that occur
+        console.log(err); 
     }
 
-    return result; // Return the result of the update operation
+    return result; 
 }
 
 export {
