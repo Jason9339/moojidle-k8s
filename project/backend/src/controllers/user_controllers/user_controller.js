@@ -12,6 +12,14 @@ async function GetAllUserData(req, res) {
    
 }
 
+// Register a new user in the database
+// In Postman send this json format in the body
+// {
+//     "name": "John Doe",
+//     "email": "john@exmple.com",
+//     "password": "securepassword"
+// }
+
 async function Register(req, res) {
     const { name, email, password } = req.body;
 

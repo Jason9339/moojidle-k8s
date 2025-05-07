@@ -8,12 +8,6 @@ async function AllUserData() {
     return result;
 }
 
-// Register a new user in the database
-// In Postman send this json format in the body
-// {
-//     "email": "john@exmple.com",
-//     "password": "securepassword"
-// }
 async function RegisterUser(userData) {
     let result;
 
