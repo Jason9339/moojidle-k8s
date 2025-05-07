@@ -2,7 +2,6 @@ import express from 'express';
 const router = express.Router();
 
 import {
-    GetAllUserData,
     GetUserData,
     Register,
     Login,
@@ -38,7 +37,6 @@ import {
 // }
 
 router.get("/get-user-by-id/:userId", GetUserData);
-router.get("/", GetAllUserData);
 
 router.post("/register", Register);
 router.post("/login", Login);

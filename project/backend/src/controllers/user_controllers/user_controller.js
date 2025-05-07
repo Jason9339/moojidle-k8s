@@ -1,18 +1,10 @@
 import { 
-    AllUserData,
     RegisterUser,
     LoginUser,
     DeleteUser,
     FindOneUserById,
     FindOnesTagById
 } from "#src/services/user_services/user_service.js";
-
-async function GetAllUserData(req, res) {
-    let result = await AllUserData();
-
-    res.status(200).send(result);
-   
-}
 
 // Register a new user in the database
 // In Postman send this json format in the body
@@ -89,6 +81,7 @@ async function Delete(req, res) {
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
+
 async function GetUserData(req, res) {
     const userId = req.params.userId;
 
@@ -103,8 +96,8 @@ async function GetUserData(req, res) {
         res.status(404).send({ message: "User not found" });
     }
 }
+
 export {
-    GetAllUserData,
     Register,
     Login,
     Delete,
