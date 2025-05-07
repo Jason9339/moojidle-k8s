@@ -13,7 +13,7 @@ function EditCourseModal({ course, onClose }) {
   const handleDelete = async () => {
     try {
       console.log('刪除課程:', course);
-      await deleteCourse(course.course_id);
+      await deleteCourse(course.courseId);
       console.log('刪除課程成功:', course.course_id);
       onClose();
     } catch (error) {
