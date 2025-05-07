@@ -9,6 +9,12 @@ import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
 import Register from "@/pages/login_register_pages/Register.jsx";
 import Login from "@/pages/login_register_pages/Login.jsx";
+import LeftBar from "./components/LeftBar/LeftBar";
+
+// pages for user related
+import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
+
+
 
 const isAuthenticated = () => {
     return localStorage.getItem("user") !== null; // Check if user is logged in
@@ -28,11 +34,14 @@ const router = createBrowserRouter([
             { path: "discussion/:id", element: <DiscussionBoard /> },
             { path: "*", element: <NotFoundPage /> },
 
+            // user related
+            { path: "user/profile", element: <UserProfile /> }
         ],
     },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
 ]);
+
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <RouterProvider router={router} />
