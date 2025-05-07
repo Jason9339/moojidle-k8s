@@ -8,8 +8,8 @@ async function FetchUpcomingExams(user_id) {
         const parsedUserId = parseInt(user_id);
 
         // Define a fixed current time for testing
-        // const current_time = new Date("2023-05-01T00:00:00Z"); // Set to a date in 2023
-        const current_time = new Date(); // Comment this out for testing
+        const current_time = new Date("2023-05-01T00:00:00Z"); // Set to a date in 2023
+        // const current_time = new Date(); // Comment this out for testing
 
         const result = await db.collection("exams").aggregate([
             // Match exams for courses the user is studying in
@@ -47,10 +47,8 @@ async function FetchUpcomingExams(user_id) {
             {
                 $project: {
                     _id: 0,
-                    exam_name: 1,
-                    description: 1,
-                    "course_data.name": 1, // Course name
-                    exam_date: 1
+                    title: "$exam_name", // Map to frontend's "title"
+                    date: "$exam_date" // Map to frontend's "date"
                 }
             }
         ]).toArray();

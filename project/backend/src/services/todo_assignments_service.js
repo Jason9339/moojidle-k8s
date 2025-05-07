@@ -8,8 +8,8 @@ async function FetchToDoAssignments(user_id) {
         const parsedUserId = parseInt(user_id);
 
         // Define a fixed current time for testing
-        // const current_time = new Date("2023-05-01T00:00:00Z"); // Set to a date in 2023
-        const current_time = new Date(); // Comment this out for testing
+        const current_time = new Date("2023-05-01T00:00:00Z"); // Set to a date in 2023
+        // const current_time = new Date(); // Comment this out for testing
 
         const result = await db.collection("assignments").aggregate([
             // Match assignments for courses the user is studying in
@@ -72,10 +72,10 @@ async function FetchToDoAssignments(user_id) {
             {
                 $project: {
                     _id: 0,
-                    ass_name: 1,
-                    description: 1,
-                    "course_data.name": 1, // Course name
-                    end_date: 1
+                    title: "$ass_name", // Map to frontend's "title"
+                    course: "$course_data.name", // Map to frontend's "course"
+                    due: "$end_date", // Map to frontend's "due"
+                    points: { $literal: 100 } // Add a placeholder value for "points"
                 }
             }
         ]).toArray();
