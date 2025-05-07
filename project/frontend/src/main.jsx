@@ -7,7 +7,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
-// import Register from "@/pages/login_register_pages/Register.jsx";
+import Register from "@/pages/login_register_pages/Register.jsx";
 import Login from "@/pages/login_register_pages/Login.jsx";
 
 const isAuthenticated = () => {
@@ -30,7 +30,8 @@ const router = createBrowserRouter([
 
         ],
     },
-    { path: "/login", element: <Login /> }
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
 ]);
 createRoot(document.getElementById("root")).render(
     <StrictMode>

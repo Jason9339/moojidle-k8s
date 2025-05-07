@@ -1,83 +1,67 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "@/services/login_register_api/RegisterApi";
-import { loginUser } from "@/services/login_register_api/LoginApi";
+import { RegisterUser } from "@/services/login_register_api/RegisterApi.js";
+import "./Register.css";
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-    });
-    const [error, setError] = useState(null);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(""); // Clear previous errors
         try {
-            // 註冊使用者
-            await registerUser(formData);
-
-            // 自動登入
-            const loginResponse = await loginUser({
-                email: formData.email,
-                password: formData.password,
-            });
-
-            if (loginResponse) {
-                // 儲存登入狀態 (例如 token)
-                localStorage.setItem("user", JSON.stringify(loginResponse.user));
-                navigate("/dashboard"); // 導向主畫面
+            const response = await RegisterUser({ name, email, password });
+            if (response && response.message === "User registered successfully") {
+                navigate("/login"); // Redirect to login page after successful registration
+            } else {
+                setError(response?.message || "Registration failed");
             }
         } catch (err) {
-            setError(err.response?.data?.message || "Registration failed");
+            setError("An error occurred. Please try again.");
         }
     };
 
     return (
         <div className="register-container">
-            <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name:</label>
+            <form className="register-form" onSubmit={handleSubmit}>
+                <h2>Moojidle</h2>
+                <h2>Register</h2>
+                {error && <p className="error-message">{error}</p>}
+                <div className="form-group">
+                    <label htmlFor="name">Name</label>
                     <input
                         type="text"
                         id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="email">Email:</label>
+                <div className="form-group">
+                    <label htmlFor="email">Email</label>
                     <input
                         type="email"
                         id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="password">Password:</label>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
                     <input
                         type="password"
                         id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
-                {error && <p className="error">{error}</p>}
-                <button type="submit">Register</button>
+                <button type="submit" className="register-button">Register</button>
             </form>
         </div>
     );

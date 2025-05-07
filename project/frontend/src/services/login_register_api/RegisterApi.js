@@ -1,8 +1,8 @@
 import api from "@/services/apiClient";
 
-async function Register(userData) {
+async function RegisterUser(userData) {
     try{
-        const response = await api.post("/register", userData);
+        const response = await api.post("user/register", userData);
 
         return response.data;
     }catch (error) {
@@ -12,5 +12,5 @@ async function Register(userData) {
 };
 
 export{
-    Register
+    RegisterUser
 }
