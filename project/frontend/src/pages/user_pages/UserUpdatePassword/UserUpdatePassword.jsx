@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UpdateUserPassword } from "@/services/user_api/UserApi.js";
-import "./UserUpdatePassword.css";
+import styles from "./UserUpdatePassword.module.css";
 
 const UserUpdatePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -38,33 +38,35 @@ const UserUpdatePassword = () => {
     };
 
     return (
-        <div className="update-password-container">
-            <form className="update-password-form" onSubmit={handleSubmit}>
-                <h2>Password</h2>
-                <p>Change your password here. After saving, you'll be logged out.</p>
-                {error && <p className="error-message">{error}</p>}
-                {success && <p className="success-message">{success}</p>}
-                <div className="form-group">
-                    <label htmlFor="current-password">Current password</label>
+        <div className={styles["update-password-container"]}>
+            <form className={styles["update-password-form"]} onSubmit={handleSubmit}>
+                <h2 className={styles.h2}>Password</h2>
+                <p className={styles.p}>Change your password here. After saving, you'll be logged out.</p>
+                {error && <p className={styles["error-message"]}>{error}</p>}
+                {success && <p className={styles["success-message"]}>{success}</p>}
+                <div className={styles["form-group"]}>
+                    <label htmlFor="current-password" className={styles.label}>Current password</label>
                     <input
                         type="password"
                         id="current-password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         required
+                        className={styles.input}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="new-password">New password</label>
+                <div className={styles["form-group"]}>
+                    <label htmlFor="new-password" className={styles.label}>New password</label>
                     <input
                         type="password"
                         id="new-password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
+                        className={styles.input}
                     />
                 </div>
-                <button type="submit" className="save-password-button">Save password</button>
+                <button type="submit" className={styles["save-password-button"]}>Save password</button>
             </form>
         </div>
     );

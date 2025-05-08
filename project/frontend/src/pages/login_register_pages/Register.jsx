@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterUser } from "@/services/login_register_api/RegisterApi.js";
-import "./Register.css";
+import styles from "./Register.module.css";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -26,13 +26,13 @@ const Register = () => {
     };
 
     return (
-        <div className="register-container">
-            <form className="register-form" onSubmit={handleSubmit}>
-                <h2>Moojidle</h2>
-                <h2>Register</h2>
-                {error && <p className="error-message">{error}</p>}
-                <div className="form-group">
-                    <label htmlFor="name"></label>
+        <div className={styles["register-container"]}>
+            <form className={styles["register-form"]} onSubmit={handleSubmit}>
+                <h2 className={styles.h2}>Moojidle</h2>
+                <h2 className={styles.h2}>Register</h2>
+                {error && <p className={styles["error-message"]}>{error}</p>}
+                <div className={styles["form-group"]}>
+                    <label htmlFor="name" className={styles.label}></label>
                     <input
                         type="text"
                         id="name"
@@ -40,10 +40,11 @@ const Register = () => {
                         onChange={(e) => setName(e.target.value)}
                         required
                         placeholder="Enter your name"
+                        className={styles.input}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="email"></label>
+                <div className={styles["form-group"]}>
+                    <label htmlFor="email" className={styles.label}></label>
                     <input
                         type="email"
                         id="email"
@@ -51,10 +52,11 @@ const Register = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         placeholder="Enter your email"
+                        className={styles.input}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="password"></label>
+                <div className={styles["form-group"]}>
+                    <label htmlFor="password" className={styles.label}></label>
                     <input
                         type="password"
                         id="password"
@@ -62,10 +64,11 @@ const Register = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         placeholder="Enter your password"
+                        className={styles.input}
                     />
                 </div>
-                <button type="submit" className="register-button">Register</button>
-                <div className="additional-options">
+                <button type="submit" className={styles["register-button"]}>Register</button>
+                <div className={styles["additional-options"]}>
                     <p>Already have an account? <a href="/login">Log In</a></p>
                 </div>
             </form>

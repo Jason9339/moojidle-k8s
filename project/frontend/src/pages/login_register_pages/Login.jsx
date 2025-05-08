@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginUser } from "@/services/login_register_api/LoginLogoutApi.js";
-import "./Login.css";
+import styles from "./Login.module.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -32,12 +32,12 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <form className="login-form" onSubmit={handleSubmit}>
-                <h2>Moojidle</h2>
-                {error && <p className="error-message">{error}</p>}
-                <div className="form-group">
-                    <label htmlFor="email"></label>
+        <div className={styles["login-container"]}>
+            <form className={styles["login-form"]} onSubmit={handleSubmit}>
+                <h2 className={styles.h2}>Moojidle</h2>
+                {error && <p className={styles["error-message"]}>{error}</p>}
+                <div className={styles["form-group"]}>
+                    <label htmlFor="email" className={styles.label}></label>
                     <input
                         type="email"
                         id="email"
@@ -45,10 +45,11 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         placeholder="Enter your email"
+                        className={styles.input}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="password"></label>
+                <div className={styles["form-group"]}>
+                    <label htmlFor="password" className={styles.label}></label>
                     <input
                         type="password"
                         id="password"
@@ -56,22 +57,23 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         placeholder="Enter your password"
+                        className={styles.input}
                     />
                 </div>
-                <button type="submit" className="login-button">Log In</button>
-                <div className="additional-options">
-                    <a href="/forgot-password" className="forgot-password-link">Forget password?</a>
+                <button type="submit" className={styles["login-button"]}>Log In</button>
+                <div className={styles["additional-options"]}>
+                    <a href="/forgot-password" className={styles["forgot-password-link"]}>Forget password?</a>
                     <p>
                         Do not have an account?{" "}
-                        <a href="/register" className="sign-up-link">Sign Up</a>
+                        <a href="/register" className={styles["sign-up-link"]}>Sign Up</a>
                     </p>
                 </div>
-                <div className="social-login">
+                <div className={styles["social-login"]}>
                     <p>Or log in with</p>
                     <img
                         src="/icons/GoogleLogo.jpg"
                         alt="Google Login"
-                        className="google-login"
+                        className={styles["google-login"]}
                         onClick={handleGoogleLogin}
                     />
                 </div>

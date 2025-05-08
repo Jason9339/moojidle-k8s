@@ -1,46 +1,37 @@
-.update-password-container {
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f9f9f9;
+    background-color: #f5f5f5;
 }
 
-.update-password-form {
+.login-form {
     background: #fff;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
-    text-align: center;
 }
 
-.update-password-form h2 {
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    color: #333;
-}
-
-.update-password-form p {
+.h2 {
     margin-bottom: 1.5rem;
-    color: #666;
-    font-size: 0.875rem;
+    text-align: center;
+    color: #333;
 }
 
 .form-group {
     margin-bottom: 1rem;
-    text-align: left;
 }
 
-.form-group label {
+.label {
     display: block;
     margin-bottom: 0.5rem;
     color: #555;
-    font-size: 0.875rem;
 }
 
-.form-group input {
+.input {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ddd;
@@ -48,7 +39,7 @@
     font-size: 1rem;
 }
 
-.save-password-button {
+.login-button {
     width: 100%;
     padding: 0.75rem;
     background-color: #007bff;
@@ -60,7 +51,7 @@
     transition: background-color 0.3s ease;
 }
 
-.save-password-button:hover {
+.login-button:hover {
     background-color: #0056b3;
 }
 
@@ -68,10 +59,45 @@
     color: red;
     font-size: 0.875rem;
     margin-bottom: 1rem;
+    text-align: center;
 }
 
-.success-message {
-    color: green;
+.additional-options {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.forgot-password-link,
+.sign-up-link {
+    color: #007bff;
+    text-decoration: none;
     font-size: 0.875rem;
-    margin-bottom: 1rem;
+}
+
+.forgot-password-link:hover,
+.sign-up-link:hover {
+    text-decoration: underline;
+}
+
+.social-login {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.social-login p {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.google-login {
+    display: block;
+    margin: 0 auto;
+    width: 50px; 
+    height: 50px; 
+    cursor: pointer; 
+    transition: transform 0.2s ease; 
+}
+
+.google-login:hover {
+    transform: scale(1.1); 
 }

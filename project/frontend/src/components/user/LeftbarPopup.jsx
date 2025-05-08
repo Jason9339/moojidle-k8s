@@ -1,20 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./LeftbarPopup.css"; 
+import styles from "./LeftbarPopup.module.css";
 
 function LeftbarPopup({ className, onClose }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem("user"); 
-        navigate("/login"); 
+        localStorage.removeItem("user");
+        navigate("/login");
     };
 
     return (
-        <div className={`popup-container ${className}`}>
-            <div className="popup-content">
-                <button className="popup-close" onClick={onClose}>×</button>
-                <ul className="popup-menu">
+        <div className={`${styles["popup-container"]} ${className}`}>
+            <div className={styles["popup-content"]}>
+                <button className={styles["popup-close"]} onClick={onClose}>×</button>
+                <ul className={styles["popup-menu"]}>
                     <li onClick={() => navigate("/user/update-password")}>重設密碼</li>
                     <li onClick={() => navigate("/user/profile")}>個人檔案</li>
                     <li onClick={handleLogout}>登出</li>
