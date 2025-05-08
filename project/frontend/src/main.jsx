@@ -6,6 +6,7 @@ import Layout from "@/Layout";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
+import Post from "@/pages/Post";
 
 const router = createBrowserRouter([
     {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             { path: "dashboard", element: <Dashboard /> },
+            { path: "post/:id", element: <Post /> },
             { path: "discussion/:param", element: <DiscussionBoard /> },
             { path: "*", element: <NotFoundPage /> },
         ],
