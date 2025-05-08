@@ -24,15 +24,13 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
-import courseRouterBase from "#src/routes/course_router.js"
-import courseRoute from "#src/routes/course_detail_route.js"
+import courseRouter from "#src/routes/course_router.js" // 已合併的課程路由
 import assignmentRoute from "#src/routes/assignment_route.js"
 import examRoute from "#src/routes/exam_route.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
-app.use("/course", courseRouterBase); // 基礎課程操作 (創建、刪除、查詢)
-app.use("/course", courseRoute);      // 課程專頁相關 API
+app.use("/course", courseRouter); // 使用合併後的課程路由
 app.use("/assignment", assignmentRoute);
 app.use("/exam", examRoute);
 
