@@ -8,7 +8,7 @@ import { Bold, Italic, Code as CodeIcon, List as ListIcon, ListOrdered, Quote, H
 
 /* Basic UI components */
 const Card = ({ className = "", ...props }) => (
-    <div {...props} className={`border rounded-2xl shadow bg-white ${className}`} />
+    <div {...props} className={`border rounded-2xl shadow ${className}`} />
 )
 const CardContent = ({ className = "", ...props }) => (
     <div {...props} className={`p-4 ${className}`} />
@@ -31,7 +31,7 @@ const Button = React.forwardRef(({ variant = "default", size = "default", classN
     )
 })
 
-export default function TextEditor({ onTextChange, onSubmit }) {
+export default function TextEditor({ styles = {}, onTextChange, onSubmit }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
@@ -73,13 +73,13 @@ export default function TextEditor({ onTextChange, onSubmit }) {
     ]
 
     return (
-        <Card className="w-full max-w-3xl flex flex-col h-screen">
-            <CardContent className="flex-1 overflow-auto flex flex-col">
+        <Card style={{ ...styles }}>
+            <CardContent className="flex-1 overflow-auto flex flex-col test123">
                 {/* Toolbar */}
                 {!preview && (
                     <motion.div
                         layout
-                        className="flex gap-1 px-2 py-2 border-b sticky top-0 bg-white z-10"
+                        className="flex gap-1 px-2 py-2 border-b sticky top-0 z-10"
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
@@ -109,7 +109,7 @@ export default function TextEditor({ onTextChange, onSubmit }) {
                         <textarea
                             ref={textareaRef}
                             value={text}
-                            onChange={(e) => { setText(e.target.value); onTextChange && onTextChange }}
+                            onChange={(e) => { setText(e.target.value); onTextChange && onTextChange(e.target.value) }}
                             placeholder=""
                             className="w-full h-full p-4 font-mono outline-none"
                         />
@@ -117,7 +117,7 @@ export default function TextEditor({ onTextChange, onSubmit }) {
                 </div>
             </CardContent>
 
-            <div className="flex justify-between items-center p-4 border-t bg-zinc-50 rounded-b-2xl">
+            <div className="flex justify-between items-center p-4 border-t rounded-b-2xl">
                 <Button variant="ghost" onClick={() => setPreview(p => !p)}>
                     {preview ? "Edit" : "Preview"}
                 </Button>
