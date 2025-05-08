@@ -9,6 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
 import CoursePage from "@/pages/CoursePage";
 import CourseDetail from "@/pages/CourseDetail";
+import LeftBar from "./components/LeftBar/LeftBar";
 
 const router = createBrowserRouter([
   {
