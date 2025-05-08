@@ -22,11 +22,11 @@ function LeftBar() {
 
     return (
         <>
-            {show ? <div className="!h-screen w-3xs"></div>
+            {show ? <div className="h-screen w-[250px]"></div>
                 : <></>}
-            {showUser ? <LeftbarPopup className="fixed" /> : <></>}
-            <div className="fixed top-0 left-0 z-50 !h-screen w-3xs">
-                <Sidebar className="!h-full w-3xs">
+            {showUser ? <LeftbarPopup onClose={() => setShowUser(false)} /> : <></>}
+            <div className="fixed top-0 left-0 z-50 h-screen w-[250px]">
+                <Sidebar className="!h-full w-[250px]">
                     <Menu>
                         <MenuItem icon=<FaUser /> onClick={toggleShowUser}>使用者</MenuItem>
 
