@@ -8,7 +8,7 @@ async function FetchUpcomingExams(user_id) {
         const parsedUserId = parseInt(user_id);
 
         // Define a fixed current time for testing
-        const current_time = new Date("2023-05-01T00:00:00Z"); // Set to a date in 2023
+        const current_time = new Date("2022-05-01T00:00:00Z"); // Set to a date in 2023
         // const current_time = new Date(); // Comment this out for testing
 
         const result = await db.collection("exams").aggregate([
@@ -27,7 +27,6 @@ async function FetchUpcomingExams(user_id) {
             {
                 $match: {
                     "study_data.user_id": parsedUserId, // Filter by user_id
-                    create_date: { $lt: current_time }, // create_date < current_time
                     exam_date: { $gt: current_time } // current_time < exam_date
                 }
             },

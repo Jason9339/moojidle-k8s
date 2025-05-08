@@ -1,12 +1,12 @@
 import axios from "./apiClient";
 
-const tempApiClient = axios.create({
-    baseURL: 'http://localhost:5173',
-    timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+// const tempApiClient = axios.create({
+//     baseURL: 'http://localhost:5173',
+//     timeout: 5000,
+//     headers: {
+//         'Content-Type': 'application/json',
+//     },
+// });
 
 export const getCourses = async () => {
   return (await axios.get("/course/read")).data;
