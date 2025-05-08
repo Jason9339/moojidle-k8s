@@ -11,7 +11,8 @@ async function ViewCourses() {
             projection: {
                 _id: 0, // Exclude the default MongoDB _id
                 course_id: 1,
-                name: 1
+                name: 1,
+                color:1
             }
         }).toArray();
 
@@ -22,7 +23,7 @@ async function ViewCourses() {
             title: course.name,       // Map name to title
             courseId: course.course_id, // Use the integer course_id
             // WARN: Just a temporary solution for isTeacher and color
-            color:"#2ECC71",
+            color:course.color
             // 'color' field is not available in the database schema
         }));
 

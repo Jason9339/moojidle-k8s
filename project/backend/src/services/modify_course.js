@@ -14,12 +14,15 @@ async function AddCourse(courseData) {
         const newCourseDocument = {
             course_id: nextCourseId,
             name: courseData.name,
-            description: courseData.description,
-            syllabus: courseData.syllabus,
+            description: courseData.description || "",
             create_date: new Date().toISOString(), // Set current date/time
+            syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
              invite_link: inviteLink,
             // Add other optional fields from schema if needed
+            week: courseData.week || 16, // Default to 16 if not provided
+            color : courseData.color || "#4A90E2", // Default to blue if not provided
+
         };
 
         // 3. Insert the document into the 'course' collection
