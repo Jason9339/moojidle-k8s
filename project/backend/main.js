@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+
+
 // Initialize environment variables
 dotenv.config();
 
@@ -16,6 +18,8 @@ TestDBConnection();
 const app = express();
 const PORT = process.env.PORT;
 
+
+
 // Middle Ware
 app.use(bodyParser.json());
 app.use(cors({
@@ -24,6 +28,17 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+
+
+
+import post_course_router from "#src/routes/post/post_course_route.js";
+import post_router from "#src/routes/post/post_route.js";
+import post_user_router from "#src/routes/post/post_user_route.js";
+import post_board_router from "#src/routes/post/post_board_route.js";
+app.use("/post-course", post_course_router);
+app.use("/post", post_router);
+app.use("/post-user", post_user_router);
+app.use("/post-board", post_board_router);
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
@@ -35,7 +50,7 @@ app.use("/example", exampleRoute);
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(err.status || 500).send("something is wrong...\n detected in global error handler");
-  });
+});
 
 // Start server
 app.listen(PORT, () => {
