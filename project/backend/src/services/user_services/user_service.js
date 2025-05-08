@@ -22,7 +22,7 @@ async function RegisterUser(userData) {
         // Check if the email already exists in the database
         const existingUser = await mongoose.connection.db.collection('user').findOne({ email: userData.email });
         if (existingUser) {
-            throw new Error("Email already exists"); // Throw an error if the email is already registered
+            return null;
         }
 
         // Find the highest user_id in the database and calculate the next user_id
