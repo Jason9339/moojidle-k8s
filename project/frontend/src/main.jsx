@@ -8,18 +8,18 @@ import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "discussion/:param", element: <DiscussionBoard /> },
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { path: "dashboard", element: <Dashboard /> },
+            { path: "discussion/:param", element: <DiscussionBoard /> },
+            { path: "*", element: <NotFoundPage /> },
+        ],
+    },
 ]);
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+    <StrictMode>
+        <RouterProvider router={router} />
+    </StrictMode>
 );
