@@ -31,11 +31,10 @@ const Button = React.forwardRef(({ variant = "default", size = "default", classN
     )
 })
 
-export default function TextEditor({ onTextChange }) {
+export default function TextEditor({ onTextChange, onSubmit }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
-
     // Wrap selected text with markers
     const wrapSelection = (before, after = before) => {
         const ta = textareaRef.current
@@ -110,7 +109,7 @@ export default function TextEditor({ onTextChange }) {
                         <textarea
                             ref={textareaRef}
                             value={text}
-                            onChange={e => setText(e.target.value)}
+                            onChange={(e) => { setText(e.target.value); onTextChange && onTextChange }}
                             placeholder=""
                             className="w-full h-full p-4 font-mono outline-none"
                         />
@@ -124,7 +123,7 @@ export default function TextEditor({ onTextChange }) {
                 </Button>
                 <Button
                     variant="default"
-                    onClick={() => onTextChange && onTextChange(text)}
+                    onClick={() => onSubmit && onSubmit(text)}
                 >
                     Comment
                 </Button>
