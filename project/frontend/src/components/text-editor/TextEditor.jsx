@@ -31,7 +31,7 @@ const Button = React.forwardRef(({ variant = "default", size = "default", classN
     )
 })
 
-export default function TextEditor({ onTextChange, onSubmit, styles = {} }) {
+export default function TextEditor({ styles = {}, onTextChange, onSubmit }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
@@ -109,7 +109,7 @@ export default function TextEditor({ onTextChange, onSubmit, styles = {} }) {
                         <textarea
                             ref={textareaRef}
                             value={text}
-                            onChange={(e) => { setText(e.target.value); onTextChange && onTextChange }}
+                            onChange={(e) => { setText(e.target.value); onTextChange && onTextChange(e.target.value) }}
                             placeholder=""
                             className="w-full h-full p-4 font-mono outline-none"
                         />

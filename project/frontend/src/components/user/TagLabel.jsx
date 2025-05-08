@@ -5,10 +5,9 @@ function TagLabel({ text, color }) {
         "blue": "bg-[#0000E3]",
         "yellow": "bg-[#FFE153]"
     }
-    console.log(text, color);
     return (
         <div
-            className={`${colorMap[color] || "bg-[#ADADAD]"} w-fit h-fit rounded-[4px]`}
+            className={`${colorMap[color] || "bg-[#ADADAD]"} w-fit h-fit rounded-[4px] ml-2.5`}
         > {text} </div >
     )
 }
