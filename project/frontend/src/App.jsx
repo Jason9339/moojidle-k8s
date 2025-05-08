@@ -4,15 +4,16 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
+import Blank from "@/pages/Blank";
 
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 function App() {
     let login;
 
-    if(localStorage.getItem("user") == null){
+    if (localStorage.getItem("user") == null) {
         login = false;
-    }else{
+    } else {
         login = true;
     }
 
@@ -22,11 +23,10 @@ function App() {
     return (
         <div className="flex">
             <Router>
-                <LeftBar />
                 <Routes>
-                    <Route path="/"/>
+                    <Route path="/" element={<Blank />} />
 
-                    <Route element={<ProtectedRoutes login={login} />}>
+                    <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/discussion/:id" element={<DiscussionBoard />} />
                         <Route path="/discussion" element={<DiscussionBoardList />} />
