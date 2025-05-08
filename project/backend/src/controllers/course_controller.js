@@ -1,5 +1,5 @@
-import { AddCourse, RemoveCourse, RemoveCourseRelationships } from "#src/services/modify_course.js";
-import { ViewCourses } from "#src/services/view_course.js";
+import { AddCourse, AddTeachIn, RemoveCourse, RemoveCourseRelationships, ChangeCourseName } from "#src/services/modify_course.js";
+import { ViewCourses, GetTeachIn } from "#src/services/view_course.js";
 
 
 
@@ -13,6 +13,7 @@ async function CreateCourse(req, res) {
         }
         console.log("courseData", courseData);
         const newCourse = await AddCourse(courseData);
+        const newTeachIn = await AddTeachIn(courseData.user_id, newCourse.course_id);
         res.status(201).send(newCourse); // 返回新增的課程物件
 
     } catch (error) {
@@ -25,6 +26,7 @@ async function DeleteCourse(req, res) {
     try {
         // 1. 從路由參數獲取課程 ID
         const { id } = req.params;
+        console.log("DeleteCourse ID:", req.params);
 
         // 2. 驗證 ID 是否存在
         if (!id) {
@@ -78,8 +80,42 @@ async function ReadCourse(req, res) {
     }
 }
 
+async function ReadTeachIn(req, res) {
+    try {
+        console.log("[TeachIn] Request received to fetch courses.");
+        // Call the service function to get formatted courses
+        const teach_in = await (GetTeachIn(req.query.user_id));
+
+        // Send the courses back to the client with a 200 OK status
+        res.status(200).json(teach_in); // Use .json() to correctly set Content-Type
+
+    } catch (error) {
+        // If the service layer throws an error
+        console.error("[TeachInCourse] Error fetching courses:", error);
+        res.status(500).json({ message: "讀取teach_in失敗", error: error.message });
+    }
+}
+
+async function EditCourse(req, res) {
+    try {
+        const updateData = req.body
+        const courseId = parseInt(req.params.id, 10);
+        if (!updateData || Object.keys(updateData).length === 0) {
+            return res.status(400).send({ message: "Lack of update Data." });
+        }
+        const updatedData = await ChangeCourseName(courseId, updateData.name);
+        res.status(200).send(updatedData); // 返回更新的課程物件
+
+    } catch (error) {
+        console.error("Failed to Edit course", error);
+        res.status(500).send({ message: "Failed to Edit course", error: error.message });
+    }
+}
+
 export {
     CreateCourse,
     DeleteCourse,
-    ReadCourse
+    ReadCourse,
+    ReadTeachIn,
+    EditCourse
 }

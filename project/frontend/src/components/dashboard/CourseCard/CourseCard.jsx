@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
-function CourseCard({ title, courseId, color, isTeacher }) {
+function CourseCard({ title, courseId, color, isTeacher, onDeleteCourse }) {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -22,7 +22,7 @@ function CourseCard({ title, courseId, color, isTeacher }) {
         <FaEdit
           className="edit-icon"
           onClick={(e) => {
-            e.stopPropagation(); 
+            e.stopPropagation();
             setShowEditModal(true);
           }}
           title="編輯課程"
@@ -50,6 +50,7 @@ function CourseCard({ title, courseId, color, isTeacher }) {
         <EditCourseModal
           course={{ title, courseId }}
           onClose={() => setShowEditModal(false)}
+          onDeleteCourse={onDeleteCourse} // 傳進去
         />
       )}
     </div>
