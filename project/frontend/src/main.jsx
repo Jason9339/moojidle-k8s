@@ -16,7 +16,6 @@ const router = createBrowserRouter([
             { path: "dashboard", element: <Dashboard /> },
             { path: "post/:id", element: <Post /> },
             { path: "discussion/:param", element: <DiscussionBoard /> },
-            { path: "discussion/:id", element: <DiscussionBoard /> },
             { path: "*", element: <NotFoundPage /> },
         ],
     },
