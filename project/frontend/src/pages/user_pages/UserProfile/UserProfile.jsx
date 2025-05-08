@@ -11,7 +11,7 @@ function UserProfile() {
     const [data, setData] = useState(null);
 
     // faka data
-    let userId = 1;
+    let userId = JSON.parse(localStorage.getItem("user")).user_id;
 
     // fetching data from api services
     useEffect(() => {
