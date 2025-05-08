@@ -34,14 +34,3 @@ export const getCourseLink = async (courseId) => {
       return { link: "" }; // 返回空連結或提示信息
   }
 };
-
-export const getWeeklyCourseData = async (courseId, week) => {
-   try {
-      const response = await axios.get(`/course/${courseId}/weeks?week=${week}`);
-      return response.data;
-   } catch (error) {
-      console.error(`獲取課程 ${courseId} 第 ${week} 週資料失敗:`, error);
-      // 根據需要返回預設值或拋出錯誤
-      return { weeks: [] }; // 返回空週次資料
-   }
-};

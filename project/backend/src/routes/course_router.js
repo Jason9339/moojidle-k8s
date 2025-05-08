@@ -17,8 +17,7 @@ import {
   getCourseFiles, 
   getCourseAssignments, 
   getCourseSyllabus, 
-  getCourseLink,
-  getWeeklyCourseDataController
+  getCourseLink
 } from '#src/controllers/course_controller.js';
 
 // 路由基礎地址: http://localhost:PORT/course
@@ -47,6 +46,5 @@ router.get("/:courseId/materials", getCourseFiles); // files 的別名
 router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
-router.get("/:courseId/weeks", getWeeklyCourseDataController);
 
 export default router;

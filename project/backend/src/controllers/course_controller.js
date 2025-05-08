@@ -7,7 +7,6 @@ import {
     getAssignmentsByCourseId,
     getCourseSyllabus as getCourseSyllabusService,
     getCourseLink as getCourseLinkService,
-    getWeeklyCourseData,
     getCourseDetails as getCourseDetailsService,
     getTeachingCourses as getTeachingCoursesService
 } from '#src/services/course_service.js';
@@ -91,19 +90,6 @@ export const getCourseLink = async (req, res) => {
         res.json(linkData);
     } catch (error) {
         console.error("取得課程連結錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// 週課程資料查詢
-export const getWeeklyCourseDataController = async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const { week } = req.query;
-        const weeklyData = await getWeeklyCourseData(courseId, week);
-        res.json(weeklyData);
-    } catch (error) {
-        console.error("週課程資料查詢錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 };
