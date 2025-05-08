@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Layout from "@/Layout";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
@@ -25,6 +25,7 @@ const ProtectedRoute = ({ element }) => {
 const router = createBrowserRouter([
     {
         path: "/",
+        // element: <Navigate to="/login" replace />,
         element: <Layout />,
         children: [
             { path: "dashboard", element: <Dashboard /> },

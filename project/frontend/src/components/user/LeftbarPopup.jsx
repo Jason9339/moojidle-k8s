@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LeftbarPopup.module.css";
 
-function LeftbarPopup({ className, onClose }) {
+function LeftbarPopup({ onClose }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -11,7 +11,7 @@ function LeftbarPopup({ className, onClose }) {
     };
 
     return (
-        <div className={`${styles["popup-container"]} ${className}`}>
+        <div className={`${styles["popup-container"]}`}>
             <div className={styles["popup-content"]}>
                 <button className={styles["popup-close"]} onClick={onClose}>×</button>
                 <ul className={styles["popup-menu"]}>
