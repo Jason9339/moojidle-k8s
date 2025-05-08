@@ -35,7 +35,7 @@ function LeftBar() {
                         <MenuItem icon=<FaUserGroup /> onClick={() => navigate("/group")}>小組</MenuItem>
                         <MenuItem icon=<FaRegCalendarDays /> onClick={() => navigate("/calendar")}>行事曆</MenuItem>
                         <MenuItem icon=<MdOutlineMailOutline /> onClick={() => navigate("/inbox")}>通知</MenuItem>
-                        <MenuItem icon=<GoCommentDiscussion /> onClick={() => navigate("/discussion")}>討論版</MenuItem>
+                        <MenuItem icon=<GoCommentDiscussion /> onClick={() => navigate("/discussion/all")}>討論版</MenuItem>
                     </Menu>
                 </Sidebar>
             </div >
