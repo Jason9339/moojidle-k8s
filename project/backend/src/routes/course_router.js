@@ -24,6 +24,8 @@ router.get("/", async (req, res) => {
 router.post("/create", CreateCourse);
 router.delete("/delete/:id", DeleteCourse);
 router.get("/read", ReadCourse);
+router.get("/read/teach_in", ReadTeachIn);
+router.post("/edit/:id", EditCourse);
 
 // 獲取教師的課程列表 - 注意：此路由必須在 /:courseId 路由之前
 router.get("/teaching", GetTeachingCourses);
