@@ -28,7 +28,7 @@ import userRoute from "#src/routes/user_routes/user_route.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
-
+// user route
 app.use("/user", userRoute);
 
 

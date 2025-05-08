@@ -24,7 +24,7 @@ function LeftBar() {
         <>
             {show ? <div className="!h-screen w-3xs"></div>
                 : <></>}
-            {showUser ? <LeftbarPopup className="fixed" /> : <></>}
+            {showUser ? <LeftbarPopup onClose={() => setShowUser(false)} /> : <></>}
             <div className="fixed top-0 left-0 z-50 !h-screen w-3xs">
                 <Sidebar className="!h-full w-3xs">
                     <Menu>

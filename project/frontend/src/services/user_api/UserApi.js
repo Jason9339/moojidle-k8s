@@ -10,6 +10,17 @@ async function GetUserDataById(userId) {
     }
 }
 
+async function UpdateUserPassword(userId, data) {
+    try {
+        const response = await api.put(`/user/update-password/${userId}`, data);
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        return { message: "An error occurred while updating the password." };
+    }
+}
+
 export {
     GetUserDataById,
+    UpdateUserPassword
 }
