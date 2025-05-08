@@ -58,6 +58,21 @@ async function generateInviteLink(course_id) {
     return inviteLinkBase + course_id;
 }
 
+async function AddTeachIn(userId, courseId) {
+    try {
+        const newTeachInDocument = {
+            user_id: userId,
+            course_id: courseId,
+        };
+        const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
+        // console.log("Inserted document ID:", result.insertedId);
+        return result.insertedId;
+    } catch (err) {
+        console.error("Error adding teach_in entry:", err);
+        throw new Error(`Failed to add teach_in entry: ${err.message}`);
+    }
+}
+
 
 // Service to remove a course by its course_id
 async function RemoveCourse(id) {
@@ -127,10 +142,34 @@ async function RemoveCourseRelationships(courseIdInt) {
     }
 }
 
+// Service to change the course name and return the updated course
+async function ChangeCourseName(courseId, newName) {
+    try {
+        const result = await mongoose.connection.db.collection('course').updateOne(
+            { course_id: courseId }, // Filter by course_id
+            { $set: { name: newName } } // Update the name field
+        );
+
+
+        if (result.matchedCount === 0) {
+            throw new Error(`Course with ID ${courseId} not found.`);
+        }
+
+        // Fetch the updated course
+        const updatedCourse = await mongoose.connection.db.collection('course').findOne({ course_id: courseId });
+        console.log("Updated course:", updatedCourse);
+        return updatedCourse; // Return the updated course
+    } catch (err) {
+        console.error("Error updating course name:", err);
+        throw new Error(`Failed to update course name: ${err.message}`); 
+    }
+}
+
 
 export {
     AddCourse, 
+    AddTeachIn,
     RemoveCourse,
     RemoveCourseRelationships,
-
+    ChangeCourseName,
 }
