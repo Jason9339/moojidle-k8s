@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 
 function DiscussionBoard(){
 
@@ -7,6 +8,7 @@ function DiscussionBoard(){
 
     return (
         <>
+            <LeftBar></LeftBar>
             {id}
         </>
 

@@ -3,6 +3,7 @@ import { GetUserDataById } from '@/services/user_api/UserApi.js';
 import styles from "./UserProfile.module.css"
 
 // for components
+import LeftBar from '@/components/LeftBar/LeftBar';
 import MainLayout from '@/components/user_components/user_profile/MainLayout/MainLayout.jsx';
 import SecondaryLayout from '@/components/user_components/user_profile/SecondaryLayout/SecondaryLayout.jsx';
 
@@ -35,6 +36,7 @@ function UserProfile() {
     // page content
     return (
         <>
+            <LeftBar />
             <div className={styles.content}>
                 <header className={styles.category}>
                     Profile
@@ -43,7 +45,7 @@ function UserProfile() {
 
                 <div className={styles["layout-flexbox"]}>
                     <MainLayout pfp_path={data.path_to_profile_pic}
-                                name={data.name} 
+                                name={data.name}
                                 email={data.email}
                                 contact_ways={data.contact_ways} />
 

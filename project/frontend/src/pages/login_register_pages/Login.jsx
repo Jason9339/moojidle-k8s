@@ -17,7 +17,7 @@ const Login = () => {
             if (response && response.user_id) {
                 // Save user data to localStorage
                 localStorage.setItem("user", JSON.stringify(response));
-                navigate("/"); 
+                navigate("/dashboard"); 
             } else {
                 setError(response?.message || "Invalid email or password");
             }
