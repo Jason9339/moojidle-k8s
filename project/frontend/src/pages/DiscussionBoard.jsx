@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion-board/BoardSideBar";
 import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
 import PostPreview from "@/components/discussion-board/PostPreview";
-import CreatePostButton from "@/components/discussion-board/CreatePostButton";
-
+import PostCreator from "@/components/discussion-board/PostCreator";
 
 
 function DiscussionBoard() {
@@ -36,7 +35,7 @@ function DiscussionBoard() {
         <div className="flex">
             <BoardSideBar />
             <div className="p-5 flex-1 flex flex-col h-screen">
-                <CreatePostButton />
+                <PostCreator />
                 <h2>課程{param}討論版</h2>
                 {loading && <p>載入中...</p>}
                 {error && <p className="text-red-500">{error}</p>}

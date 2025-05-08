@@ -24,7 +24,6 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <div className="text-7x1 text-cyan-50">Hello</div>
         <RouterProvider router={router} />
     </StrictMode>
 );
