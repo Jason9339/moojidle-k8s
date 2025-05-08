@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion-board/BoardSideBar";
 import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
 import PostPreview from "@/components/discussion-board/PostPreview";
+import CreatePostButton from "@/components/discussion-board/CreatePostButton";
 
 
 
@@ -32,19 +33,20 @@ function DiscussionBoard() {
     }, [param]);
 
     return (
-        <div style={{ display: "flex" }}>
+        <div className="flex">
             <BoardSideBar />
-            <div style={{ padding: "20px", flex: 1 }}>
+            <div className="p-5 flex-1 flex flex-col h-screen">
+                <CreatePostButton />
                 <h2>課程{param}討論版</h2>
                 {loading && <p>載入中...</p>}
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error && <p className="text-red-500">{error}</p>}
                 {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
                 {posts.map((post) => (
 
                     <PostPreview post={post} />
                 ))}
             </div>
-        </div>
+        </div >
     );
 }
 
