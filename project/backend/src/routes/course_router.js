@@ -1,47 +1,50 @@
 import express from 'express';
 const router = express.Router();
 
-import { CreateCourse,DeleteCourse,ReadCourse,ReadTeachIn,EditCourse } from '#src/controllers/course_controller.js';
+import { 
+  // 課程基本操作控制器
+  CreateCourse,
+  DeleteCourse,
+  ReadCourse,
+  GetCourseDetails,
+  GetTeachingCourses,
+  ReadTeachIn,
+  EditCourse,
+  
+  // 課程詳細資訊控制器
+  getAllCourses,
+  getCourseAnnouncements, 
+  getCourseFiles, 
+  getCourseAssignments, 
+  getCourseSyllabus, 
+  getCourseLink
+} from '#src/controllers/course_controller.js';
 
-// the route address start from:
-// http://localhost:PORT/course
+// 路由基礎地址: http://localhost:PORT/course
 
-// for example purpose:
-// frontend gives nothing and backend sends an arry of object
-// axios are expected to get a array:
-//          
-//      [
-//          {
-//              "_id": "6810d7fdbd1eb7784fd861e0",
-//              "user_id": 1,
-//              "name": "User 1",
-//              "contact_ways": [
-//                  {
-//                      "approach": "email",
-//                      "details": "user85@example.com"
-//                  },
-//                  {
-//                      "approach": "social_media",
-//                      "details": "@user7"
-//                  },
-//                  {
-//                      "approach": "phone",
-//                      "details": "555-8598"
-//                  }
-//              ],
-//              "path_to_profile_pic": "/profiles/1.jpg",
-//              "email": "user1@example.com",
-//              "pw": "hashed_password_1",
-//              "create_date": "2020-10-06T03:57:48.000Z"
-//          },
-//          ....
+// ----- 基本路由 -----
 router.get("/", async (req, res) => {
     return res.status(200).send("Hello from course router!!");
-})
+});
+
+// ----- 課程管理路由 -----
 router.post("/create", CreateCourse);
 router.delete("/delete/:id", DeleteCourse);
 router.get("/read", ReadCourse);
+router.get("/list", getAllCourses); // 獲取所有課程列表
 router.get("/read/teach_in", ReadTeachIn);
 router.post("/edit/:id", EditCourse);
+
+// 獲取教師的課程列表 - 注意：此路由必須在 /:courseId 路由之前
+router.get("/teaching", GetTeachingCourses);
+
+// ----- 課程詳情路由 -----
+router.get("/:courseId", GetCourseDetails);
+router.get("/:courseId/announcements", getCourseAnnouncements);
+router.get("/:courseId/files", getCourseFiles);
+router.get("/:courseId/materials", getCourseFiles); // files 的別名
+router.get("/:courseId/assignments", getCourseAssignments);
+router.get("/:courseId/syllabus", getCourseSyllabus);
+router.get("/:courseId/link", getCourseLink);
 
 export default router;

@@ -24,6 +24,8 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+import assignmentRoute from "#src/routes/assignment_route.js"
+import examRoute from "#src/routes/exam_route.js"
 import courseRouter from "#src/routes/course_router.js"
 import todoAssignmentsRoute from "#src/routes/todo_assignments_route.js"
 import upcomingExamsRoute from "#src/routes/upcoming_exams_route.js"
@@ -33,6 +35,7 @@ app.use("/example", exampleRoute);
 app.use("/course", courseRouter);
 app.use("/assignments", todoAssignmentsRoute);
 app.use("/exams", upcomingExamsRoute);
+
 
 // Routes ends --------------------------------------------------------------------------
 

@@ -17,6 +17,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "", element: <Dashboard /> },
+      { path: "dashboard", element: <Dashboard /> },
       { path: "course", element: <CoursePage /> },
       { path: "course/:courseId", element: <CourseDetail /> },
       { path: "discussion", element: <DiscussionBoardList /> },
