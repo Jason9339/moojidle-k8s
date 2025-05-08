@@ -34,9 +34,6 @@ function App() {
                     </Route>
                 </Routes>
             </Router>
-            <main className="flex-1">
-                <Outlet />
-            </main>
         </div >
     );
 }
