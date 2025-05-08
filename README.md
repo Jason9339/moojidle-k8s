@@ -2,11 +2,13 @@
 
 ## Table of Content
 
-- [Team Members](#team-members)
-- [Relative Develope Tool](#relative-develope-tool)
-- [Requirement](#requirement)
-- [Instructions](#instructions)
-- [Brief File Structures](#brief-file-structures)
+- [Moojidle](#moojidle)
+  - [Table of Content](#table-of-content)
+  - [Team Members](#team-members)
+  - [Relative Develope Tool](#relative-develope-tool)
+  - [Requirement](#requirement)
+  - [Instructions](#instructions)
+  - [Brief File Structures](#brief-file-structures)
 
 ## Team Members
 
@@ -62,5 +64,5 @@
 project-root/
 ├── frontend/
 ├── backend/
-└── data_base/
+└── database/
 ```
