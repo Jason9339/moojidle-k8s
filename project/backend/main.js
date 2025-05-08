@@ -25,7 +25,7 @@ app.use(cors({
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
 import courseRouterBase from "#src/routes/course_router.js"
-import courseRoute from "#src/routes/course_route.js"
+import courseRoute from "#src/routes/course_detail_route.js"
 import assignmentRoute from "#src/routes/assignment_route.js"
 import examRoute from "#src/routes/exam_route.js"
 

@@ -319,6 +319,8 @@ async function GetTeachingCourses(req, res) {
     } catch (error) {
         console.error("獲取教師課程錯誤:", error);
         res.status(500).json({ message: "伺服器錯誤", error: error.message });
+    }
+}
 
 async function ReadTeachIn(req, res) {
     try {
