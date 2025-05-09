@@ -68,15 +68,6 @@ const Login = () => {
                         <a href="/register" className={styles["sign-up-link"]}>Sign Up</a>
                     </p>
                 </div>
-                <div className={styles["social-login"]}>
-                    <p>Or log in with</p>
-                    <img
-                        src="/icons/GoogleLogo.jpg"
-                        alt="Google Login"
-                        className={styles["google-login"]}
-                        onClick={handleGoogleLogin}
-                    />
-                </div>
             </form>
         </div>
     );
