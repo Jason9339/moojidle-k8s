@@ -11,7 +11,8 @@ async function ViewCourses() {
             projection: {
                 _id: 0, // Exclude the default MongoDB _id
                 course_id: 1,
-                name: 1
+                name: 1,
+                color:1
             }
         }).toArray();
 
@@ -21,9 +22,7 @@ async function ViewCourses() {
         const formattedCourses = courses.map(course => ({
             title: course.name,       // Map name to title
             courseId: course.course_id, // Use the integer course_id
-            // WARN: Just a temporary solution for isTeacher and color
-            color:"#2ECC71",
-            // 'color' field is not available in the database schema
+            color:course.color
         }));
 
         // console.log("[ViewCourses] Returning formatted courses:", JSON.stringify(formattedCourses, null, 2));

@@ -19,7 +19,8 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
       name: title,
       description: description,
       syllabus: "",
-      user_id: currentUserId,
+      userId: currentUserId,
+      color:color
     };
 
     try {

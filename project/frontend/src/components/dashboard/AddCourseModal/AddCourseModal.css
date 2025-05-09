@@ -86,7 +86,14 @@
 .modal-btn-group button:first-of-type:hover {
   background-color: #357ab8;
 }
+.modal-btn-group button.danger {
+  background-color: #f44336; /* Red */
+  color: white;
+}
 
+.modal-btn-group button.danger:hover {
+  background-color: #d32f2f; /* Darker red */
+}
 .modal-btn-group button:last-of-type {
   background-color: #e0e0e0;
   color: #333;

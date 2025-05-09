@@ -99,12 +99,13 @@ async function CreateCourse(req, res) {
     try {
         const courseData = req.body;
 
+        // console.log("courseData", courseData);
         if (!courseData || Object.keys(courseData).length === 0) {
             return res.status(400).send({ message: "Lack of Course Data." });
         }
-        
+        // console.log("courseData", courseData);
         const newCourse = await AddCourse(courseData);
-        const newTeachIn = await AddTeachIn(courseData.user_id, newCourse.course_id);
+        const newTeachIn = await AddTeachIn(courseData.userId, newCourse.course_id);
         res.status(201).send(newCourse); // 返回新增的課程物件
     } catch (error) {
         console.error("Failed to create course", error);

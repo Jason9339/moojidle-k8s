@@ -6,19 +6,23 @@ const inviteLinkBase = "https://localhost:3000/course/join/";
 async function AddCourse(courseData) {
     try {
         // 1. Generate the next course_id
-        const nextCourseId = await getNextSequenceValue("course_id");
+        const nextCourseId = await getNextSequenceValue("course");
+        console.log("Next course_id:", nextCourseId);
         const inviteLink = await generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
         const newCourseDocument = {
             course_id: nextCourseId,
             name: courseData.name,
-            description: courseData.description,
-            syllabus: courseData.syllabus,
-            create_date: new Date(), // Set current date/time
+            description: courseData.description || "",
+            create_date: new Date().toISOString(), // Set current date/time
+            syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
              invite_link: inviteLink,
             // Add other optional fields from schema if needed
+            week: courseData.week || 16, // Default to 16 if not provided
+            color : courseData.color || "#4A90E2", // Default to blue if not provided
+
         };
 
         // 3. Insert the document into the 'course' collection
@@ -41,17 +45,25 @@ async function AddCourse(courseData) {
 }
 
 
-// Helper function to get the next sequence value for course_id
-async function getNextSequenceValue(sequenceName) {
-    const sequenceDocument = await mongoose.connection.db.collection("__course_counter").findOneAndUpdate(
-       { course_id: sequenceName }, // Find the counter document (e.g., { _id: "course_id" })
-       { $inc: { sequence_value: 1 } }, // Atomically increment the sequence_value field by 1
-       { returnDocument: 'after', // Return the document *after* the update
-         upsert: true } // Create the document if it doesn't exist
+async function getNextSequenceValue(collectionName) {
+    // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
+    const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
+
+    if (!existingCounter) {
+        throw new Error("Counter document does not exist. Please initialize the counter collection manually.");
+    }
+
+    const result = await mongoose.connection.db.collection("counter").findOneAndUpdate(
+        { _id: existingCounter._id },
+        { $inc: { [collectionName]: 1 } },
+        {
+            returnDocument: 'after',
+            upsert: false  // 強制只更新，不建立新 document
+        }
     );
-    // If the counter was just created (upserted), sequence_value might be null initially depending on MongoDB version/config
-    // Ensure we return a valid number, starting from 1 if it was just created.
-    return sequenceDocument?.sequence_value ?? 1;
+    console.log("Counter update result:", result);
+    console.log("Counter result:", result.value?.[collectionName]);
+    return result[collectionName] ?? 1;
 }
 
 async function generateInviteLink(course_id) {
@@ -65,7 +77,6 @@ async function AddTeachIn(userId, courseId) {
             course_id: courseId,
         };
         const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
-        // console.log("Inserted document ID:", result.insertedId);
         return result.insertedId;
     } catch (err) {
         console.error("Error adding teach_in entry:", err);
