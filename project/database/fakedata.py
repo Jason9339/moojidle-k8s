@@ -60,7 +60,7 @@ def generate_courses(n=5):
             "create_date": DATE.isoformat(),
             "syllabus": f"Syllabus for course {i}",
             "invite_link": f"http://example.com/course_{i}/invite",
-            "weeek_num": 18,
+            "week_num": 18,
             "color": "#FFFFFF"
         })
     return courses
