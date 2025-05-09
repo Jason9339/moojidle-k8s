@@ -182,9 +182,9 @@
 
 ## File Structure
 
-```
-your file structure, you can use `tree -I node_modules` command in terminal
-```
+      ```
+      your file structure, you can use `tree -I node_modules` command in terminal
+      ```
 
 ## Installation Instructions for New Packages
 
