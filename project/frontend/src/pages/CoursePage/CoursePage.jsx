@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCourses } from "@/services/DashboardApi";
 import "./CoursePage.css";
 import CourseListItem from "@/components/course/CourseListItem/CourseListItem";
+import LeftBar from "@/components/LeftBar/LeftBar";
 
 function CoursePage() {
     const [courses, setCourses] = useState([]);
@@ -19,7 +20,9 @@ function CoursePage() {
     }, []);
   
     return (
-      <div className="course-page">
+      <div className="app-layout">
+        <LeftBar />
+        <div className="course-page">
         <h2 className="course-heading">All Course</h2>
         <hr className="course-heading-divider" />
   
@@ -37,6 +40,7 @@ function CoursePage() {
         <h3 className="past-title">Past Enrollments</h3>
         <hr className="course-heading-divider" />
       </div>
+    </div>
     );
   }
   
