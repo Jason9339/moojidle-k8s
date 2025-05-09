@@ -30,7 +30,7 @@ function LeftBar() {
                     <Menu>
                         <MenuItem icon=<FaUser /> onClick={toggleShowUser}>使用者</MenuItem>
 
-                        <MenuItem icon=<MdOutlineSpaceDashboard onClick={() => navigate("/dashboard")} />>儀表板</MenuItem>
+                        <MenuItem icon=<MdOutlineSpaceDashboard /> onClick={() => navigate("/dashboard")}>儀表板</MenuItem>
                         <MenuItem icon=<FaBook /> onClick={() => navigate("/course")}>課程</MenuItem>
                         <MenuItem icon=<FaUserGroup /> onClick={() => navigate("/group")}>小組</MenuItem>
                         <MenuItem icon=<FaRegCalendarDays /> onClick={() => navigate("/calendar")}>行事曆</MenuItem>
