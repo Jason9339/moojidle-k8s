@@ -5,6 +5,7 @@ import ToDoItem from "@/components/dashboard/ToDoItem/ToDoItem";
 import ComingUpItem from "@/components/dashboard/ComingUpItem/ComingUpItem";
 import AddCourseButton from "@/components/dashboard/AddCourseButton/AddCourseButton";
 import AddCourseModal from "@/components/dashboard/AddCourseModal/AddCourseModal";
+import LeftBar from "@/components/LeftBar/LeftBar";
 import "./Dashboard.css";
 import {
   getCourses,
@@ -69,6 +70,7 @@ function Dashboard() {
 
   return (
     <div className="app-layout">
+      <LeftBar />
       <div className="dashboard-container">
         <div className="dashboard-left">
           <div className="dashboard-heading-row">

@@ -3,6 +3,8 @@ body {
   font-family: "Segoe UI", sans-serif;
   background-color: #eff2f5;
   color: #222;
+  height: 100vh;
+  overflow: hidden;
 }
 
 h2,
@@ -27,20 +29,21 @@ h2.dashboard-heading {
   overflow: hidden;
 }
 
+/* === Dashboard Content 样式 === */
 .dashboard-container {
   display: flex;
   flex-direction: row;
   padding: 24px;
-  width: 100%;
+  width: calc(100% - 250px);
   gap: 24px;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .dashboard-left {
   flex: 2;
-}
-
-.dashboard-left {
-  flex: 2;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .dashboard-right {
@@ -51,6 +54,8 @@ h2.dashboard-heading {
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  overflow-y: auto;
 }
 
 .course-grid {
