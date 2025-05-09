@@ -1,5 +1,14 @@
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
 .course-page {
   padding: 24px;
+  width: calc(100% - 250px);
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto; 
 }
 
 .course-heading {

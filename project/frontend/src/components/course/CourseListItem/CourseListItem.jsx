@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/CourseListItem.css";
+import "./CourseListItem.css";
 import { useNavigate } from "react-router-dom";
 
 function CourseListItem({ title, courseId, color }) {

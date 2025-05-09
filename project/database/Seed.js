@@ -271,7 +271,7 @@ db.course.insertMany([
     "create_date": "2025-01-01T00:00:00",
     "syllabus": "Syllabus for course 1",
     "invite_link": "http://example.com/course_1/invite",
-    "weeek_num": 18,
+    "week_num": 18,
     "color": "#FFFFFF"
   },
   {
@@ -281,7 +281,7 @@ db.course.insertMany([
     "create_date": "2025-01-01T00:00:00",
     "syllabus": "Syllabus for course 2",
     "invite_link": "http://example.com/course_2/invite",
-    "weeek_num": 18,
+    "week_num": 18,
     "color": "#FFFFFF"
   },
   {
@@ -291,7 +291,7 @@ db.course.insertMany([
     "create_date": "2025-01-01T00:00:00",
     "syllabus": "Syllabus for course 3",
     "invite_link": "http://example.com/course_3/invite",
-    "weeek_num": 18,
+    "week_num": 18,
     "color": "#FFFFFF"
   },
   {
@@ -301,7 +301,7 @@ db.course.insertMany([
     "create_date": "2025-01-01T00:00:00",
     "syllabus": "Syllabus for course 4",
     "invite_link": "http://example.com/course_4/invite",
-    "weeek_num": 18,
+    "week_num": 18,
     "color": "#FFFFFF"
   },
   {
@@ -311,7 +311,7 @@ db.course.insertMany([
     "create_date": "2025-01-01T00:00:00",
     "syllabus": "Syllabus for course 5",
     "invite_link": "http://example.com/course_5/invite",
-    "weeek_num": 18,
+    "week_num": 18,
     "color": "#FFFFFF"
   }
 ]);

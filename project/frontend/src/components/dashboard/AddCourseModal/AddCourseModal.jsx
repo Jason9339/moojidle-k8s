@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import "@/styles/Modal.css";
+import "./AddCourseModal.css";
 import { addCourse } from "@/services/DashboardApi"
+
 
 function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
   const [title, setTitle] = useState("");
