@@ -1,8 +1,18 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
 .course-detail-container {
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: calc(100% - 250px); /* 为 LeftBar 留出空间 */
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto; 
 }
 
 .course-header {

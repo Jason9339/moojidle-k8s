@@ -29,7 +29,6 @@ h2.dashboard-heading {
   overflow: hidden;
 }
 
-/* === Dashboard Content 样式 === */
 .dashboard-container {
   display: flex;
   flex-direction: row;
