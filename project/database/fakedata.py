@@ -24,6 +24,9 @@ def seq_date(index=0):
     date = DATE
     return (date + timedelta(weeks = index)).isoformat()
 
+def add_ISO_to_string(str):
+    return 'ISODate(' + str + ')'
+
 # Generate random contact ways
 def generate_contact_ways():
     """Generate random contact methods."""
@@ -46,7 +49,7 @@ def generate_users(n=15):
             "path_to_profile_pic": f"/profiles/{i}.jpg",
             "email": f"user{i}@example.com",
             "pw": f"hashed_password_{i}",
-            "create_date": DATE.isoformat()
+            "create_date": add_ISO_to_string(DATE.isoformat())
         })
     return users
 
@@ -57,11 +60,11 @@ def generate_courses(n=5):
             "course_id": i,
             "name": f"Course {i}",
             "description": f"This is the description for course {i}.",
-            "create_date": DATE.isoformat(),
+            "create_date": add_ISO_to_string(DATE.isoformat()),
             "syllabus": f"Syllabus for course {i}",
             "invite_link": f"http://example.com/course_{i}/invite",
             "week_num": 18,
-            "color": "#FFFFFF"
+            "color": "#4A90E2"
         })
     return courses
 
@@ -130,7 +133,7 @@ def generate_announcements(user_count=15, course_count=5, n=15):
     for i in range(1, n + 1):
         announcements.append({
             "a_id": i,
-            "create_date": seq_date(i + 1),
+            "create_date": add_ISO_to_string(seq_date(i + 1)),
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
             "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
@@ -214,10 +217,10 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
     for course in courses:
         course_id = course["course_id"]
         # 確保 course["create_date"] 是 datetime 對象
-        if isinstance(course["create_date"], datetime):
-            course_create_date = course["create_date"]
-        else:
-            course_create_date = datetime.strptime(course["create_date"].replace('ISODate("', '').replace('")', ''), "%Y-%m-%dT%H:%M:%S")
+        # if isinstance(course["create_date"], datetime):
+        #     course_create_date = course["create_date"]
+        # else:
+        #     course_create_date = datetime.strptime(course["create_date"].replace('ISODate("', '').replace('")', ''), "%Y-%m-%dT%H:%M:%S")
         
         # 每門課程可以有 1 到 max_exams_per_course 次考試
         num_exams = random.randint(1, max_exams_per_course)
@@ -242,8 +245,8 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
                 "in_course_id": course_id,
                 "create_by_user_id": create_by_user_id,
                 "exam_name": f"Exam {exam_id} for Course {course_id}",
-                "exam_date": seq_date(exam_index + 2),
-                "create_date": seq_date(exam_index),
+                "exam_date": add_ISO_to_string(seq_date(exam_index + 2)),
+                "create_date": add_ISO_to_string(seq_date(exam_index)),
                 "description": f"This is the description for Exam {exam_id}.",
                 "attachments": attachments
             })
@@ -294,7 +297,7 @@ def generate_materials(courses, teach_in, assist_in, max_materials_per_course=5)
                 "in_course_id": course_id,
                 "create_by_user_id": create_by_user_id,
                 "m_name": f"Material {material_id} for Course {course_id}",
-                "create_date": seq_date(mat_index + 1),
+                "create_date": add_ISO_to_string(seq_date(mat_index + 1)),
                 # "path_to_file": f"/materials/course_{course_id}/material_{material_id}.pdf",
                 "url": f"http://example.com/materials/course_{course_id}/material_{material_id}.pdf",
                 # "description": f"This is the description for Material {material_id}."
@@ -360,8 +363,8 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "in_course_id": course_id,
                 "create_by_user_id": create_by_user_id,
                 "ass_name": f"Assignment {assignment_id} for Course {course_id}",
-                "create_date": seq_date(ass_index + 1),
-                "end_date": seq_date(ass_index + 2),
+                "create_date": add_ISO_to_string(seq_date(ass_index + 1)),
+                "end_date": add_ISO_to_string(seq_date(ass_index + 2)),
                 "description": f"This is the description for Assignment {assignment_id}.",
                 "attachments": attachments
             })
@@ -477,7 +480,7 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
                     for _ in range(random.randint(0, 3))
                 ],
                 "description": f"This is the content of post {post_id} in board {board_id}.",
-                "post_date": seq_date(post_index + 2),
+                "post_date": add_ISO_to_string(seq_date(post_index + 2)),
                 "public": random.choice([True, False]),  # Randomly set the post as public or private
                 "in_b_id": board_id,
                 "post_tags": [
@@ -492,7 +495,7 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
                         "comment_id": random.randint(1, 1000),
                         "comment_by_user_id": random.randint(1, len(users)),
                         "comment_user_custom_tag": f"CustomTag_{random.randint(1, 100)}",
-                        "comment_date": seq_date(post_index + 2 + comment_index),
+                        "comment_date": add_ISO_to_string(seq_date(post_index + 2 + comment_index)),
                         "description": f"This is a comment on post {post_id}."
                     }
                     for comment_index in range(random.randint(0, 5))  # Randomly generate 0 to 5 comments
@@ -524,7 +527,7 @@ def generate_mailbox(users, max_messages_per_user=10):
                 "receiver_id": receiver_id,
                 "subject": f"Subject of Mail {mail_id}",
                 "content": f"This is the content of mail {mail_id} from User {sender_id} to User {receiver_id}.",
-                "send_date": seq_date(5)
+                "send_date": add_ISO_to_string(seq_date(5))
             })
 
             mail_id += 1
@@ -585,12 +588,12 @@ def write_seed_file():
 
     with open(output_file, "w") as f:
         for collection, data in seed_data.items():
-            if collection in ["course", "announcement", "exams", "materials", "assignments", "submitted_ass", "post", "user", "custom_tag", "course_tag", "mailbox"]:  # Handle collections with ISODate
-                collection_data = json.dumps(convert_datetime_to_iso(data), indent=2)
-                collection_data = collection_data.replace('"ISODate(', 'ISODate(').replace(')"', ')')
-                f.write(f"db.{collection}.insertMany({collection_data});\n\n")
-            else:
-                f.write(f"db.{collection}.insertMany({json.dumps(data, indent=2)});\n\n")
+            # if collection in ["course", "announcement", "exams", "materials", "assignments", "submitted_ass", "post", "user", "custom_tag", "course_tag", "mailbox"]:  # Handle collections with ISODate
+            #     collection_data = json.dumps(convert_datetime_to_iso(data), indent=2)
+            #     collection_data = collection_data.replace('"ISODate(', 'ISODate(').replace(')"', ')')
+            #     f.write(f"db.{collection}.insertMany({collection_data});\n\n")
+            # else:
+            f.write(f"db.{collection}.insertMany({json.dumps(data, indent=2)});\n\n")
         
         counter_data = {
             "announcement": ANNOUNCEMENT_NUM,
