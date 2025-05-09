@@ -40,8 +40,8 @@ async function RegisterUser(userData) {
             create_date: new Date(), // Set the current date as the creation date
             contact_ways: [
                 {
-                    approach: "phone", // Default contact method
-                    details: "555-3791" // Default phone number
+                    approach: "email", // Default contact method
+                    details: userData.email // Default phone number
                 }
             ]
         });
