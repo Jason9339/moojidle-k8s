@@ -247,6 +247,7 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
                 "exam_name": f"Exam {exam_id} for Course {course_id}",
                 "exam_date": add_ISO_to_string(seq_date(exam_index + 2)),
                 "create_date": add_ISO_to_string(seq_date(exam_index)),
+                "start_date": add_ISO_to_string(seq_date(exam_index)),
                 "description": f"This is the description for Exam {exam_id}.",
                 "attachments": attachments
             })
