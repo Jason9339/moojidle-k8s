@@ -2,10 +2,11 @@ import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom
 import LeftBar from "@/components/LeftBar/LeftBar";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
-import Dashboard from "@/pages/Dashboard";
+import Dashboard from "@/pages/Dashboard/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
 import Blank from "@/pages/Blank";
-
+import CoursePage from "@/pages/CoursePage/CoursePage";
+import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 function App() {
@@ -28,6 +29,8 @@ function App() {
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/course" element={<CoursePage />} />
+                        <Route path="/course/:courseId" element={<CourseDetail />} />
                         <Route path="/discussion/:id" element={<DiscussionBoard />} />
                         <Route path="/discussion" element={<DiscussionBoardList />} />
                         <Route path="*" element={<NotFoundPage />} />
