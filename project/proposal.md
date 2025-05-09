@@ -154,7 +154,8 @@
    3. 前端，後端，DB，快取間的 workflow（如果有大改動再提即可）
    4. file structure
    5. 新增功能若需安裝新套件，請列出 Instruction Steps
-   6. Reminder
+   6. 相關測試步驟
+   7. Reminder
 5. PR 須經過至少一人的 Approve，若是有特定功能相關的開發者，請 assign 給他
 6. 當使用 js 的時候，禁止使用 `var`
 
@@ -163,16 +164,47 @@
 ```
 # PR content
 
-## Feature Outline in less then 3 sentences
+@相關者1 @相關者2
+
+## Feature Outline in 1 sentences
+
+描述你的 PR 到底"想"做什麼
 
 ## Features list
 
+1. 改動1
+2. 改動2
+
 ## Workflow
+
+- Api 1 的走法: `frontend server` --request--> `backend server` --request--> `database`
+- Api 2 的走法: `frontend server` <--socket--> `backend server` --request--> `database`
 
 ## File Structure
 
+```
+your file structure, you can use `tree -I node_modules` command in terminal
+```
+
 ## Installation Instructions for New Packages
+
+說一下你加了什麼 package，為了什麼
+
+1. 到終端輸入 `npm i`
+2. `npm run dev`
+
+## Testing Steps
+
+- 功能A
+    1. step 1
+    2. step 2
+    3. step 3
+- 功能B
+    1. step 1
+    2. step 2
+    3. step 3
 
 ## Reminders and Important Notes
 
+打你想要的提醒
 ```
