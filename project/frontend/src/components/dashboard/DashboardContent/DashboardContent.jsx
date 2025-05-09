@@ -25,8 +25,8 @@ function DashboardContent() {
       const [courses, todoList, comingUpList, teachInList] =
         await Promise.all([
           getCourses(),
-          getTodoList(),
-          getComingUpList(),
+          getTodoList(currentUserId),
+          getComingUpList(currentUserId),
           getTeachIn(currentUserId),
         ]);
 
