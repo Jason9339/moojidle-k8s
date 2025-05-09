@@ -40,11 +40,11 @@
      - intergration 系列
        - 整合 feature 分支
      - library 系列
-       - 當出現大家要共用的套件，或函式庫時使用
-       - 優先權僅次於 hotfix
+       - 當出現大家要共用的套件，或函式庫時使用 優先權僅次於 hotfix
 3. codying style 的一致性
    - [variable] camelCase
-   - [class] CamelCase
+   - [function] camelCase
+   - [class] PascalCase
    - [global] UPPER_CASE
    - 禁止簡體中文註解
    - if use JS, only async / await
@@ -60,23 +60,23 @@
 
 5. PR 須經過至少一人的 Approve，若是有特定功能相關的開發者，請 assign 給他
 
-6. Express後端
+6. Express 後端
 
-   1. 檔案為**PascalCase**
-   2. 資料夾為**caterpillar_case**
-   3. Router-Controller-Service架構
-      - Router: API的路徑
-      - Controller: 處理Request、Response，並呼叫Service取得資料
+   1. 檔案為 **caterpillar_case**
+   2. 資料夾為 **caterpillar_case**
+   3. Router-Controller-Service 架構
+      - Router: API 的路徑
+      - Controller: 處理 Request、Response，並呼叫 Service 取得資料
       - Service: 和資料庫溝通、處理業務邏輯
    4. Service File Structure
-      - 假設路徑`~/service/user/post_api.js`，代表**前端處理User時取得Post資料的API**
+      - 假設路徑`~/service/user/post_api.js`，代表**前端處理 User 時取得 Post 資料的 API**
 
 7. 前端
 
-   1. 檔案為**caterpillar_case**
-   2. 資料夾為**caterpillar_case**
-   3. 如果有全域變數，用Context來存([Context介紹](https://ithelp.ithome.com.tw/articles/10252123))
-   4. JSX Page 的單位是**一個URL對應一個Page**
+   1. 檔案為 **PascalCase**
+   2. 資料夾為 **caterpillar_case**
+   3. 如果有全域變數，用 Context 來存([Context介紹](https://ithelp.ithome.com.tw/articles/10252123))
+   4. JSX Page 的單位是**一個 URL 對應一個 Page**
 
-8. MongoDB新增一筆資料後，要把counter加一
-9. Figma設計做完請上傳給**林子齊**驗收
+8. MongoDB 新增一筆資料後，要把 counter 加一
+9. Figma 設計做完請上傳給**林子齊**驗收
