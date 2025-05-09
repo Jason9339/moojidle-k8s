@@ -113,7 +113,7 @@ db.createCollection("course", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["course_id", "name", "description", "create_date", "syllabus"],
+            required: ["course_id", "name", "description", "create_date", "start_date", "syllabus", "week_num", "color"],
             properties: {
                 course_id: { bsonType: "int" },
                 name: { bsonType: "string" },
