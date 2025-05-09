@@ -23,12 +23,12 @@ function LeftBar() {
     return (
         <>
             {showUser ? <LeftbarPopup onClose={() => setShowUser(false)} /> : <></>}
-            <div className="top-0 left-0 z-50 h-screen w-[200px]">
+            <div className="top-0 left-0 z-50 h-screen w-[180px]">
                 <Sidebar className="!h-full" width="180px">
                     <Menu>
                         <MenuItem icon=<FaUser /> onClick={toggleShowUser}>使用者</MenuItem>
 
-                        <MenuItem icon=<MdOutlineSpaceDashboard />onClick={() => navigate("/")}>儀表板</MenuItem>
+                        <MenuItem icon=<MdOutlineSpaceDashboard /> onClick={() => navigate("/")}>儀表板</MenuItem>
                         <MenuItem icon=<FaBook /> onClick={() => navigate("/course")}>課程</MenuItem>
                         <MenuItem icon=<FaUserGroup /> onClick={() => navigate("/group")}>小組</MenuItem>
                         <MenuItem icon=<FaRegCalendarDays /> onClick={() => navigate("/calendar")}>行事曆</MenuItem>
