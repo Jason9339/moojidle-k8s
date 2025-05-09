@@ -1,5 +1,5 @@
 import React from 'react';
-import '@/styles/ComingUpItem.css';
+import './ComingUpItem.css';
 
 function ComingUpItem({ comingUpList }) {
   return (

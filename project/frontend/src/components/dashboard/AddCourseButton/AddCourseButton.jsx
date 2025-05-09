@@ -1,6 +1,6 @@
 import React from "react";
 import { FaPlus } from "react-icons/fa";
-import "@/styles/AddCourseButton.css";
+import "./AddCourseButton.css";
 
 function AddCourseButton({ onClick }) {
     return (

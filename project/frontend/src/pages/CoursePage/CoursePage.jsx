@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCourses } from "@/services/DashboardApi";
-//import { getCourses } from "@/services/CoursepageApi";
-import "@/styles/CoursePage.css";
-import CourseListItem from "@/components/course/CourseListItem";
+import "./CoursePage.css";
+import CourseListItem from "@/components/course/CourseListItem/CourseListItem";
 
 function CoursePage() {
     const [courses, setCourses] = useState([]);

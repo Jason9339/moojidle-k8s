@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import "@/styles/CourseDetail.css";
-// 修改導入來源
+
+import "./CourseDetail.css";
 import { getCourseDetails, getCourseAssignments, getCourseMaterials } from "@/services/CoursepageApi";
 
 function CourseDetail() {

@@ -5,11 +5,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "@/Layout";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoard";
-import Dashboard from "@/pages/Dashboard";
+import Dashboard from "@/pages/Dashboard/Dashboard";
 import DiscussionBoardList from "@/pages/DiscussionBoardList";
-import CoursePage from "@/pages/CoursePage";
-import CourseDetail from "@/pages/CourseDetail";
+
+import CoursePage from "@/pages/CoursePage/CoursePage";
+import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import LeftBar from "./components/LeftBar/LeftBar";
+
 
 const router = createBrowserRouter([
   {

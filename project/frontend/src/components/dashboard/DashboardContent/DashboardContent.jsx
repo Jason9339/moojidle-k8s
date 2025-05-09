@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import CourseCard from "./CourseCard";
-import ToDoItem from "./ToDoItem";
-import ComingUpItem from "./ComingUpItem";
-import AddCourseButton from "./AddCourseButton";
-import AddCourseModal from "./AddCourseModal";
-import "@/styles/Dashboard.css";
+import CourseCard from "../CourseCard/CourseCard";
+import ToDoItem from "../ToDoItem/ToDoItem";
+import ComingUpItem from "../ComingUpItem/ComingUpItem";
+import AddCourseButton from "../AddCourseButton/AddCourseButton";
+import AddCourseModal from "../AddCourseModal/AddCourseModal";
+import "./DashboardContent.css";
 import {
   getCourses,
   getTodoList,
