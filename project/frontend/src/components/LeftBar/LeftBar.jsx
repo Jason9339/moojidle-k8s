@@ -9,7 +9,7 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { FaUser, FaBook } from "react-icons/fa";
 import { FaUserGroup, FaRegCalendarDays } from "react-icons/fa6";
 import { MdOutlineMailOutline } from "react-icons/md";
-import LeftbarPopup from "../user_components/LeftbarPopup/LeftbarPopup";
+import LeftbarPopup from "@/components/user_components/LeftbarPopup/LeftbarPopup";
 
 function LeftBar() {
     const [show, setShow] = useState(true);

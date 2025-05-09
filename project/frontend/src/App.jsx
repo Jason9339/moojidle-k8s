@@ -27,7 +27,7 @@ function App() {
         <div className="flex">
             <Router>
                 <Routes>
-                    <Route path="/" element={<Login />} />
+                    <Route path="/" element={<Blank />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
