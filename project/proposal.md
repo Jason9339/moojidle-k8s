@@ -154,7 +154,8 @@
    3. 前端，後端，DB，快取間的 workflow（如果有大改動再提即可）
    4. file structure
    5. 新增功能若需安裝新套件，請列出 Instruction Steps
-   6. Reminder
+   6. 相關測試步驟
+   7. Reminder
 5. PR 須經過至少一人的 Approve，若是有特定功能相關的開發者，請 assign 給他
 6. 當使用 js 的時候，禁止使用 `var`
 
@@ -163,7 +164,7 @@
 ```
 # PR content
 
-## Feature Outline in less then 3 sentences
+## Feature Outline in 1 sentences
 
 ## Features list
 
@@ -172,6 +173,8 @@
 ## File Structure
 
 ## Installation Instructions for New Packages
+
+## Testing Steps
 
 ## Reminders and Important Notes
 
