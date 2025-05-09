@@ -8,9 +8,6 @@
   - [需求](#需求-requirements)
 - [專案預計分工](#專案預計分工)
 - [專案技術選型](#專案技術選型)
-- [團隊協定與標準](#團隊協定與標準)
-  - [團隊協定](#團隊協定)
-  - [團隊標準](#團隊標準)
 
 ## 專案目標
 
@@ -66,11 +63,13 @@
 ## 專案預計分工
 
 <details>
-<summary>Sprint 1</summary>
+    <summary>Sprint 1</summary>
 
-- 課程資料管理: 3人
-- 行事曆: 2人
-- 討論版: 2人
+    - 課程資料管理: 3人
+    - 行事曆: 2人
+
+    - 討論版: 2人
+
 - 使用者管理: 2人
 
 </details>
@@ -103,68 +102,3 @@
   1. EC2 micro
   2. RDS
   3. elasticache
-
-## 團隊協定與標準
-
-### 團隊協定
-
-1. 使用 Jira 管理 sprint 的 story 和 task
-2. 每 2 周 meeting 一次，每次不得超過 1 小時
-   - bug report
-   - possible bottleneck tasks
-   - advices
-3. Gitlab 上的 PR 每個人都要看過，理解 code 本身在幹嘛，comment 有空就要回
-4. 逕行決策時，透過 Discord 投票
-5. 做不完要先講
-6. 規定某個禮拜的某兩個小時為 office time，在這段時間，code 共同協作的優先權要排最高。
-
-#### PR 文模板
-
-````
-# PR content
-
-@相關者1 @相關者2
-
-## Feature Outline in 1 sentences
-
-描述你的 PR 到底"想"做什麼
-
-## Features list
-
-1. 改動1
-2. 改動2
-
-## Workflow
-
-- Api 1 的走法: `frontend server` --request--> `backend server` --request--> `database`
-- Api 2 的走法: `frontend server` <--socket--> `backend server` --request--> `database`
-
-## File Structure
-
-      ```
-      your file structure, you can use `tree -I node_modules` command in terminal
-      ```
-
-## Installation Instructions for New Packages
-
-說一下你加了什麼 package，為了什麼
-
-1. 到終端輸入 `npm i`
-2. `npm run dev`
-
-## Testing Steps
-
-- 功能A
-    1. step 1
-    2. step 2
-    3. step 3
-- 功能B
-    1. step 1
-    2. step 2
-    3. step 3
-
-## Reminders and Important Notes
-
-打你想要的提醒
-````
-
