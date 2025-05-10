@@ -45,6 +45,11 @@ async function RegisterUser(userData) {
                 }
             ]
         });
+
+        await mongoose.connection.db.collection('counter').updateOne(
+            {},
+            {$inc: {user: 1}}
+        );
     } catch (err) {
         console.log(err); // Log any errors that occur
         throw err; // Re-throw the error to be handled by the controller
