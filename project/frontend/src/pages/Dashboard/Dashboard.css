@@ -34,7 +34,7 @@ h2.dashboard-heading {
   display: flex;
   flex-direction: row;
   padding: 24px;
-  width: calc(100% - 250px);
+  width: calc(100% - 180px);
   gap: 24px;
   height: 100vh;
   box-sizing: border-box;
