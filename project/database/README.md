@@ -22,3 +22,11 @@
 2. `mongosh`
 3. `load("the/path/of/your/Schema.js")`
 4. `load("the/path/of/your/Seed.js")`
+
+## Steps For Seed Creator
+
+以下是要生成 `Seed.js` 的步驟
+
+1. `py fakedata.py`
+2. change **ALL** `"ISODate(` to `ISODate("`
+3. change **ALL** `00)"` to `00.000Z")`
