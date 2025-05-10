@@ -18,11 +18,11 @@ function SecondaryLayout({ user_tags }) {
                 {user_tags && user_tags.length > 0 ? (
                     <ul>
                         {user_tags.map((tag, index) => (
-                            <li className={styles.li} key={index}>{tag.user_tag}</li>
+                            <li className={styles["tag-display"]} key={index}>{tag.user_tag}</li>
                         ))}
                     </ul>
                 ) : (
-                    <p>No custom tags yet.</p>
+                    <p className={styles["tag-display"]}>No custom tags yet.</p>
                 )}
             </div>
         </>

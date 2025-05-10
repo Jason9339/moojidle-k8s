@@ -16,13 +16,12 @@ function MainLayout({ pfp_path, name, email, contact_ways }) {
 
                 <div className={styles["primary-info-flexbox"]}>
                     <div>
-                        <h2 className={styles.h2}>User Name:</h2>
-                        <h3 className={styles.h3}>{name}</h3>
+                        <h3 className={styles["user-name"]}>{name}</h3>
                     </div>
 
                     <div>
                         <h2 className={styles.h2}>Registered Email:</h2>
-                        <h3 className={styles.h3}>{email}</h3>
+                        <h3 className={styles["register-email"]}>{email}</h3>
                     </div>
 
                     <div>

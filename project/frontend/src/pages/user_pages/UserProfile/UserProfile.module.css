@@ -1,12 +1,14 @@
 .content {
-    padding-top: 1vh;
+    padding-top: 2vh;
+    padding-left: 1vw;
 
     height: 90vh;
-    width: calc(100vw - 180px);
+    width: calc(99vw - 180px);
 }
 
 .category {
     display: block;
+    padding-left: 2vw;
     font-size: 5vh;
 }
 
@@ -30,7 +32,7 @@
     align-items: start;
     height: 100%;
 
-    background-color: rgba(218, 218, 218, 0.5);
+    background-color: rgba(218, 218, 218, 0.15);
     border-radius: 10px;
 }
 
