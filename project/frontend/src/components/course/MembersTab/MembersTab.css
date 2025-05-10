@@ -1,0 +1,143 @@
+/* Member Tab Container */
+.membersContainer {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Table styling for members */
+.memberTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+    border: 1px solid #dee2e6; /* 外圍邊框 */
+}
+
+.memberTable th {
+    background-color: #f8f9fa;
+    color: #495057;
+    text-align: left;
+    font-weight: 600;
+}
+
+.memberTable td {
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+
+
+.memberTable tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.memberTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Action column styling */
+.memberTable th:last-child,
+.memberTable td:last-child {
+    text-align: center;
+    width: 120px;
+}
+
+.memberSection li:last-child {
+    border-bottom: none;
+}
+
+    /* Contact ways styling */
+.contactItem {
+    margin-bottom: 4px;
+    font-size: 13px;
+    display: flex;
+    gap: 5px;
+}
+
+.contactItem strong {
+    text-transform: capitalize;
+    color: #495057;
+}
+
+/* Button for promoting/demoting assistants */
+.roleButton {
+    background-color: #cfe2ff;
+    color: #084298;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.roleButton:hover {
+    background-color: #bfd8f8;
+}
+
+.removeButton {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.removeButton:hover {
+    background-color: #f5c2c7;
+}
+
+/* Member info styling */
+.memberInfo {
+    display: flex;
+    align-items: center;
+}
+
+.memberName {
+    font-weight: 500;
+}
+
+.memberEmail {
+    color: #666;
+    margin-left: 8px;
+}
+
+.studentId {
+    color: #666;
+    font-size: 12px;
+    margin-left: 8px;
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Error message */
+.error {
+    padding: 12px;
+    background-color: #f8d7da;
+    color: #842029;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+/* Loading indicator */
+.loading {
+    color: #666;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Empty state */
+.emptyState {
+    text-align: center;
+    color: #666;
+    padding: 30px;
+    font-style: italic;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+

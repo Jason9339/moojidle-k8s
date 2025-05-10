@@ -34,3 +34,11 @@ export const getCourseLink = async (courseId) => {
       return { link: "" }; // 返回空連結或提示信息
   }
 };
+
+
+
+// 成員相關
+export const getCourseMembers = async (courseId) => {
+
+    return (await axios.get(`/course/member/${courseId}`)).data;
+}

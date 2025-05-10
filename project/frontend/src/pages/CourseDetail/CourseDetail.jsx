@@ -22,7 +22,7 @@ function CourseDetail() {
     const [activeTab, setActiveTab] = useState("課程");
     const [members, setMembers] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => { 
         const fetchCourseData = async () => {
             try {
                 setLoading(true);
@@ -98,7 +98,7 @@ function CourseDetail() {
                     <AssignmentsTab assignments={assignments} />
                 )}
                 {activeTab === "公告" && <AnnouncementsTab />}
-                {activeTab === "成員" && <MembersTab members={members} />}
+                {activeTab === "成員" && <MembersTab courseId={courseId} />}
             </div>
         </div>
     );
