@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TextEditor from '@/components/text-editor/TextEditor';
+import TextEditor from '@/components/text_editor/TextEditor';
 import { BsZoomOut } from "react-icons/bs";
 import { MdAddCircleOutline } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";

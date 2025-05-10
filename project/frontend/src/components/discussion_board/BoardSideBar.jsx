@@ -56,6 +56,11 @@ function BoardSideBar() {
                     link={"/discussion/all"}
                 />
 
+
+                <SubMenu>
+
+
+                </SubMenu>
                 {courses.map(({ course_id, name }) => (
                     <Item
                         key={course_id}
@@ -72,30 +77,30 @@ function BoardSideBar() {
 export default BoardSideBar;
 /* ---------- styled-components ---------- */
 const StyledSidebar = styled(Sidebar)`
-    height: 100vh !important;
+    height: 100vh;
 
     .ps-sidebar-container {
         height: 100% !important;
-        background-color: #1f2a40 !important;
+        background-color: #1f2a40;
     }
 
     .ps-menu-button {
-        padding: 12px 20px !important;
-        color: #ffffff;
+        padding: 12px 20px;
+        color:#ffffff;
         font-weight: bold;
     }
 
     .ps-menu-button:hover {
-        background-color: #1f2a40 !important;
+        background-color: #1f2a40;
         color: #5961d4 !important;
     }
 
     .ps-menu-item-root.ps-active > .ps-menu-button {
-        background-color: #2e3e6e !important;
-        color: #5961d4 !important;
+        background-color: #2e3e6e;
+        color: #5961d4 ;
     }
 
     .ps-icon-wrapper {
-        background: transparent !important;
+        background: transparent;
     }
 `;

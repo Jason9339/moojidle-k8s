@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import BoardSideBar from "@/components/discussion-board/BoardSideBar";
+import BoardSideBar from "@/components/discussion_board/BoardSideBar";
 import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
-import PostPreview from "@/components/discussion-board/PostPreview";
-import PostCreator from "@/components/discussion-board/PostCreator";
+import PostPreview from "@/components/discussion_board/PostPreview";
+import PostCreator from "@/components/discussion_board/PostCreator";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 
 
