@@ -1,39 +1,27 @@
 import { useEffect, useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-const Item = ({ title, icon, selected, setSelected, link }) => (
-    <MenuItem
-        active={selected === title}
-        onClick={() => {
-            setSelected(title);
-        }}
-        icon={icon}
-        style={{
-            color: selected === title ? "#5961d4" : "#FFFFFF",
-        }}
-        component={<Link to={link} />}
-    >
-        {title}
-    </MenuItem>
-);
+import { useNavigate, useLocation } from "react-router-dom";
+import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi"
 
+const SELECT_ALL_ID = -1;
 function BoardSideBar() {
-    const [selected, setSelected] = useState("所有");
-    const [courses, setCourses] = useState([]);
+
+    const { state } = useLocation();
+    const [selectedID, setSelectedID] = useState((state == null) ? SELECT_ALL_ID : state.initBoardID);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [itemData, setItemData] = useState([]);
+    const navigate = useNavigate()
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchItemData = async () => {
             try {
-                // TODO get user involved courses.
-                const courses = [
-                    { course_id: 1, name: "電腦圖學" },
-                    { course_id: 2, name: "圖論" },
-                    { course_id: 3, name: "軟體工程" },
-                ];
-                setCourses(courses);
+
+                const userID = 1;
+                const data = GetBoardsGroupByCourseByUserID(userID);
+
+                setItemData(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -41,66 +29,113 @@ function BoardSideBar() {
             }
         };
 
-        fetchCourses();
+        fetchItemData();
     }, []);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
     return (
         <StyledSidebar>
-            <Menu>
-                <Item
-                    title="所有"
-                    selected={selected}
-                    setSelected={setSelected}
-                    link={"/discussion/all"}
-                />
+            <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
+                menuItemStyles={{
+                    button: ({ level }) => {
+                        if (level === 0) return {
+                            fontSize: "1.5rem",
+                            textAlign: "center"
+                        };
+
+                        if (level === 1) return {
+                            fontSize: "1rem",
+                            textAlign: "right"
+                        };
+                    }
+                }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        setSelectedID(SELECT_ALL_ID);
+                        navigate("/discussion/all");
+                    }}
+
+                    className={selectedID === SELECT_ALL_ID ? "text-[#5961d4]" : "text-white"}
+                >
+                    所有
+                </MenuItem>
 
 
-                <SubMenu>
+                {
+                    itemData.map(({ course_id, course_name, boards }) => (
+
+                        <SubMenu key={course_id} label={course_name} className="bg-[#1f2a40]">
+
+                            {
+                                boards.map(({ board_id, board_name }) => (
+
+                                    <MenuItem
+                                        key={board_id}
+                                        onClick={() => {
+                                            setSelectedID(board_id);
+                                            navigate(`/discussion/${board_id}`)
+                                        }}
+
+                                        className={selectedID === board_id ? "text-[#5961d4]" : "text-white"}
+
+                                    >
+                                        {board_name}
+                                    </MenuItem>
+                                ))
+
+                            }
+                            <MenuItem className="addBoard">
+                                新增討論版
+                            </MenuItem>
+
+                        </SubMenu>
+
+                    ))
 
 
-                </SubMenu>
-                {courses.map(({ course_id, name }) => (
-                    <Item
-                        key={course_id}
-                        title={name}
-                        selected={selected}
-                        setSelected={setSelected}
-                        link={`/discussion/${course_id}`}
-                    />
-                ))}
+
+                }
             </Menu>
-        </StyledSidebar>
+        </StyledSidebar >
     );
 }
 export default BoardSideBar;
-/* ---------- styled-components ---------- */
-const StyledSidebar = styled(Sidebar)`
-    height: 100vh;
 
+const StyledSidebar = styled(Sidebar)`
+    height: 100vh !important;
+
+    .ps-menu-label {
+        margin: 0;
+        width : 100%;
+    }
     .ps-sidebar-container {
-        height: 100% !important;
-        background-color: #1f2a40;
+        background-color: #1f2a40 !important;
     }
 
     .ps-menu-button {
         padding: 12px 20px;
-        color:#ffffff;
+        color: #ffffff;
         font-weight: bold;
+        transition: background-color 0.2s, color 0.2s;
+        display: flex;
+  
     }
 
     .ps-menu-button:hover {
-        background-color: #1f2a40;
-        color: #5961d4 !important;
+    background-color: #1f2a40 !important;
+    color: #5961d4 !important;
     }
 
-    .ps-menu-item-root.ps-active > .ps-menu-button {
-        background-color: #2e3e6e;
-        color: #5961d4 ;
+
+
+
+    .ps-submenu-content {
+    background-color: #1f2a40 !important;
+    }
+    .ps-submenu-root > .ps-menu-button {
+    background-color: #1f2a40 !important;
     }
 
-    .ps-icon-wrapper {
-        background: transparent;
-    }
 `;
