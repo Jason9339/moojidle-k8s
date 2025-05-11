@@ -25,6 +25,11 @@ const UserUpdatePassword = () => {
                 return;
             }
 
+            if (currentPassword == newPassword) {
+                setError("New password are the same as the original one.");
+                return;
+            }
+
             const response = await UpdateUserPassword(userId, { currentPassword, newPassword });
 
             if (response?.message === "Password updated successfully") {
