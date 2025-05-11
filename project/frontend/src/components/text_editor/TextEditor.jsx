@@ -1,8 +1,6 @@
-
 import React, { useState, useRef } from "react"
 import { motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
-import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
 import { Bold, Italic, Code as CodeIcon, List as ListIcon, ListOrdered, Quote, Heading } from "lucide-react"
 
@@ -101,7 +99,7 @@ export default function TextEditor({ styles = {}, onTextChange, onSubmit }) {
                 <div className="flex-1 overflow-auto">
                     {preview ? (
                         <div className="prose prose-blue mx-auto p-4">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} >
                                 {text}
                             </ReactMarkdown>
                         </div>
@@ -128,7 +126,7 @@ export default function TextEditor({ styles = {}, onTextChange, onSubmit }) {
                     Comment
                 </Button>
             </div>
-        </Card>
+        </Card >
     )
 }
 
