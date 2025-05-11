@@ -29,6 +29,10 @@ app.use(cors({
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
 
+import postRoute from "#src/routes/discussion_routes/post_routes.js"
+
+app.use("/post", postRoute);
+
 
 
 import post_course_router from "#src/routes/post/post_course_route.js";
