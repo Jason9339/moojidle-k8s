@@ -8,7 +8,9 @@ import {
     getCourseSyllabus as getCourseSyllabusService,
     getCourseLink as getCourseLinkService,
     getCourseDetails as getCourseDetailsService,
-    getTeachingCourses as getTeachingCoursesService
+    getTeachingCourses as getTeachingCoursesService,
+    updateMaterialsService,
+    deleteMaterialService
 } from '#src/services/course_service.js';
 
 import { 
@@ -25,17 +27,17 @@ import {
 } from "#src/services/view_course.js";
 
 // 取得所有課程列表
-export const getAllCourses = async (req, res) => {
+async function getAllCourses(req, res) {
     try {
         const courses = await getAllCoursesService();
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 取得特定課程的公告
-export const getCourseAnnouncements = async (req, res) => {
+async function getCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
         const announcements = await getAnnouncementsByCourseId(courseId);
@@ -44,10 +46,10 @@ export const getCourseAnnouncements = async (req, res) => {
         console.error("取得課程公告錯誤:", error);
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 取得特定課程的檔案
-export const getCourseFiles = async (req, res) => {
+async function getCourseFiles(req, res) {
     try {
         const { courseId } = req.params;
         const files = await getMaterialsByCourseId(courseId);
@@ -56,10 +58,10 @@ export const getCourseFiles = async (req, res) => {
         console.error("取得課程檔案錯誤:", error);
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 取得特定課程的作業
-export const getCourseAssignments = async (req, res) => {
+async function getCourseAssignments(req, res) {
     try {
         const { courseId } = req.params;
         const formattedAssignments = await getAssignmentsByCourseId(courseId);
@@ -68,10 +70,10 @@ export const getCourseAssignments = async (req, res) => {
         console.error("取得課程作業錯誤:", error);
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 取得特定課程的 syllabus
-export const getCourseSyllabus = async (req, res) => {
+async function getCourseSyllabus(req, res) {
     try {
         const { courseId } = req.params;
         const syllabusData = await getCourseSyllabusService(courseId);
@@ -80,10 +82,10 @@ export const getCourseSyllabus = async (req, res) => {
         console.error("取得課程大綱錯誤:", error);
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 取得特定課程的連結
-export const getCourseLink = async (req, res) => {
+async function getCourseLink(req, res) {
     try {
         const { courseId } = req.params;
         const linkData = await getCourseLinkService(courseId);
@@ -92,7 +94,7 @@ export const getCourseLink = async (req, res) => {
         console.error("取得課程連結錯誤:", error);
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // 創建課程
 async function CreateCourse(req, res) {
@@ -224,12 +226,58 @@ async function EditCourse(req, res) {
     }
 }
 
+// 更新課程教材
+async function updateCourseMaterials(req, res) {
+    try {
+        const { courseId } = req.params;
+        const materials = req.body;
+        
+        if (!materials || !Array.isArray(materials) || materials.length === 0) {
+            return res.status(400).json({ message: '請提供有效的教材數據' });
+        }
+        
+        // 從 course_service.js 引入的更新教材服務函數
+        const updatedMaterials = await updateMaterialsService(parseInt(courseId), materials);
+        res.status(200).json(updatedMaterials);
+    } catch (error) {
+        console.error(`更新課程 ${req.params.courseId} 教材失敗:`, error);
+        res.status(500).json({ message: '更新教材失敗', error: error.message });
+    }
+}
+
+// 刪除課程教材
+async function deleteCourseMaterial(req, res) {
+    try {
+        const { courseId, materialId } = req.params;
+        
+        // 從 course_service.js 引入的刪除教材服務函數
+        const result = await deleteMaterialService(parseInt(courseId), parseInt(materialId));
+        
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: '未找到指定教材' });
+        }
+        
+        res.status(200).json({ message: `成功刪除教材 ID: ${materialId}` });
+    } catch (error) {
+        console.error(`刪除課程 ${req.params.courseId} 教材 ${req.params.materialId} 失敗:`, error);
+        res.status(500).json({ message: '刪除教材失敗', error: error.message });
+    }
+}
+
 export {
+    getAllCourses,
+    getCourseAnnouncements,
+    getCourseFiles,
+    getCourseAssignments,
+    getCourseSyllabus,
+    getCourseLink,
     CreateCourse,
     DeleteCourse,
     ReadCourse,
     GetCourseDetails,
     GetTeachingCourses,
     ReadTeachIn,
-    EditCourse
+    EditCourse,
+    updateCourseMaterials,
+    deleteCourseMaterial
 };

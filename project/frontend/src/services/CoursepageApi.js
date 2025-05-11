@@ -34,3 +34,25 @@ export const getCourseLink = async (courseId) => {
       return { link: "" }; // 返回空連結或提示信息
   }
 };
+
+// 更新課程教材資料
+export const updateCourseMaterials = async (courseId, materials) => {
+  try {
+    const response = await axios.post(`/course/${courseId}/materials`, materials);
+    return response.data;
+  } catch (error) {
+    console.error(`更新課程 ${courseId} 教材失敗:`, error);
+    throw error;
+  }
+};
+
+// 刪除教材
+export const deleteCourseMaterial = async (courseId, materialId) => {
+  try {
+    const response = await axios.delete(`/course/${courseId}/materials/${materialId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`刪除課程 ${courseId} 教材 ${materialId} 失敗:`, error);
+    throw error;
+  }
+};

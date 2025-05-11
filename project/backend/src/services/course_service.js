@@ -36,7 +36,8 @@ async function getMaterialsByCourseId(courseId) {
             name: material.m_name,
             url: material.url,
             description: material.description,
-            uploadDate: material.create_date
+            uploadDate: material.create_date,
+            week: material.week || 1 // 確保返回 week 字段，默認為第1週
         }));
     } catch (error) {
         console.error(`[getMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
@@ -176,6 +177,69 @@ async function getTeachingCourses(userId) {
     }
 }
 
+// 更新課程教材
+async function updateMaterialsService(courseId, materials) {
+    try {
+        const materialsCollection = mongoose.connection.db.collection('materials');
+        const results = [];
+        
+        // 只處理現有教材的更新
+        for (const material of materials) {
+            // 檢查是否是已存在的教材
+            if (material.id) {
+                // 更新現有教材
+                const result = await materialsCollection.updateOne(
+                    { 
+                        m_id: parseInt(material.id),
+                        in_course_id: parseInt(courseId)
+                    },
+                    {
+                        $set: {
+                            m_name: material.name,
+                            url: material.url,
+                            description: material.description || "",
+                            week: material.week || 1
+                        }
+                    }
+                );
+                
+                if (result.matchedCount > 0) {
+                    results.push({
+                        id: material.id,
+                        name: material.name,
+                        url: material.url,
+                        description: material.description || "",
+                        week: material.week || 1,
+                        status: 'updated'
+                    });
+                }
+            }
+        }
+        
+        return results;
+    } catch (error) {
+        console.error(`[updateMaterialsService] Error updating materials for course ID ${courseId}:`, error);
+        throw new Error(`Failed to update course materials: ${error.message}`);
+    }
+}
+
+// 刪除教材
+async function deleteMaterialService(courseId, materialId) {
+    try {
+        const materialsCollection = mongoose.connection.db.collection('materials');
+        
+        const result = await materialsCollection.deleteOne({
+            m_id: parseInt(materialId),
+            in_course_id: parseInt(courseId)
+        });
+        
+        return result;
+    } catch (error) {
+        console.error(`[deleteMaterialService] Error deleting material ID ${materialId} from course ID ${courseId}:`, error);
+        throw new Error(`Failed to delete material: ${error.message}`);
+    }
+}
+
 export {
     getCourseById,
     getAnnouncementsByCourseId,
@@ -185,5 +249,8 @@ export {
     getCourseSyllabus,
     getCourseLink,
     getCourseDetails,
-    getTeachingCourses
+    getTeachingCourses,
+    // 教材操作服務
+    updateMaterialsService,
+    deleteMaterialService
 };

@@ -1,7 +1,87 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./CourseTab.css";
 
-function CourseTab({ courseId, course, materials, assignments }) {
+function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
+    const [editingMaterials, setEditingMaterials] = useState([]);
+    
+    // 當 materials 或 isEditMode 改變時，重新初始化編輯數據
+    useEffect(() => {
+        if (isEditMode) {
+            // 深度複製 materials 並按週次分組
+            const materialsByWeek = Array(16).fill().map((_, i) => {
+                const currentWeek = i + 1;
+                return materials.filter(
+                    m => m.week === currentWeek || (!m.week && currentWeek === 1)
+                );
+            });
+            
+            setEditingMaterials(materialsByWeek);
+        }
+    }, [materials, isEditMode]);
+
+    // 當編輯的材料發生變化時，通知父組件
+    useEffect(() => {
+        if (isEditMode && onMaterialsChange) {
+            // 將按週次分組的教材轉換為平面數組
+            const flattenedMaterials = editingMaterials.flatMap((weekMaterials, weekIndex) => {
+                return weekMaterials.map(material => ({
+                    ...material,
+                    week: weekIndex + 1  // 確保每個教材都有正確的 week 屬性
+                }));
+            });
+            
+            onMaterialsChange(flattenedMaterials);
+        }
+    }, [editingMaterials, isEditMode, onMaterialsChange]);
+
+    // 處理教材名稱變更
+    const handleMaterialNameChange = (weekIndex, materialIndex, newName) => {
+        const updatedMaterials = [...editingMaterials];
+        if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+            updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+            updatedMaterials[weekIndex][materialIndex] = {
+                ...updatedMaterials[weekIndex][materialIndex],
+                name: newName
+            };
+            setEditingMaterials(updatedMaterials);
+        }
+    };
+
+    // 處理教材URL變更
+    const handleMaterialUrlChange = (weekIndex, materialIndex, newUrl) => {
+        const updatedMaterials = [...editingMaterials];
+        if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+            updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+            updatedMaterials[weekIndex][materialIndex] = {
+                ...updatedMaterials[weekIndex][materialIndex],
+                url: newUrl
+            };
+            setEditingMaterials(updatedMaterials);
+        }
+    };
+
+    // 刪除教材
+    const deleteMaterial = (weekIndex, materialIndex) => {
+        const updatedMaterials = [...editingMaterials];
+        if (updatedMaterials[weekIndex]) {
+            updatedMaterials[weekIndex] = updatedMaterials[weekIndex].filter((_, idx) => idx !== materialIndex);
+            setEditingMaterials(updatedMaterials);
+        }
+    };
+
+    // 輔助函數：獲取特定週次的教材列表
+    const getMaterialsForWeek = (weekIndex) => {
+        const currentWeek = weekIndex + 1;
+        
+        if (isEditMode && editingMaterials[weekIndex]) {
+            return editingMaterials[weekIndex];
+        } else {
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        }
+    };
+
     return (
         <div className="material-table-section">
             <table className="material-table">
@@ -16,9 +96,7 @@ function CourseTab({ courseId, course, materials, assignments }) {
                 <tbody>
                     {Array.from({ length: 16 }, (_, i) => {
                         const currentWeek = i + 1;
-                        const weekMaterials = materials.filter(
-                            (m) => m.week === currentWeek || (!m.week && currentWeek === 1)
-                        );
+                        const weekMaterials = getMaterialsForWeek(i);
                         const weekAssignments = assignments.filter(
                             (a) => a.week === currentWeek || (!a.week && currentWeek === 1)
                         );
@@ -27,21 +105,55 @@ function CourseTab({ courseId, course, materials, assignments }) {
                             <tr key={currentWeek}>
                                 <td>{currentWeek}</td>
                                 <td>
-                                    {weekMaterials.length > 0 ? (
-                                        weekMaterials.map((material, idx) => (
-                                            <div key={idx}>
-                                                {material.name}{" "}
-                                                <a
-                                                    href={material.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    [slide]
-                                                </a>
-                                            </div>
-                                        ))
+                                    {isEditMode ? (
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx} className="edit-material-item">
+                                                        <input
+                                                            type="text"
+                                                            value={material.name || ""}
+                                                            onChange={(e) => handleMaterialNameChange(i, idx, e.target.value)}
+                                                            className="material-input"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            value={material.url || "#"}
+                                                            onChange={(e) => handleMaterialUrlChange(i, idx, e.target.value)}
+                                                            className="material-input"
+                                                            placeholder="URL"
+                                                        />
+                                                        <button 
+                                                            onClick={() => deleteMaterial(i, idx)}
+                                                            className="delete-material-btn"
+                                                        >
+                                                            刪除
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>尚無教材</span>
+                                            )}
+                                        </>
                                     ) : (
-                                        <span>Week {currentWeek} Topic</span>
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx}>
+                                                        {material.name}{" "}
+                                                        <a
+                                                            href={material.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            [slide]
+                                                        </a>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>Week {currentWeek} Topic</span>
+                                            )}
+                                        </>
                                     )}
                                 </td>
                                 <td>
