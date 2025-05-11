@@ -28,21 +28,14 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+import courseRoute from "#src/routes/course_routes/course_route.js"
 
-
-
-import post_course_router from "#src/routes/post/post_course_route.js";
-import post_router from "#src/routes/post/post_route.js";
-import post_user_router from "#src/routes/post/post_user_route.js";
-import post_board_router from "#src/routes/post/post_board_route.js";
-app.use("/post-course", post_course_router);
-app.use("/post", post_router);
-app.use("/post-user", post_user_router);
-app.use("/post-board", post_board_router);
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
 
+// try hit http://localhost:3000/course
+app.use("/course", courseRoute);
 
 // Routes ends --------------------------------------------------------------------------
 
