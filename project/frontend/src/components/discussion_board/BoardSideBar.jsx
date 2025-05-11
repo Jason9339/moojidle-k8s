@@ -4,14 +4,14 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi"
 
+const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
-const SELECT_ALL_ID = -1;
 function BoardSideBar() {
 
     const { state } = useLocation();
 
     // Whether a MenuItem is currently selectewd
-    const [selectedID, setSelectedID] = useState((state == null) ? SELECT_ALL_ID : state.initBoardID);
+    const [selectedID, setSelectedID] = useState((state == null) ? NO_SELECTED : state.initBoardID);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -70,17 +70,6 @@ function BoardSideBar() {
                     }
                 }}
             >
-                <MenuItem
-                    onClick={() => {
-                        setSelectedID(SELECT_ALL_ID);
-                        navigate("/discussion/all");
-                    }}
-
-                    className={selectedID === SELECT_ALL_ID ? "text-[#5961d4]" : "text-white"}
-                >
-                    所有
-                </MenuItem>
-
 
                 {
                     itemData.map(({ course_id, course_name, boards }) => (
@@ -97,8 +86,9 @@ function BoardSideBar() {
                                         className={selectedID === board_id ? "text-[#5961d4]" : "text-white"}
                                         suffix={
                                             <div key={`container-${board_id}`} className="flex space-x-2" >
-                                                <button key={`${board_id}-btn1`} className={`flex-1 ${selectedID === board_id ? "text-[#5961d4]" : "text-white"
-                                                    }`} onClick={() => {
+                                                <button key={`${board_id}-btn1`}
+                                                    className={`flex-1 hover:cursor-pointer hover:text-[#5961d4] ${selectedID === board_id ? "text-[#5961d4]" : "text-white"}`}
+                                                    onClick={() => {
                                                         setSelectedID(board_id);
                                                         navigate(`/discussion/${board_id}`)
                                                     }}>
@@ -112,7 +102,7 @@ function BoardSideBar() {
                                                         e.stopPropagation();
                                                         alert("Delete Board")
                                                     }}
-                                                    className="px-2 py-1 text-sm rounded hover:bg-gray-700 text-white"
+                                                    className="px-2 py-1 text-sm rounded hover:bg-gray-700 hover:cursor-pointer text-white"
                                                 >
                                                     <FaEdit className="inline w-4 h-4" />
                                                 </button>

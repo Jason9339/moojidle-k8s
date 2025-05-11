@@ -10,7 +10,6 @@ import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 function DiscussionBoard() {
     const { param } = useParams();
     const [posts, setPosts] = useState([]);
-    const [courseName, setCourseName] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -38,17 +37,29 @@ function DiscussionBoard() {
             <LeftBar />
             <div className="flex">
                 <BoardSideBar />
-                <div className="p-5 flex-1 flex flex-col h-screen">
-                    <PostCreator />
-                    <h2>課程{param}討論版</h2>
-                    {loading && <p>載入中...</p>}
-                    {error && <p className="text-red-500">{error}</p>}
-                    {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
-                    {posts.map((post) => (
 
-                        <PostPreview post={post} />
-                    ))}
-                </div>
+                {
+                    param == "home" ?
+                        <span>
+                            Homepage
+                        </span>
+
+                        :
+
+
+                        <div className="p-5 flex-1 flex flex-col h-screen">
+                            <PostCreator />
+                            <h2>課程{param}討論版</h2>
+                            {loading && <p>載入中...</p>}
+                            {error && <p className="text-red-500">{error}</p>}
+                            {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
+                            {posts.map((post) => (
+
+                                <PostPreview post={post} />
+                            ))}
+                        </div>
+                }
+
 
             </div >
 
