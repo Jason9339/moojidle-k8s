@@ -30,7 +30,13 @@ async function GetAllUserCourseByUserId(userId) {
             .project({ _id: 0, course_id: 1, name: 1 })
             .toArray();
 
-        return courses;
+        // change name to course_name
+        const result = courses.map(c => ({
+            course_id: c.course_id,
+            course_name: c.name
+        }));
+
+        return result;
 
     } catch (err) {
         console.log(err);
