@@ -13,18 +13,23 @@ import {
 //
 // [
 //     {
-//         "_id": "682075190db4344b7ed86290",
-//         "post_id": 2,
-//         "post_by_user_id": 15,
-//         "title": "Post title 2 in Board 2",
-//         "description": "This is the content of post 2 in board 2.",
+//         "_id": "6820a7350db4344b7ed8645e",
+//         "post_id": 3,
+//         "post_by_user_id": 7,
+//         "title": "Post title 3 in Board 3",
+//         "post_user_custom_tags": [
+//             {
+//                 "tag_name": "User7's CustomTag_1"
+//             }
+//         ],
+//         "description": "This is the content of post 3....",
 //         "post_date": "2025-01-15T00:00:00.000Z",
 //         "public": false,
-//         "in_b_id": 2
+//         "in_b_id": 3,
+//         "post_tags": []
 //     },
 //     ......
 // ]
-
 router.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 
 export default router;

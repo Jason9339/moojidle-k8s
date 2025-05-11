@@ -8,8 +8,6 @@ async function FindProjectedPostsByBId(in_b_id) {
             in_b_id: parseInt(in_b_id)
         }).project({
             comments: 0,
-            post_user_custom_tag: 0,
-            post_tags: 0
         }).toArray();
     } catch (err) {
         console.log(err);
