@@ -29,13 +29,16 @@ app.use(cors({
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
 import courseRoute from "#src/routes/course_routes/course_route.js"
-
+import discussionBoardRoute from "#src/routes/discussion_board_routes/discussion_board_route.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
 
 // try hit http://localhost:3000/course
 app.use("/course", courseRoute);
+
+// try hit http://localhost:3000/discussion-board
+app.use("/discussion-board", discussionBoardRoute);
 
 // Routes ends --------------------------------------------------------------------------
 

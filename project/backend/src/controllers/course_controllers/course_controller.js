@@ -7,19 +7,19 @@ import {
 // [
 //     {
 //         course_id : 1,
-//         name : "course 1",
+//         course_name : "course 1",
 //     },
 //     {
 //         course_id : 2,
-//         name : "course 2",
+//         course_name  : "course 2",
 //     },
 //     {
 //         course_id : 3,
-//         name : "course 3",
+//         course_name  : "course 3",
 //     },
 //     {
 //         course_id : 4,
-//         name : "course 4",
+//         course_name  : "course 4",
 //     }
 // ]
 
