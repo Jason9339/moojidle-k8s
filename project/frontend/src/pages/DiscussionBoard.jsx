@@ -38,31 +38,36 @@ function DiscussionBoard() {
             <div className="flex">
                 <BoardSideBar />
 
-                {
-                    param == "home" ?
-                        <span>
-                            Homepage
-                        </span>
+                <div className="p-5 flex-1 flex flex-col h-screen w-[35vw]">
+                    {
+                        param == "home" ?
+                            <span>
+                                Homepage
+                            </span>
 
-                        :
+                            :
 
+                            <>                            <PostCreator />
+                                <h2>課程{param}討論版</h2>
+                                {loading && <p>載入中...</p>}
+                                {error && <p className="text-red-500">{error}</p>}
+                                {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
+                                {posts.map((post) => (
 
-                        <div className="p-5 flex-1 flex flex-col h-screen">
-                            <PostCreator />
-                            <h2>課程{param}討論版</h2>
-                            {loading && <p>載入中...</p>}
-                            {error && <p className="text-red-500">{error}</p>}
-                            {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
-                            {posts.map((post) => (
+                                    <PostPreview post={post} />
+                                ))}
+                            </>
 
-                                <PostPreview post={post} />
-                            ))}
-                        </div>
-                }
+                    }
 
-
+                </div>
             </div >
 
+            <div className="flex flex-col w-10vw h-screen">
+                <button className="w-full text-center" onClick={() => { alert("new post") }}>
+                    新增貼文
+                </button>
+            </div>
         </>
 
     );

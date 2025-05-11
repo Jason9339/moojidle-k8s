@@ -8,6 +8,7 @@ const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
 function BoardSideBar() {
 
+
     const { state } = useLocation();
 
     // Whether a MenuItem is currently selectewd
@@ -54,7 +55,7 @@ function BoardSideBar() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
     return (
-        <StyledSidebar>
+        <StyledSidebar width="200px">
             <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
                 menuItemStyles={{
                     button: ({ level }) => {
@@ -138,7 +139,6 @@ export default BoardSideBar;
 
 const StyledSidebar = styled(Sidebar)`
     height: 100vh !important;
-
     .ps-menu-label {
         margin: 0;
         width : 100%;
