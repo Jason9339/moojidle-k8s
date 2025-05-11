@@ -11,7 +11,7 @@ import {
 router.get("/course-boards/:courseId", GetCourseDiscussionBoard);
 router.get("/user-course-boards/:userId", GetAllCourseDiscussionBoard);
 
-router.post("/add-course-boards", AddDiscussionBoard)
+router.post("/course-boards", AddDiscussionBoard)
 
 router.delete("/course-boards/:boardId", DeleteDiscussionBoard)
 export default router;
