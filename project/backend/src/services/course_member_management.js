@@ -112,6 +112,7 @@ async function switchStudyAssist(userId, courseId) {
         } else {
             // If the user is not an assistant yet, add them
             // First check if they are a student in the course
+            console.log("Checking if user is a student... user", parsedUserId, "course", parsedCourseId);
             const studyInCollection = db.collection("study_in");
             const isStudent = await studyInCollection.findOne({
                 user_id: parsedUserId,
@@ -135,10 +136,55 @@ async function switchStudyAssist(userId, courseId) {
     }
 }
 
+async function addStudent(userId, studentId, courseId) {
+    try {
+        // Parse the parameters to ensure they are integers
+        const parsedUserId = parseInt(userId);
+        const parsedStudentId = parseInt(studentId);
+        const parsedCourseId = parseInt(courseId);
+
+        console.log(parsedUserId, parsedStudentId, parsedCourseId);
+        
+        const client = mongoose.connection.client;
+        const db = client.db("moojidle");
+        const studyInCollection = db.collection("study_in");
+        const userCollection = db.collection("user");
+        
+        // Check if the user exists
+        const userExists = await userCollection.findOne({ user_id: parsedUserId });
+        if (!userExists) {
+            throw new Error("User does not exist");
+        }
+        
+        // Check if the student is already enrolled in this course
+        const existingEnrollment = await studyInCollection.findOne({
+            user_id: parsedUserId,
+            course_id: parsedCourseId
+        });
+        
+        if (existingEnrollment) {
+            throw new Error("Student is already enrolled in this course");
+        }
+        
+        // Add the student to the study_in collection
+        await studyInCollection.insertOne({
+            user_id: parsedUserId,
+            course_id: parsedCourseId,
+            student_id: parsedStudentId
+        });
+        
+        return { message: "Student successfully enrolled in the course" };
+    } catch (error) {
+        console.error("Error in inviteStudent:", error);
+        throw error;
+    }
+}
+
 export {
     getStudyIn,
     getAssistIn,
     getTeachIn,
-    switchStudyAssist
+    switchStudyAssist,
+    addStudent,
 }
 

@@ -6,12 +6,15 @@ const router = express.Router();
 
 import {  
     getCourseMembers,
-    switchCharacter
+    switchCharacter,
+    manualInviteStudent
 } from '#src/controllers/course_members_controller.js';
 
 
 router.get("/:courseId", getCourseMembers)
 router.post("/switch/:userId/:courseId", switchCharacter)
+router.post("/add/:courseId", manualInviteStudent) // 手動加入學生
+
 
 
 

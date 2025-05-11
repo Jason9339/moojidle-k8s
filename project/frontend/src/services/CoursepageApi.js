@@ -42,3 +42,17 @@ export const getCourseMembers = async (courseId) => {
 
     return (await axios.get(`/course/member/${courseId}`)).data;
 }
+
+export const manualAddStudent = async (courseId, userId, studentId) => {
+  console.log(courseId, studentId, userId);
+  return (await axios.post(`/course/member/add/${courseId}`, { userId, studentId })).data;
+}
+
+export const switchCharacter = async (userId, courseId) => {
+  return (await axios.post(`/course/member/switch/${userId}/${courseId}`)).data;
+}
+
+
+
+
+
