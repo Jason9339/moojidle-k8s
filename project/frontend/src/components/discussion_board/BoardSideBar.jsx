@@ -4,23 +4,42 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi"
 
+import { FaEdit } from "react-icons/fa";
 const SELECT_ALL_ID = -1;
 function BoardSideBar() {
 
     const { state } = useLocation();
+
+    // Whether a MenuItem is currently selectewd
     const [selectedID, setSelectedID] = useState((state == null) ? SELECT_ALL_ID : state.initBoardID);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    /*
+     *  Data from backend
+     *
+     * [
+     *  {course_id, course_name, boards : [{board_id, board_name}, ...]}
+     * ]
+     *
+     */
     const [itemData, setItemData] = useState([]);
     const navigate = useNavigate()
     useEffect(() => {
         const fetchItemData = async () => {
             try {
 
-                const userID = 1;
-                const data = GetBoardsGroupByCourseByUserID(userID);
-
+                // TODO uncomment this after creating backend api. 
+                // const userID = 1;
+                // const data = GetBoardsGroupByCourseByUserID(userID);
+                const data = [
+                    {
+                        course_id: 1,
+                        course_name: "電腦圖學",
+                        boards: [{ board_id: 1, board_name: "Assign1" }, { board_id: 2, board_name: "Final" }]
+                    },
+                ];
                 setItemData(data);
             } catch (err) {
                 setError(err.message);
@@ -73,20 +92,44 @@ function BoardSideBar() {
 
                                     <MenuItem
                                         key={board_id}
-                                        onClick={() => {
-                                            setSelectedID(board_id);
-                                            navigate(`/discussion/${board_id}`)
-                                        }}
+
 
                                         className={selectedID === board_id ? "text-[#5961d4]" : "text-white"}
+                                        suffix={
+                                            <div key={`container-${board_id}`} className="flex space-x-2" >
+                                                <button key={`${board_id}-btn1`} className={`flex-1 ${selectedID === board_id ? "text-[#5961d4]" : "text-white"
+                                                    }`} onClick={() => {
+                                                        setSelectedID(board_id);
+                                                        navigate(`/discussion/${board_id}`)
+                                                    }}>
 
+                                                    {board_name}
+                                                </button>
+
+                                                {/* TODO Edit Board (Delete in Sprint 1) */}
+                                                <button
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        alert("Delete Board")
+                                                    }}
+                                                    className="px-2 py-1 text-sm rounded hover:bg-gray-700 text-white"
+                                                >
+                                                    <FaEdit className="inline w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        }
                                     >
-                                        {board_name}
+
+
                                     </MenuItem>
                                 ))
 
                             }
-                            <MenuItem className="addBoard">
+                            <MenuItem className="addBoard" onClick={
+                                () => {
+                                    alert("Add Board")
+                                }
+                            }>
                                 新增討論版
                             </MenuItem>
 
@@ -97,7 +140,7 @@ function BoardSideBar() {
 
 
                 }
-            </Menu>
+            </Menu >
         </StyledSidebar >
     );
 }
