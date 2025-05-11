@@ -26,10 +26,9 @@ async function RegisterUser(userData) {
         }
 
         // Find the highest user_id in the database and calculate the next user_id
-        // The idea is that if the user_id is 16, the next user_id will be 17
-        // If no users exist, start from 1
-        const lastUser = await mongoose.connection.db.collection('user').find().sort({ user_id: -1 }).limit(1).toArray();
-        const nextUserId = lastUser.length > 0 ? lastUser[0].user_id + 1 : 1; // Start from 1 if no users exist
+        // we get this my querying into counter document
+        const counter = await mongoose.connection.db.collection('counter').findOne();
+        const nextUserId = counter.user + 1;
 
         // Insert the new user into the database
         result = await mongoose.connection.db.collection('user').insertOne({
