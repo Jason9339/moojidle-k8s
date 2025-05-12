@@ -1,10 +1,7 @@
 import express from 'express';
-
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
-
 
 // Initialize environment variables
 dotenv.config();
@@ -18,8 +15,6 @@ TestDBConnection();
 const app = express();
 const PORT = process.env.PORT;
 
-
-
 // Middle Ware
 app.use(bodyParser.json());
 app.use(cors({
@@ -28,25 +23,29 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
-
+import userRoute from "#src/routes/user_routes/user_route.js"
+import courseRoute from "#src/routes/course_routes/course_route.js"
+import discussionBoardRoute from "#src/routes/discussion_board_routes/discussion_board_route.js"
 import postRoute from "#src/routes/discussion_routes/post_routes.js"
-
-app.use("/post", postRoute);
-
-
-
-import post_course_router from "#src/routes/post/post_course_route.js";
-import post_router from "#src/routes/post/post_route.js";
-import post_user_router from "#src/routes/post/post_user_route.js";
-import post_board_router from "#src/routes/post/post_board_route.js";
-app.use("/post-course", post_course_router);
-app.use("/post", post_router);
-app.use("/post-user", post_user_router);
-app.use("/post-board", post_board_router);
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
 
+
+// user route
+app.use("/user", userRoute);
+
+// course route
+app.use("/course", courseRoute);
+
+// discussion-board route
+app.use("/discussion-board", discussionBoardRoute);
+
+// post route
+app.use("/post", postRoute);
+
+import postRouter from '#src/routes/discussion_board_routes/post_route.js';
+app.use("/post", postRouter);
 
 // Routes ends --------------------------------------------------------------------------
 

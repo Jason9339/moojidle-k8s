@@ -1,106 +1,118 @@
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-const Item = ({ title, icon, selected, setSelected, link }) => (
-    <MenuItem
-        active={selected === title}
-        onClick={() => {
-            setSelected(title);
-        }}
-        icon={icon}
-        style={{
-            color: selected === title ? "#5961d4" : "#FFFFFF",
-        }}
-        component={<Link to={link} />}
-    >
-        {title}
-    </MenuItem>
-);
+import { useNavigate, useLocation } from "react-router-dom";
 
-function BoardSideBar() {
-    const [selected, setSelected] = useState("所有");
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const NO_SELECTED = -1;
+import { FaEdit } from "react-icons/fa";
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                // TODO get user involved courses.
-                const courses = [
-                    { course_id: 1, name: "電腦圖學" },
-                    { course_id: 2, name: "圖論" },
-                    { course_id: 3, name: "軟體工程" },
-                ];
-                setCourses(courses);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+const BoardSideBar = memo(({ itemData, setBoardID }) => {
 
-        fetchCourses();
-    }, []);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    const { state } = useLocation();
+
+    // Whether a MenuItem is currently selectewd
+    const [selectedID, setSelectedID] = useState((state == null) ? NO_SELECTED : state.initBoardID);
+
+    /*
+     *  Data from backend
+     *
+     * [
+     *  {course_id, course_name, boards : [{board_id, board_name}, ...]}
+     * ]
+     *
+     */
+    const navigate = useNavigate()
     return (
-        <StyledSidebar>
-            <Menu>
-                <Item
-                    title="所有"
-                    selected={selected}
-                    setSelected={setSelected}
-                    link={"/discussion/all"}
-                />
+        <StyledSidebar width="200px">
+            <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
+            >
+
+                {
+                    itemData.map(({ course_id, course_name, boards }) => (
+
+                        <SubMenu key={course_id} label={course_name} className="text-white bg-[#1f2a40]">
+
+                            {
+                                boards.map(({ board_id, board_name }) => (
+
+                                    <MenuItem
+                                        key={board_id}
+                                        className={selectedID === board_id ? "text-[#5961d4]" : "text-white"}
+                                        onClick={() => {
+                                            setBoardID(board_id);
+                                            setSelectedID(board_id);
+                                            navigate(`/discussion/${board_id}`);
+                                        }}
+                                        suffix={
+                                            <button
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    alert("Delete Board");
+                                                }}
+                                                className="p-1 hover:text-[#5961d4] cursor-pointer"
+                                            >
+                                                <FaEdit className="w-4 h-4" />
+                                            </button>
+                                        }
+                                    >
+                                        <span >{board_name}</span>
+                                    </MenuItem>))
+
+                            }
+                            <MenuItem className="addBoard" onClick={
+                                () => {
+                                    alert("Add Board")
+                                }
+                            }>
+                                新增討論版
+                            </MenuItem>
+
+                        </SubMenu>
+
+                    ))
 
 
-                <SubMenu>
 
-
-                </SubMenu>
-                {courses.map(({ course_id, name }) => (
-                    <Item
-                        key={course_id}
-                        title={name}
-                        selected={selected}
-                        setSelected={setSelected}
-                        link={`/discussion/${course_id}`}
-                    />
-                ))}
-            </Menu>
-        </StyledSidebar>
+                }
+            </Menu >
+        </StyledSidebar >
     );
-}
+});
 export default BoardSideBar;
-/* ---------- styled-components ---------- */
-const StyledSidebar = styled(Sidebar)`
-    height: 100vh;
 
-    .ps-sidebar-container {
-        height: 100% !important;
-        background-color: #1f2a40;
+const StyledSidebar = styled(Sidebar)`
+    height: 100vh !important;
+
+    .ps-menu-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.25rem;
     }
 
+    .ps-menu-suffix {
+    flex: 0 0 auto;
+    margin-left: 0.5rem;
+    }
+
+    .ps-sidebar-container { background-color: #1f2a40 !important; }
     .ps-menu-button {
         padding: 12px 20px;
-        color:#ffffff;
+        color: #ffffff;
         font-weight: bold;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    .ps-menu-button:hover { background-color: #1f2a40 !important; color: #5961d4 !important; }
+    .ps-submenu-content { background-color: #1f2a40 !important; }
+    .ps-submenu-content > ul {
+        display: flex;
+        flex-direction: column;
     }
 
-    .ps-menu-button:hover {
-        background-color: #1f2a40;
-        color: #5961d4 !important;
-    }
+    .ps-submenu-content > ul > li {
+        margin-top : 10px;
 
-    .ps-menu-item-root.ps-active > .ps-menu-button {
-        background-color: #2e3e6e;
-        color: #5961d4 ;
-    }
-
-    .ps-icon-wrapper {
-        background: transparent;
     }
 `;

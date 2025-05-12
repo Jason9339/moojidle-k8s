@@ -83,7 +83,7 @@ db.createCollection("study_in", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["user_id", "course_id", "student_id"],
+            required: ["user_id", "course_id"],
             properties: {
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int" },
@@ -314,7 +314,7 @@ db.createCollection("post", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["post_id", "post_by_user_id", "post_user_custom_tag", "description", "post_date", "public"],
+            required: ["post_id", "post_by_user_id", "post_user_custom_tags", "description", "post_date", "public"],
             properties: {
                 post_id: {
                     bsonType: "int",
@@ -328,15 +328,14 @@ db.createCollection("post", {
                     bsonType: "string",
                     description: "Title of the post"
                 },
-                post_user_custom_tag: {
+                post_user_custom_tags: {
                     bsonType: "array",
                     items: {
                         bsonType: "object",
                         properties: {
-                            tag_id: { bsonType: "int" },
                             tag_name: { bsonType: "string" }
                         },
-                        required: ["tag_id", "tag_name"]
+                        required: ["tag_name"]
                     }
                 },
                 description: {
@@ -361,7 +360,7 @@ db.createCollection("post", {
                             comment_date: { bsonType: "date" },
                             description: { bsonType: "string" }
                         },
-                        required: ["comment_by_user_id", "comment_user_custom_tag", "comment_date", "description"]
+                        required: ["comment_by_user_id", "comment_date", "description"]
                     },
                     description: "Comments on the post (optional)"
                 },
@@ -374,10 +373,9 @@ db.createCollection("post", {
                     items: {
                         bsonType: "object",
                         properties: {
-                            tag_id: { bsonType: "int" },
                             tag_name: { bsonType: "string" }
                         },
-                        required: ["tag_id", "tag_name"]
+                        required: ["tag_name"]
                     },
                     description: "Tags associated with the post (optional)"
                 }
