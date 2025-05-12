@@ -8,6 +8,8 @@ import {
     findInviteCodeId
 } from '#src/services/course_member_management.js';
 
+import {getInviteCode} from '#src/services/view_course.js';
+
 
 async function getCourseMembers(req, res) {
     try {
@@ -79,6 +81,8 @@ async function getIdViaInviteCode(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
+
+
 
 export {
     getCourseMembers,

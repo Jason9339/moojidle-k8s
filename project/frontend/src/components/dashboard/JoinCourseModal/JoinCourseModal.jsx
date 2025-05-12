@@ -18,7 +18,8 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
       
       const courseId = await fetchCourseIdByCode(inviteCode);
       const msg = await inviteStudent(courseId.courseId, currentUserId, currentUserId);
-      alert(msg);
+      console.log(msg);
+      alert(msg.message);
       
       
 

@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { getCourseMembers, manualAddStudent, switchCharacter } from "@/services/CoursepageApi"
+import { getCourseMembers, manualAddStudent, switchCharacter,getInviteCode  } from "@/services/CoursepageApi"
 import { useEffect, useState } from 'react';
 import './MembersTab.css';
 
 // 模擬目前登入的 user_id
-const currentUserId = 1;
+// const currentUserId = 1;
 
-function MembersTab({ courseId }) {
+function MembersTab({ courseId, userId }) {
     const [members, setMembers] = useState({
         students: [],
         assistants: [],
@@ -18,6 +18,8 @@ function MembersTab({ courseId }) {
     
     const [showAddForm, setShowAddForm] = useState(false);
     const [newStudent, setNewStudent] = useState({ userId: '', studentId: '' });
+
+    const [code, setCode] = useState(''); // 邀請碼
 
 
     const handleAddStudentFormSubmit = async (e) => {
@@ -50,9 +52,9 @@ function MembersTab({ courseId }) {
     
     // Check if current user is a teacher or assistant
     const isTeacherOrAssistant = () => {
-        if (!currentUserId) return false;
+        if (!userId) return false;
         
-        const userIdNum = parseInt(currentUserId);
+        const userIdNum = parseInt(userId);
         const isTeacher = members.teachers?.some(teacher => teacher.user_id === userIdNum);
         const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
         return isTeacher || isAssistant;
@@ -72,9 +74,23 @@ function MembersTab({ courseId }) {
             } finally {
                 setLoading(false);
             }
-        };
+    };
+    const fetchCode = async () => {
+        try {
+            setLoading(true);
+            const data = await getInviteCode(courseId);
+            setCode(data.code);
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching course invite code:', err);
+            setError('Failed to load course invite code. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    }
     useEffect(() => {    
         fetchMembers();
+        fetchCode();
     }, [courseId]);
 
     const handleMakeAssistant = async (userId) => {
@@ -92,6 +108,7 @@ function MembersTab({ courseId }) {
     return (
         <div className="membersContainer">
             <h3>助教與學生管理</h3>
+            <h3>邀請碼：{code}</h3>
 
             {isTeacherOrAssistant() && false && (
                 <div className="addStudentSection">

@@ -52,6 +52,9 @@ export const switchCharacter = async (userId, courseId) => {
   return (await axios.post(`/course/member/switch/${userId}/${courseId}`)).data;
 }
 
+export const getInviteCode = async (courseId) => {
+  return (await axios.get(`/course/${courseId}/inviteCode`)).data;
+}
 
 
 

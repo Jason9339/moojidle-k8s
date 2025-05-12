@@ -14,6 +14,9 @@ import AnnouncementsTab from "@/components/course/AnnouncementsTab/Announcements
 import MembersTab from "@/components/course/MembersTab/MembersTab";
 
 function CourseDetail() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = user?.user_id;
+
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
@@ -98,7 +101,7 @@ function CourseDetail() {
                     <AssignmentsTab assignments={assignments} />
                 )}
                 {activeTab === "公告" && <AnnouncementsTab />}
-                {activeTab === "成員" && <MembersTab courseId={courseId} />}
+                {activeTab === "成員" && <MembersTab courseId={courseId} userId={currentUserId} />}
             </div>
         </div>
     );
