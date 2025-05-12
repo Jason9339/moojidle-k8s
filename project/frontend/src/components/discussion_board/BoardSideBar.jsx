@@ -31,7 +31,7 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                 {
                     itemData.map(({ course_id, course_name, boards }) => (
 
-                        <SubMenu key={course_id} label={course_name} className="text-white bg-[#1f2a40] [&>ps-submenu-content]:overflow-visible">
+                        <SubMenu key={course_id} label={course_name} className="text-white bg-[#1f2a40]">
 
                             {
                                 boards.map(({ board_id, board_name }) => (
@@ -56,7 +56,7 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                                             </button>
                                         }
                                     >
-                                        <span className="block truncate">{board_name}</span>
+                                        <span >{board_name}</span>
                                     </MenuItem>))
 
                             }
@@ -83,34 +83,36 @@ export default BoardSideBar;
 
 const StyledSidebar = styled(Sidebar)`
     height: 100vh !important;
- .ps-menu-button {
-   display: flex;
-   align-items: flex-start;  
-   flex-wrap: nowrap;
- }
 
- .ps-menu-label {
-    overflow: visible;
-   flex: 1 1 auto;
-   min-width: 0;
-   white-space: normal;
-   word-break: break-word;
-   line-height: 1.25rem;
- }
+    .ps-menu-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.25rem;
+    }
 
- .ps-menu-suffix {
-   flex: 0 0 auto;
-   margin-left: 0.5rem;
- }
+    .ps-menu-suffix {
+    flex: 0 0 auto;
+    margin-left: 0.5rem;
+    }
 
-  .ps-sidebar-container { background-color: #1f2a40 !important; }
-  .ps-menu-button {
-    padding: 12px 20px;
-    color: #ffffff;
-    font-weight: bold;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  .ps-menu-button:hover { background-color: #1f2a40 !important; color: #5961d4 !important; }
-  .ps-submenu-content { background-color: #1f2a40 !important; }
-  .ps-submenu-root > .ps-menu-button { background-color: #1f2a40 !important; }
+    .ps-sidebar-container { background-color: #1f2a40 !important; }
+    .ps-menu-button {
+        padding: 12px 20px;
+        color: #ffffff;
+        font-weight: bold;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    .ps-menu-button:hover { background-color: #1f2a40 !important; color: #5961d4 !important; }
+    .ps-submenu-content { background-color: #1f2a40 !important; }
+    .ps-submenu-content > ul {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ps-submenu-content > ul > li {
+        margin-top : 10px;
+
+    }
 `;
