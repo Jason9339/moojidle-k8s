@@ -10,6 +10,7 @@ function AddCourseButton({ onClick }) {
             title="新增或加入課程"
         >
             <FaPlus />
+            <span>創建課程</span>
         </button>
     );
 }
