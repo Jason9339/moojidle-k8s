@@ -14,7 +14,7 @@ const DiscussionBoardContent = () => {
 
             </div>
             <div className="flex flex-col w-[10vw] mt:[5vh] h-full">
-                <button className="w-full text-center" onClick={() => { alert("new post") }}>
+                <button className="w-full bg-[#9D9D9D] hover:bg-[#6C6C6C] text-center" onClick={() => { alert("new post") }}>
                     新增貼文
                 </button>
             </div>
