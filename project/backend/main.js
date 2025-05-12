@@ -44,7 +44,7 @@ app.use("/course", courseRoute);
 // try hit http://localhost:3000/discussion-board
 app.use("/discussion-board", discussionBoardRoute);
 
-import postRouter from '#src/routes/discussion_routes/post_route.js';
+import postRouter from '#src/routes/discussion_board_routes/post_route.js';
 app.use("/post", postRouter);
 
 // Routes ends --------------------------------------------------------------------------
