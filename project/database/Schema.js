@@ -83,7 +83,7 @@ db.createCollection("study_in", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["user_id", "course_id", "student_id"],
+            required: ["user_id", "course_id"],
             properties: {
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int" },
