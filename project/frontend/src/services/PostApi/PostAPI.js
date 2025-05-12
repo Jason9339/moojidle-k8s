@@ -1,30 +1,8 @@
-import apiClient from "@/services/apiClient";
-import axios from 'axios';
+import apiClient from "../apiClient";
 
-
-async function getPostContent(postID) {
+async function GetPostContent(postID) {
     try {
-        const response = await axios.get(`http://localhost:3000/post/${postID}`);
-        return response.data;
-    } catch (error) {
-        console.error("Failed to fetch post content:", error.message);
-        throw error;
-    }
-}
-
-async function getUserName(UserID) {
-    try {
-        const response = await axios.get(`http://localhost:3000/post-user/${UserID}`);
-        return response.data;
-    } catch (error) {
-        console.error("Failed to fetch post content:", error.message);
-        throw error;
-    }
-}
-
-async function getBoardName(BoardID) {
-    try {
-        const response = await axios.get(`http://localhost:3000/post-board/${BoardID}`);
+        const response = await apiClient.get(`http://localhost:3000/post/content/${postID}`);
         return response.data;
     } catch (error) {
         console.error("Failed to fetch post content:", error.message);
@@ -33,4 +11,7 @@ async function getBoardName(BoardID) {
 }
 
 
-export { getBoardName, getPostContent, getUserName };
+
+
+
+export { GetPostContent };

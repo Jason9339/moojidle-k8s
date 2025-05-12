@@ -1,11 +1,39 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getPostContent, getUserName, getBoardName } from "@/services/PostApi/PostAPI";
+import { GetPostContent } from "@/services/PostApi/PostAPI";
+
 
 function PostContent(props) {
     const [post, setPost] = useState(null);
-    const [postAuthorName, setPostAuthorName] = useState("");
-    const [boardName, setBoardName] = useState("");
+
+    /* postHeaderData = {
+     *
+     *      course_name : String,
+     *      board_name  : String,
+     *      author_name : String,
+     *      title : String,
+     *      post_date : Date,
+     *      post_user_custom_tag : [
+     *          {
+     *              tag_id : Int32,
+     *              tag_name : String
+     *          }
+     *      ], 
+     *
+     *      post_tags : [
+     *          {
+     *              tag_id : Int32,
+     *              tag_name : String
+     *          }
+     *      ] 
+     *
+     * }
+     *
+     */
+    const [postHeaderData, setPostHeaderData] = useState({});
+    const [postDescription, setPostDescription] = useState("");
+    const [comments, setComments] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState("");
@@ -14,27 +42,12 @@ function PostContent(props) {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const data = await getPostContent(postId);
+                const data = await GetPostContent(postId);
+                console.log(data)
+                // setPostHeaderData();
 
-                // 發文者名稱
-                const postAuthor = await getUserName(data.post_by_user_id);
-                setPostAuthorName(postAuthor.name);
-
-                const postBoard = await getBoardName(data.in_b_id);
-                setBoardName(postBoard.name);
-
-                // 留言者名稱
-                const commentsWithNames = await Promise.all(
-                    (data.comments || []).map(async (comment) => {
-                        const userData = await getUserName(comment.comment_by_user_id);
-                        return {
-                            ...comment,
-                            comment_user_display_name: userData.name,
-                        };
-                    })
-                );
-
-                setPost({ ...data, comments: commentsWithNames });
+                setPostDescription(data.description);
+                setComments(data.comments);
             } catch (err) {
                 setError("載入貼文失敗：" + (err.message || "未知錯誤"));
             } finally {
@@ -43,11 +56,13 @@ function PostContent(props) {
         };
 
         fetchPost();
-    }, [postId]);
+    }, []);
 
     const handleCommentSubmit = () => {
         if (!newComment.trim()) return;
 
+
+        // 
         const newCommentObj = {
             comment_id: Date.now(),
             comment_by_user_id: 999,
@@ -72,21 +87,21 @@ function PostContent(props) {
 
     if (loading) return <p>⏳ 載入中...</p>;
     if (error) return <p>{error}</p>;
-    if (!post) return <p>找不到貼文</p>;
+    if (postHeaderData) return <p>找不到貼文</p>;
 
     return (
         <PostContainer>
             <PostHeader>
-                <Title>{boardName} / {post.title}</Title>
+                <Title>{postHeaderData.board_name} / {postHeaderData.title}</Title>
                 <Info>
-                    發文者：{postAuthorName}（{post.post_by_user_id}） | 發文時間：{formatDate(post.post_date)}
+                    發文者：{postHeaderData.author_name} | 發文時間：{formatDate(postHeaderData.post_date)}
                 </Info>
             </PostHeader>
 
-            <Description>{post.description}</Description>
+            <Description>{postDescription}</Description>
 
             <TagList>
-                {post.post_tags && post.post_tags.length > 0 ? (
+                {postHeaderData.post_tags && postHeaderData.post_tags.length > 0 ? (
                     post.post_tags.map((tag) => (
                         <Tag key={tag.tag_id}>{tag.tag_name}</Tag>
                     ))
@@ -108,13 +123,13 @@ function PostContent(props) {
                     <CommentButton onClick={handleCommentSubmit}>送出留言</CommentButton>
                 </CommentInputWrapper>
 
-                {!post.comments || post.comments.length === 0 ? (
+                {!comments || comments.length === 0 ? (
                     <p>目前尚無留言。</p>
                 ) : (
-                    post.comments.map((comment) => (
+                    comments.map((comment) => (
                         <CommentCard key={comment.comment_id}>
                             <CommentInfo>
-                                使用者 {comment.comment_user_display_name}（{comment.comment_user_custom_tag}）於{" "}
+                                使用者 {comment.comment_by_user_name}（{comment.comment_user_custom_tag}）於{" "}
                                 {formatDate(comment.comment_date)}：
                             </CommentInfo>
                             <CommentText>{comment.description}</CommentText>
