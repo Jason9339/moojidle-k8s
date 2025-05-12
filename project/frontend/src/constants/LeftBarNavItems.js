@@ -1,4 +1,4 @@
-import LeftbarPopup from "@/components/user/LeftbarPopup";
+import LeftbarPopup from "@/components/user_components/LeftbarPopup/LeftbarPopup";
 
 export const leftBarNavItems = [
     { label: "使用者", icon: FaUser, popup: LeftbarPopup },
