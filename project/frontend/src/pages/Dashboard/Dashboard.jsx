@@ -15,9 +15,12 @@ import {
 } from "@/services/DashboardApi";
 
 // 模擬目前登入的 user_id
-const currentUserId = 1;
+// const currentUserId = 1;
 
 function Dashboard() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const currentUserId = user?.user_id;
+
   const [dashboardData, setDashboardData] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
