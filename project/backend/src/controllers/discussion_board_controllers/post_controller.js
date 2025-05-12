@@ -36,7 +36,7 @@ async function GetPostContent(req, res, next) {
         postData.course_name = courseName;
 
 
-        // Missing commentator's name, enrich it.
+        // Enrich commentator's name.
         postData.comments = await Promise.all(
             postData.comments.map(async comment => (
                 {
