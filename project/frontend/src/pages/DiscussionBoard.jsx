@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board/BoardSideBar";
-import PostPreview from "@/components/discussion_board/PostPreview";
-import PostCreator from "@/components/discussion_board/PostCreator";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
+import HomepageContent from "@/components/discussion_board/HomepageContent";
+import DiscussionBoardContent from "@/components/discussion_board/DiscussionBoardContent";
+import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi";
 
 
 function DiscussionBoard() {
     const { param } = useParams();
-    const [posts, setPosts] = useState([]);
-    const [courseName, setCourseName] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [boardData, setBoardData] = useState([]);
+    const [currentBoardID, setCurrentBoardID] = useState(-1);
+    const [postData, setPostData] = useState([])
+
+    const setBoardIDAndFetchPosts = useCallback((board_id) => {
+        setCurrentBoardID(board_id);
+
+        // TODO Fetch post data by board_id
+
+    }, [])
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // const data = await getCourseDiscussionBoardFake(param);
-                //const courseData = await getCourse(param); 
-                // setPosts(data);
-                //setCourseName(courseData.name || `課程 ${param}`);
+
+
+                // TODO use Context to save userID
+                const userID = JSON.parse(localStorage.getItem("user")).user_id;
+                const data = await GetBoardsGroupByCourseByUserID(userID);
+                console.log(data)
+                setBoardData(data);
                 setError(null);
+                setLoading(false);
             } catch (err) {
                 setError("無法載入討論資料");
             } finally {
@@ -29,26 +42,27 @@ function DiscussionBoard() {
         };
 
         fetchPosts();
-    }, [param]);
+    }, []);
 
+    if (loading) return (<p>載入中...</p>)
+    if (error) return (<p className="text-red-500">{error}</p>)
     return (
         <>
 
             <LeftBar />
             <div className="flex">
-                <BoardSideBar />
-                <div className="p-5 flex-1 flex flex-col h-screen">
-                    <PostCreator />
-                    <h2>課程{param}討論版</h2>
-                    {loading && <p>載入中...</p>}
-                    {error && <p className="text-red-500">{error}</p>}
-                    {!loading && posts.length === 0 && <p>目前沒有貼文</p>}
-                    {posts.map((post) => (
+                <BoardSideBar itemData={boardData} setBoardID={setCurrentBoardID} />
 
-                        <PostPreview post={post} />
-                    ))}
+                <div className="p-5 flex-1 flex flex-col h-screen w-[35vw]">
+                    {
+                        param == "home" ?
+                            <HomepageContent />
+                            :
+                            <DiscussionBoardContent />
+
+                    }
+
                 </div>
-
             </div >
 
         </>
