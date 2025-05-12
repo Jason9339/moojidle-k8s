@@ -30,6 +30,7 @@ app.use(cors({
 import exampleRoute from "#src/routes/example_route.js"
 import courseRoute from "#src/routes/course_routes/course_route.js"
 import discussionBoardRoute from "#src/routes/discussion_board_routes/discussion_board_route.js"
+
 import userRoute from "#src/routes/user_routes/user_route.js"
 
 // try hit http://localhost:3000/example
@@ -42,6 +43,9 @@ app.use("/course", courseRoute);
 
 // try hit http://localhost:3000/discussion-board
 app.use("/discussion-board", discussionBoardRoute);
+
+import postRouter from '#src/routes/discussion_routes/post_route.js';
+app.use("/post", postRouter);
 
 // Routes ends --------------------------------------------------------------------------
 

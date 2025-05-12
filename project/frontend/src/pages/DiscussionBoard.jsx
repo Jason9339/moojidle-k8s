@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board/BoardSideBar";
-import { getCourseDiscussionBoardFake } from "@/services/UserApi/BoardAPI";
 import PostPreview from "@/components/discussion_board/PostPreview";
 import PostCreator from "@/components/discussion_board/PostCreator";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
@@ -16,9 +15,9 @@ function DiscussionBoard() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const data = await getCourseDiscussionBoardFake(param);
+                // const data = await getCourseDiscussionBoardFake(param);
                 //const courseData = await getCourse(param); 
-                setPosts(data);
+                // setPosts(data);
                 //setCourseName(courseData.name || `課程 ${param}`);
                 setError(null);
             } catch (err) {
