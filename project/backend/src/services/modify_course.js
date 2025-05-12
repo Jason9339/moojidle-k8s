@@ -15,12 +15,13 @@ async function AddCourse(courseData) {
             course_id: nextCourseId,
             name: courseData.name,
             description: courseData.description || "",
-            create_date: new Date().toISOString(), // Set current date/time
+            create_date: new Date(), // Set current date/time
+            start_date: courseData.start_date || new Date(), // Default to current date if not provided
             syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
              invite_link: inviteLink,
             // Add other optional fields from schema if needed
-            week: courseData.week || 16, // Default to 16 if not provided
+            week_num: courseData.week || 16, // Default to 16 if not provided
             color : courseData.color || "#4A90E2", // Default to blue if not provided
 
         };

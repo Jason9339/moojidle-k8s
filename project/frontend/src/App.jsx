@@ -9,6 +9,12 @@ import CoursePage from "@/pages/CoursePage/CoursePage";
 import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
+// pages for user related
+import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
+import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
+import Register from "@/pages/login_register_pages/Register.jsx";
+import Login from "@/pages/login_register_pages/Login.jsx";
+
 function App() {
     let login;
 
@@ -18,14 +24,13 @@ function App() {
         login = true;
     }
 
-    // for sprint 1 we set login to true for testing purpose
-    login = true;
-
     return (
         <div className="flex">
             <Router>
                 <Routes>
                     <Route path="/" element={<Blank />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
@@ -34,6 +39,10 @@ function App() {
                         <Route path="/discussion/:id" element={<DiscussionBoard />} />
                         <Route path="/discussion" element={<DiscussionBoardList />} />
                         <Route path="*" element={<NotFoundPage />} />
+
+                        {/* user pages related */}
+                        <Route path="/user/update-password" element={<UpadatePassword />} />
+                        <Route path="/user/profile" element={<UserProfile />} />
                     </Route>
                 </Routes>
             </Router>
