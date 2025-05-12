@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
 import "./JoinCourseModal.css";
-import { addCourse } from "@/services/DashboardApi"
+import { fetchCourseIdByCode , inviteStudent } from "@/services/DashboardApi"
 
-function JoinCourseModal({ onClose, onAddCourse, currentUserId }) {
+function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
   const [inviteCode, setInviteCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -16,14 +16,13 @@ function JoinCourseModal({ onClose, onAddCourse, currentUserId }) {
     try {
       setIsSubmitting(true);
       
-      // 這裡需要修改為加入課程的 API 呼叫
-      // TODO: 替換為正確的 joinCourse API 調用
-      await addCourse({ 
-        inviteCode: inviteCode,
-        userId: currentUserId 
-      });
+      const courseId = await fetchCourseIdByCode(inviteCode);
+      const msg = await inviteStudent(courseId.courseId, currentUserId, currentUserId);
+      alert(msg);
       
-      await onAddCourse(); // 重新 fetch 所有資料
+      
+
+      await onJoinCourse(); // 重新 fetch 所有資料
       onClose(); // 關閉 modal
     } catch (error) {
       console.error("加入課程失敗:", error);
@@ -33,6 +32,9 @@ function JoinCourseModal({ onClose, onAddCourse, currentUserId }) {
       setIsSubmitting(false);
     }
   };
+
+
+
 
   return (
     <div className="modal-backdrop">
@@ -46,7 +48,7 @@ function JoinCourseModal({ onClose, onAddCourse, currentUserId }) {
           disabled={isSubmitting}
         />
 
-        <div className="modal-btn-group">
+        <div className="modal-btn-group-join">
           <button onClick={handleJoin} disabled={isSubmitting}>
             {isSubmitting ? "加入中..." : "加入課程"}
           </button>

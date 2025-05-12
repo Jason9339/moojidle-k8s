@@ -62,14 +62,14 @@
   resize: none; /* 禁止拉動 */
 }
 
-.modal-btn-group {
+.modal-btn-group-join {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 12px;
 }
 
-.modal-btn-group button {
+.modal-btn-group-join button {
   padding: 8px 16px;
   border-radius: 6px;
   border: none;
@@ -78,27 +78,20 @@
   transition: background-color 0.2s ease;
 }
 
-.modal-btn-group button:first-of-type {
+.modal-btn-group-join button:first-of-type {
   background-color: #22C55E;
   color: white;
 }
 
-.modal-btn-group button:first-of-type:hover {
+.modal-btn-group-join button:first-of-type:hover {
   background-color: #157539;
 }
-.modal-btn-group button.danger {
-  background-color: #f44336; /* Red */
-  color: white;
-}
 
-.modal-btn-group button.danger:hover {
-  background-color: #d32f2f; /* Darker red */
-}
-.modal-btn-group button:last-of-type {
+.modal-btn-group-join button:last-of-type {
   background-color: #e0e0e0;
   color: #333;
 }
 
-.modal-btn-group button:last-of-type:hover {
+.modal-btn-group-join button:last-of-type:hover {
   background-color: #c5c5c5;
 }

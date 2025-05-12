@@ -8,7 +8,7 @@ async function AddCourse(courseData) {
         // 1. Generate the next course_id
         const nextCourseId = await getNextSequenceValue("course");
         console.log("Next course_id:", nextCourseId);
-        const inviteLink = await generateInviteLink(nextCourseId);
+        const inviteLink = await generateInviteCode(); //generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
         const newCourseDocument = {
@@ -70,6 +70,16 @@ async function getNextSequenceValue(collectionName) {
 async function generateInviteLink(course_id) {
     return inviteLinkBase + course_id;
 }
+
+async function generateInviteCode() {
+    const db = mongoose.connection.db;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code;
+    do {
+        code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    } while (await db.collection('courses').findOne({ inviteCode: code }));
+    return code;
+};
 
 async function AddTeachIn(userId, courseId) {
     try {

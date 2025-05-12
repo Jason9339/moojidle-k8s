@@ -61,6 +61,9 @@ function Dashboard() {
   const handleAddCourse = async () => {
     await fetchAll();
   };
+  const handleJoinCourse = async () => {
+    await fetchAll();
+  };
 
   const handleDeleteCourse = async (courseId) => {
     try {
@@ -113,24 +116,13 @@ function Dashboard() {
           onClose={() => setShowAddModal(false)}
           onAddCourse={handleAddCourse}
           currentUserId={currentUserId}
-        />,
-        <AddCourseModal
-          onClose={() => setShowAddModal(false)}
-          onAddCourse={handleAddCourse}
-          currentUserId={currentUserId}
         />
-
       )}
 
       {showJoinModal && (
         <JoinCourseModal
           onClose={() => setShowJoinModal(false)}
-          onJoinCourse={handleAddCourse}
-          currentUserId={currentUserId}
-        />,
-        <JoinCourseModal
-          onClose={() => setShowJoinModal(false)}
-          onJoinCourse={handleAddCourse}
+          onJoinCourse={handleJoinCourse}
           currentUserId={currentUserId}
         />
 

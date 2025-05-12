@@ -3,7 +3,9 @@ import {
     getAssistIn,
     getTeachIn,
     switchStudyAssist,
-    addStudent
+    addStudent, 
+    inviteStudentByCode,
+    findInviteCodeId
 } from '#src/services/course_member_management.js';
 
 
@@ -39,7 +41,7 @@ async function switchCharacter(req, res) {
     }
 }
 
-async function manualInviteStudent(req, res) {
+async function inviteStudent(req, res) {
     try {
         const userId = req.body.userId;
         const studentId = req.body.studentId;
@@ -54,6 +56,26 @@ async function manualInviteStudent(req, res) {
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);
+        res.status(409).json({ message: error.message });
+    }
+}
+
+
+
+async function getIdViaInviteCode(req, res) {
+   try {
+        const code = req.params.code;
+        const courseId = await findInviteCodeId(code);
+        if (courseId) {
+            res.status(200).json({ courseId: courseId.course_id });
+        }  
+        else {
+            res.status(404).json({ message: "Course not found" });
+        }
+        
+    } 
+    catch (error) {
+        console.error("Error getting course ID via invite code:", error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -61,7 +83,8 @@ async function manualInviteStudent(req, res) {
 export {
     getCourseMembers,
     switchCharacter,
-    manualInviteStudent
+    inviteStudent,
+    getIdViaInviteCode
 }
 
 

@@ -93,7 +93,7 @@ function MembersTab({ courseId }) {
         <div className="membersContainer">
             <h3>助教與學生管理</h3>
 
-            {isTeacherOrAssistant() && (
+            {isTeacherOrAssistant() && false && (
                 <div className="addStudentSection">
                     <button 
                         className="addButton"
