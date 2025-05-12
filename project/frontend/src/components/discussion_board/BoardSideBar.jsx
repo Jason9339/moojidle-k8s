@@ -32,15 +32,9 @@ function BoardSideBar() {
             try {
 
                 // TODO uncomment this after creating backend api. 
-                // const userID = 1;
-                // const data = GetBoardsGroupByCourseByUserID(userID);
-                const data = [
-                    {
-                        course_id: 1,
-                        course_name: "電腦圖學",
-                        boards: [{ board_id: 1, board_name: "Assign1" }, { board_id: 2, board_name: "Final" }]
-                    },
-                ];
+                const userID = JSON.parse(localStorage.getItem("user")).user_id;
+                const data = await GetBoardsGroupByCourseByUserID(userID);
+                console.log(data)
                 setItemData(data);
             } catch (err) {
                 setError(err.message);
