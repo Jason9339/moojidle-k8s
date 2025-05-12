@@ -28,8 +28,13 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+
+import userRoute from "#src/routes/user_routes/user_route.js"
+
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
+// user route
+app.use("/user", userRoute);
 
 import postRouter from '#src/routes/discussion_routes/post_route.js';
 app.use("/post", postRouter);
