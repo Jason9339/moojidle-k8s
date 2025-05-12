@@ -55,7 +55,6 @@ function MembersTab({ courseId }) {
         const userIdNum = parseInt(currentUserId);
         const isTeacher = members.teachers?.some(teacher => teacher.user_id === userIdNum);
         const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
-        
         return isTeacher || isAssistant;
     };
 
@@ -210,10 +209,12 @@ function MembersTab({ courseId }) {
                                                     )}
                                             </td>
                                             <td>
-                                                <button className={`$"roleButton" $"removeButton"`} 
-                                                    onClick={() => handleMakeAssistant(assistant.user_id)}>
-                                                    移除助教權限
-                                                </button>
+                                                {isTeacherOrAssistant() && (
+                                                    <button className={`$"roleButton" $"removeButton"`} 
+                                                        onClick={() => handleMakeAssistant(assistant.user_id)}>
+                                                        移除助教權限
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}                                </tbody>
@@ -257,10 +258,13 @@ function MembersTab({ courseId }) {
                                                     )}
                                             </td>
                                             <td>
+                                                {isTeacherOrAssistant() && (
                                                 <button className="roleButton"
                                                     onClick={() => handleMakeAssistant(student.user_id)}>
                                                     設為助教
                                                 </button>
+                                                )}
+                                                
                                             </td>
                                         </tr>
                                     ))}
