@@ -7,8 +7,30 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
     return (
         <>
             <div className={styles["card"]}>
-                <div>
+                <div className={styles["padder-each-block"]}>
                     <p className={styles["course-name"]}>{courseName} / </p> <p className={styles["board-name"]}>{boardName}</p>
+                </div>
+                <div className={styles["padder-each-block"]}>
+                    <p className={styles["user-name"]}>{userName}</p>
+                    {userTags && userTags.length > 0 ? (
+                        userTags.map((userTag, index) => (
+                            <p className={styles["user-tag"]} key={index}>
+                                {userTag.tag_name}
+                            </p>
+                        ))
+                    ) : (
+                        <p className={styles["user-tag"]}>No specific tags</p>
+                    )}
+                </div>
+                <div className={styles["padder-each-block"]}>
+                    <p className={styles["title"]}>
+                        {title}
+                    </p>
+                </div>
+                <div className={styles["padder-each-block"]}>
+                    <p className={styles["content"]}>
+                        {content}
+                    </p>
                 </div>
             </div>
         </>
