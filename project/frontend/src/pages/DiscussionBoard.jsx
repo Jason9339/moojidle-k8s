@@ -4,7 +4,7 @@ import BoardSideBar from "@/components/discussion_board/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import HomepageContent from "@/components/discussion_board/HomepageContent";
 import DiscussionBoardContent from "@/components/discussion_board/DiscussionBoardContent";
-import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi";
+import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_board_api/BoardApi";
 
 
 function DiscussionBoard() {
