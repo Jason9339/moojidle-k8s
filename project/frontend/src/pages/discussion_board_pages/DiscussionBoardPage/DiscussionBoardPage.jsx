@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
-import HomepageContent from "@/components/discussion_board_components/HomepageContent";
-import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent";
+import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
+import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
 import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_board_api/BoardApi";
 
+// css styling
+import styles from "./DiscussionBoardPage.module.css"
 
 function DiscussionBoard() {
     const { param } = useParams();
@@ -25,8 +27,6 @@ function DiscussionBoard() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-
-
                 // TODO use Context to save userID
                 const userID = JSON.parse(localStorage.getItem("user")).user_id;
                 const data = await GetBoardsGroupByCourseByUserID(userID);
@@ -53,20 +53,18 @@ function DiscussionBoard() {
             <div className="flex">
                 <BoardSideBar itemData={boardData} setBoardID={setCurrentBoardID} />
 
-                <div className="p-5 flex-1 flex flex-col h-screen w-[35vw]">
+                {/* <div className="p-5 flex-1 flex flex-col h-screen w-[180px]"> */}
+                <div className={styles["main-content-flex-box"]}>
                     {
-                        param == "home" ?
-                            <HomepageContent />
+                        param == "home" || param == null ?
+                            <DiscussionBoardInitContent />
                             :
                             <DiscussionBoardContent />
-
                     }
-
                 </div>
             </div >
 
         </>
-
     );
 }
 
