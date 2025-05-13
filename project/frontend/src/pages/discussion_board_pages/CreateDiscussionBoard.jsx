@@ -74,7 +74,7 @@ const CreateDiscussion = () => {
                 </div>
 
                 
-
+                <button type="button" onClick={() => navigate(-1)} className="cancel-btn">取消</button>
                 <button type="submit">建立討論版</button>
             </form>
         </div>
