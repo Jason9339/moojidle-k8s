@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import BoardSideBar from "@/components/discussion_board/BoardSideBar";
+import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
-import HomepageContent from "@/components/discussion_board/HomepageContent";
-import DiscussionBoardContent from "@/components/discussion_board/DiscussionBoardContent";
-import { GetBoardsGroupByCourseByUserID } from "@/services/BoardApi/BoardApi";
+import HomepageContent from "@/components/discussion_board_components/HomepageContent";
+import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent";
+import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_board_api/BoardApi";
 
 
 function DiscussionBoard() {
