@@ -214,7 +214,8 @@ db.createCollection("materials", {
                 display_date: { bsonType: "date" },
                 path_to_file: { bsonType: "string" },
                 url: { bsonType: "string" },
-                description: { bsonType: "string" }
+                description: { bsonType: "string" },
+                filename: { bsonType: "string" }
             }
         }
     }
@@ -240,7 +241,8 @@ db.createCollection("assignments", {
                         bsonType: "object",
                         properties: {
                             filename: { bsonType: "string", description: "Name of the attached file" },
-                            url: { bsonType: "string", description: "URL of the attached file" }
+                            url: { bsonType: "string", description: "URL of the attached file" },
+                            path_to_file: { bsonType: "string", description: "Path to the attached file" }
                         }
                     }
                 }

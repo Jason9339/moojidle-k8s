@@ -52,7 +52,7 @@ export const handleUploadAndInsert = async (req) => {
             attachments: [
                 {
                     filename: savedFile.originalName,
-                    url: savedFile.relativeUrl,
+                    path_to_file: savedFile.relativeUrl
                 },
             ],
         };
@@ -68,7 +68,6 @@ export const handleUploadAndInsert = async (req) => {
             create_date: now,
             display_date: new Date(displayDate),
             path_to_file: savedFile.relativeUrl,
-            url: savedFile.relativeUrl,
         };
         return await insertMaterialToDB(doc);
     }

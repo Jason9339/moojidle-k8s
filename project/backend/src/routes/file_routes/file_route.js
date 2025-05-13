@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { upload } from "#src/controllers/file_controllers/file_controller.js";
+import { upload, downloadFile } from "#src/controllers/file_controllers/file_controller.js";
 
 const fileRouter = Router();
 
@@ -24,5 +24,6 @@ const multerErrorHandling = (err, req, res, next) => {
 };
 
 fileRouter.post("/upload", uploadWithMulter, upload, multerErrorHandling);
+fileRouter.get("/download", downloadFile);
 
 export default fileRouter;

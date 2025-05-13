@@ -36,7 +36,9 @@ async function getMaterialsByCourseId(courseId) {
             name: material.m_name,
             url: material.url,
             description: material.description,
-            uploadDate: material.create_date
+            uploadDate: material.create_date,
+            path_to_file: material.path_to_file,
+            filename: material.filename
         }));
     } catch (error) {
         console.error(`[getMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
