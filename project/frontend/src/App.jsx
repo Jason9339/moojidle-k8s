@@ -1,10 +1,10 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import NotFoundPage from "@/pages/NotFoundPage";
-import DiscussionBoard from "@/pages/DiscussionBoard";
+import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoard";
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
-import Post from "@/pages/Post";
+import Post from "@/pages/post_pages/Post";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related

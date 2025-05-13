@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { GetPostContent } from "@/services/PostApi/PostAPI";
+import { GetPostContent } from "@/services/post_api/PostAPI";
 
 
 function PostContent(props) {

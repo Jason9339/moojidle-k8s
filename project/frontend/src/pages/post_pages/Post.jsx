@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import BoardSideBar from "@/components/discussion_board/BoardSideBar";
-import PostContent from "@/components/discussion_board/PostConent";
+import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
+import PostContent from "@/components/post_components/PostConent";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 
