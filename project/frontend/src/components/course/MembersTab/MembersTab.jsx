@@ -51,13 +51,13 @@ function MembersTab({ courseId, userId }) {
     };
     
     // Check if current user is a teacher or assistant
-    const isTeacherOrAssistant = () => {
+    const isTeacher = () => {
         if (!userId) return false;
         
         const userIdNum = parseInt(userId);
         const isTeacher = members.teachers?.some(teacher => teacher.user_id === userIdNum);
-        const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
-        return isTeacher || isAssistant;
+        // const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
+        return isTeacher;
     };
 
 
@@ -110,7 +110,7 @@ function MembersTab({ courseId, userId }) {
             <h3>助教與學生管理</h3>
             <h3>邀請碼：{code}</h3>
 
-            {isTeacherOrAssistant() && false && (
+            {isTeacher() && false && (
                 <div className="addStudentSection">
                     <button 
                         className="addButton"
@@ -226,7 +226,7 @@ function MembersTab({ courseId, userId }) {
                                                     )}
                                             </td>
                                             <td>
-                                                {isTeacherOrAssistant() && (
+                                                {isTeacher() && (
                                                     <button className={`$"roleButton" $"removeButton"`} 
                                                         onClick={() => handleMakeAssistant(assistant.user_id)}>
                                                         移除助教權限
@@ -275,7 +275,7 @@ function MembersTab({ courseId, userId }) {
                                                     )}
                                             </td>
                                             <td>
-                                                {isTeacherOrAssistant() && (
+                                                {isTeacher() && (
                                                 <button className="roleButton"
                                                     onClick={() => handleMakeAssistant(student.user_id)}>
                                                     設為助教
