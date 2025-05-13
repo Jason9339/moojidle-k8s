@@ -2,7 +2,7 @@ import axios from "./apiClient";
 
 export const uploadFile = async (formData) => {
     try {
-        const response = await axios.post("/api/file/upload", formData, {
+        const response = await axios.post("/file/upload", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

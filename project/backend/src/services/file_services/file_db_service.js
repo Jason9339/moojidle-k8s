@@ -1,76 +1,73 @@
-import { MongoClient } from "mongodb";
-import FileStorageService from "./file_storage_service.js";
+import mongoose from "mongoose";
+import { saveFile } from "./file_storage_service.js";
 
-class FileDBService {
-    constructor() {
-        this.storageService = new FileStorageService();
-        this.client = new MongoClient("mongodb://localhost:27017");
-    }
+export const getNextId = async (collectionName) => {
+    try {
+        const counter = await mongoose.connection.db.collection("counter").findOne();
+        const nextId = (counter?.[collectionName] ?? 0) + 1;
 
-    async getNextId(collectionName) {
-        const db = this.client.db("moojidle");
-        const counter = await db.collection("counter").findOneAndUpdate(
+        await mongoose.connection.db.collection("counter").updateOne(
             {},
-            { $inc: { [collectionName]: 1 } },
-            { returnDocument: "after", upsert: true }
+            { $set: { [collectionName]: nextId } },
+            { upsert: true }
         );
-        return counter.value[collectionName];
+
+        return nextId;
+    } catch (error) {
+        console.error(`Error getting next ID for ${collectionName}:`, error);
+        throw error;
     }
+};
 
-    async uploadFile(req) {
-        await this.client.connect();
-        const db = this.client.db("moojidle");
+export const insertAssignmentToDB = async (assignmentDoc) => {
+    const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
+    return result;
+};
 
-        const { type, courseId, createByUserId, description } = req.body;
-        const file = req.file;
-        if (!file) throw new Error("No file uploaded");
+export const insertMaterialToDB = async (materialDoc) => {
+    const result = await mongoose.connection.db.collection("materials").insertOne(materialDoc);
+    return result;
+};
 
-        const subfolder = type === "assignment" ? "assignment" : "material";
-        const savedFile = await this.storageService.saveFile(
-            file.buffer,
-            decodeURIComponent(file.originalname),
-            subfolder
-        );
+export const handleUploadAndInsert = async (req) => {
+    const { type, courseId, createByUserId, description } = req.body;
+    const file = req.file;
+    if (!file) throw new Error("No file uploaded");
 
-        const now = new Date();
-        if (type === "assignment") {
-            const { assName, endDate } = req.body;
-            const doc = {
-                ass_id: await this.getNextId("assignments"),
-                in_course_id: parseInt(courseId),
-                create_by_user_id: parseInt(createByUserId),
-                ass_name: assName,
-                description,
-                create_date: now,
-                end_date: new Date(endDate),
-                attachments: [
-                    {
-                        filename: savedFile.originalName,
-                        url: savedFile.relativeUrl,
-                    },
-                ],
-            };
-            await db.collection("assignments").insertOne(doc);
-        } else {
-            const { mName } = req.body;
-            const doc = {
-                m_id: await this.getNextId("materials"),
-                in_course_id: parseInt(courseId),
-                create_by_user_id: parseInt(createByUserId),
-                m_name: mName,
-                description,
-                create_date: now,
-                path_to_file: savedFile.relativeUrl,
-                url: savedFile.relativeUrl,
-            };
-            await db.collection("materials").insertOne(doc);
-        }
+    const subfolder = type === "assignment" ? "assignment" : "material";
+    const savedFile = await saveFile(file.buffer, decodeURIComponent(file.originalname), subfolder);
 
-        return {
-            fileId: savedFile.fileId,
-            fileName: savedFile.originalName,
+    const now = new Date();
+    if (type === "assignment") {
+        const { assName, endDate } = req.body;
+        const doc = {
+            ass_id: await getNextId("assignments"),
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            ass_name: assName,
+            description,
+            create_date: now,
+            end_date: new Date(endDate),
+            attachments: [
+                {
+                    filename: savedFile.originalName,
+                    url: savedFile.relativeUrl,
+                },
+            ],
         };
+        return await insertAssignmentToDB(doc);
+    } else {
+        const { mName } = req.body;
+        const doc = {
+            m_id: await getNextId("materials"),
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            m_name: mName,
+            description,
+            create_date: now,
+            path_to_file: savedFile.relativeUrl,
+            url: savedFile.relativeUrl,
+        };
+        return await insertMaterialToDB(doc);
     }
-}
-
-export default FileDBService;
+};
