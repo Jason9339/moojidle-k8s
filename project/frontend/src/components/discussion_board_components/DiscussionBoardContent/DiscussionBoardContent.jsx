@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styles from "./DiscussionBoardContent.module.css"
 
-const DiscussionBoardContent = () => {
+const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
     return (
         <>
             <div className={styles["content-flex-box"]}>
                 <div>
-                    test
+                    {courseName} / {boardName}
                 </div>
             </div>
         </>
