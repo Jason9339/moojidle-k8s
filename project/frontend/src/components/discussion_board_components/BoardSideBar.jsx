@@ -48,7 +48,12 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                                             <button
                                                 onClick={e => {
                                                     e.stopPropagation();
-                                                    alert("Delete Board");
+                                                    navigate("/discussion/delete/", {
+                                                        state: {
+                                                            boardId: board_id,
+                                                            boardName: board_name,
+                                                        }
+                                                    });
                                                 }}
                                                 className="p-1 hover:text-[#5961d4] cursor-pointer"
                                             >
@@ -62,7 +67,7 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                             }
                             <MenuItem className="addBoard" onClick={
                                 () => {
-                                    alert("Add Board")
+                                    navigate("/discussion/create")
                                 }
                             }>
                                 新增討論版
