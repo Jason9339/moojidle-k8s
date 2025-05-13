@@ -36,10 +36,6 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
     return (
         <>
             <div className={styles["content-flex-box"]}>
-                <div>
-                    {courseName} / {boardName}
-                </div>
-
                 {/* foreach overviewPost in overviewPosts */}
                 {overviewPosts && overviewPosts.length > 0 ? (
                     overviewPosts.map((overviewPost, index) => (

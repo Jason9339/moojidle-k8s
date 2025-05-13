@@ -1,0 +1,26 @@
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    min-height: 30vh;
+    min-width: calc(80vw - 400px);
+    background-color: rgba(187, 187, 187, 0.452);
+    border-radius: 20px;
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+}
+
+.course-name {
+    display: inline;
+    font-size: 25px;
+    color: red;
+}
+
+.board-name {
+    display: inline;
+    font-size: 25px;
+    color: blue;
+}

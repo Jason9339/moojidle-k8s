@@ -89,7 +89,7 @@ function DiscussionBoard() {
                 <BoardSideBar itemData={courseBoardData} />
 
                 {/* <div className="p-5 flex-1 flex flex-col h-screen w-[180px]"> */}
-                <div className={styles["main-content-flex-box"]}>
+                <div className={styles["main-container"]}>
                     {
                         param == "home" || param == null ?
                             <DiscussionBoardInitContent />
