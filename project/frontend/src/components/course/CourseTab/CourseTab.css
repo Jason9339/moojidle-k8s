@@ -192,3 +192,12 @@
     cursor: not-allowed;
     border: 1px solid #ced4da;
 }
+
+/* 週次日期範圍樣式 */
+.week-date-range {
+    color: #6c757d;
+    font-size: 12px;
+    display: block;
+    margin-top: 3px;
+    font-style: italic;
+}

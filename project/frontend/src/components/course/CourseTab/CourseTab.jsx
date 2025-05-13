@@ -34,6 +34,41 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
         }
     }, [editingMaterials, isEditMode, onMaterialsChange]);
 
+    // 計算週次的日期範圍
+    const getWeekDateRange = (weekNumber) => {
+        // 使用課程開始日期作為基準日期
+        console.log("課程資料:", course); // 查看課程資料是否包含 start_date
+        let semesterStartDate = course && course.start_date 
+            ? new Date(course.start_date) 
+            : new Date(); // 如果沒有開始日期，則使用當前日期
+        
+        console.log("學期開始日期:", semesterStartDate); // 查看實際使用的日期
+        
+        // 將日期調整為該週的週日
+        // 獲取當前是星期幾（0是星期日，1是星期一，...，6是星期六）
+        const dayOfWeek = semesterStartDate.getDay();
+        // 如果不是週日，將日期調整為該週的週日
+        const daysToSubtract = dayOfWeek === 0 ? 0 : dayOfWeek;
+        semesterStartDate.setDate(semesterStartDate.getDate() - daysToSubtract);
+        
+        console.log("調整後的週日日期:", semesterStartDate); // 查看調整後的週日日期
+        
+        // 計算第n週的起始日期（週日）
+        const weekStartDate = new Date(semesterStartDate);
+        weekStartDate.setDate(semesterStartDate.getDate() + (weekNumber - 1) * 7);
+        
+        // 計算第n週的結束日期（週六）
+        const weekEndDate = new Date(weekStartDate);
+        weekEndDate.setDate(weekStartDate.getDate() + 6);
+        
+        // 格式化日期為 MM/DD 格式
+        const formatDate = (date) => {
+            return `${date.getMonth() + 1}/${date.getDate()}`;
+        };
+        
+        return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
+    };
+
     // 處理教材名稱變更
     const handleMaterialNameChange = (weekIndex, materialIndex, newName) => {
         const updatedMaterials = [...editingMaterials];
@@ -100,10 +135,15 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                         const weekAssignments = assignments.filter(
                             (a) => a.week === currentWeek || (!a.week && currentWeek === 1)
                         );
+                        const dateRange = getWeekDateRange(currentWeek);
 
                         return (
                             <tr key={currentWeek}>
-                                <td>{currentWeek}</td>
+                                <td>
+                                    {currentWeek}
+                                    <br />
+                                    <small className="week-date-range">{dateRange}</small>
+                                </td>
                                 <td>
                                     {isEditMode ? (
                                         <>

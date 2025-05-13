@@ -175,6 +175,7 @@ async function getCourseDetails(courseId) {
             description: course.description,
             syllabus: course.syllabus || "",
             createDate: course.create_date,
+            start_date: course.start_date,
             inviteLink: course.invite_link || ""
         };
     } catch (error) {
