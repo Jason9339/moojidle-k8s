@@ -37,6 +37,7 @@ export const upload = async (req, res, next) => {
                 in_course_id: parseInt(courseId),
                 create_by_user_id: parseInt(createByUserId),
                 ass_name: assName,
+                start_date: new Date(req.body.startDate),
                 end_date: new Date(endDate),
                 description,
                 create_date: now,
@@ -56,6 +57,7 @@ export const upload = async (req, res, next) => {
                 m_name: mName,
                 description,
                 create_date: now,
+                display_date: new Date(req.body.displayDate),
                 path_to_file: savedFile.relativeUrl,
                 url: savedFile.relativeUrl
             };

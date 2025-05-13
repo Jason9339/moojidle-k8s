@@ -48,13 +48,53 @@
 }
 
 .upload-modal button:first-of-type {
-    background-color: #4caf50;
+    background-color: #f44336;
     color: white;
 }
 
 .upload-modal button:last-of-type {
-    background-color: #f44336;
+    background-color: #4caf50;
     color: white;
+}
+
+
+.upload-modal label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    flex: 1;
+}
+
+.upload-modal .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-modal .input-group input,
+.upload-modal .input-group select {
+    flex: 2;
+}
+
+.upload-modal .input-group textarea {
+    flex: 1;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-group button {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.button-group button:first-of-type {
+    margin-left: 0;
+}
+
+.button-group button:last-of-type {
+    margin-right: 0;
 }
 
 

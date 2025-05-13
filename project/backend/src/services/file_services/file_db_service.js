@@ -39,15 +39,16 @@ export const handleUploadAndInsert = async (req) => {
 
     const now = new Date();
     if (type === "assignment") {
-        const { assName, endDate } = req.body;
+        const { assName, endDate, startDate } = req.body;
         const doc = {
             ass_id: await getNextId("assignments"),
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             ass_name: assName,
+            start_date: new Date(startDate),
+            end_date: new Date(endDate),
             description,
             create_date: now,
-            end_date: new Date(endDate),
             attachments: [
                 {
                     filename: savedFile.originalName,
@@ -57,7 +58,7 @@ export const handleUploadAndInsert = async (req) => {
         };
         return await insertAssignmentToDB(doc);
     } else {
-        const { mName } = req.body;
+        const { mName, displayDate } = req.body;
         const doc = {
             m_id: await getNextId("materials"),
             in_course_id: parseInt(courseId),
@@ -65,6 +66,7 @@ export const handleUploadAndInsert = async (req) => {
             m_name: mName,
             description,
             create_date: now,
+            display_date: new Date(displayDate),
             path_to_file: savedFile.relativeUrl,
             url: savedFile.relativeUrl,
         };
