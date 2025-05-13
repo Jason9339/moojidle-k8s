@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "./OverviewPostCard.module.css"
 
 const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, title, content, postDate }) => {
-    // console.error(postDate.substring(0, 10), typeof postDate);
+    const [imgSrc, setImgSrc] = useState(userPfp || "/user_pfp/default.png");
 
     return (
         <>
@@ -27,11 +27,20 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
                         {title}
                     </p>
                 </div>
-                <div className={styles["padder-each-block"]}>
+                <div className={styles["padder-content-block"]}>
                     <p className={styles["content"]}>
                         {content}
                     </p>
                 </div>
+                <div className={styles["post-date"]}>
+                    {postDate.substring(0, 10)}
+                </div>
+                <img
+                    src={imgSrc}
+                    onError={() => setImgSrc("/user_pfp/default.png")}
+                    className={styles["user-pfp"]}
+                    alt="profile"
+                />
             </div>
         </>
     )
