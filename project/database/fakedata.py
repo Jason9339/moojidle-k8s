@@ -135,6 +135,7 @@ def generate_announcements(user_count=15, course_count=5, n=15):
         announcements.append({
             "a_id": i,
             "create_date": add_ISO_to_string(seq_date(i + 1)),
+            "announce_date": add_ISO_to_string(seq_date(i + 1)),
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
             "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
@@ -300,6 +301,7 @@ def generate_materials(courses, teach_in, assist_in, max_materials_per_course=5)
                 "create_by_user_id": create_by_user_id,
                 "m_name": f"Material {material_id} for Course {course_id}",
                 "create_date": add_ISO_to_string(seq_date(mat_index + 1)),
+                "display_date": add_ISO_to_string(seq_date(mat_index + 1)),
                 # "path_to_file": f"/materials/course_{course_id}/material_{material_id}.pdf",
                 "url": f"http://example.com/materials/course_{course_id}/material_{material_id}.pdf",
                 # "description": f"This is the description for Material {material_id}."
@@ -366,6 +368,7 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "create_by_user_id": create_by_user_id,
                 "ass_name": f"Assignment {assignment_id} for Course {course_id}",
                 "create_date": add_ISO_to_string(seq_date(ass_index + 1)),
+                "start_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "end_date": add_ISO_to_string(seq_date(ass_index + 2)),
                 "description": f"This is the description for Assignment {assignment_id}.",
                 "attachments": attachments
