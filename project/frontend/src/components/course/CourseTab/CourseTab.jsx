@@ -115,14 +115,9 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             value={material.name || ""}
                                                             onChange={(e) => handleMaterialNameChange(i, idx, e.target.value)}
                                                             className="material-input"
+                                                            placeholder="教材名稱"
                                                         />
-                                                        <input
-                                                            type="text"
-                                                            value={material.url || "#"}
-                                                            onChange={(e) => handleMaterialUrlChange(i, idx, e.target.value)}
-                                                            className="material-input"
-                                                            placeholder="URL"
-                                                        />
+                                                        {/* URL 輸入框已移除，連結將保持不變 */}
                                                         <button 
                                                             onClick={() => deleteMaterial(i, idx)}
                                                             className="delete-material-btn"

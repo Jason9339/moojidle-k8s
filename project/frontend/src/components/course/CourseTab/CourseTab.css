@@ -184,3 +184,11 @@
 .add-material-btn:hover {
     background-color: #badbcc;
 }
+
+/* URL 唯讀輸入框樣式 */
+.url-readonly {
+    background-color: #f0f0f0;
+    color: #6c757d;
+    cursor: not-allowed;
+    border: 1px solid #ced4da;
+}
