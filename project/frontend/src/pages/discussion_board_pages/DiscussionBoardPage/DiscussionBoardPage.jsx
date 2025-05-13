@@ -59,7 +59,7 @@ function DiscussionBoard() {
 
     // want to get over view posts
     if (param != null && param !== "home") {
-        if(!overviewPostData){  // over view posts are missing...
+        if (!overviewPostData) {  // over view posts are missing...
             return (<p>載入中...</p>);
         }
 
@@ -67,10 +67,10 @@ function DiscussionBoard() {
         let currentBoardId = parseInt(param);
 
         // for each course
-        for(let i = 0; i < courseBoardData.length; i ++){
+        for (let i = 0; i < courseBoardData.length; i++) {
             // for each board in that course
-            for(let j = 0; j < courseBoardData[i].boards.length; j ++){
-                if(courseBoardData[i].boards[j].board_id == currentBoardId){
+            for (let j = 0; j < courseBoardData[i].boards.length; j++) {
+                if (courseBoardData[i].boards[j].board_id == currentBoardId) {
                     // find the correct path
                     currentCourseName = courseBoardData[i].course_name;
                     currentBoardName = courseBoardData[i].boards[j].board_name;
@@ -88,13 +88,18 @@ function DiscussionBoard() {
             <div className="flex">
                 <BoardSideBar itemData={courseBoardData} />
 
+                {/* <header className={styles["category"]}>
+                    討論版
+                </header>
+                <hr /> */}
+
                 {/* <div className="p-5 flex-1 flex flex-col h-screen w-[180px]"> */}
                 <div className={styles["main-container"]}>
                     {
                         param == "home" || param == null ?
                             <DiscussionBoardInitContent />
                             :
-                            <DiscussionBoardContent 
+                            <DiscussionBoardContent
                                 overviewPosts={overviewPostData}
                                 courseName={currentCourseName}
                                 boardName={currentBoardName}

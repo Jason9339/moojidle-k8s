@@ -33,6 +33,12 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
     //     "post_by_user_pfp": "/profiles/4.jpg"
     // }
 
+    const handleCardClick = (overviewPost) => {
+        console.log("Card clicked:", overviewPost);
+        // Navigate to post page
+    };
+
+
     return (
         <>
             <div className={styles["content-flex-box"]}>
@@ -49,6 +55,8 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
                             title={overviewPost.title}
                             content={overviewPost.description}
                             postDate={overviewPost.post_date}
+
+                            onClick={() => handleCardClick(overviewPost)}
                         />
                     ))
                 ) : (

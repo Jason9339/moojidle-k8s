@@ -13,6 +13,11 @@
     margin-bottom: 1.5vh;
 }
 
+.card:hover {
+    box-shadow: 0 0.5vw 1vw rgba(220, 53, 70, 0.151);
+    cursor: pointer;
+}
+
 .padder-each-block {
     padding-left: 8vw;
     padding-top: 1.5vh;

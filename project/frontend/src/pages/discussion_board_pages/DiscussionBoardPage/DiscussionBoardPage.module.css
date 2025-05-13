@@ -2,3 +2,9 @@
     width: calc(100vw - 2vw - 380px);
     padding-left: 2vw;
 }
+
+.category {
+    display: block;
+    padding-left: 2vw;
+    font-size: 5vh;
+}

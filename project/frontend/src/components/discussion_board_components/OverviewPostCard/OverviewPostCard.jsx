@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from "./OverviewPostCard.module.css"
 
-const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, title, content, postDate }) => {
+const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, title, content, postDate, onClick }) => {
     const [imgSrc, setImgSrc] = useState(userPfp || "/user_pfp/default.png");
 
     let test = `A good example of a paragraph is: "The bustling streets of 北投區 teem with activity. From the vibrant stalls offering fresh produce to the lively cafes serving local delicacies, the area pulsates with energy. Ancient temples stand as silent guardians of the past, while modern buildings reflect the area's vibrant present." This paragraph uses vivid language and imagery to paint a picture of the area, effectively conveying its character and atmosphere.
@@ -19,7 +19,7 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
 
     return (
         <>
-            <div className={styles["card"]}>
+            <div className={styles["card"]} onClick={onClick}>
                 <div className={styles["padder-each-block"]}>
                     <p className={styles["course-name"]}>{courseName} / </p> <p className={styles["board-name"]}>{boardName}</p>
                 </div>
