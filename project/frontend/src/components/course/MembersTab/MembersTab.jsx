@@ -56,10 +56,16 @@ function MembersTab({ courseId, userId }) {
         
         const userIdNum = parseInt(userId);
         const isTeacher = members.teachers?.some(teacher => teacher.user_id === userIdNum);
-        // const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
         return isTeacher;
     };
 
+    const isAssistant = (stu_userId) => {
+        if (!stu_userId) return false;
+        
+        const userIdNum = parseInt(stu_userId);
+        const isAssistant = members.assistants?.some(assistant => assistant.user_id === userIdNum);
+        return isAssistant;
+    };
 
     const fetchMembers = async () => {
             try {
@@ -275,7 +281,7 @@ function MembersTab({ courseId, userId }) {
                                                     )}
                                             </td>
                                             <td>
-                                                {isTeacher() && (
+                                                {isTeacher()  && !isAssistant(student.user_id)&& (
                                                 <button className="roleButton"
                                                     onClick={() => handleMakeAssistant(student.user_id)}>
                                                     設為助教
