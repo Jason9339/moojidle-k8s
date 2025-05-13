@@ -7,7 +7,7 @@ import {
 
 async function GetOverviewPosts(req, res) {
     const inBoardId = req.params.inBoardId;
-    let maxContent = 30;
+    let maxContent = 400;
 
     try {
         let result = await FindProjectedPostsByBId(inBoardId);
