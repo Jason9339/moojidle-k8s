@@ -32,7 +32,7 @@ const DeleteDiscussion = () => {
             <h2>刪除討論版</h2>
             <p>你確定要刪除「<strong>{boardName}</strong>」這個討論版嗎？此操作無法復原。</p>
             <div className={styles["button-group"]}>
-                <button onClick={handleCancel} className="cancel-btn">取消</button>
+                <button onClick={handleCancel} className={styles["cancel-btn"]}>取消</button>
                 <button onClick={handleDelete} className={styles["delete-btn"]}>刪除</button>
             </div>
         </div>

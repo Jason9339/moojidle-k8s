@@ -18,6 +18,15 @@
     margin-top: 2rem; 
 }
 
+.cancel-btn {
+    background-color: #6c757d; 
+    color: white;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
 .delete-btn {
     background-color: #dc3545; 
