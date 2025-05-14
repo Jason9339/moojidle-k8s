@@ -17,8 +17,12 @@ import GradesTab from "@/components/course/GradesTab/GradesTab";
 import DiscussionTab from "@/components/course/DiscussionTab/DiscussionTab";
 import AssignmentsTab from "@/components/course/AssignmentsTab/AssignmentsTab";
 import AnnouncementsTab from "@/components/course/AnnouncementsTab/AnnouncementsTab";
+import MembersTab from "@/components/course/MembersTab/MembersTab";
 
 function CourseDetail() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = user?.user_id;
+
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
@@ -29,7 +33,7 @@ function CourseDetail() {
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
+    useEffect(() => { 
         const fetchCourseData = async () => {
             try {
                 setLoading(true);
@@ -132,7 +136,7 @@ function CourseDetail() {
 
                 {/* Tab 選單列 */}
                 <div className="tab-menu">
-                    {["課程", "成績", "討論", "作業", "公告"].map((tab) => (
+                    {["課程", "成績", "討論", "作業", "公告", "成員"].map((tab) => (
                         <button
                             key={tab}
                             className={activeTab === tab ? "active" : ""}
@@ -174,6 +178,7 @@ function CourseDetail() {
                     <AssignmentsTab assignments={assignments} />
                 )}
                 {activeTab === "公告" && <AnnouncementsTab />}
+                {activeTab === "成員" && <MembersTab courseId={courseId} userId={currentUserId} />}
             </div>
         </div>
     );

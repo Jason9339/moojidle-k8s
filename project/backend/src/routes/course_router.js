@@ -10,6 +10,7 @@ import {
   GetTeachingCourses,
   ReadTeachIn,
   EditCourse,
+  ReadInviteCode,
   
   // 課程詳細資訊控制器
   getAllCourses,
@@ -55,5 +56,6 @@ router.delete("/:courseId/materials/:materialId", deleteCourseMaterial); // 刪�
 router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
+router.get("/:courseId/inviteCode", ReadInviteCode);
 
 export default router;

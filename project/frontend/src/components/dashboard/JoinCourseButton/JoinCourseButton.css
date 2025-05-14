@@ -1,0 +1,17 @@
+.join-course-button {
+  background-color: #22C55E;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.join-course-button:hover {
+  background-color: #157539;
+}
