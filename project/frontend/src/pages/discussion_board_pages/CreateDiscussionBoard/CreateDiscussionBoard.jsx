@@ -46,23 +46,6 @@ const CreateDiscussion = () => {
                 <h2>新增討論版</h2>
                 {error && <p className="error-message">{error}</p>}
                 <div className="form-group">
-                    <label htmlFor="course-select">選擇課程</label>
-                    <select
-                        id="course-select"
-                        value={courseId}
-                        onChange={(e) => setCourseId(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>請選擇課程</option>
-                        {courses.map(course => (
-                            <option key={course.course_id} value={course.course_id}>
-                                {course.course_name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="board-name">討論版名稱</label>
                     <input
                         type="text"
