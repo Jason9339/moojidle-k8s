@@ -24,7 +24,7 @@ function CourseCard({ title, courseId, color, isTeacher, isStudent, isAssistant,
         <div className="role-indicators">
           {isTeacher && <span className="role-badge teacher">教</span>}
           {isAssistant && <span className="role-badge assistant">助</span>}
-          {isStudent && <span className="role-badge student">學</span>}
+          {!isAssistant && isStudent && <span className="role-badge student">學</span>}
           {isTeacher && (
               <FaEdit
                 className="role-badge teacher edit-icon"
