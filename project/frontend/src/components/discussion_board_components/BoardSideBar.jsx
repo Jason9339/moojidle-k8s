@@ -67,7 +67,11 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                             }
                             <MenuItem className="addBoard" onClick={
                                 () => {
-                                    navigate("/discussion/create")
+                                    navigate("/discussion/create", {
+                                        state : {
+                                            courseId: course_id
+                                        }
+                                    })
                                 }
                             }>
                                 新增討論版

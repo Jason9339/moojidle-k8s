@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CreateDiscussionBoard, GetAllUserCourses } from "@/services/discussion_board_api/BoardApi.js";
 import styles from "./CreateDiscussionBoard.module.css";
 
-
 const CreateDiscussion = () => {
+    const location = useLocation();
+    const defaultCourseId = location.state?.courseId || "";
     const [boardName, setBoardName] = useState("");
-    const [courseId, setCourseId] = useState("");
+    const [courseId, setCourseId] = useState(defaultCourseId);
     const [courses, setCourses] = useState([]);
     const [error, setError] = useState("");
 
