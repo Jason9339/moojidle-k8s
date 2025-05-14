@@ -58,6 +58,18 @@ h2.dashboard-heading {
   overflow-y: auto;
 }
 
+.dashboard-right h3 {
+  background-color: #f0f2f7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 20px 0 12px;
+  color: #333;
+}
+
+
+
 .course-grid {
   display: flex;
   flex-wrap: wrap;
