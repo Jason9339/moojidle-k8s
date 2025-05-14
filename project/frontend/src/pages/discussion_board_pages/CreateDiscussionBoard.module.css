@@ -48,7 +48,7 @@ select {
     gap: 103rem; 
     margin-top: 1.5rem;
 }
-button {
+.button {
     padding: 0.5rem 1.2rem;
     font-size: 1rem;
     margin: 0.5rem;
@@ -57,7 +57,7 @@ button {
     cursor: pointer;
 }
 
-button[type="submit"] {
+.button[type="submit"] {
     background-color: #007bff;
     color: white;
     
