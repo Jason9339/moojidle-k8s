@@ -8,8 +8,8 @@ import axios from "./apiClient";
 //     },
 // });
 
-export const getCourses = async () => {
-  return (await axios.get("/course/read")).data;
+export const getCourses = async (userId) => {
+  return (await axios.get(`/course/read?user_id=${userId}`)).data;
 };
 
 export const getTodoList = async (userId) => {
