@@ -5,38 +5,33 @@ import styles from "./CreateDiscussionBoard.module.css";
 
 const CreateDiscussion = () => {
     const location = useLocation();
-    const defaultCourseId = location.state?.courseId || "";
     const [boardName, setBoardName] = useState("");
-    const [courseId, setCourseId] = useState(defaultCourseId);
+    const [courseId, setCourseId] = useState(location.state?.courseId || "");
     const [courses, setCourses] = useState([]);
     const [error, setError] = useState("");
-
     const navigate = useNavigate();
 
-    let userId = JSON.parse(localStorage.getItem("user")).user_id;
+    const userId = JSON.parse(localStorage.getItem("user") || "{}").user_id;
 
     useEffect(() => {
-        async function fetchCourses() {
-            const result = await GetAllUserCourses(userId);
-            console.log("取得課程結果：", result);
-            setCourses(result);
+        if (!courseId) {
+            // 如果沒有預設 courseId 才拉取課程列表
+            GetAllUserCourses(userId).then(setCourses).catch(console.error);
         }
-        fetchCourses();
-    }, []);
+    }, [courseId, userId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         try {
             const response = await CreateDiscussionBoard({ course_id: courseId, name: boardName });
-            console.log(response)
             if (response?.board_id) {
                 navigate(`/discussion/${courseId}`);
             } else {
                 setError(response?.error || "無法建立討論版");
             }
-        } catch (err) {
-            setError("發生錯誤，請稍後再試");
+        } catch {
+            setError("發生錯誤，請不要直接用網址進入此頁面");
         }
     };
 
@@ -56,13 +51,11 @@ const CreateDiscussion = () => {
                         placeholder="輸入討論版名稱"
                     />
                 </div>
-
-
                 <div className={styles["button-group"]}>
                     <button type="button" onClick={() => navigate(-1)} className={styles["cancel-btn"]}>
                         取消
                     </button>
-                    <button type="submit" className={styles["submit-btn"]}> 發布</button>
+                    <button type="submit" className={styles["submit-btn"]}>發布</button>
                 </div>
             </form>
         </div>
