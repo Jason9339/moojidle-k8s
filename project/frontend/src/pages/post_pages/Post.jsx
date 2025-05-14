@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
-import PostContent from "@/components/post_components/PostConent";
+// import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
+import DiscussionPostView from "@/components/post_components/PostConent.jsx";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 
@@ -12,9 +12,9 @@ function Post() {
             <LeftBar />
 
             <div style={{ display: "flex", height: "100vh" }}>
-                <BoardSideBar />
+                {/* <BoardSideBar /> */}
                 <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
-                    <PostContent postId={id} />
+                    <DiscussionPostView postId={id} />
                 </div>
             </div>
 

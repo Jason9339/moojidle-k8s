@@ -23,6 +23,16 @@ async function FindAllPostsByBoardID(discussionBoardID) {
     }
 }
 
+const DeletePost = async (postID) => {
+    try {
+        const result = await mongoose.connection.db.collection('post').deleteOne({ post_id: postID });
+        return result;
+    } catch (error) {
+        console.error('Error deleting post:', error);
+    }
+};
+
 export {
     FindPostByID,
+    DeletePost
 }

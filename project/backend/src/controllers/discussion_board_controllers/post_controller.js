@@ -1,7 +1,8 @@
 import { FindBoardByID } from '#src/services/post_services/discussion_board_service.js';
-import { FindPostByID } from '#src/services/post_services/post_service.js'
+import { FindPostByID, DeletePost } from '#src/services/post_services/post_service.js'
 import { FindUserNameByID } from '#src/services/post_services/user_servcie.js';
 import { FindCourseNameByID } from '#src/services/post_services/course_service.js';
+import { LeaveComment, DeleteComment } from '#src/services/post_services/comment_service.js';
 
 
 async function GetPostContent(req, res, next) {
@@ -52,6 +53,78 @@ async function GetPostContent(req, res, next) {
     }
 }
 
+async function Commender(req, res) {
+    const { post_id, user_id, custom_tag, description } = req.body;
+
+    if (!post_id || !user_id || !description) {
+        return res.status(400).send({ message: "post_id, user_id, and description are required" });
+    }
+
+    try {
+        const result = await LeaveComment({
+            post_id: parseInt(post_id),
+            user_id: parseInt(user_id),
+            custom_tag: custom_tag || "",
+            description
+        });
+
+        if (result.modifiedCount === 1) {
+            res.status(201).send({ message: "Comment added successfully" });
+        } else {
+            res.status(404).send({ message: "Post not found or comment not added" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
+async function CommendDeleter(req, res) {
+    const { post_id, user_id, comment_date, description } = req.body;
+    
+    try {
+        const result = await DeleteComment({
+            post_id: parseInt(post_id),
+            user_id: parseInt(user_id),
+            date: new Date(comment_date),
+            description
+        });
+
+        if (result.modifiedCount === 1) {
+            res.status(201).send({ message: "Comment deleted" });
+        } else {
+            res.status(404).send({ message: "Post not found or comment not added" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
+async function PostDeleter(req, res) {
+    try {
+        const postId = parseInt(req.params.id);
+        if (isNaN(postId)) {
+            return res.status(400).send({ error: "Invalid post_id" });
+        }
+
+        // Call the service to delete the post
+        const result = await DeletePost(postId);
+
+        // If there is an error in the result, send it as a response
+        if (result.error) {
+            return res.status(404).send({ error: result.error });
+        }
+
+        // Otherwise, send the success message
+        return res.status(200).send({ message: result.message });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ error: "An unexpected error occurred" });
+    }
+}
+
 export {
-    GetPostContent
+    GetPostContent,
+    Commender,
+    PostDeleter,
+    CommendDeleter
 } 

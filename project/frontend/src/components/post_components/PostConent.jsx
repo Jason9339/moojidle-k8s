@@ -1,53 +1,26 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { GetPostContent } from "@/services/post_api/PostAPI";
+import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
+import { FiMoreVertical, FiCornerUpLeft } from "react-icons/fi"; 
+import { useNavigate} from "react-router-dom";
+import CommentCard from "@/components/post_components/CommentCard.jsx"
 
-
-function PostContent(props) {
+function DiscussionPostView({ postId }) {
     const [post, setPost] = useState(null);
-
-    /* postHeaderData = {
-     *
-     *      course_name : String,
-     *      board_name  : String,
-     *      author_name : String,
-     *      title : String,
-     *      post_date : Date,
-     *      post_user_custom_tag : [
-     *          {
-     *              tag_id : Int32,
-     *              tag_name : String
-     *          }
-     *      ], 
-     *
-     *      post_tags : [
-     *          {
-     *              tag_id : Int32,
-     *              tag_name : String
-     *          }
-     *      ] 
-     *
-     * }
-     *
-     */
-    const [postHeaderData, setPostHeaderData] = useState({});
-    const [postDescription, setPostDescription] = useState("");
-    const [comments, setComments] = useState([]);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState("");
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
+    const storedUser = localStorage.getItem("user");
+    const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
 
-    const postId = props.postId;
     useEffect(() => {
         const fetchPost = async () => {
             try {
                 const data = await GetPostContent(postId);
-                console.log(data)
-                // setPostHeaderData();
-
-                setPostDescription(data.description);
-                setComments(data.comments);
+                setPost(data);
             } catch (err) {
                 setError("載入貼文失敗：" + (err.message || "未知錯誤"));
             } finally {
@@ -56,59 +29,81 @@ function PostContent(props) {
         };
 
         fetchPost();
-    }, []);
+    }, [postId, refreshTrigger]); 
 
-    const handleCommentSubmit = () => {
+    const reflash = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
+
+    const handleCommentSubmit = async () => {
         if (!newComment.trim()) return;
 
+        const commenData = {
+            post_id: postId,
+            user_id: currentUserId,
+            custom_tag: "訪客",
+            description: newComment
+        }
+        try {
+            await LeaveCommend(commenData);
+            setNewComment("");
+            reflash();
+        } catch (err) {
+            alert("留言送出失敗：" + (err.message || "未知錯誤"));
+        }
+    };
+    
+    const handleDeletePost = async () => {
+        try {
+            await DeletePost(post.in_b_id);
+            navigate(`/discussion/${post.in_b_id}`);
 
-        // 
-        const newCommentObj = {
-            comment_id: Date.now(),
-            comment_by_user_id: 999,
-            comment_user_custom_tag: "訪客",
-            comment_user_display_name: "User999",
-            comment_date: new Date().toISOString(),
-            description: newComment,
-        };
-
-        setPost((prev) => ({
-            ...prev,
-            comments: [...(prev.comments || []), newCommentObj],
-        }));
-
-        setNewComment("");
+        } catch (err) {
+            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+        }
     };
 
-    const formatDate = (dateObj) => {
-        const date = new Date(dateObj?.$date || dateObj);
-        return isNaN(date) ? "無效日期" : date.toLocaleString();
-    };
-
-    if (loading) return <p>⏳ 載入中...</p>;
+    if (loading) return <p>Loading post...</p>;
     if (error) return <p>{error}</p>;
-    if (postHeaderData) return <p>找不到貼文</p>;
+    if (!post) return <p>找不到貼文</p>;
+
 
     return (
         <PostContainer>
             <PostHeader>
-                <Title>{postHeaderData.board_name} / {postHeaderData.title}</Title>
+                <BackButton onClick={() => navigate(-1)}>
+                    <FiCornerUpLeft size={24} />
+                </BackButton>
+                <HeaderTop>
+                    <Title>
+                        <CourseName>{post.course_name}</CourseName> / <BoardName>{post.board_name}</BoardName>
+                    </Title>
+                    <MoreOptionsWrapper>
+                        <MoreButton onClick={() => setShowMenu(!showMenu)}>
+                            <FiMoreVertical size={30} />
+                        </MoreButton>
+                        {showMenu && (
+                            <DropdownMenu>
+                                {currentUserId === post.post_by_user_id && (
+                                    <DropdownItem onClick={handleDeletePost}>刪除貼文</DropdownItem>
+                                )}
+                                <DropdownItem>檢舉</DropdownItem>
+                            </DropdownMenu>
+                        )}
+                    </MoreOptionsWrapper>
+                </HeaderTop>
+                
                 <Info>
-                    發文者：{postHeaderData.author_name} | 發文時間：{formatDate(postHeaderData.post_date)}
+                    發文者：{post.author_name} | 發文時間：
+                    {new Date(post.post_date).toLocaleString()}
                 </Info>
+
+                <Title>
+                    <PostTitleText>{post.title}</PostTitleText>
+                </Title>  
             </PostHeader>
 
-            <Description>{postDescription}</Description>
-
-            <TagList>
-                {postHeaderData.post_tags && postHeaderData.post_tags.length > 0 ? (
-                    post.post_tags.map((tag) => (
-                        <Tag key={tag.tag_id}>{tag.tag_name}</Tag>
-                    ))
-                ) : (
-                    <Tag>(無標籤)</Tag>
-                )}
-            </TagList>
+            <Description>{post.description}</Description>
 
             <CommentSection>
                 <CommentTitle>留言：</CommentTitle>
@@ -123,17 +118,17 @@ function PostContent(props) {
                     <CommentButton onClick={handleCommentSubmit}>送出留言</CommentButton>
                 </CommentInputWrapper>
 
-                {!comments || comments.length === 0 ? (
+                {!post.comments || post.comments.length === 0 ? (
                     <p>目前尚無留言。</p>
                 ) : (
-                    comments.map((comment) => (
-                        <CommentCard key={comment.comment_id}>
-                            <CommentInfo>
-                                使用者 {comment.comment_by_user_name}（{comment.comment_user_custom_tag}）於{" "}
-                                {formatDate(comment.comment_date)}：
-                            </CommentInfo>
-                            <CommentText>{comment.description}</CommentText>
-                        </CommentCard>
+                    post.comments.slice().reverse().map((comment) => (
+                        <CommentCard
+                            key={comment.comment_id}
+                            comment={comment}
+                            currentPostId={postId}
+                            currentUserId={currentUserId}
+                            reflash={reflash}
+                        />
                     ))
                 )}
             </CommentSection>
@@ -141,10 +136,11 @@ function PostContent(props) {
     );
 }
 
-export default PostContent;
+export default DiscussionPostView;
 
 
-// ======================= styled-components =======================
+
+// styled-components
 
 const PostContainer = styled.div`
     background-color: #f0f2f5;
@@ -153,39 +149,99 @@ const PostContainer = styled.div`
     margin: 20px;
 `;
 
+
 const PostHeader = styled.div`
     margin-bottom: 16px;
 `;
 
-const Title = styled.h2`
+const HeaderTop = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const BackButton = styled.button`
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #2e3e6e;
+
+    &:hover {
+        color: #1f2a50;
+    }
+`;
+
+const MoreOptionsWrapper = styled.div`
+    position: relative;
+`;
+
+const MoreButton = styled.button`
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
+`;
+
+const DropdownMenu = styled.ul`
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+`;
+
+const DropdownItem = styled.li`
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    &:hover {
+        background-color: #f5f5f5;
+    }
+`;
+
+
+const Title = styled.h2`
     margin-bottom: 8px;
     font-size: 40px;
 `;
 
+const BoardName= styled.span`
+    color: #2e3e6e;
+`;
+
+const CourseName = styled.span`
+    color: red;
+`;
+
+const PostTitleText = styled.span`
+    color: black;
+`;
+
 const Info = styled.p`
     color: #666;
-    font-size: 14px;
+    font-size: 20px;
 `;
 
 const Description = styled.pre`
     font-size: 25px;
-    margin-bottom: 16px;
-`;
-
-const TagList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
     margin-bottom: 24px;
-`;
-
-const Tag = styled.span`
-    background-color: #e0e7ff;
-    color: #1e3a8a;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 13px;
+    white-space: pre-wrap;
 `;
 
 const CommentSection = styled.div`
@@ -195,25 +251,6 @@ const CommentSection = styled.div`
 
 const CommentTitle = styled.h3`
     margin-bottom: 12px;
-`;
-
-const CommentCard = styled.div`
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 10px;
-`;
-
-const CommentInfo = styled.p`
-    font-size: 13px;
-    color: #888;
-`;
-
-const CommentText = styled.p`
-    font-size: 15px;
-    color: #333;
-    margin-top: 4px;
 `;
 
 const CommentInputWrapper = styled.div`
@@ -245,3 +282,39 @@ const CommentButton = styled.button`
         background-color: #1f2a50;
     }
 `;
+
+const CommentMoreOptionsWrapper = styled.div`
+    position: absolute;
+    top: 8px;
+    left: 8px;
+`;
+
+const CommentDropdownMenu = styled.ul`
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+`;
+
+const CommentDropdownItem = styled.li`
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    &:hover {
+        background-color: #f5f5f5;
+    }
+`;
+
+const CommentCardWrapper = styled.div`
+    position: relative;
+`;
+
+
+
