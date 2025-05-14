@@ -87,10 +87,36 @@ async function GetTeachIn(userId) {
     }
 }
 
+async function getInviteCode(courseId) {
+    try {
+        const parsedId = parseInt(courseId, 10);
+        if (isNaN(parsedId)) {
+            throw new Error("Invalid course ID format. Course ID must be an integer.");
+        }
+        
+        const coursesCollection = mongoose.connection.db.collection('course');
+        const course = await coursesCollection.findOne(
+            { course_id: parsedId },
+            { projection: { _id: 0, invite_link: 1 }} //WARN: link
+        );
+
+        // console.log(course);
+        
+        if (!course) {
+            throw new Error(`Course with ID ${parsedId} not found`);
+        }
+        
+        return course.invite_link;
+    } catch (error) {
+        throw new Error(`Failed to retrieve invite code: ${error.message}`);
+    }
+}
+
 
 export {
     ViewCourses,
-    GetTeachIn
+    GetTeachIn,
+    getInviteCode
 };
 
 
