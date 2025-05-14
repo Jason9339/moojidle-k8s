@@ -1,111 +1,120 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./CourseTab.css";
 
 function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
     const [editingMaterials, setEditingMaterials] = useState([]);
     
+    // 使用 useMemo 優化按週次分組的教材，避免不必要的重新計算
+    const materialsByWeek = useMemo(() => {
+        return Array(16).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        });
+    }, [materials]);
+
     // 當 materials 或 isEditMode 改變時，重新初始化編輯數據
     useEffect(() => {
         if (isEditMode) {
-            // 深度複製 materials 並按週次分組
-            const materialsByWeek = Array(16).fill().map((_, i) => {
-                const currentWeek = i + 1;
-                return materials.filter(
-                    m => m.week === currentWeek || (!m.week && currentWeek === 1)
-                );
-            });
-            
             setEditingMaterials(materialsByWeek);
         }
-    }, [materials, isEditMode]);
+    }, [materials, isEditMode, materialsByWeek]);
 
-    // 當編輯的材料發生變化時，通知父組件
+    // 使用 useMemo 優化平面數組轉換，減少不必要的操作
+    const flattenedMaterials = useMemo(() => {
+        if (!isEditMode) return [];
+        
+        return editingMaterials.flatMap((weekMaterials, weekIndex) => {
+            return weekMaterials.map(material => ({
+                ...material,
+                week: weekIndex + 1
+            }));
+        });
+    }, [editingMaterials, isEditMode]);
+
+    // 當編輯的材料發生變化時，通知父組件 (使用防抖動來減少更新頻率)
     useEffect(() => {
         if (isEditMode && onMaterialsChange) {
-            // 將按週次分組的教材轉換為平面數組
-            const flattenedMaterials = editingMaterials.flatMap((weekMaterials, weekIndex) => {
-                return weekMaterials.map(material => ({
-                    ...material,
-                    week: weekIndex + 1  // 確保每個教材都有正確的 week 屬性
-                }));
-            });
+            const timer = setTimeout(() => {
+                onMaterialsChange(flattenedMaterials);
+            }, 300); // 300ms 防抖動
             
-            onMaterialsChange(flattenedMaterials);
+            return () => clearTimeout(timer);
         }
-    }, [editingMaterials, isEditMode, onMaterialsChange]);
+    }, [flattenedMaterials, isEditMode, onMaterialsChange]);
 
-    // 計算週次的日期範圍
-    const getWeekDateRange = (weekNumber) => {
-        // 使用課程開始日期作為基準日期
-        console.log("課程資料:", course); // 查看課程資料是否包含 start_date
-        let semesterStartDate = course && course.start_date 
-            ? new Date(course.start_date) 
-            : new Date(); // 如果沒有開始日期，則使用當前日期
+    // 計算週次的日期範圍 (使用 useMemo 優化)
+    const weekDateRanges = useMemo(() => {
+        if (!course || !course.start_date) return Array(16).fill('');
         
-        console.log("學期開始日期:", semesterStartDate); // 查看實際使用的日期
-        
+        const semesterStartDate = new Date(course.start_date);
         // 將日期調整為該週的週日
-        // 獲取當前是星期幾（0是星期日，1是星期一，...，6是星期六）
         const dayOfWeek = semesterStartDate.getDay();
-        // 如果不是週日，將日期調整為該週的週日
         const daysToSubtract = dayOfWeek === 0 ? 0 : dayOfWeek;
-        semesterStartDate.setDate(semesterStartDate.getDate() - daysToSubtract);
+        const adjustedStartDate = new Date(semesterStartDate);
+        adjustedStartDate.setDate(adjustedStartDate.getDate() - daysToSubtract);
         
-        console.log("調整後的週日日期:", semesterStartDate); // 查看調整後的週日日期
-        
-        // 計算第n週的起始日期（週日）
-        const weekStartDate = new Date(semesterStartDate);
-        weekStartDate.setDate(semesterStartDate.getDate() + (weekNumber - 1) * 7);
-        
-        // 計算第n週的結束日期（週六）
-        const weekEndDate = new Date(weekStartDate);
-        weekEndDate.setDate(weekStartDate.getDate() + 6);
-        
-        // 格式化日期為 MM/DD 格式
-        const formatDate = (date) => {
-            return `${date.getMonth() + 1}/${date.getDate()}`;
-        };
-        
-        return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
-    };
+        // 為所有週次計算日期範圍
+        return Array(16).fill().map((_, weekIndex) => {
+            const weekNumber = weekIndex + 1;
+            // 計算第n週的起始日期（週日）
+            const weekStartDate = new Date(adjustedStartDate);
+            weekStartDate.setDate(adjustedStartDate.getDate() + (weekNumber - 1) * 7);
+            
+            // 計算第n週的結束日期（週六）
+            const weekEndDate = new Date(weekStartDate);
+            weekEndDate.setDate(weekStartDate.getDate() + 6);
+            
+            // 格式化日期為 MM/DD 格式
+            const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
+            return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
+        });
+    }, [course]);
 
-    // 處理教材名稱變更
-    const handleMaterialNameChange = (weekIndex, materialIndex, newName) => {
-        const updatedMaterials = [...editingMaterials];
-        if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
-            updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
-            updatedMaterials[weekIndex][materialIndex] = {
-                ...updatedMaterials[weekIndex][materialIndex],
-                name: newName
-            };
-            setEditingMaterials(updatedMaterials);
-        }
-    };
+    // 使用 useCallback 優化處理函數，避免重新創建
+    const handleMaterialNameChange = useCallback((weekIndex, materialIndex, newName) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    name: newName
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
 
-    // 處理教材URL變更
-    const handleMaterialUrlChange = (weekIndex, materialIndex, newUrl) => {
-        const updatedMaterials = [...editingMaterials];
-        if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
-            updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
-            updatedMaterials[weekIndex][materialIndex] = {
-                ...updatedMaterials[weekIndex][materialIndex],
-                url: newUrl
-            };
-            setEditingMaterials(updatedMaterials);
-        }
-    };
+    // 處理教材URL變更 (使用 useCallback 優化)
+    const handleMaterialUrlChange = useCallback((weekIndex, materialIndex, newUrl) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    url: newUrl
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
 
-    // 刪除教材
-    const deleteMaterial = (weekIndex, materialIndex) => {
-        const updatedMaterials = [...editingMaterials];
-        if (updatedMaterials[weekIndex]) {
-            updatedMaterials[weekIndex] = updatedMaterials[weekIndex].filter((_, idx) => idx !== materialIndex);
-            setEditingMaterials(updatedMaterials);
-        }
-    };
+    // 刪除教材 (使用 useCallback 優化)
+    const deleteMaterial = useCallback((weekIndex, materialIndex) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex]) {
+                updatedMaterials[weekIndex] = updatedMaterials[weekIndex].filter((_, idx) => idx !== materialIndex);
+            }
+            return updatedMaterials;
+        });
+    }, []);
 
-    // 輔助函數：獲取特定週次的教材列表
-    const getMaterialsForWeek = (weekIndex) => {
+    // 輔助函數：獲取特定週次的教材列表 (使用 useMemo 優化)
+    const getMaterialsForWeek = useCallback((weekIndex) => {
         const currentWeek = weekIndex + 1;
         
         if (isEditMode && editingMaterials[weekIndex]) {
@@ -115,7 +124,17 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                 m => m.week === currentWeek || (!m.week && currentWeek === 1)
             );
         }
-    };
+    }, [isEditMode, editingMaterials, materials]);
+
+    // 優化 assignments 的過濾，避免在渲染時重複計算
+    const assignmentsByWeek = useMemo(() => {
+        return Array(16).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return assignments.filter(
+                a => a.week === currentWeek || (!a.week && currentWeek === 1)
+            );
+        });
+    }, [assignments]);
 
     return (
         <div className="material-table-section">
@@ -132,10 +151,8 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                     {Array.from({ length: 16 }, (_, i) => {
                         const currentWeek = i + 1;
                         const weekMaterials = getMaterialsForWeek(i);
-                        const weekAssignments = assignments.filter(
-                            (a) => a.week === currentWeek || (!a.week && currentWeek === 1)
-                        );
-                        const dateRange = getWeekDateRange(currentWeek);
+                        const weekAssignments = assignmentsByWeek[i];
+                        const dateRange = weekDateRanges[i];
 
                         return (
                             <tr key={currentWeek}>
