@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 
 // 計算週次的輔助函數
-function calculateWeek(courseCreateDate, itemCreateDate, courseWeekNum = 16) {
+function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
     // 確保日期格式正確
-    const courseDate = new Date(courseCreateDate);
-    const itemDate = new Date(itemCreateDate);
+    const courseDate = new Date(courseStartDate);
+    const itemDate2 = new Date(itemDate);
     
     // 計算日期差異（毫秒）
-    const diffTime = Math.abs(itemDate - courseDate);
+    const diffTime = Math.abs(itemDate2 - courseDate);
     // 轉換為天數
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     // 轉換為週數（向上取整，確保第一週為第1週）
@@ -49,24 +49,27 @@ async function getMaterialsByCourseId(courseId) {
             throw new Error('找不到課程');
         }
         
-        const courseCreateDate = course.create_date;
+        // 使用 start_date 而不是 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
         const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
         
         const materials = await mongoose.connection.db.collection('materials')
             .find({ in_course_id: parseInt(courseId) })
-            .sort({ create_date: -1 }) // 依日期降序排列
+            .sort({ display_date: -1, create_date: -1 }) // 先依 display_date 再依 create_date 降序排列
             .toArray();
         
         return materials.map(material => {
             // 如果材料已有週次信息，則使用該信息；否則，計算週次
-            const week = material.week || calculateWeek(courseCreateDate, material.create_date, courseWeekNum);
+            // 使用 display_date 或備用 create_date
+            const materialDate = material.display_date || material.create_date;
+            const week = material.week || calculateWeek(courseStartDate, materialDate, courseWeekNum);
             
             return {
                 id: material.m_id,
                 name: material.m_name,
                 url: material.url,
                 description: material.description,
-                uploadDate: material.create_date,
+                uploadDate: material.display_date || material.create_date, // 優先使用 display_date
                 week: week
             };
         });
@@ -79,13 +82,14 @@ async function getMaterialsByCourseId(courseId) {
 // 查詢課程作業
 async function getAssignmentsByCourseId(courseId) {
     try {
-        // 先獲取課程信息，以獲取創建日期
+        // 先獲取課程信息，以獲取開始日期
         const course = await getCourseById(courseId);
         if (!course) {
             throw new Error('找不到課程');
         }
         
-        const courseCreateDate = course.create_date;
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
         const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
         
         const assignments = await mongoose.connection.db.collection('assignments')
@@ -94,14 +98,16 @@ async function getAssignmentsByCourseId(courseId) {
             .toArray();
         
         return assignments.map(assignment => {
-            // 計算週次
-            const week = assignment.week || calculateWeek(courseCreateDate, assignment.create_date, courseWeekNum);
+            // 計算週次 - 使用 start_date 而非 create_date
+            const assignmentDate = assignment.start_date || assignment.create_date;
+            const week = assignment.week || calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
             
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,
                 description: assignment.description,
                 dueDate: assignment.end_date,
+                startDate: assignment.start_date,
                 attachments: assignment.attachments || [],
                 week: week
             };
@@ -239,7 +245,8 @@ async function updateMaterialsService(courseId, materials) {
         if (!course) {
             throw new Error('找不到課程');
         }
-        const courseCreateDate = course.create_date;
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
         const courseWeekNum = course.week_num || 16; // 使用課程設定的週數
         
         // 只處理現有教材的更新
@@ -249,14 +256,16 @@ async function updateMaterialsService(courseId, materials) {
                 // 如果沒有提供週次，嘗試計算
                 let week = material.week;
                 if (!week) {
-                    // 獲取教材的創建日期
+                    // 獲取教材的顯示日期或創建日期
                     const existingMaterial = await materialsCollection.findOne({
                         m_id: parseInt(material.id),
                         in_course_id: parseInt(courseId)
                     });
                     
                     if (existingMaterial) {
-                        week = calculateWeek(courseCreateDate, existingMaterial.create_date, courseWeekNum);
+                        // 使用 display_date 或備用 create_date
+                        const materialDate = existingMaterial.display_date || existingMaterial.create_date;
+                        week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
                     } else {
                         week = 1; // 默認值
                     }
