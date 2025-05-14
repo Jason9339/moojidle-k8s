@@ -1,6 +1,7 @@
 .main-container {
-    width: calc(100vw - 2vw - 380px);
-    padding-left: 2vw;
+    width: calc(100vw - 380px);
+    height: 100vh;
+    overflow: scroll;
 }
 
 .category {
