@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DeleteDiscussionBoard } from "@/services/discussion_board_api/BoardApi";
+import styles from "./DeleteDiscussionBoard.module.css"; 
 
 const DeleteDiscussion = () => {
     const location = useLocation();
@@ -19,7 +20,7 @@ const DeleteDiscussion = () => {
     };
 
     const handleCancel = () => {
-        navigate(-1); // 返回上一頁
+        navigate(-1);
     };
 
     if (!boardId || !boardName) {
@@ -27,12 +28,12 @@ const DeleteDiscussion = () => {
     }
 
     return (
-        <div className="delete-board-container">
+        <div className={styles["delete-board-container"]}>
             <h2>刪除討論版</h2>
             <p>你確定要刪除「<strong>{boardName}</strong>」這個討論版嗎？此操作無法復原。</p>
-            <div className="button-group">
+            <div className={styles["button-group"]}>
                 <button onClick={handleCancel} className="cancel-btn">取消</button>
-                <button onClick={handleDelete} className="delete-btn">刪除</button>
+                <button onClick={handleDelete} className={styles["delete-btn"]}>刪除</button>
             </div>
         </div>
     );

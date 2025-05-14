@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateDiscussionBoard, GetAllUserCourses } from "@/services/discussion_board_api/BoardApi.js";
-
+import styles from "./CreateDiscussionBoard.module.css";
 
 
 const CreateDiscussion = () => {
@@ -9,7 +9,7 @@ const CreateDiscussion = () => {
     const [courseId, setCourseId] = useState("");
     const [courses, setCourses] = useState([]);
     const [error, setError] = useState("");
-    
+
     const navigate = useNavigate();
 
     let userId = JSON.parse(localStorage.getItem("user")).user_id;
@@ -40,8 +40,8 @@ const CreateDiscussion = () => {
     };
 
     return (
-        <div className="create-board-container">
-            <form className="create-board-form" onSubmit={handleSubmit}>
+        <div className={styles["create-board-container"]}>
+            <form className={styles["create-board-form"]} onSubmit={handleSubmit}>
                 <h2>新增討論版</h2>
                 {error && <p className="error-message">{error}</p>}
                 <div className="form-group">
@@ -73,9 +73,13 @@ const CreateDiscussion = () => {
                     />
                 </div>
 
-                
-                <button type="button" onClick={() => navigate(-1)} className="cancel-btn">取消</button>
-                <button type="submit">建立討論版</button>
+
+                <div className={styles["button-group"]}>
+                    <button type="button" onClick={() => navigate(-1)} className={styles["cancel-btn"]}>
+                        取消
+                    </button>
+                    <button type="submit">發布</button>
+                </div>
             </form>
         </div>
     );
