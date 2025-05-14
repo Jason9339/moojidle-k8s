@@ -5,6 +5,8 @@ import ToDoItem from "@/components/dashboard/ToDoItem/ToDoItem";
 import ComingUpItem from "@/components/dashboard/ComingUpItem/ComingUpItem";
 import AddCourseButton from "@/components/dashboard/AddCourseButton/AddCourseButton";
 import AddCourseModal from "@/components/dashboard/AddCourseModal/AddCourseModal";
+import JoinCourseButton from "@/components/dashboard/JoinCourseButton/JoinCourseButton";
+import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseModal";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import "./Dashboard.css";
 import {
@@ -23,6 +25,7 @@ function Dashboard() {
 
   const [dashboardData, setDashboardData] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
 
   const fetchAll = async () => {
     try {
@@ -58,6 +61,9 @@ function Dashboard() {
   const handleAddCourse = async () => {
     await fetchAll();
   };
+  const handleJoinCourse = async () => {
+    await fetchAll();
+  };
 
   const handleDeleteCourse = async (courseId) => {
     try {
@@ -78,7 +84,10 @@ function Dashboard() {
         <div className="dashboard-left">
           <div className="dashboard-heading-row">
             <h2 className="dashboard-heading">Dashboard</h2>
-            <AddCourseButton onClick={() => setShowAddModal(true)} />
+            <div className="dashboard-button-group">
+              <AddCourseButton onClick={() => setShowAddModal(true)} />
+              <JoinCourseButton onClick={() => setShowJoinModal(true)} />
+            </div>
           </div>
           <hr className="dashboard-heading-divider" />
 
@@ -108,6 +117,15 @@ function Dashboard() {
           onAddCourse={handleAddCourse}
           currentUserId={currentUserId}
         />
+      )}
+
+      {showJoinModal && (
+        <JoinCourseModal
+          onClose={() => setShowJoinModal(false)}
+          onJoinCourse={handleJoinCourse}
+          currentUserId={currentUserId}
+        />
+
       )}
     </div>
   );
