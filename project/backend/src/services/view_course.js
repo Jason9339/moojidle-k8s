@@ -1,36 +1,69 @@
 import mongoose from "mongoose"
 
-// Service function to retrieve all courses and format them
-async function ViewCourses() {
-    // console.log("[ViewCourses] Attempting to fetch all courses...");
+// Service function to retrieve all courses with user role information
+async function ViewCourses(userId) {
+    // console.log(`[ViewCourses] Attempting to fetch courses for user ID: ${userId}...`);
     try {
+        // Convert userId to integer if provided
+        const userIdInt = userId ? parseInt(userId, 10) : null;
+        
+        // Get all courses
         const coursesCollection = mongoose.connection.db.collection('course');
-
-        // Find all courses, projecting only the necessary fields
         const courses = await coursesCollection.find({}, {
             projection: {
-                _id: 0, // Exclude the default MongoDB _id
+                _id: 0,
                 course_id: 1,
                 name: 1,
-                color:1
+                color: 1
             }
         }).toArray();
-
-        // console.log(`[ViewCourses] Found ${courses.length} courses.`);
-
-        // Map the database results to the desired frontend format
-        const formattedCourses = courses.map(course => ({
-            title: course.name,       // Map name to title
-            courseId: course.course_id, // Use the integer course_id
-            color:course.color
-        }));
-
-        // console.log("[ViewCourses] Returning formatted courses:", JSON.stringify(formattedCourses, null, 2));
+        
+        // If no userId provided, just return basic course information
+        if (!userId || isNaN(userIdInt)) {
+            return courses.map(course => ({
+                title: course.name,
+                courseId: course.course_id,
+                color: course.color
+            }));
+        }
+        
+        // Get courses where user is a teacher
+        const teachInCollection = mongoose.connection.db.collection('teach_in');
+        const teachingRecords = await teachInCollection.find(
+            { user_id: userIdInt }
+        ).toArray();
+        const teachingCourseIds = new Set(teachingRecords.map(record => record.course_id));
+        
+        // Get courses where user is a student
+        const studyInCollection = mongoose.connection.db.collection('study_in');
+        const studyingRecords = await studyInCollection.find(
+            { user_id: userIdInt }
+        ).toArray();
+        const studyingCourseIds = new Set(studyingRecords.map(record => record.course_id));
+        
+        // Get courses where user is an assistant
+        const assistInCollection = mongoose.connection.db.collection('assist_in');
+        const assistingRecords = await assistInCollection.find(
+            { user_id: userIdInt }
+        ).toArray();
+        const assistingCourseIds = new Set(assistingRecords.map(record => record.course_id));
+        
+        // Format courses with role information and filter out courses with no relationship
+        const formattedCourses = courses
+            .map(course => ({
+                title: course.name,
+                courseId: course.course_id,
+                color: course.color,
+                isTeacher: teachingCourseIds.has(course.course_id) || false,
+                isStudent: studyingCourseIds.has(course.course_id) || false,
+                isAssistant: assistingCourseIds.has(course.course_id) || false
+            }))
+            .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
+        
         return formattedCourses;
 
     } catch (error) {
         console.error("[ViewCourses] Error fetching courses:", error);
-        // Re-throw the error for the controller to handle
         throw new Error(`Failed to retrieve courses: ${error.message}`);
     }
 }
@@ -113,10 +146,13 @@ async function getInviteCode(courseId) {
 }
 
 
+
+
+
 export {
     ViewCourses,
     GetTeachIn,
-    getInviteCode
+    getInviteCode,
 };
 
 
