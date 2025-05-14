@@ -3,16 +3,29 @@ import "./CourseTab.css";
 
 function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
     const [editingMaterials, setEditingMaterials] = useState([]);
+    // 確定課程週數，如果不存在則默認為16週
+    const weekNum = useMemo(() => {
+        let result = 16; // 默認值
+        const parsedWeekNum = parseInt(course.week_num, 10);     
+        if (!isNaN(parsedWeekNum) && parsedWeekNum > 0) {
+            result = parsedWeekNum;
+            //console.log("使用解析後的週數:", result);
+        } else {
+            console.log("解析失敗，使用默認週數:", result);
+        }
+        return result;
+    }, [course]);
     
+
     // 使用 useMemo 優化按週次分組的教材，避免不必要的重新計算
     const materialsByWeek = useMemo(() => {
-        return Array(16).fill().map((_, i) => {
+        return Array(weekNum).fill().map((_, i) => {
             const currentWeek = i + 1;
             return materials.filter(
                 m => m.week === currentWeek || (!m.week && currentWeek === 1)
             );
         });
-    }, [materials]);
+    }, [materials, weekNum]);
 
     // 當 materials 或 isEditMode 改變時，重新初始化編輯數據
     useEffect(() => {
@@ -46,7 +59,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
 
     // 計算週次的日期範圍 (使用 useMemo 優化)
     const weekDateRanges = useMemo(() => {
-        if (!course || !course.start_date) return Array(16).fill('');
+        if (!course || !course.start_date) return Array(weekNum).fill('');
         
         const semesterStartDate = new Date(course.start_date);
         // 將日期調整為該週的週日
@@ -56,7 +69,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
         adjustedStartDate.setDate(adjustedStartDate.getDate() - daysToSubtract);
         
         // 為所有週次計算日期範圍
-        return Array(16).fill().map((_, weekIndex) => {
+        return Array(weekNum).fill().map((_, weekIndex) => {
             const weekNumber = weekIndex + 1;
             // 計算第n週的起始日期（週日）
             const weekStartDate = new Date(adjustedStartDate);
@@ -70,7 +83,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
             const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
             return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
         });
-    }, [course]);
+    }, [course, weekNum]);
 
     // 使用 useCallback 優化處理函數，避免重新創建
     const handleMaterialNameChange = useCallback((weekIndex, materialIndex, newName) => {
@@ -128,13 +141,13 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
 
     // 優化 assignments 的過濾，避免在渲染時重複計算
     const assignmentsByWeek = useMemo(() => {
-        return Array(16).fill().map((_, i) => {
+        return Array(weekNum).fill().map((_, i) => {
             const currentWeek = i + 1;
             return assignments.filter(
                 a => a.week === currentWeek || (!a.week && currentWeek === 1)
             );
         });
-    }, [assignments]);
+    }, [assignments, weekNum]);
 
     return (
         <div className="material-table-section">
@@ -148,7 +161,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                     </tr>
                 </thead>
                 <tbody>
-                    {Array.from({ length: 16 }, (_, i) => {
+                    {Array.from({ length: weekNum }, (_, i) => {
                         const currentWeek = i + 1;
                         const weekMaterials = getMaterialsForWeek(i);
                         const weekAssignments = assignmentsByWeek[i];
