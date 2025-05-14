@@ -96,7 +96,7 @@ function CourseDetail() {
                 {activeTab === "作業" && (
                     <AssignmentsTab assignments={assignments} />
                 )}
-                {activeTab === "公告" && <AnnouncementsTab />}
+                {activeTab === "公告" && <AnnouncementsTab courseId={courseId} />}
             </div>
         </div>
     );
