@@ -169,6 +169,9 @@ async function getCourseDetails(courseId) {
             throw new Error('找不到課程');
         }
         
+        console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
+        
         return {
             id: course.course_id,
             title: course.name,
@@ -176,7 +179,8 @@ async function getCourseDetails(courseId) {
             syllabus: course.syllabus || "",
             createDate: course.create_date,
             start_date: course.start_date,
-            inviteLink: course.invite_link || ""
+            inviteLink: course.invite_link || "",
+            week_num: course.week_num,
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
