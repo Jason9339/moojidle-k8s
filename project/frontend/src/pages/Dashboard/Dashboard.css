@@ -89,3 +89,16 @@ h2.dashboard-heading {
 .add-course-btn:hover {
   background-color: #0056b3;
 }
+
+.dashboard-button-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dashboard-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}

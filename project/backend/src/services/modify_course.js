@@ -8,19 +8,20 @@ async function AddCourse(courseData) {
         // 1. Generate the next course_id
         const nextCourseId = await getNextSequenceValue("course");
         console.log("Next course_id:", nextCourseId);
-        const inviteLink = await generateInviteLink(nextCourseId);
+        const inviteLink = await generateInviteCode(); //generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
         const newCourseDocument = {
             course_id: nextCourseId,
             name: courseData.name,
             description: courseData.description || "",
-            create_date: new Date().toISOString(), // Set current date/time
+            create_date: new Date(), // Set current date/time
+            start_date: courseData.start_date || new Date(), // Default to current date if not provided
             syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
              invite_link: inviteLink,
             // Add other optional fields from schema if needed
-            week: courseData.week || 16, // Default to 16 if not provided
+            week_num: courseData.week || 16, // Default to 16 if not provided
             color : courseData.color || "#4A90E2", // Default to blue if not provided
 
         };
@@ -69,6 +70,16 @@ async function getNextSequenceValue(collectionName) {
 async function generateInviteLink(course_id) {
     return inviteLinkBase + course_id;
 }
+
+async function generateInviteCode() {
+    const db = mongoose.connection.db;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code;
+    do {
+        code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    } while (await db.collection('courses').findOne({ inviteCode: code }));
+    return code;
+};
 
 async function AddTeachIn(userId, courseId) {
     try {

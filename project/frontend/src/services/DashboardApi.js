@@ -8,8 +8,8 @@ import axios from "./apiClient";
 //     },
 // });
 
-export const getCourses = async () => {
-  return (await axios.get("/course/read")).data;
+export const getCourses = async (userId) => {
+  return (await axios.get(`/course/read?user_id=${userId}`)).data;
 };
 
 export const getTodoList = async (userId) => {
@@ -50,3 +50,20 @@ export const deleteCourse = async (courseId) => {
     throw error;
   }
 };
+
+
+// 邀請碼
+export const fetchCourseIdByCode = async (code) => {
+  try {
+    const response = await axios.get(`/course/member/invite/${code}`);
+    return response.data; // Assuming the response contains the courseId
+
+  } catch (error) {
+    console.error("Error finding courseId by invite code :", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+export const inviteStudent = async (courseId, userId, studentId) => {
+  return (await axios.post(`/course/member/add/${courseId}`, { userId, studentId })).data;
+}

@@ -5,44 +5,44 @@ import ToDoItem from "@/components/dashboard/ToDoItem/ToDoItem";
 import ComingUpItem from "@/components/dashboard/ComingUpItem/ComingUpItem";
 import AddCourseButton from "@/components/dashboard/AddCourseButton/AddCourseButton";
 import AddCourseModal from "@/components/dashboard/AddCourseModal/AddCourseModal";
+import JoinCourseButton from "@/components/dashboard/JoinCourseButton/JoinCourseButton";
+import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseModal";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import "./Dashboard.css";
 import {
   getCourses,
   getTodoList,
   getComingUpList,
-  getTeachIn,
 } from "@/services/DashboardApi";
 
 // 模擬目前登入的 user_id
-const currentUserId = 1;
+// const currentUserId = 1;
 
 function Dashboard() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const currentUserId = user?.user_id;
+
   const [dashboardData, setDashboardData] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
 
   const fetchAll = async () => {
     try {
-      const [courses, todoList, comingUpList, teachInList] =
+      const [courses, todoList, comingUpList] =
         await Promise.all([
-          getCourses(),
+          getCourses(currentUserId),
           getTodoList(currentUserId),
           getComingUpList(currentUserId),
-          getTeachIn(currentUserId),
         ]);
 
-      const teacherCourseIds = teachInList.map((entry) => entry.courseId);
-
-      const coursesWithRole = courses.map((course) => ({
-        ...course,
-        isTeacher: teacherCourseIds.includes(course.courseId),
-      }));
 
       setDashboardData({
-        courses: coursesWithRole,
+        courses,
         todoList,
         comingUpList,
       });
+          console.log(courses);
+
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
     }
@@ -53,6 +53,9 @@ function Dashboard() {
   }, []);
 
   const handleAddCourse = async () => {
+    await fetchAll();
+  };
+  const handleJoinCourse = async () => {
     await fetchAll();
   };
 
@@ -75,7 +78,10 @@ function Dashboard() {
         <div className="dashboard-left">
           <div className="dashboard-heading-row">
             <h2 className="dashboard-heading">Dashboard</h2>
-            <AddCourseButton onClick={() => setShowAddModal(true)} />
+            <div className="dashboard-button-group">
+              <AddCourseButton onClick={() => setShowAddModal(true)} />
+              <JoinCourseButton onClick={() => setShowJoinModal(true)} />
+            </div>
           </div>
           <hr className="dashboard-heading-divider" />
 
@@ -105,6 +111,15 @@ function Dashboard() {
           onAddCourse={handleAddCourse}
           currentUserId={currentUserId}
         />
+      )}
+
+      {showJoinModal && (
+        <JoinCourseModal
+          onClose={() => setShowJoinModal(false)}
+          onJoinCourse={handleJoinCourse}
+          currentUserId={currentUserId}
+        />
+
       )}
     </div>
   );

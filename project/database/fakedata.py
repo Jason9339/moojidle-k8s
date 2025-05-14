@@ -61,6 +61,7 @@ def generate_courses(n=5):
             "name": f"Course {i}",
             "description": f"This is the description for course {i}.",
             "create_date": add_ISO_to_string(DATE.isoformat()),
+            "start_date": add_ISO_to_string(DATE.isoformat()),
             "syllabus": f"Syllabus for course {i}",
             "invite_link": f"http://example.com/course_{i}/invite",
             "week_num": 18,
@@ -134,6 +135,7 @@ def generate_announcements(user_count=15, course_count=5, n=15):
         announcements.append({
             "a_id": i,
             "create_date": add_ISO_to_string(seq_date(i + 1)),
+            "announce_date": add_ISO_to_string(seq_date(i + 1)),
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
             "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
@@ -168,10 +170,10 @@ def generate_custom_tags(user_count=15, max_tags_per_user=3):
     for user_id in range(1, user_count + 1):
         # Each user can have 1 to max_tags_per_user custom tags
         num_tags = random.randint(1, max_tags_per_user)
-        for _ in range(num_tags):
+        for tag_id in range(num_tags):
             custom_tags.append({
                 "user_id": user_id,
-                "user_tag": f"CustomTag_{random.randint(1, 100)}"
+                "user_tag": f"User{user_id}'s CustomTag_{tag_id + 1}"
             })
             global CUSTOM_TAG_NUM
             CUSTOM_TAG_NUM += 1
@@ -187,7 +189,7 @@ def generate_course_tags(user_count=15, course_count=5, role_tracker=None):
                 course_tags.append({
                     "user_id": user_id,
                     "course_id": course_id,
-                    "course_tag": f"CourseTag_{random.randint(1, 100)}"
+                    "course_tag": f"User{user_id} in Course{course_id}'s CourseTag_1"
                 })
                 global COURSE_TAG_NUM
                 COURSE_TAG_NUM += 1
@@ -299,6 +301,7 @@ def generate_materials(courses, teach_in, assist_in, max_materials_per_course=5)
                 "create_by_user_id": create_by_user_id,
                 "m_name": f"Material {material_id} for Course {course_id}",
                 "create_date": add_ISO_to_string(seq_date(mat_index + 1)),
+                "display_date": add_ISO_to_string(seq_date(mat_index + 1)),
                 # "path_to_file": f"/materials/course_{course_id}/material_{material_id}.pdf",
                 "url": f"http://example.com/materials/course_{course_id}/material_{material_id}.pdf",
                 # "description": f"This is the description for Material {material_id}."
@@ -365,6 +368,7 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "create_by_user_id": create_by_user_id,
                 "ass_name": f"Assignment {assignment_id} for Course {course_id}",
                 "create_date": add_ISO_to_string(seq_date(ass_index + 1)),
+                "start_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "end_date": add_ISO_to_string(seq_date(ass_index + 2)),
                 "description": f"This is the description for Assignment {assignment_id}.",
                 "attachments": attachments
@@ -473,12 +477,10 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
                 "post_id": post_id,
                 "post_by_user_id": user_id,
                 "title": f"Post title {post_id} in Board {board_id}",
-                "post_user_custom_tag": [
+                "post_user_custom_tags": [
                     {
-                        "tag_id": random.randint(1, 100),
-                        "tag_name": f"Tag_{random.randint(1, 100)}"
+                        "tag_name": f"User{user_id}'s CustomTag_1"
                     }
-                    for _ in range(random.randint(0, 3))
                 ],
                 "description": f"This is the content of post {post_id} in board {board_id}.",
                 "post_date": add_ISO_to_string(seq_date(post_index + 2)),
@@ -486,19 +488,19 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
                 "in_b_id": board_id,
                 "post_tags": [
                     {
-                        "tag_id": random.randint(1, 100),
                         "tag_name": f"Tag_{random.randint(1, 100)}"
                     }
                     for _ in range(random.randint(0, 3))  # Randomly generate 0 to 3 tags
                 ],
                 "comments": [
-                    {
-                        "comment_id": random.randint(1, 1000),
-                        "comment_by_user_id": random.randint(1, len(users)),
-                        "comment_user_custom_tag": f"CustomTag_{random.randint(1, 100)}",
-                        "comment_date": add_ISO_to_string(seq_date(post_index + 2 + comment_index)),
-                        "description": f"This is a comment on post {post_id}."
-                    }
+                    (
+                        lambda comment_user_id: {
+                            "comment_by_user_id": comment_user_id,
+                            "comment_user_custom_tag": f"User{comment_user_id}'s CustomTag_1",
+                            "comment_date": add_ISO_to_string(seq_date(post_index + 2 + comment_index)),
+                            "description": f"This is a comment on post {post_id}."
+                        }
+                    )(random.randint(1, len(users)))
                     for comment_index in range(random.randint(0, 5))  # Randomly generate 0 to 5 comments
                 ]
             })

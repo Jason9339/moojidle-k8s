@@ -10,6 +10,7 @@ import {
   GetTeachingCourses,
   ReadTeachIn,
   EditCourse,
+  ReadInviteCode,
   
   // 課程詳細資訊控制器
   getAllCourses,
@@ -46,5 +47,6 @@ router.get("/:courseId/materials", getCourseFiles); // files 的別名
 router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
+router.get("/:courseId/inviteCode", ReadInviteCode);
 
 export default router;

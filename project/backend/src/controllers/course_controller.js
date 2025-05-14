@@ -21,7 +21,8 @@ import {
 
 import { 
     ViewCourses, 
-    GetTeachIn 
+    GetTeachIn,
+    getInviteCode,
 } from "#src/services/view_course.js";
 
 // 取得所有課程列表
@@ -144,11 +145,12 @@ async function DeleteCourse(req, res) {
     }
 }
 
-// 讀取所有課程
+// 讀取user有的課程
 async function ReadCourse(req, res) {
     try {
+        const userId = req.query.user_id;
         // 調用服務函數獲取格式化的課程
-        const courses = await ViewCourses();
+        const courses = await ViewCourses(userId);
 
         // 返回課程給客戶端
         res.status(200).json(courses);
@@ -224,6 +226,17 @@ async function EditCourse(req, res) {
     }
 }
 
+async function ReadInviteCode(req, res) {
+    try {
+        const courseId = req.params.courseId;
+        // console.log(courseId);
+        const code = await getInviteCode(courseId);
+        return res.status(200).json({ code: code });
+    } catch (error) {
+        throw new Error(`Failed to retrieve invite code: ${error.message}`);
+    }
+}
+
 export {
     CreateCourse,
     DeleteCourse,
@@ -231,5 +244,6 @@ export {
     GetCourseDetails,
     GetTeachingCourses,
     ReadTeachIn,
-    EditCourse
+    EditCourse,
+    ReadInviteCode,
 };

@@ -83,7 +83,7 @@ db.createCollection("study_in", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["user_id", "course_id", "student_id"],
+            required: ["user_id", "course_id"],
             properties: {
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int" },
@@ -97,10 +97,11 @@ db.createCollection("announcement", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["a_id", "create_date", "context", "user_id", "course_id"],
+            required: ["a_id", "create_date", "announce_date", "context", "user_id", "course_id"],
             properties: {
                 a_id: { bsonType: "int" },
                 create_date: { bsonType: "date" },
+                announce_date: { bsonType: "date" },
                 context: { bsonType: "string" },
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int"},
@@ -203,13 +204,15 @@ db.createCollection("materials", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["m_id", "in_course_id", "create_by_user_id", "m_name", "create_date"],
+            required: ["m_id", "in_course_id", "create_by_user_id", "m_name", "create_date", "display_date"],
             properties: {
                 m_id: { bsonType: "int" },
                 in_course_id: { bsonType: "int" },
                 create_by_user_id: { bsonType: "int" },
                 m_name: { bsonType: "string" },
                 create_date: { bsonType: "date" },
+                display_date: { bsonType: "date" },
+                filename: { bsonType: "string" },
                 path_to_file: { bsonType: "string" },
                 url: { bsonType: "string" },
                 description: { bsonType: "string" }
@@ -222,43 +225,24 @@ db.createCollection("assignments", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "end_date"],
+            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "start_date", "end_date"],
             properties: {
-                ass_id: {
-                    bsonType: "int",
-                    description: "Primary key: Unique identifier for the assignment"
-                },
-                in_course_id: {
-                    bsonType: "int",
-                    description: "Foreign key: ID of the course the assignment belongs to"
-                },
-                create_by_user_id: {
-                    bsonType: "int",
-                    description: "Foreign key: User ID of the creator"
-                },
-                ass_name: {
-                    bsonType: "string",
-                    description: "Name of the assignment"
-                },
-                create_date: {
-                    bsonType: "date",
-                    description: "Date when the assignment was created"
-                },
-                end_date: {
-                    bsonType: "date",
-                    description: "Deadline for the assignment"
-                },
-                description: {
-                    bsonType: "string",
-                    description: "Description of the assignment (optional)"
-                },
+                ass_id: { bsonType: "int", },
+                in_course_id: { bsonType: "int", },
+                create_by_user_id: { bsonType: "int", },
+                ass_name: { bsonType: "string", },
+                create_date: { bsonType: "date", },
+                start_date: { bsonType: "date", },
+                end_date: { bsonType: "date", },
+                description: { bsonType: "string", },
                 attachments: {
                     bsonType: "array",
                     items: { 
                         bsonType: "object",
                         properties: {
                             filename: { bsonType: "string", description: "Name of the attached file" },
-                            url: { bsonType: "string", description: "URL of the attached file" }
+                            url: { bsonType: "string", description: "URL of the attached file" },
+                            path_to_file: { bsonType: "string" }
                         }
                     }
                 }
@@ -314,7 +298,7 @@ db.createCollection("post", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["post_id", "post_by_user_id", "post_user_custom_tag", "description", "post_date", "public"],
+            required: ["post_id", "post_by_user_id", "post_user_custom_tags", "description", "post_date", "public"],
             properties: {
                 post_id: {
                     bsonType: "int",
@@ -328,15 +312,14 @@ db.createCollection("post", {
                     bsonType: "string",
                     description: "Title of the post"
                 },
-                post_user_custom_tag: {
+                post_user_custom_tags: {
                     bsonType: "array",
                     items: {
                         bsonType: "object",
                         properties: {
-                            tag_id: { bsonType: "int" },
                             tag_name: { bsonType: "string" }
                         },
-                        required: ["tag_id", "tag_name"]
+                        required: ["tag_name"]
                     }
                 },
                 description: {
@@ -361,7 +344,7 @@ db.createCollection("post", {
                             comment_date: { bsonType: "date" },
                             description: { bsonType: "string" }
                         },
-                        required: ["comment_by_user_id", "comment_user_custom_tag", "comment_date", "description"]
+                        required: ["comment_by_user_id", "comment_date", "description"]
                     },
                     description: "Comments on the post (optional)"
                 },
@@ -374,10 +357,9 @@ db.createCollection("post", {
                     items: {
                         bsonType: "object",
                         properties: {
-                            tag_id: { bsonType: "int" },
                             tag_name: { bsonType: "string" }
                         },
-                        required: ["tag_id", "tag_name"]
+                        required: ["tag_name"]
                     },
                     description: "Tags associated with the post (optional)"
                 }
