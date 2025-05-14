@@ -1,7 +1,7 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import NotFoundPage from "@/pages/NotFoundPage";
-import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoard";
+import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
 import Post from "@/pages/post_pages/Post";
@@ -32,13 +32,16 @@ function App() {
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/discussion/:param" element={<DiscussionBoard />} />
                         <Route path="/post/:id" element={<Post />} />
                         <Route path="*" element={<NotFoundPage />} />
 
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
                         <Route path="/user/profile" element={<UserProfile />} />
+
+                        {/* discussion board pages related */}
+                        <Route path="/discussion/" element={<DiscussionBoard />} />
+                        <Route path="/discussion/:param" element={<DiscussionBoard />} />
                     </Route>
                 </Routes>
             </Router>

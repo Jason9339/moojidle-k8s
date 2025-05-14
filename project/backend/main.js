@@ -1,10 +1,7 @@
 import express from 'express';
-
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
-
 
 // Initialize environment variables
 dotenv.config();
@@ -18,8 +15,6 @@ TestDBConnection();
 const app = express();
 const PORT = process.env.PORT;
 
-
-
 // Middle Ware
 app.use(bodyParser.json());
 app.use(cors({
@@ -28,21 +23,26 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+import userRoute from "#src/routes/user_routes/user_route.js"
 import courseRoute from "#src/routes/course_routes/course_route.js"
 import discussionBoardRoute from "#src/routes/discussion_board_routes/discussion_board_route.js"
-
-import userRoute from "#src/routes/user_routes/user_route.js"
+import postRoute from "#src/routes/discussion_routes/post_routes.js"
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
+
+
 // user route
 app.use("/user", userRoute);
 
-// try hit http://localhost:3000/course
+// course route
 app.use("/course", courseRoute);
 
-// try hit http://localhost:3000/discussion-board
+// discussion-board route
 app.use("/discussion-board", discussionBoardRoute);
+
+// post route
+app.use("/post", postRoute);
 
 import postRouter from '#src/routes/discussion_board_routes/post_route.js';
 app.use("/post", postRouter);
