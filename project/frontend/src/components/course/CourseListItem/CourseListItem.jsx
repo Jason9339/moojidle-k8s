@@ -11,8 +11,10 @@ function CourseListItem({ title, courseId, color }) {
       onClick={() => navigate(`/course/${courseId}`)}
       style={{ cursor: "pointer" }}
     >
-      <div className="course-color-indicator" style={{ backgroundColor: color }} />
-      <span className="course-title">{title}</span>
+      <div className="course-title">
+        <div className="course-color-indicator" style={{ backgroundColor: color }} />
+        <span>{title}</span>
+      </div>
       <span className="course-id">{courseId}</span>
     </div>
   );
