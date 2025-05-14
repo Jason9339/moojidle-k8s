@@ -1,6 +1,6 @@
 .delete-board-container {
     display: flex;
-    flex-direction: column; /* 垂直排列子元素 */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -20,7 +20,7 @@
 
 
 .delete-btn {
-    background-color: #dc3545; /* Bootstrap's danger color */
+    background-color: #dc3545; 
     color: white;
     padding: 0.5rem 1.2rem;
     font-size: 1rem;

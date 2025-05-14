@@ -78,7 +78,7 @@ const CreateDiscussion = () => {
                     <button type="button" onClick={() => navigate(-1)} className={styles["cancel-btn"]}>
                         取消
                     </button>
-                    <button type="submit">發布</button>
+                    <button type="submit" className={styles["submit-btn"]}> 發布</button>
                 </div>
             </form>
         </div>
