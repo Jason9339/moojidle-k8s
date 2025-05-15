@@ -13,8 +13,8 @@
     padding: 2rem 3rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    min-width: 1920px;
-    max-width: 1080px;
+    min-width: 100%;
+    min-height: 100%;
 }
 
 .create-board-form h2 {
@@ -44,14 +44,14 @@ select {
 
 .button-group {
     display: flex;
-    justify-content: flex-end;
-    gap: 102rem; 
+    justify-content: space-between;
     margin-top: 1.5rem;
 }
 
 
 .submit-btn {
     background-color: #007bff;
+    
     color: white;
     cursor: pointer;
 }
