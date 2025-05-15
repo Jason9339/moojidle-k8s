@@ -2,11 +2,11 @@ import {
     GetCourseBoardByCourseId,
     AddDiscussionBoardService, 
     DeleteDiscussionBoardService
-} from "#src/services/discussion_board_services/discussion_board_service.js";
+} from "#src/services/discussion_services/discussion_board_service.js";
 
 import { 
     GetAllUserCourseByUserId
-} from "#src/services/course_services/course_service.js";
+} from "#src/services/discussion_services/course_service.js";
 
 // This function is used to get the discussion board of a course by course id
 // Example response:

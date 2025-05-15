@@ -3,7 +3,7 @@ const router = express.Router();
 
 import { 
     GetUserCourse 
-} from '#src/controllers/course_controllers/course_controller.js';
+} from '#src/controllers/discussion_controllers/course_controller.js';
 
 
 router.get("/:userid", GetUserCourse);

@@ -1,6 +1,6 @@
 import { 
     GetAllUserCourseByUserId 
-} from "#src/services/course_services/course_service.js";
+} from "#src/services/discussion_services/course_service.js";
 
 // This function is used to get all the courses of a user by user id
 // Example response:

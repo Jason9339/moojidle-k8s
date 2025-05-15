@@ -9,7 +9,7 @@ import DiscussionBoardContent from "@/components/discussion_board_components/Dis
 import styles from "./DiscussionBoardPage.module.css"
 
 // services
-import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_board_api/BoardApi";
+import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_api/DiscussionBoardApi";
 import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 
 function DiscussionBoard() {
