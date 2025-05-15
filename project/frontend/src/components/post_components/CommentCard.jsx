@@ -105,6 +105,10 @@ const DropdownItem = styled.li`
     padding: 8px 16px;
     cursor: pointer;
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* 或其他你想限制的寬度 */
     &:hover {
         background-color: #f5f5f5;
     }
