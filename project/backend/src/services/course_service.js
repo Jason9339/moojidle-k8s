@@ -2,20 +2,22 @@ import mongoose from 'mongoose';
 
 // 計算週次的輔助函數
 function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
-    // 確保日期格式正確
     const courseDate = new Date(courseStartDate);
     const itemDate2 = new Date(itemDate);
-    
-    // 計算日期差異（毫秒）
-    const diffTime = Math.abs(itemDate2 - courseDate);
-    // 轉換為天數
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    // 轉換為週數（向上取整，確保第一週為第1週）
+
+    if (isNaN(courseDate) || isNaN(itemDate2)) return 1;
+
+    // 將課程起始日對齊到當週的週日
+    const dayOfWeek = courseDate.getDay(); // Sunday=0, Monday=1, ..., Saturday=6
+    courseDate.setDate(courseDate.getDate() - dayOfWeek); // 往前推到週日
+
+    const diffTime = itemDate2 - courseDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const weekNumber = Math.floor(diffDays / 7) + 1;
-    
-    // 防止週數超過課程設定的週數
-    return Math.min(weekNumber, courseWeekNum);
+
+    return Math.min(Math.max(weekNumber, 1), courseWeekNum);
 }
+
 
 // 查詢課程基本資訊
 async function getCourseById(courseId) {

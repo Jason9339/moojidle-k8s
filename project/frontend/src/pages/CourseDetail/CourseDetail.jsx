@@ -46,6 +46,9 @@ function CourseDetail() {
                     getCourseAssignments(courseId)
                 ]);
                 
+                // console.log("materialsData", materialsData);
+                // console.log("assignmentsData", assignmentsData);
+
                 setCourse(courseData);
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
