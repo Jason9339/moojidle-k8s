@@ -10,19 +10,6 @@ async function FindPostByID(postID) {
 
 }
 
-async function FindAllPostsByBoardID(discussionBoardID) {
-    try {
-        const posts = await mongoose.connection.db
-            .collection('post')
-            .find({ in_b_id: discussionBoardID })
-            .toArray();
-
-        return posts;
-    } catch (err) {
-        throw new Error("Failed to fetch posts by course: " + err.message);
-    }
-}
-
 const DeletePost = async (postID) => {
     try {
         const result = await mongoose.connection.db.collection('post').deleteOne({ post_id: postID });
