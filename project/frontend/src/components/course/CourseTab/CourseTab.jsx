@@ -214,6 +214,15 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                         >
                                                             [slide]
                                                         </a>
+                                                        <button
+                                                            className="download-button"
+                                                            onClick={() =>
+                                                                downloadFile(material.path_to_file, material.filename)
+                                                            }
+                                                            style={{ marginLeft: "8px" }}
+                                                        >
+                                                            下載
+                                                        </button>
                                                     </div>
                                                 ))
                                             ) : (

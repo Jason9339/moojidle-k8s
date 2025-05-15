@@ -70,7 +70,9 @@ async function getMaterialsByCourseId(courseId) {
                 url: material.url,
                 description: material.description,
                 displayDate: material.display_date || material.create_date, // 優先使用 display_date
-                week: week
+                week: week,
+                path_to_file: material.path_to_file,
+                filename: material.filename
             };
         });
     } catch (error) {
@@ -175,8 +177,8 @@ async function getCourseDetails(courseId) {
             throw new Error('找不到課程');
         }
         
-        console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
-        console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
+        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
         
         return {
             id: course.course_id,
