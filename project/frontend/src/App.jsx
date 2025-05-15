@@ -33,10 +33,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
 
                     <Route element={<ProtectedRoutes login={login} />} >
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/discussion/:param" element={<DiscussionBoard />} />
-                        <Route path="/discussion/create" element={<CreateDiscussion />} />
-                        <Route path="/discussion/delete" element={<DeleteDiscussion />} />
+                        <Route path="/dashboard" element={<Dashboard />} />                       
                         <Route path="/post/:id" element={<Post />} />
                         <Route path="*" element={<NotFoundPage />} />
                         
@@ -47,6 +44,8 @@ function App() {
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
+                        <Route path="/discussion/create" element={<CreateDiscussion />} />
+                        <Route path="/discussion/delete" element={<DeleteDiscussion />} />
                     </Route>
                 </Routes>
             </Router>
