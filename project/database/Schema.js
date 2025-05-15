@@ -215,8 +215,7 @@ db.createCollection("materials", {
                 filename: { bsonType: "string" },
                 path_to_file: { bsonType: "string" },
                 url: { bsonType: "string" },
-                description: { bsonType: "string" },
-                filename: { bsonType: "string" }
+                description: { bsonType: "string" }
             }
         }
     }
