@@ -2,7 +2,8 @@ import Button from "@/components/Button/Button";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
-import { useCallback } from "react";
+import { GetUserTagsById } from "@/services/user_api/UserApi";
+import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
@@ -10,10 +11,32 @@ const PostEdit = () => {
     const { state } = useLocation();
     const { param } = useParams();
     const [title, setTitle] = useState("");
+    const [userTags, setUserTags] = useState([]);
+    const [error, setError] = useState(null);
 
-    console.log(state);
     const navigate = useNavigate();
 
+    useEffect(() => {
+
+        const fetchTag = async () => {
+            try {
+
+                // TODO use Context to save userID
+                const userId = JSON.parse(localStorage.getItem("user")).user_id;
+                const data = await GetUserTagsById(userId);
+                const tags = data.map(d => d.user_tag);
+                setUserTags(tags);
+
+            }
+
+            catch (e) {
+                setError("找不到User Id: ", e);
+            }
+        }
+
+
+        fetchTag();
+    }, [])
     const handleCancel = useCallback(() => {
         console.log("cancel")
         navigate(-1);
@@ -49,7 +72,13 @@ const PostEdit = () => {
                 </div>
 
                 <div className="flex w-[70vw] h-[5vh] p-[5px]">
-                    tags
+                    {userTags.map((tagName) => (
+                        <span className="text-[#82D900] pl-[2vw]">
+                            {tagName}
+                        </span>
+
+                    ))}
+
                 </div>
                 <hr />
 
