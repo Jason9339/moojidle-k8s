@@ -18,7 +18,11 @@ import {
   getCourseFiles, 
   getCourseAssignments, 
   getCourseSyllabus, 
-  getCourseLink
+  getCourseLink,
+  
+  // 教材操作控制器
+  updateCourseMaterials,
+  deleteCourseMaterial
 } from '#src/controllers/course_controller.js';
 
 // 路由基礎地址: http://localhost:PORT/course
@@ -44,6 +48,11 @@ router.get("/:courseId", GetCourseDetails);
 router.get("/:courseId/announcements", getCourseAnnouncements);
 router.get("/:courseId/files", getCourseFiles);
 router.get("/:courseId/materials", getCourseFiles); // files 的別名
+
+// ----- 教材管理路由 -----
+router.post("/:courseId/materials", updateCourseMaterials); // 更新教材
+router.delete("/:courseId/materials/:materialId", deleteCourseMaterial); // 刪除教材
+
 router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
