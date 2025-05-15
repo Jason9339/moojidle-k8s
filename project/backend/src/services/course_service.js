@@ -62,14 +62,14 @@ async function getMaterialsByCourseId(courseId) {
             // 如果材料已有週次信息，則使用該信息；否則，計算週次
             // 使用 display_date 或備用 create_date
             const materialDate = material.display_date || material.create_date;
-            const week = material.week || calculateWeek(courseStartDate, materialDate, courseWeekNum);
+            const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
             
             return {
                 id: material.m_id,
                 name: material.m_name,
                 url: material.url,
                 description: material.description,
-                uploadDate: material.display_date || material.create_date, // 優先使用 display_date
+                displayDate: material.display_date || material.create_date, // 優先使用 display_date
                 week: week
             };
         });
@@ -281,8 +281,7 @@ async function updateMaterialsService(courseId, materials) {
                         $set: {
                             m_name: material.name,
                             url: material.url,
-                            description: material.description || "",
-                            week: week
+                            description: material.description || ""
                         }
                     }
                 );
