@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FiCornerUpLeft } from "react-icons/fi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
-import CommentSection from "@/components/discussion_board_components/post_components/CommentSection.jsx";
-import PostContent from "@/components/discussion_board_components/post_components/PostContent.jsx";
+import CommentSection from "@/components/discussion_board_components/post_components/CommentSection/CommentSection.jsx";
+import PostContent from "@/components/discussion_board_components/post_components/PostContent/PostContent.jsx";
 import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
 
 function PostPage() {
