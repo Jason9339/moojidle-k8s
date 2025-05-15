@@ -1,9 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
+import { useNavigate } from "react-router-dom";
 import DiscussionPostView from "@/components/post_components/PostConent.jsx";
 import LeftBar from "@/components/LeftBar/LeftBar";
+import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
+
 
 
 function Post() {
@@ -16,6 +18,7 @@ function Post() {
 
     const storedUser = localStorage.getItem("user");
     const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
+    const navigate = useNavigate();
     
     useEffect(() => {
         const fetchPost = async () => {
@@ -53,6 +56,7 @@ function Post() {
     const handleDeletePost = async () => {
         try {
             await DeletePost(post.in_b_id);
+            alert("貼文刪除成功");
             navigate(`/discussion/${post.in_b_id}`);
     
         } catch (err) {
