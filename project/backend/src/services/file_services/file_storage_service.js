@@ -15,7 +15,7 @@ const basePath = path.join(__dirname, "../../../uploads");
  * @param {string} subfolder - 要儲存的子資料夾 (e.g., "assignment", "material")
  * @returns {Promise<object>} 檔案資訊（包含路徑與 id 等）
  */
-export async function saveFile(buffer, originalName, subfolder) {
+export async function SaveFile(buffer, originalName, subfolder) {
     const ext = path.extname(originalName);
     const fileId = randomUUID();
     const savedFileName = `${fileId}${ext}`;

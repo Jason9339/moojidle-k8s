@@ -1,8 +1,8 @@
-import { saveFile } from "#src/services/file_services/file_storage_service.js";
+import { SaveFile } from "#src/services/file_services/file_storage_service.js";
 import {
-    insertAssignmentToDB,
-    insertMaterialToDB,
-    getNextId
+    InsertAssignmentToDB,
+    InsertMaterialToDB,
+    GetNextId
 } from "#src/services/file_services/file_db_service.js";
 import path from "path";
 import fs from "fs";
@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 /**
  * 處理檔案上傳與資料庫寫入
  */
-export const upload = async (req, res, next) => {
+export const Upload = async (req, res, next) => {
     try {
         const {
             courseId,
@@ -33,14 +33,14 @@ export const upload = async (req, res, next) => {
         }
 
         // 儲存檔案到硬碟
-        const savedFile = await saveFile(file.buffer, decodeURIComponent(file.originalname), type);
+        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), type);
         const now = new Date();
 
         let dbResult;
 
         if (type === "assignment") {
             const doc = {
-                ass_id: await getNextId("assignments"),
+                ass_id: await GetNextId("assignments"),
                 in_course_id: parseInt(courseId),
                 create_by_user_id: parseInt(createByUserId),
                 ass_name: assName,
@@ -55,10 +55,10 @@ export const upload = async (req, res, next) => {
                     }
                 ]
             };
-            dbResult = await insertAssignmentToDB(doc);
+            dbResult = await InsertAssignmentToDB(doc);
         } else if (type === "material") {
             const doc = {
-                m_id: await getNextId("materials"),
+                m_id: await GetNextId("materials"),
                 in_course_id: parseInt(courseId),
                 create_by_user_id: parseInt(createByUserId),
                 m_name: mName,
@@ -68,7 +68,7 @@ export const upload = async (req, res, next) => {
                 path_to_file: savedFile.relativeUrl,
                 filename: savedFile.originalName
             };
-            dbResult = await insertMaterialToDB(doc);
+            dbResult = await InsertMaterialToDB(doc);
         } else {
             return res.status(400).json({ message: "Unknown upload type" });
         }
@@ -84,7 +84,7 @@ export const upload = async (req, res, next) => {
     }
 };
 
-export const downloadFile = (req, res) => {
+export const DownloadFile = (req, res) => {
     const { path: filePathParam } = req.query;
 
     if (!filePathParam) {

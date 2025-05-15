@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { saveFile } from "./file_storage_service.js";
+import { SaveFile } from "./file_storage_service.js";
 
-export const getNextId = async (collectionName) => {
+export const GetNextId = async (collectionName) => {
     try {
         const counter = await mongoose.connection.db.collection("counter").findOne();
         const nextId = (counter?.[collectionName] ?? 0) + 1;
@@ -19,29 +19,29 @@ export const getNextId = async (collectionName) => {
     }
 };
 
-export const insertAssignmentToDB = async (assignmentDoc) => {
+export const InsertAssignmentToDB = async (assignmentDoc) => {
     const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
     return result;
 };
 
-export const insertMaterialToDB = async (materialDoc) => {
+export const InsertMaterialToDB = async (materialDoc) => {
     const result = await mongoose.connection.db.collection("materials").insertOne(materialDoc);
     return result;
 };
 
-export const handleUploadAndInsert = async (req) => {
+export const HandleUploadAndInsert = async (req) => {
     const { type, courseId, createByUserId, description } = req.body;
     const file = req.file;
     if (!file) throw new Error("No file uploaded");
 
     const subfolder = type === "assignment" ? "assignment" : "material";
-    const savedFile = await saveFile(file.buffer, decodeURIComponent(file.originalname), subfolder);
+    const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), subfolder);
 
     const now = new Date();
     if (type === "assignment") {
         const { assName, endDate, startDate } = req.body;
         const doc = {
-            ass_id: await getNextId("assignments"),
+            ass_id: await GetNextId("assignments"),
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             ass_name: assName,
@@ -56,11 +56,11 @@ export const handleUploadAndInsert = async (req) => {
                 },
             ],
         };
-        return await insertAssignmentToDB(doc);
+        return await InsertAssignmentToDB(doc);
     } else {
         const { mName, displayDate } = req.body;
         const doc = {
-            m_id: await getNextId("materials"),
+            m_id: await GetNextId("materials"),
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             m_name: mName,
@@ -69,6 +69,6 @@ export const handleUploadAndInsert = async (req) => {
             display_date: new Date(displayDate),
             path_to_file: savedFile.relativeUrl,
         };
-        return await insertMaterialToDB(doc);
+        return await InsertMaterialToDB(doc);
     }
 };

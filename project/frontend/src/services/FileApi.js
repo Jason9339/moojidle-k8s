@@ -1,6 +1,6 @@
 import axios from "./apiClient";
 
-export const uploadFile = async (formData) => {
+export const UploadFile = async (formData) => {
     try {
         const response = await axios.post("/file/upload", formData, {
             headers: {
@@ -14,7 +14,7 @@ export const uploadFile = async (formData) => {
     }
 };
 
-export const downloadFile = async (pathToFile, filename) => {
+export const DownloadFile = async (pathToFile, filename) => {
     try {
         const response = await axios.get(`/file/download`, {
             params: { path: pathToFile },

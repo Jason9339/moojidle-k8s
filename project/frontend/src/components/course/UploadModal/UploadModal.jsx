@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./UploadModal.css";
-import { uploadFile } from "@/services/FileApi";
+import { UploadFile } from "@/services/FileApi";
 
 const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [file, setFile] = useState(null);
@@ -36,7 +36,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
         }
 
         try {
-            await uploadFile(formData);
+            await UploadFile(formData);
             alert("上傳成功！");
             onSuccess();
             onClose();

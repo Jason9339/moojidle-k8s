@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./CourseTab.css";
-import { downloadFile } from "@/services/FileApi";
+import { DownloadFile } from "@/services/FileApi";
 
 function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
     const [editingMaterials, setEditingMaterials] = useState([]);
@@ -217,7 +217,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                         <button
                                                             className="download-button"
                                                             onClick={() =>
-                                                                downloadFile(material.path_to_file, material.filename)
+                                                                DownloadFile(material.path_to_file, material.filename)
                                                             }
                                                             style={{ marginLeft: "8px" }}
                                                         >
@@ -249,7 +249,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                                     key={i}
                                                                     className="download-button"
                                                                     onClick={() =>
-                                                                        downloadFile(
+                                                                        DownloadFile(
                                                                             file.path_to_file,
                                                                             file.filename
                                                                         )

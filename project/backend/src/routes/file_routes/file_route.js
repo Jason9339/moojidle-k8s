@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { upload, downloadFile } from "#src/controllers/file_controllers/file_controller.js";
+import { Upload, DownloadFile } from "#src/controllers/file_controllers/file_controller.js";
 
 const fileRouter = Router();
 
@@ -11,7 +11,7 @@ const uploadWithMulter = multer({
 }).single("uploadFile");
 
 // Multer 錯誤處理 middleware
-const multerErrorHandling = (err, req, res, next) => {
+const MulterErrorHandling = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         console.error("Multer Error:", err.message);
         return res.status(400).json({ message: `Multer error: ${err.message}` });
@@ -23,7 +23,7 @@ const multerErrorHandling = (err, req, res, next) => {
     next();
 };
 
-fileRouter.post("/upload", uploadWithMulter, upload, multerErrorHandling);
-fileRouter.get("/download", downloadFile);
+fileRouter.post("/upload", uploadWithMulter, Upload, MulterErrorHandling);
+fileRouter.get("/download", DownloadFile);
 
 export default fileRouter;
