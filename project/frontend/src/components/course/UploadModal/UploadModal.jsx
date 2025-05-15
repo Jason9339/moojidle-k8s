@@ -71,19 +71,19 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             {type === "assignment" && (
                 <>
                     <div className="input-group">
-                        <label htmlFor="startDate">開始日期</label>
+                        <label htmlFor="startDate">開始日期時間</label>
                         <input
                             id="startDate"
-                            type="date"
+                            type="datetime-local"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
                         />
                     </div>
                     <div className="input-group">
-                        <label htmlFor="endDate">結束日期</label>
+                        <label htmlFor="endDate">結束日期時間</label>
                         <input
                             id="endDate"
-                            type="date"
+                            type="datetime-local"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
                         />
