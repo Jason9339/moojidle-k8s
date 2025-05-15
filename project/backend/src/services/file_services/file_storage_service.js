@@ -34,3 +34,26 @@ export async function SaveFile(buffer, originalName, subfolder) {
         originalName,
     };
 }
+
+/**
+ * 刪除指定路徑的檔案
+ * @param {string} filePath - 檔案的相對路徑 (以 /uploads 開頭的路徑)
+ * @returns {Promise<boolean>} 是否成功刪除
+ */
+export async function DeleteFile(filePath) {
+    try {
+        // 移除開頭的斜線並解析完整路徑
+        const sanitizedPath = filePath.replace(/^\/+/, "");
+        const fullPath = path.join(__dirname, "../../../", sanitizedPath);
+        
+        // 檢查檔案是否存在
+        await fs.promises.access(fullPath, fs.constants.F_OK);
+        
+        // 刪除檔案
+        await fs.promises.unlink(fullPath);
+        return true;
+    } catch (error) {
+        console.error(`刪除檔案失敗: ${filePath}`, error);
+        return false;
+    }
+}
