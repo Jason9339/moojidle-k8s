@@ -44,8 +44,6 @@ app.use("/discussion-board", discussionBoardRoute);
 // post route
 app.use("/post", postRoute);
 
-import postRouter from '#src/routes/discussion_board_routes/post_route.js';
-app.use("/post", postRouter);
 
 // Routes ends --------------------------------------------------------------------------
 

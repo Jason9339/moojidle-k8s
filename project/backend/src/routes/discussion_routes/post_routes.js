@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { 
+import {
     GetOverviewPosts,
     AddPosts
 } from '#src/controllers/discussion_controllers/post_controllers.js';
@@ -42,6 +42,6 @@ router.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 //     "title": "這是測試標題",
 //     "public": true
 // }
-router.post("/create-post/:inBoardId", AddPosts);
+router.post("/create-post", AddPosts);
 
 export default router;

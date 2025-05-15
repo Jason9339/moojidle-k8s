@@ -1,9 +1,9 @@
-import { 
+import {
     FindProjectedPostsByBId,
     GetNextPostId,
     CreatePostsByBId
 } from "#src/services/discussion_services/post_services.js"
-import { 
+import {
     FindOneUserById
 } from "#src/services/user_services/user_service.js"
 
@@ -14,8 +14,8 @@ async function GetOverviewPosts(req, res) {
     try {
         let result = await FindProjectedPostsByBId(inBoardId);
 
-        for (let i = 0; i < result.length; i ++){
-            if(result[i].description.length > maxContent){
+        for (let i = 0; i < result.length; i++) {
+            if (result[i].description.length > maxContent) {
                 result[i].description = result[i].description.substring(0, maxContent).concat("....");
             }
 
@@ -38,14 +38,14 @@ async function GetOverviewPosts(req, res) {
 
 async function AddPosts(req, res) {
     try {
-        const in_b_id = parseInt(req.params.inBoardId, 10);
         const {
             post_by_user_id,
             post_user_custom_tags,
             description,
             title,
             public: isPublic = false,
-            post_tags
+            in_b_id,
+            post_tags = []
         } = req.body;
 
         if (!post_by_user_id || !description || !title) {
@@ -55,7 +55,7 @@ async function AddPosts(req, res) {
         const post_id = await GetNextPostId();
         const post_date = new Date();
 
-        
+
         const customTagsArray = (post_user_custom_tags || []).map(tag =>
             typeof tag === "string" ? { tag_name: tag } : tag
         );
