@@ -5,6 +5,7 @@ import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
 import Post from "@/pages/post_pages/Post";
+import PostEdit from "@/pages/post_pages/PostEdit";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
@@ -33,6 +34,7 @@ function App() {
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/post/:id" element={<Post />} />
+                        <Route path="/post-edit/:param" element={<PostEdit />} />
                         <Route path="*" element={<NotFoundPage />} />
 
                         {/* user pages related */}

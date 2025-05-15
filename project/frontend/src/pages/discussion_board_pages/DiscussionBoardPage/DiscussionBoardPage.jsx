@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { data, useParams } from "react-router-dom";
+import { data, useParams, Link } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
-
 // css styling
 import styles from "./DiscussionBoardPage.module.css"
 
@@ -17,10 +16,8 @@ function DiscussionBoard() {
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
-
     let currentCourseName;
     let currentBoardName;
-
     useEffect(() => {
         const fetchCourseBoards = async () => {
             try {
@@ -99,11 +96,19 @@ function DiscussionBoard() {
                         param == "home" || param == null ?
                             <DiscussionBoardInitContent />
                             :
-                            <DiscussionBoardContent
-                                overviewPosts={overviewPostData}
-                                courseName={currentCourseName}
-                                boardName={currentBoardName}
-                            />
+                            <div className="flex">
+
+                                <DiscussionBoardContent
+                                    overviewPosts={overviewPostData}
+                                    courseName={currentCourseName}
+                                    boardName={currentBoardName}
+                                />
+
+                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow top:50px"
+                                    state={{ courseName: currentCourseName, boardName: currentBoardName }}>
+                                    新增貼文
+                                </Link>
+                            </div>
                     }
                 </div>
             </div >
