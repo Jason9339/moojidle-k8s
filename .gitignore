@@ -13,7 +13,11 @@ node_modules
 dump.rdb
 
 # for uploaded files
-project/backend/uploads/
+project/backend/uploads/*
+!project/backend/uploads/assignment/
+!project/backend/uploads/assignment/.gitkeep
+!project/backend/uploads/material/
+!project/backend/uploads/material/.gitkeep
 
 # for custom
 test.js
