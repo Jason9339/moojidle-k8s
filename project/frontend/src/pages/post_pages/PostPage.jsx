@@ -1,25 +1,26 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import DiscussionPostView from "@/components/post_components/PostConent.jsx";
+import React, { useEffect, useState } from "react";
+import styles from "./PostPage.module.css";
+import { useParams, useNavigate } from "react-router-dom";
+import { FiCornerUpLeft } from "react-icons/fi";
+
 import LeftBar from "@/components/LeftBar/LeftBar";
+import CommentSection from "@/components/discussion_board_components/post_components/CommentSection.jsx";
+import PostContent from "@/components/discussion_board_components/post_components/PostContent.jsx";
 import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
 
-
-
-function Post() {
+function PostPage() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [post, setPost] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [newComment, setNewComment] = useState("");
+    const [showMenu, setShowMenu] = useState(false);
 
     const storedUser = localStorage.getItem("user");
     const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const fetchPost = async () => {
             try {
@@ -31,19 +32,17 @@ function Post() {
                 setLoading(false);
             }
         };
-
         fetchPost();
-    }, [id, refreshTrigger]); 
+    }, [id, refreshTrigger]);
 
     const handleCommentSubmit = async () => {
         if (!newComment.trim()) return;
-
         const commenData = {
             post_id: post.post_id,
             user_id: currentUserId,
             custom_tag: "訪客",
             description: newComment
-        }
+        };
         try {
             await LeaveCommend(commenData);
             setNewComment("");
@@ -58,7 +57,6 @@ function Post() {
             await DeletePost(post.in_b_id);
             alert("貼文刪除成功");
             navigate(`/discussion/${post.in_b_id}`);
-    
         } catch (err) {
             alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
         }
@@ -75,23 +73,34 @@ function Post() {
     return (
         <>
             <LeftBar />
-
             <div style={{ display: "flex", height: "100vh" }}>
-                {/* <BoardSideBar /> */}
                 <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
-                    <DiscussionPostView 
-                        post={post}
-                        reflash={reflash}
-                        handleCommentSubmit={handleCommentSubmit}
-                        handleDeletePost={handleDeletePost}
-                        newComment={newComment}
-                        setNewComment={setNewComment}
-                        currentUserId={currentUserId} />
+                    <div className={styles.postContainer}>
+                        <button className={styles.backButton} onClick={() => navigate(-1)}>
+                            <FiCornerUpLeft size={24} />
+                        </button>
+
+                        <PostContent
+                            post={post}
+                            currentUserId={currentUserId}
+                            showMenu={showMenu}
+                            setShowMenu={setShowMenu}
+                            handleDeletePost={handleDeletePost}
+                        />
+
+                        <CommentSection
+                            post={post}
+                            newComment={newComment}
+                            setNewComment={setNewComment}
+                            handleCommentSubmit={handleCommentSubmit}
+                            reflash={reflash}
+                            currentUserId={currentUserId}
+                        />
+                    </div>
                 </div>
             </div>
-
         </>
     );
 }
 
-export default Post;
+export default PostPage;
