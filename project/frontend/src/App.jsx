@@ -4,7 +4,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
-import Post from "@/pages/post_pages/Post";
+import PostPage from "@/pages/post_pages/PostPage";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
@@ -33,8 +33,8 @@ function App() {
                     <Route path="/register" element={<Register />} />
 
                     <Route element={<ProtectedRoutes login={login} />} >
-                        <Route path="/dashboard" element={<Dashboard />} />                       
-                        <Route path="/post/:id" element={<Post />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/post/:id" element={<PostPage />} />
                         <Route path="*" element={<NotFoundPage />} />
                         
                         {/* user pages related */}
