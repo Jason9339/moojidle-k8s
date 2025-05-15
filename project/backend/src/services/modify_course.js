@@ -16,7 +16,7 @@ async function AddCourse(courseData) {
             name: courseData.name,
             description: courseData.description || "",
             create_date: new Date(), // Set current date/time
-            start_date: courseData.start_date || new Date(), // Default to current date if not provided
+            start_date: new Date(courseData.start_date) || new Date(), // Default to current date if not provided
             syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
              invite_link: inviteLink,
