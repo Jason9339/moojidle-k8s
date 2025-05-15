@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Redirect = ({
     message = 'Wrong path',
     initialSeconds = 5,
+    returnTo = -1
 }) => {
     const navigate = useNavigate();
     const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
@@ -15,14 +16,14 @@ const Redirect = ({
         }, 1000);
 
         const timeout = setTimeout(() => {
-            navigate(-1, { replace: true });
+            navigate(returnTo, { replace: true });
         }, initialSeconds * 1000);
 
         return () => {
             clearInterval(interval);
             clearTimeout(timeout);
         };
-    }, [navigate, initialSeconds]);
+    }, [navigate, initialSeconds, returnTo]);
 
     return (
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
