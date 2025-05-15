@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
 
-const BoardSideBar = memo(({ itemData, setBoardID }) => {
+const BoardSideBar = memo(({ itemData }) => {
 
 
     const { state } = useLocation();
@@ -40,7 +40,6 @@ const BoardSideBar = memo(({ itemData, setBoardID }) => {
                                         key={board_id}
                                         className={selectedID === board_id ? "text-[#5961d4]" : "text-white"}
                                         onClick={() => {
-                                            setBoardID(board_id);
                                             setSelectedID(board_id);
                                             navigate(`/discussion/${board_id}`);
                                         }}
