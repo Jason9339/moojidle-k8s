@@ -54,7 +54,7 @@ function PostPage() {
 
     const handleDeletePost = async () => {
         try {
-            await DeletePost(post.in_b_id);
+            await DeletePost(post.post_id);
             alert("貼文刪除成功");
             navigate(`/discussion/${post.in_b_id}`);
         } catch (err) {
