@@ -33,7 +33,7 @@ function CommentSection({
             ) : (
                 post.comments.slice().reverse().map((comment) => (
                     <CommentCard
-                        key={comment.comment_id}
+                        key={currentUserId + comment.comment_date}
                         comment={comment}
                         currentPostId={post.post_id}
                         currentUserId={currentUserId}
