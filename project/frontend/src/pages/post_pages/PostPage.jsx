@@ -6,7 +6,7 @@ import { FiCornerUpLeft } from "react-icons/fi";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import CommentSection from "@/components/post_components/CommentSection/CommentSection.jsx";
 import PostContent from "@/components/post_components/PostContent/PostContent.jsx";
-import { GetPostContent, LeaveCommend, DeletePost } from "@/services/discussion_api/PostAPI";
+import { GetPostContent, LeaveCommend, DeletePost } from "@/services/discussion_api/PostApi";
 
 function PostPage() {
     const { id } = useParams();
@@ -66,7 +66,6 @@ function PostPage() {
         setRefreshTrigger(prev => prev + 1);
     };
 
-    if (loading) return <p>Loading post...</p>;
     if (error) return <p>{error}</p>;
     if (!post) return <p>找不到貼文</p>;
 

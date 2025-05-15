@@ -1,6 +1,6 @@
 import { FindBoardByID } from '#src/services/discussion_services/discussion_board_service.js';
 import { FindPostByID, DeletePost, FindProjectedPostsByBId } from '#src/services/discussion_services/post_services.js'
-import { FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
+import { FindUserdataByID, FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
 import { FindCourseNameByID } from '#src/services/discussion_services/course_service.js';
 import { LeaveComment, DeleteComment } from '#src/services/discussion_services/comment_service.js';
 import { FindOneUserById } from "#src/services/user_services/user_service.js"
@@ -17,11 +17,16 @@ async function GetPostContent(req, res, next) {
             return res.status(404).send({ error: "Post Not Found" });
         }
 
-        const authorName = await FindUserNameByID(postData.post_by_user_id);
-        if (!authorName) {
+        const authorData = await FindUserdataByID(postData.post_by_user_id);
+        console.log(authorData);
+        const authorName = authorData.name;
+        const autherImage = authorData.path_to_profile_pic;
+
+        if (!authorData) {
             return res.status(404).send({ error: "Author Not found" });
         }
         postData.author_name = authorName;
+        postData.auther_image = autherImage;
 
         const boardData = await FindBoardByID(postData.in_b_id);
         if (!boardData) {

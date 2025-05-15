@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from 'react';
 import styles from "./PostContent.module.css";
 import { FiMoreVertical, FiCornerUpLeft } from "react-icons/fi";
 
 function PostContent({ post, currentUserId, showMenu, setShowMenu, handleDeletePost }) {
-
+    const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
     return (
         <>
             <div className={styles.postHeader}>
@@ -28,10 +28,22 @@ function PostContent({ post, currentUserId, showMenu, setShowMenu, handleDeleteP
                         )}
                     </div>
                 </div>
-
+                <img
+                    src={imgSrc}
+                    onError={() => setImgSrc("/user_pfp/default.png")}
+                    className={styles.pfp}
+                    alt="profile"
+                />
                 <p className={styles.info}>
                     發文者：{post.author_name} | 發文時間：{new Date(post.post_date).toLocaleString()}
                 </p>
+                {!post.post_user_custom_tags || post.post_user_custom_tags.length === 0 ? (
+                    <p>目前尚無留言。</p>
+                ) : (
+                    post.post_user_custom_tags.slice().reverse().map((tag) => (
+                        <p className={styles.tag}>{tag.tag_name}</p>
+                    ))
+                )}
 
                 <h2 className={styles.title}>
                     <span className={styles.postTitleText}>{post.title}</span>
