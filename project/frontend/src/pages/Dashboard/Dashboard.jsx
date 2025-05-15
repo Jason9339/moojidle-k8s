@@ -8,7 +8,7 @@ import AddCourseModal from "@/components/dashboard/AddCourseModal/AddCourseModal
 import JoinCourseButton from "@/components/dashboard/JoinCourseButton/JoinCourseButton";
 import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseModal";
 import LeftBar from "@/components/LeftBar/LeftBar";
-import "./Dashboard.css";
+import styles from "./Dashboard.module.css";
 import {
   getCourses,
   getTodoList,
@@ -72,20 +72,20 @@ function Dashboard() {
   const { courses, todoList, comingUpList } = dashboardData;
 
   return (
-    <div className="app-layout">
+    <div className={`${styles["app-layout"]}`}>
       <LeftBar />
-      <div className="dashboard-container">
-        <div className="dashboard-left">
-          <div className="dashboard-heading-row">
-            <h2 className="dashboard-heading">Dashboard</h2>
-            <div className="dashboard-button-group">
+      <div className={`${styles["dashboard-container"]}`}>
+        <div className={`${styles["dashboard-left"]}`}>
+          <div className={`${styles["dashboard-heading-row"]}`}>
+            <h2 className={`${styles["dashboard-heading"]}`}>Dashboard</h2>
+            <div className={`${styles["dashboard-button-group"]}`}>
               <AddCourseButton onClick={() => setShowAddModal(true)} />
               <JoinCourseButton onClick={() => setShowJoinModal(true)} />
             </div>
           </div>
-          <hr className="dashboard-heading-divider" />
+          <hr className={`${styles["dashboard-heading-divider"]}`} />
 
-          <div className="course-grid">
+          <div className={`${styles["course-grid"]}`}>
             {courses.map((course, index) => (
               <CourseCard
                 key={index}
@@ -96,7 +96,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="dashboard-right">
+        <div className={`${styles["dashboard-right"]}`}>
           <h3>To Do</h3>
           <ToDoItem todoList={todoList} />
           <hr />

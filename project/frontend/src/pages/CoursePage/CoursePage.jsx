@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getCourses } from "@/services/DashboardApi";
-import "./CoursePage.css";
+import styles from "./CoursePage.module.css";
 import CourseListItem from "@/components/course/CourseListItem/CourseListItem";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
@@ -20,25 +20,25 @@ function CoursePage() {
     }, []);
   
     return (
-      <div className="app-layout">
+      <div className={`${styles["app-layout"]}`}>
         <LeftBar />
-        <div className="course-page">
-        <h2 className="course-heading">All Course</h2>
-        <hr className="course-heading-divider" />
+        <div className={`${styles["course-page"]}`}>
+        <h2 className={`${styles["course-heading"]}`}>All Course</h2>
+        <hr className={`${styles["course-heading-divider"]}`} />
   
-        <div className="course-list-header">
+        <div className={`${styles["course-list-header"]}`}>
           <span>課程名稱</span>
           <span>課程代碼</span>
         </div>
   
-        <div className="course-list">
+        <div className={`${styles["course-list"]}`}>
           {courses.map((course, index) => (
             <CourseListItem key={index} {...course} />
           ))}
         </div>
   
-        <h3 className="past-title">Past Enrollments</h3>
-        <hr className="course-heading-divider" />
+        <h3 className={`${styles["past-title"]}`}>Past Enrollments</h3>
+        <hr className={`${styles["course-heading-divider"]}`} />
       </div>
     </div>
     );

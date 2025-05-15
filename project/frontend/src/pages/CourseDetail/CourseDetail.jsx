@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import "./CourseDetail.css";
+import styles from "./CourseDetail.module.css";
 import { 
   getCourseDetails, 
   getCourseAssignments, 
@@ -117,25 +117,25 @@ function CourseDetail() {
     };
 
     if (loading) {
-        return <div className="loading">載入中...</div>;
+        return <div className={`${styles["loading"]}`}>載入中...</div>;
     }
 
     if (!course) {
-        return <div className="error">無法載入課程資料</div>;
+        return <div className={`${styles["error"]}`}>無法載入課程資料</div>;
     }
 
     return (
-        <div className="app-layout">
+        <div className={`${styles["app-layout"]}`}>
             <LeftBar />
-            <div className="course-detail-container">
+            <div className={`${styles["course-detail-container"]}`}>
                 {/* 課程標題列 */}
-                <div className="course-header">
+                <div className={`${styles["course-header"]}`}>
                     <span>{course.title}</span>
                     <span>{courseId}</span>
                 </div>
 
                 {/* Tab 選單列 */}
-                <div className="tab-menu">
+                <div className={`${styles["tab-menu"]}`}>
                     {["課程", "成績", "討論", "作業", "公告", "成員"].map((tab) => (
                         <button
                             key={tab}
@@ -150,8 +150,8 @@ function CourseDetail() {
                 {/* Tab 對應內容渲染 */}
                 {activeTab === "課程" && (
                     <>
-                        <div className="material-bar">
-                            <button className="material-button">助教與學生管理</button>
+                        <div className={`${styles["material-bar"]}`}>
+                            <button className={`${styles["material-button"]}`}>助教與學生管理</button>
                             <button 
                                 className={`material-button ${isEditMode ? 'active' : ''}`}
                                 onClick={toggleEditMode}
