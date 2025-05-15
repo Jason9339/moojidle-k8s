@@ -18,6 +18,7 @@ function CommentCard({ comment, currentPostId, currentUserId, reflash}) {
             alert("留言刪除失敗：" + (err.message || "未知錯誤"));
         }
         alert("留言刪除成功");
+        setShowMenu(false);
         reflash();
     };
 
