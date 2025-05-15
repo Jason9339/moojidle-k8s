@@ -63,7 +63,7 @@ async function getMaterialsByCourseId(courseId) {
             // 使用 display_date 或備用 create_date
             const materialDate = material.display_date || material.create_date;
             const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
-            
+
             return {
                 id: material.m_id,
                 name: material.m_name,
@@ -102,8 +102,8 @@ async function getAssignmentsByCourseId(courseId) {
         return assignments.map(assignment => {
             // 計算週次 - 使用 start_date 而非 create_date
             const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = assignment.week || calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
-            
+            const week = calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
+          
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,

@@ -28,8 +28,8 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
 
         if (type === "assignment") {
             formData.append("assName", name);
-            formData.append("startDate", startDate);
-            formData.append("endDate", endDate);
+            formData.append("startDate", new Date(startDate).toISOString());
+            formData.append("endDate", new Date(endDate).toISOString());
         } else {
             formData.append("mName", name);
             formData.append("displayDate", displayDate);
