@@ -12,6 +12,8 @@ import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 import Register from "@/pages/login_register_pages/Register.jsx";
 import Login from "@/pages/login_register_pages/Login.jsx";
+import CreateDiscussion from "@/pages/discussion_board_pages/CreateDiscussionBoard/CreateDiscussionBoard.jsx";        
+import DeleteDiscussion from "@/pages/discussion_board_pages/DeleteDiscussionBoard/DeleteDiscussionBoard.jsx";  
 
 function App() {
     let login;
@@ -34,7 +36,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/post/:id" element={<PostPage />} />
                         <Route path="*" element={<NotFoundPage />} />
-
+                        
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
                         <Route path="/user/profile" element={<UserProfile />} />
@@ -42,6 +44,8 @@ function App() {
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
+                        <Route path="/discussion/create" element={<CreateDiscussion />} />
+                        <Route path="/discussion/delete" element={<DeleteDiscussion />} />
                     </Route>
                 </Routes>
             </Router>
