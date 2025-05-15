@@ -1,46 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
+// import { LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
 import { FiMoreVertical, FiCornerUpLeft } from "react-icons/fi"; 
 import { useNavigate} from "react-router-dom";
 import CommentCard from "@/components/post_components/CommentCard.jsx"
 
-function DiscussionPostView({ post, reflash }) {
+function DiscussionPostView({ post, reflash, handleCommentSubmit, handleDeletePost, newComment, setNewComment, currentUserId }) {
 
-    const [newComment, setNewComment] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
-    const storedUser = localStorage.getItem("user");
-    const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
-
-
-    const handleCommentSubmit = async () => {
-        if (!newComment.trim()) return;
-
-        const commenData = {
-            post_id: post.post_id,
-            user_id: currentUserId,
-            custom_tag: "訪客",
-            description: newComment
-        }
-        try {
-            await LeaveCommend(commenData);
-            setNewComment("");
-            reflash();
-        } catch (err) {
-            alert("留言送出失敗：" + (err.message || "未知錯誤"));
-        }
-    };
-    
-    const handleDeletePost = async () => {
-        try {
-            await DeletePost(post.in_b_id);
-            navigate(`/discussion/${post.in_b_id}`);
-
-        } catch (err) {
-            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
-        }
-    };
 
     return (
         <PostContainer>

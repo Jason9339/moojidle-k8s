@@ -12,6 +12,10 @@ function Post() {
     const [error, setError] = useState(null);
     const [post, setPost] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [newComment, setNewComment] = useState("");
+
+    const storedUser = localStorage.getItem("user");
+    const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
     
     useEffect(() => {
         const fetchPost = async () => {
@@ -27,6 +31,34 @@ function Post() {
 
         fetchPost();
     }, [id, refreshTrigger]); 
+
+    const handleCommentSubmit = async () => {
+        if (!newComment.trim()) return;
+
+        const commenData = {
+            post_id: post.post_id,
+            user_id: currentUserId,
+            custom_tag: "訪客",
+            description: newComment
+        }
+        try {
+            await LeaveCommend(commenData);
+            setNewComment("");
+            reflash();
+        } catch (err) {
+            alert("留言送出失敗：" + (err.message || "未知錯誤"));
+        }
+    };
+
+    const handleDeletePost = async () => {
+        try {
+            await DeletePost(post.in_b_id);
+            navigate(`/discussion/${post.in_b_id}`);
+    
+        } catch (err) {
+            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+        }
+    };
 
     const reflash = () => {
         setRefreshTrigger(prev => prev + 1);
@@ -45,7 +77,12 @@ function Post() {
                 <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
                     <DiscussionPostView 
                         post={post}
-                        reflash={reflash} />
+                        reflash={reflash}
+                        handleCommentSubmit={handleCommentSubmit}
+                        handleDeletePost={handleDeletePost}
+                        newComment={newComment}
+                        setNewComment={setNewComment}
+                        currentUserId={currentUserId} />
                 </div>
             </div>
 
