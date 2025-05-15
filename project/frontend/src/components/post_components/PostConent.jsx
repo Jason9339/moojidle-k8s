@@ -5,41 +5,20 @@ import { FiMoreVertical, FiCornerUpLeft } from "react-icons/fi";
 import { useNavigate} from "react-router-dom";
 import CommentCard from "@/components/post_components/CommentCard.jsx"
 
-function DiscussionPostView({ postId }) {
-    const [post, setPost] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+function DiscussionPostView({ post, reflash }) {
+
     const [newComment, setNewComment] = useState("");
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const storedUser = localStorage.getItem("user");
     const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
 
-    useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const data = await GetPostContent(postId);
-                setPost(data);
-            } catch (err) {
-                setError("載入貼文失敗：" + (err.message || "未知錯誤"));
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPost();
-    }, [postId, refreshTrigger]); 
-
-    const reflash = () => {
-        setRefreshTrigger(prev => prev + 1);
-    };
 
     const handleCommentSubmit = async () => {
         if (!newComment.trim()) return;
 
         const commenData = {
-            post_id: postId,
+            post_id: post.post_id,
             user_id: currentUserId,
             custom_tag: "訪客",
             description: newComment
@@ -62,11 +41,6 @@ function DiscussionPostView({ postId }) {
             alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
         }
     };
-
-    if (loading) return <p>Loading post...</p>;
-    if (error) return <p>{error}</p>;
-    if (!post) return <p>找不到貼文</p>;
-
 
     return (
         <PostContainer>
@@ -125,7 +99,7 @@ function DiscussionPostView({ postId }) {
                         <CommentCard
                             key={comment.comment_id}
                             comment={comment}
-                            currentPostId={postId}
+                            currentPostId={post.post_id}
                             currentUserId={currentUserId}
                             reflash={reflash}
                         />
