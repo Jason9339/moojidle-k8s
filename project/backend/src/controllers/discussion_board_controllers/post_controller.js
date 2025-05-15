@@ -1,8 +1,8 @@
-import { FindBoardByID } from '#src/services/post_services/discussion_board_service.js';
-import { FindPostByID, DeletePost } from '#src/services/post_services/post_service.js'
-import { FindUserNameByID } from '#src/services/post_services/user_servcie.js';
-import { FindCourseNameByID } from '#src/services/post_services/course_service.js';
-import { LeaveComment, DeleteComment } from '#src/services/post_services/comment_service.js';
+import { FindBoardByID } from '#src/services/discussion_services/discussion_board_service.js';
+import { FindPostByID, DeletePost } from '#src/services/discussion_services/post_services.js'
+import { FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
+import { FindCourseNameByID } from '#src/services/discussion_services/course_service.js';
+import { LeaveComment, DeleteComment } from '#src/services/discussion_services/comment_service.js';
 
 
 async function GetPostContent(req, res, next) {
