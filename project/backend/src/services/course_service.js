@@ -2,20 +2,22 @@ import mongoose from 'mongoose';
 
 // 計算週次的輔助函數
 function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
-    // 確保日期格式正確
     const courseDate = new Date(courseStartDate);
     const itemDate2 = new Date(itemDate);
-    
-    // 計算日期差異（毫秒）
-    const diffTime = Math.abs(itemDate2 - courseDate);
-    // 轉換為天數
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    // 轉換為週數（向上取整，確保第一週為第1週）
+
+    if (isNaN(courseDate) || isNaN(itemDate2)) return 1;
+
+    // 將課程起始日對齊到當週的週日
+    const dayOfWeek = courseDate.getDay(); // Sunday=0, Monday=1, ..., Saturday=6
+    courseDate.setDate(courseDate.getDate() - dayOfWeek); // 往前推到週日
+
+    const diffTime = itemDate2 - courseDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const weekNumber = Math.floor(diffDays / 7) + 1;
-    
-    // 防止週數超過課程設定的週數
-    return Math.min(weekNumber, courseWeekNum);
+
+    return Math.min(Math.max(weekNumber, 1), courseWeekNum);
 }
+
 
 // 查詢課程基本資訊
 async function getCourseById(courseId) {
@@ -63,14 +65,16 @@ async function getMaterialsByCourseId(courseId) {
             // 使用 display_date 或備用 create_date
             const materialDate = material.display_date || material.create_date;
             const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
-            
+
             return {
                 id: material.m_id,
                 name: material.m_name,
                 url: material.url,
                 description: material.description,
                 displayDate: material.display_date || material.create_date, // 優先使用 display_date
-                week: week
+                week: week,
+                path_to_file: material.path_to_file,
+                filename: material.filename
             };
         });
     } catch (error) {
@@ -100,8 +104,8 @@ async function getAssignmentsByCourseId(courseId) {
         return assignments.map(assignment => {
             // 計算週次 - 使用 start_date 而非 create_date
             const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = assignment.week || calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
-            
+            const week = calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
+          
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,
@@ -175,8 +179,8 @@ async function getCourseDetails(courseId) {
             throw new Error('找不到課程');
         }
         
-        console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
-        console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
+        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
         
         return {
             id: course.course_id,
