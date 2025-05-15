@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DeleteDiscussionBoard } from "@/services/discussion_board_api/BoardApi";
+import { DeleteDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi.js";
 import styles from "./DeleteDiscussionBoard.module.css"; 
 
 const DeleteDiscussion = () => {

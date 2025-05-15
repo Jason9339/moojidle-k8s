@@ -18,7 +18,6 @@ async function GetPostContent(req, res, next) {
         }
 
         const authorData = await FindUserdataByID(postData.post_by_user_id);
-        console.log(authorData);
         const authorName = authorData.name;
         const autherImage = authorData.path_to_profile_pic;
 

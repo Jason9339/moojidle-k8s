@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { CreateDiscussionBoard, GetAllUserCourses } from "@/services/discussion_board_api/BoardApi.js";
+import { CreateDiscussionBoard, GetAllUserCourses } from "@/services/discussion_api/DiscussionBoardApi.js";
 import styles from "./CreateDiscussionBoard.module.css";
 
 const CreateDiscussion = () => {
