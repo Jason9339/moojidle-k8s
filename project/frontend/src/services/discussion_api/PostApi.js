@@ -1,4 +1,5 @@
 import api from "@/services/apiClient.js"
+import { data } from "react-router-dom";
 
 async function GetOverviewPostByBId(inBoardId) {
     try {
@@ -10,6 +11,17 @@ async function GetOverviewPostByBId(inBoardId) {
     }
 }
 
+async function CreatePost(postData) {
+    console.log("postData=", postData)
+    try {
+        const response = await api.post("/post/create-post", postData);
+
+        return response.data;
+    } catch (err) {
+        console.error(err);
+    }
+}
 export {
     GetOverviewPostByBId,
+    CreatePost,
 }

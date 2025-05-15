@@ -2,20 +2,46 @@ import Button from "@/components/Button/Button";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
+import PostEditHeader from "@/components/post_components/PostEditHeader";
+import { CreatePost } from "@/services/discussion_api/PostApi";
 import { GetUserTagsById } from "@/services/user_api/UserApi";
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
+
+const NOT_EXIST = -1;
 const PostEdit = () => {
     const { state } = useLocation();
+
+
     const { param } = useParams();
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [userTags, setUserTags] = useState([]);
+    const [boardData, setBoardData] = useState([]);
+    const [courseData, setCourseData] = useState([])
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
 
+
+    const setCurrentCourseById = useCallback((courseId) => {
+        const obj = state.data.find((d) => d.course_id == courseId);
+
+        const data = obj.boards.map(
+            (b) => ({ value: b.board_id, label: b.board_name })
+        );
+        setBoardData(data);
+        const { boards, ...curr } = obj;
+        state.currentCourse = curr;
+        state.currentBoardId = boards[0].board_id ?? NOT_EXIST;
+    }, [state]);
+
+    const setCurrentBoardById = useCallback((boardId) => {
+
+        state.currentBoardId = boardId;
+    }, [state])
     useEffect(() => {
 
         const fetchTag = async () => {
@@ -23,9 +49,9 @@ const PostEdit = () => {
 
                 // TODO use Context to save userID
                 const userId = JSON.parse(localStorage.getItem("user")).user_id;
-                const data = await GetUserTagsById(userId);
-                const tags = data.map(d => d.user_tag);
-                setUserTags(tags);
+                const tags = await GetUserTagsById(userId);
+                setUserTags(tags.map(t => t.user_tag));
+
 
             }
 
@@ -34,30 +60,68 @@ const PostEdit = () => {
             }
         }
 
-
         fetchTag();
+
     }, [])
+
+
+    useEffect(() => {
+
+
+        const courses = state.data.map((d) => (
+            { value: d.course_id, label: d.course_name }
+        ));
+        setCourseData(courses);
+        setCurrentCourseById(state.currentCourseId);
+
+    }, [state.data, state.currentCourseId,
+        setCurrentCourseById])
+
+
+    const handleTitleChange = useCallback((txt) => {
+        setTitle(txt);
+    }, [])
+
+    const handleDescriptionChange = useCallback((txt) => {
+        setDescription(txt)
+    }, [])
+
     const handleCancel = useCallback(() => {
-        console.log("cancel")
         navigate(-1);
 
     }, [navigate]);
 
-    const handleSubmit = useCallback(() => {
+    const handleSubmit = useCallback(async () => {
 
-        console.log("submit")
 
+        // TODO use Context to save userID
+        const userId = JSON.parse(localStorage.getItem("user")).user_id;
+
+        const data = {
+            post_by_user_id: userId,
+            post_user_custom_tags: userTags,
+            description: description,
+            title: title,
+            in_b_id: state.currentBoardId,
+
+        }
+
+
+        const resData = await CreatePost(data);
+
+        const post = resData.post;
+
+        // TODO route back and pass data
+        console.log(resData)
         navigate(-1, {
 
         });
-    }, [navigate]);
+    }, [navigate, description, state.currentBoardId, state.currentCourseId, title, userTags]);
 
-    if (!state?.boardName || !state?.courseName) {
+    if (!state?.currentBoardId || !state?.currentBoardId) {
 
         return <Redirect />
     }
-
-
     return (
 
         <>
@@ -65,29 +129,18 @@ const PostEdit = () => {
 
             {param == "new" ? "new" : "edit"}
             <div className="flex flex-col px-[10vw] py-[5vh]">
-
-                <div className="flex w-[70vw] h-[5vh] p-[5px]">
-                    <span > {state.courseName} </span>
-                    <span> {state.boardName} </span>
-                </div>
-
-                <div className="flex w-[70vw] h-[5vh] p-[5px]">
-                    {userTags.map((tagName) => (
-                        <span className="text-[#82D900] pl-[2vw]">
-                            {tagName}
-                        </span>
-
-                    ))}
-
-                </div>
+                <PostEditHeader courseData={courseData} boardData={boardData}
+                    defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}
+                    onCourseFilterChange={(e) => setCurrentCourseById(e)}
+                    onBoardFilterChange={(e) => setCurrentBoardById(e)} />
                 <hr />
 
                 <form className="p-[10px]" onSubmit={handleSubmit}>
                     <label htmlFor="titile">標題</label>
-                    <textarea id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-2 rounded-2xl" />
+                    <textarea id="title" value={title} onChange={e => handleTitleChange(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-2 rounded-2xl" />
 
                     <label htmlFor="description" >內文</label>
-                    <TextEditor className="mt-[1vh] h-[60vh]" rows={19} />
+                    <TextEditor className="mt-[1vh] h-[60vh]" rows={19} onChange={txt => handleDescriptionChange(txt)} />
 
 
                     <div className="flex justify-end mt-[1vh]">

@@ -16,8 +16,8 @@ function DiscussionBoard() {
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
-    let currentCourseName;
-    let currentBoardName;
+    let currentCourse;
+    let currentBoard;
     useEffect(() => {
         const fetchCourseBoards = async () => {
             try {
@@ -69,10 +69,14 @@ function DiscussionBoard() {
             for (let j = 0; j < courseBoardData[i].boards.length; j++) {
                 if (courseBoardData[i].boards[j].board_id == currentBoardId) {
                     // find the correct path
-                    currentCourseName = courseBoardData[i].course_name;
-                    currentBoardName = courseBoardData[i].boards[j].board_name;
+                    const { course_id, course_name } = courseBoardData[i];
+                    const { board_id, board_name } = courseBoardData[i].boards[j];
+
+                    currentCourse = { course_id: course_id, course_name: course_name };
+                    currentBoard = { board_id: board_id, board_name: board_name };
                 }
             }
+
         }
     }
 
@@ -100,12 +104,12 @@ function DiscussionBoard() {
 
                                 <DiscussionBoardContent
                                     overviewPosts={overviewPostData}
-                                    courseName={currentCourseName}
-                                    boardName={currentBoardName}
+                                    courseName={currentCourse.name}
+                                    boardName={currentBoard.name}
                                 />
 
                                 <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow top:50px"
-                                    state={{ courseName: currentCourseName, boardName: currentBoardName }}>
+                                    state={{ data: courseBoardData, currentCourseId: currentCourse.course_id, currentBoardId: currentBoard.board_id }}>
                                     新增貼文
                                 </Link>
                             </div>

@@ -13,7 +13,7 @@ const CardContent = ({ className = "", ...props }) => (
 )
 
 
-export default function TextEditor({ className = "", rows = 10, onTextChange, onSubmit }) {
+export default function TextEditor({ className = "", rows = 10, onChange, onSubmit }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
@@ -94,7 +94,7 @@ export default function TextEditor({ className = "", rows = 10, onTextChange, on
                     <textarea
                         ref={textareaRef}
                         value={text}
-                        onChange={(e) => { setText(e.target.value); onTextChange && onTextChange(e.target.value) }}
+                        onChange={(e) => { setText(e.target.value); onChange && onChange(e.target.value) }}
                         placeholder=""
                         className={`flex-2 w-full p-4 font-mono outline-none overflow-scroll resize-none`}
                         rows={rows}

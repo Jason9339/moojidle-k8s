@@ -1,0 +1,31 @@
+import Combobox from "@/components/Combobox/Combobox";
+
+const PostEditHeader = ({ courseData, boardData, defaultCourseId, defaultBoardId, userTags, onCourseFilterChange, onBoardFilterChange }) => {
+
+    return (
+
+        <>
+            <div className="flex w-[70vw] h-[5vh] p-[5px]">
+                <Combobox options={courseData} onChange={onCourseFilterChange} defaultValue={defaultCourseId} />
+                <Combobox options={boardData} onChange={onBoardFilterChange} defaultValue={defaultBoardId} />
+            </div>
+
+            <div className="flex w-[70vw] h-[5vh] p-[5px]">
+                {userTags.map((tag) => (
+                    <span id={`user${tag.user_id}${tag.user_tag}`} className="text-[#548C00] pl-[2vw]">
+                        {tag}
+                    </span>
+
+                ))}
+
+            </div>
+
+        </>
+
+
+
+
+    )
+
+}
+export default PostEditHeader;
