@@ -17,6 +17,7 @@ import GradesTab from "@/components/course/GradesTab/GradesTab";
 import DiscussionTab from "@/components/course/DiscussionTab/DiscussionTab";
 import AssignmentsTab from "@/components/course/AssignmentsTab/AssignmentsTab";
 import AnnouncementsTab from "@/components/course/AnnouncementsTab/AnnouncementsTab";
+import UploadModal from "@/components/course/UploadModal/UploadModal";
 import MembersTab from "@/components/course/MembersTab/MembersTab";
 
 function CourseDetail() {
@@ -29,6 +30,8 @@ function CourseDetail() {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("課程");
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [members, setMembers] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
@@ -151,7 +154,12 @@ function CourseDetail() {
                 {activeTab === "課程" && (
                     <>
                         <div className="material-bar">
-                            <button className="material-button">助教與學生管理</button>
+                            <button
+                                className="material-button"
+                                onClick={() => setShowUploadModal(true)}
+                            >
+                                上傳教材/作業
+                            </button>
                             <button 
                                 className={`material-button ${isEditMode ? 'active' : ''}`}
                                 onClick={toggleEditMode}
@@ -168,6 +176,17 @@ function CourseDetail() {
                             isEditMode={isEditMode}
                             onMaterialsChange={handleMaterialsChange}
                         />
+                        {/* 顯示 UploadModal */}
+                        {showUploadModal && (
+                            <>
+                                <div className="modal-overlay" onClick={() => setShowUploadModal(false)} />
+                                <UploadModal
+                                onClose={() => setShowUploadModal(false)}
+                                courseId={courseId}
+                                onSuccess={() => window.location.reload()}
+                                />
+                            </>
+                        )}
                     </>
                 )}
                 {activeTab === "成績" && (
