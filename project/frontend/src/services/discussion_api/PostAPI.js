@@ -42,7 +42,15 @@ async function DeletePost(postID) {
 
 };
 
+async function GetOverviewPostByBId(inBoardId) {
+    try {
+        const response = await api.get(`/post/get-overview-posts/${inBoardId}`);
 
+        return response.data;
+    } catch (err) {
+        console.error(err);
+    }
+}
 
-export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost};
+export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost, GetOverviewPostByBId};
 

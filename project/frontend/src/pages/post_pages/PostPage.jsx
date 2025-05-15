@@ -6,7 +6,7 @@ import { FiCornerUpLeft } from "react-icons/fi";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import CommentSection from "@/components/post_components/CommentSection/CommentSection.jsx";
 import PostContent from "@/components/post_components/PostContent/PostContent.jsx";
-import { GetPostContent, LeaveCommend, DeletePost } from "@/services/post_api/PostAPI";
+import { GetPostContent, LeaveCommend, DeletePost } from "@/services/discussion_api/PostAPI";
 
 function PostPage() {
     const { id } = useParams();

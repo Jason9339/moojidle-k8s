@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./CommentSection.module.css";
 import { FiMoreVertical } from "react-icons/fi";
-import { DeleteCommend } from "@/services/post_api/PostAPI";
+import { DeleteCommend } from "@/services/discussion_api/PostAPI";
 
 function CommentSection({
     post,
