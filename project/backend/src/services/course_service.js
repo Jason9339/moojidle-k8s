@@ -1,5 +1,22 @@
 import mongoose from 'mongoose';
 
+// 計算週次的輔助函數
+function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
+    // 確保日期格式正確
+    const courseDate = new Date(courseStartDate);
+    const itemDate2 = new Date(itemDate);
+    
+    // 計算日期差異（毫秒）
+    const diffTime = Math.abs(itemDate2 - courseDate);
+    // 轉換為天數
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // 轉換為週數（向上取整，確保第一週為第1週）
+    const weekNumber = Math.floor(diffDays / 7) + 1;
+    
+    // 防止週數超過課程設定的週數
+    return Math.min(weekNumber, courseWeekNum);
+}
+
 // 查詢課程基本資訊
 async function getCourseById(courseId) {
     try {
@@ -26,20 +43,36 @@ async function getAnnouncementsByCourseId(courseId) {
 // 查詢課程教材
 async function getMaterialsByCourseId(courseId) {
     try {
+        // 先獲取課程信息，以獲取創建日期
+        const course = await getCourseById(courseId);
+        if (!course) {
+            throw new Error('找不到課程');
+        }
+        
+        // 使用 start_date 而不是 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
+        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
+        
         const materials = await mongoose.connection.db.collection('materials')
             .find({ in_course_id: parseInt(courseId) })
-            .sort({ create_date: -1 }) // 依日期降序排列
+            .sort({ display_date: -1, create_date: -1 }) // 先依 display_date 再依 create_date 降序排列
             .toArray();
         
-        return materials.map(material => ({
-            id: material.m_id,
-            name: material.m_name,
-            url: material.url,
-            description: material.description,
-            uploadDate: material.create_date,
-            path_to_file: material.path_to_file,
-            filename: material.filename
-        }));
+        return materials.map(material => {
+            // 如果材料已有週次信息，則使用該信息；否則，計算週次
+            // 使用 display_date 或備用 create_date
+            const materialDate = material.display_date || material.create_date;
+            const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
+            
+            return {
+                id: material.m_id,
+                name: material.m_name,
+                url: material.url,
+                description: material.description,
+                displayDate: material.display_date || material.create_date, // 優先使用 display_date
+                week: week
+            };
+        });
     } catch (error) {
         console.error(`[getMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course materials: ${error.message}`);
@@ -49,18 +82,36 @@ async function getMaterialsByCourseId(courseId) {
 // 查詢課程作業
 async function getAssignmentsByCourseId(courseId) {
     try {
+        // 先獲取課程信息，以獲取開始日期
+        const course = await getCourseById(courseId);
+        if (!course) {
+            throw new Error('找不到課程');
+        }
+        
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
+        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
+        
         const assignments = await mongoose.connection.db.collection('assignments')
             .find({ in_course_id: parseInt(courseId) })
             .sort({ end_date: 1 }) // 依截止日期升序排列
             .toArray();
         
-        return assignments.map(assignment => ({
-            id: assignment.ass_id,
-            name: assignment.ass_name,
-            description: assignment.description,
-            dueDate: assignment.end_date,
-            attachments: assignment.attachments || []
-        }));
+        return assignments.map(assignment => {
+            // 計算週次 - 使用 start_date 而非 create_date
+            const assignmentDate = assignment.start_date || assignment.create_date;
+            const week = assignment.week || calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
+            
+            return {
+                id: assignment.ass_id,
+                name: assignment.ass_name,
+                description: assignment.description,
+                dueDate: assignment.end_date,
+                startDate: assignment.start_date,
+                attachments: assignment.attachments || [],
+                week: week
+            };
+        });
     } catch (error) {
         console.error(`[getAssignmentsByCourseId] Error fetching assignments for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course assignments: ${error.message}`);
@@ -124,13 +175,18 @@ async function getCourseDetails(courseId) {
             throw new Error('找不到課程');
         }
         
+        console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
+        
         return {
             id: course.course_id,
             title: course.name,
             description: course.description,
             syllabus: course.syllabus || "",
             createDate: course.create_date,
-            inviteLink: course.invite_link || ""
+            start_date: course.start_date,
+            inviteLink: course.invite_link || "",
+            week_num: course.week_num,
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
@@ -178,6 +234,95 @@ async function getTeachingCourses(userId) {
     }
 }
 
+// 更新課程教材
+async function updateMaterialsService(courseId, materials) {
+    try {
+        const materialsCollection = mongoose.connection.db.collection('materials');
+        const results = [];
+        
+        // 獲取課程創建日期和週數，用於計算週次
+        const course = await getCourseById(courseId);
+        if (!course) {
+            throw new Error('找不到課程');
+        }
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
+        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數
+        
+        // 只處理現有教材的更新
+        for (const material of materials) {
+            // 檢查是否是已存在的教材
+            if (material.id) {
+                // 如果沒有提供週次，嘗試計算
+                let week = material.week;
+                if (!week) {
+                    // 獲取教材的顯示日期或創建日期
+                    const existingMaterial = await materialsCollection.findOne({
+                        m_id: parseInt(material.id),
+                        in_course_id: parseInt(courseId)
+                    });
+                    
+                    if (existingMaterial) {
+                        // 使用 display_date 或備用 create_date
+                        const materialDate = existingMaterial.display_date || existingMaterial.create_date;
+                        week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
+                    } else {
+                        week = 1; // 默認值
+                    }
+                }
+                
+                // 更新現有教材
+                const result = await materialsCollection.updateOne(
+                    { 
+                        m_id: parseInt(material.id),
+                        in_course_id: parseInt(courseId)
+                    },
+                    {
+                        $set: {
+                            m_name: material.name,
+                            url: material.url,
+                            description: material.description || ""
+                        }
+                    }
+                );
+                
+                if (result.matchedCount > 0) {
+                    results.push({
+                        id: material.id,
+                        name: material.name,
+                        url: material.url,
+                        description: material.description || "",
+                        week: week,
+                        status: 'updated'
+                    });
+                }
+            }
+        }
+        
+        return results;
+    } catch (error) {
+        console.error(`[updateMaterialsService] Error updating materials for course ID ${courseId}:`, error);
+        throw new Error(`Failed to update course materials: ${error.message}`);
+    }
+}
+
+// 刪除教材
+async function deleteMaterialService(courseId, materialId) {
+    try {
+        const materialsCollection = mongoose.connection.db.collection('materials');
+        
+        const result = await materialsCollection.deleteOne({
+            m_id: parseInt(materialId),
+            in_course_id: parseInt(courseId)
+        });
+        
+        return result;
+    } catch (error) {
+        console.error(`[deleteMaterialService] Error deleting material ID ${materialId} from course ID ${courseId}:`, error);
+        throw new Error(`Failed to delete material: ${error.message}`);
+    }
+}
+
 export {
     getCourseById,
     getAnnouncementsByCourseId,
@@ -187,5 +332,8 @@ export {
     getCourseSyllabus,
     getCourseLink,
     getCourseDetails,
-    getTeachingCourses
+    getTeachingCourses,
+    // 教材操作服務
+    updateMaterialsService,
+    deleteMaterialService
 };

@@ -1,12 +1,154 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./CourseTab.css";
 import { downloadFile } from "@/services/FileApi";
 
-function CourseTab({ courseId, course, materials, assignments }) {
+function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
+    const [editingMaterials, setEditingMaterials] = useState([]);
+    // 確定課程週數，如果不存在則默認為16週
+    const weekNum = useMemo(() => {
+        let result = 16; // 默認值
+        const parsedWeekNum = parseInt(course.week_num, 10);     
+        if (!isNaN(parsedWeekNum) && parsedWeekNum > 0) {
+            result = parsedWeekNum;
+            //console.log("使用解析後的週數:", result);
+        } else {
+            console.log("解析失敗，使用默認週數:", result);
+        }
+        return result;
+    }, [course]);
+    
+
+    // 使用 useMemo 優化按週次分組的教材，避免不必要的重新計算
+    const materialsByWeek = useMemo(() => {
+        return Array(weekNum).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        });
+    }, [materials, weekNum]);
+
+    // 當 materials 或 isEditMode 改變時，重新初始化編輯數據
     useEffect(() => {
-        console.log("Current materials:", materials);
-        console.log("Current assignments:", assignments);
-    }, [materials, assignments]);
+        if (isEditMode) {
+            setEditingMaterials(materialsByWeek);
+        }
+    }, [materials, isEditMode, materialsByWeek]);
+
+    // 使用 useMemo 優化平面數組轉換，減少不必要的操作
+    const flattenedMaterials = useMemo(() => {
+        if (!isEditMode) return [];
+        
+        return editingMaterials.flatMap((weekMaterials, weekIndex) => {
+            return weekMaterials.map(material => ({
+                ...material,
+                week: weekIndex + 1
+            }));
+        });
+    }, [editingMaterials, isEditMode]);
+
+    // 當編輯的材料發生變化時，通知父組件 (使用防抖動來減少更新頻率)
+    useEffect(() => {
+        if (isEditMode && onMaterialsChange) {
+            const timer = setTimeout(() => {
+                onMaterialsChange(flattenedMaterials);
+            }, 300); // 300ms 防抖動
+            
+            return () => clearTimeout(timer);
+        }
+    }, [flattenedMaterials, isEditMode, onMaterialsChange]);
+
+    // 計算週次的日期範圍 (使用 useMemo 優化)
+    const weekDateRanges = useMemo(() => {
+        if (!course || !course.start_date) return Array(weekNum).fill('');
+        
+        const semesterStartDate = new Date(course.start_date);
+        // 將日期調整為該週的週日
+        const dayOfWeek = semesterStartDate.getDay();
+        const daysToSubtract = dayOfWeek === 0 ? 0 : dayOfWeek;
+        const adjustedStartDate = new Date(semesterStartDate);
+        adjustedStartDate.setDate(adjustedStartDate.getDate() - daysToSubtract);
+        
+        // 為所有週次計算日期範圍
+        return Array(weekNum).fill().map((_, weekIndex) => {
+            const weekNumber = weekIndex + 1;
+            // 計算第n週的起始日期（週日）
+            const weekStartDate = new Date(adjustedStartDate);
+            weekStartDate.setDate(adjustedStartDate.getDate() + (weekNumber - 1) * 7);
+            
+            // 計算第n週的結束日期（週六）
+            const weekEndDate = new Date(weekStartDate);
+            weekEndDate.setDate(weekStartDate.getDate() + 6);
+            
+            // 格式化日期為 MM/DD 格式
+            const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
+            return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
+        });
+    }, [course, weekNum]);
+
+    // 使用 useCallback 優化處理函數，避免重新創建
+    const handleMaterialNameChange = useCallback((weekIndex, materialIndex, newName) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    name: newName
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 處理教材URL變更 (使用 useCallback 優化)
+    const handleMaterialUrlChange = useCallback((weekIndex, materialIndex, newUrl) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    url: newUrl
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 刪除教材 (使用 useCallback 優化)
+    const deleteMaterial = useCallback((weekIndex, materialIndex) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex]) {
+                updatedMaterials[weekIndex] = updatedMaterials[weekIndex].filter((_, idx) => idx !== materialIndex);
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 輔助函數：獲取特定週次的教材列表 (使用 useMemo 優化)
+    const getMaterialsForWeek = useCallback((weekIndex) => {
+        const currentWeek = weekIndex + 1;
+        
+        if (isEditMode && editingMaterials[weekIndex]) {
+            return editingMaterials[weekIndex];
+        } else {
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        }
+    }, [isEditMode, editingMaterials, materials]);
+
+    // 優化 assignments 的過濾，避免在渲染時重複計算
+    const assignmentsByWeek = useMemo(() => {
+        return Array(weekNum).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return assignments.filter(
+                a => a.week === currentWeek || (!a.week && currentWeek === 1)
+            );
+        });
+    }, [assignments, weekNum]);
 
     return (
         <div className="material-table-section">
@@ -20,49 +162,64 @@ function CourseTab({ courseId, course, materials, assignments }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {Array.from({ length: 16 }, (_, i) => {
+                    {Array.from({ length: weekNum }, (_, i) => {
                         const currentWeek = i + 1;
-                        const weekMaterials = materials.filter(
-                            (m) =>
-                                m.week === currentWeek ||
-                                (!m.week && currentWeek === 1)
-                        );
-                        const weekAssignments = assignments.filter(
-                            (a) =>
-                                a.week === currentWeek ||
-                                (!a.week && currentWeek === 1)
-                        );
+                        const weekMaterials = getMaterialsForWeek(i);
+                        const weekAssignments = assignmentsByWeek[i];
+                        const dateRange = weekDateRanges[i];
 
                         return (
                             <tr key={currentWeek}>
-                                <td>{currentWeek}</td>
                                 <td>
-                                    {weekMaterials.length > 0 ? (
-                                        weekMaterials.map((material, idx) => (
-                                            <div key={idx}>
-                                                {material.name}{" "}
-                                                <a
-                                                    href={material.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    [slide]
-                                                </a>
-                                                <button
-                                                    className="download-button"
-                                                    onClick={() =>
-                                                        downloadFile(
-                                                            material.path_to_file,
-                                                            material.filename
-                                                        )
-                                                    }
-                                                >
-                                                    下載
-                                                </button>
-                                            </div>
-                                        ))
+                                    {currentWeek}
+                                    <br />
+                                    <small className="week-date-range">{dateRange}</small>
+                                </td>
+                                <td>
+                                    {isEditMode ? (
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx} className="edit-material-item">
+                                                        <input
+                                                            type="text"
+                                                            value={material.name || ""}
+                                                            onChange={(e) => handleMaterialNameChange(i, idx, e.target.value)}
+                                                            className="material-input"
+                                                            placeholder="教材名稱"
+                                                        />
+                                                        {/* URL 輸入框已移除，連結將保持不變 */}
+                                                        <button 
+                                                            onClick={() => deleteMaterial(i, idx)}
+                                                            className="delete-material-btn"
+                                                        >
+                                                            刪除
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>尚無教材</span>
+                                            )}
+                                        </>
                                     ) : (
-                                        <span>Week {currentWeek} Topic</span>
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx}>
+                                                        {material.name}{" "}
+                                                        <a
+                                                            href={material.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            [slide]
+                                                        </a>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>Week {currentWeek} Topic</span>
+                                            )}
+                                        </>
                                     )}
                                 </td>
                                 <td>
