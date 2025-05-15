@@ -16,6 +16,31 @@ async function FindProjectedPostsByBId(in_b_id) {
     return result;
 }
 
+async function GetNextPostId() {
+    const db = mongoose.connection.db;
+    const counter = await db.collection('counter').findOne({});
+    if (!counter) {
+        throw new Error("Counter document not found. Please initialize your counter collection.");
+    }
+    const postId = (counter.post || 0) + 1;
+    await db.collection('counter').updateOne(
+        { _id: counter._id },
+        { $set: { post: postId } }
+    );
+    return postId;
+}
+
+async function CreatePostsByBId(post) {
+    try {
+        const result = await mongoose.connection.db.collection('post').insertOne(post);
+        return result;
+    } catch (err) {
+        throw new Error("Failed to create post: " + err.message);
+    }
+}
+
 export {
     FindProjectedPostsByBId,
+    GetNextPostId,
+    CreatePostsByBId,
 }

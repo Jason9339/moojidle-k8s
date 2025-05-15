@@ -3,6 +3,7 @@ const router = express.Router();
 
 import { 
     GetOverviewPosts,
+    AddPosts
 } from '#src/controllers/discussion_controllers/post_controllers.js';
 
 // the route address start from:
@@ -31,5 +32,16 @@ import {
 //     ......
 // ]
 router.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
+
+//  add a new post
+//  the example:
+// {
+//     "post_by_user_id": 7,
+//     "post_user_custom_tags": ["助教", "公告"],
+//     "description": "這是測試貼文內容",
+//     "title": "這是測試標題",
+//     "public": true
+// }
+router.post("/create-post/:inBoardId", AddPosts);
 
 export default router;
