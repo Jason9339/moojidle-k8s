@@ -12,6 +12,9 @@ node_modules
 # for Redis
 dump.rdb
 
+# for uploaded files
+project/backend/uploads/
+
 # for custom
 test.js
 test.py
