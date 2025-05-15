@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import OverviewPostCard from '@/components/discussion_board_components/OverviewPostCard/OverviewPostCard';
+import { useNavigate} from "react-router-dom";
+
 
 // style
 import styles from "./DiscussionBoardContent.module.css"
@@ -32,10 +34,12 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
     //     "post_by_user_name": "User 4",
     //     "post_by_user_pfp": "/profiles/4.jpg"
     // }
+    const navigate = useNavigate();
 
     const handleCardClick = (overviewPost) => {
         console.log("Card clicked:", overviewPost);
-        // Navigate to post page
+        navigate(`/post/${overviewPost.post_id}`);
+
     };
 
 
