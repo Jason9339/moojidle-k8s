@@ -37,3 +37,8 @@
     border-radius: 6px;
     cursor: pointer;
 }
+
+.submit-btn:hover,
+.delete-btn:hover {
+    opacity: 0.9;
+}

@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; 
+    min-height: 100vh; 
     width: 100vw;
     background-color: #f8f9fa;
     font-size: 3rem;
@@ -15,6 +15,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     min-width: 100%;
     min-height: 100%;
+    
 }
 
 .create-board-form h2 {
@@ -51,7 +52,6 @@ select {
 
 .submit-btn {
     background-color: #007bff;
-    
     color: white;
     cursor: pointer;
 }
@@ -60,4 +60,10 @@ select {
     background-color: #6c757d;
     color: white;
     cursor: pointer;
+}
+
+
+.submit-btn:hover,
+.cancel-btn:hover {
+    opacity: 0.9;
 }
