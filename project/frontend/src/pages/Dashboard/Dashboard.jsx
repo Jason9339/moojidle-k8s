@@ -13,7 +13,6 @@ import {
   getCourses,
   getTodoList,
   getComingUpList,
-  getTeachIn,
 } from "@/services/DashboardApi";
 
 // 模擬目前登入的 user_id
@@ -29,26 +28,21 @@ function Dashboard() {
 
   const fetchAll = async () => {
     try {
-      const [courses, todoList, comingUpList, teachInList] =
+      const [courses, todoList, comingUpList] =
         await Promise.all([
-          getCourses(),
+          getCourses(currentUserId),
           getTodoList(currentUserId),
           getComingUpList(currentUserId),
-          getTeachIn(currentUserId),
         ]);
 
-      const teacherCourseIds = teachInList.map((entry) => entry.courseId);
-
-      const coursesWithRole = courses.map((course) => ({
-        ...course,
-        isTeacher: teacherCourseIds.includes(course.courseId),
-      }));
 
       setDashboardData({
-        courses: coursesWithRole,
+        courses,
         todoList,
         comingUpList,
       });
+          console.log(courses);
+
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
     }

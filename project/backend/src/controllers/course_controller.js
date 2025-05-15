@@ -24,7 +24,7 @@ import {
 import { 
     ViewCourses, 
     GetTeachIn,
-    getInviteCode
+    getInviteCode,
 } from "#src/services/view_course.js";
 
 // 取得所有課程列表
@@ -147,11 +147,12 @@ async function DeleteCourse(req, res) {
     }
 }
 
-// 讀取所有課程
+// 讀取user有的課程
 async function ReadCourse(req, res) {
     try {
+        const userId = req.query.user_id;
         // 調用服務函數獲取格式化的課程
-        const courses = await ViewCourses();
+        const courses = await ViewCourses(userId);
 
         // 返回課程給客戶端
         res.status(200).json(courses);
