@@ -2,7 +2,7 @@ import {
     GetCourseBoardByCourseId,
     AddDiscussionBoardService, 
     DeleteDiscussionBoardService
-} from "#src/services/discussion_board_services/discussion_board_service.js";
+} from "#src/services/discussion_services/discussion_board_service.js";
 
 import { 
     GetAllUserCourseByUserId
