@@ -275,6 +275,18 @@ async function updateMaterialsService(courseId, materials) {
                     }
                 }
                 
+                // 創建更新對象
+                const updateObj = {
+                    m_name: material.name,
+                    url: material.url,
+                    description: material.description || ""
+                };
+                
+                // 如果提供了顯示日期，添加到更新對象中
+                if (material.displayDate) {
+                    updateObj.display_date = new Date(material.displayDate);
+                }
+                
                 // 更新現有教材
                 const result = await materialsCollection.updateOne(
                     { 
@@ -282,11 +294,7 @@ async function updateMaterialsService(courseId, materials) {
                         in_course_id: parseInt(courseId)
                     },
                     {
-                        $set: {
-                            m_name: material.name,
-                            url: material.url,
-                            description: material.description || ""
-                        }
+                        $set: updateObj
                     }
                 );
                 
@@ -296,6 +304,7 @@ async function updateMaterialsService(courseId, materials) {
                         name: material.name,
                         url: material.url,
                         description: material.description || "",
+                        displayDate: material.displayDate || "",
                         week: week,
                         status: 'updated'
                     });
