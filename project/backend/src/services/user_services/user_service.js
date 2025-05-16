@@ -122,11 +122,51 @@ async function UpdateUserPassword(userId, newPassword) {
     return result; 
 }
 
+async function SignUpByGoogleApi(userData) {
+    let result;
+
+    try {
+        const existingUser = await mongoose.connection.db.collection('user').findOne({ email: userData.email });
+        if (existingUser) {
+            return { alreadyExists: true, user: existingUser };
+        }
+
+        const counter = await mongoose.connection.db.collection('counter').findOne();
+        const nextUserId = counter.user + 1;
+
+        result = await mongoose.connection.db.collection('user').insertOne({
+            user_id: nextUserId,
+            name: userData.name,
+            email: userData.email,
+            pw: "", 
+            create_date: new Date(),
+            contact_ways: [
+                {
+                    approach: "email",
+                    details: userData.email
+                }
+            ],
+            path_to_profile_pic: userData.picture || "" 
+        });
+
+        await mongoose.connection.db.collection('counter').updateOne(
+            {},
+            { $inc: { user: 1 } }
+        );
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    return result;
+}
+
 export {
     RegisterUser,
     LoginUser,
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword
+    UpdateUserPassword,
+    SignUpByGoogleApi
 }

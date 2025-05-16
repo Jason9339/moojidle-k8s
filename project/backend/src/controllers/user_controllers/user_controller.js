@@ -142,13 +142,57 @@ async function UpdatePassword(req, res) {
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
+
+async function SignUpByGoogleApi(userData) {
+    let result;
+
+    try {
+        // 檢查 email 是否已存在
+        const existingUser = await mongoose.connection.db.collection('user').findOne({ email: userData.email });
+        if (existingUser) {
+            return { alreadyExists: true, user: existingUser };
+        }
+
+        // 取得下一個 user_id
+        const counter = await mongoose.connection.db.collection('counter').findOne();
+        const nextUserId = counter.user + 1;
+
+        // 寫入 user collection
+        result = await mongoose.connection.db.collection('user').insertOne({
+            user_id: nextUserId,
+            name: userData.name,
+            email: userData.email,
+            pw: "", // Google 註冊不設密碼
+            create_date: new Date(),
+            contact_ways: [
+                {
+                    approach: "email",
+                    details: userData.email
+                }
+            ],
+            path_to_profile_pic: userData.picture || "" // 可選：Google 頭像
+        });
+
+        // 更新 counter
+        await mongoose.connection.db.collection('counter').updateOne(
+            {},
+            { $inc: { user: 1 } }
+        );
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
+    return result;
+}
 export {
     Register,
     Login,
     Delete,
     GetUserData,
     GetUserTags,
-    UpdatePassword
+    UpdatePassword,
+    GoogleSignUp
 }
 
 
