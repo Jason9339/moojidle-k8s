@@ -141,7 +141,7 @@ const PostEdit = () => {
         <>
             <LeftBar />
 
-            <div className="flex flex-col px-[10vw] py-[1vh] h-screen overflow-scroll">
+            <div className="flex flex-col pl-[7vw] pt-[3vh] h-screen overflow-y-scroll">
                 <PostEditHeader courseData={courseData} boardData={boardData}
                     defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}
                     onCourseFilterChange={(e) => setCurrentCourseById(e)}
