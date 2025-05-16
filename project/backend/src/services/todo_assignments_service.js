@@ -27,8 +27,6 @@ async function FetchToDoAssignments(user_id) {
             {
                 $match: {
                     "study_data.user_id": parsedUserId, // Filter by user_id
-                    create_date: { $lt: current_time }, // create_date < current_time
-                    end_date: { $gt: current_time } // current_time < end_date
                 }
             },
             // Exclude assignments that have been submitted by the current user
@@ -74,6 +72,7 @@ async function FetchToDoAssignments(user_id) {
                     _id: 0,
                     title: "$ass_name", // Map to frontend's "title"
                     course: "$course_data.name", // Map to frontend's "course"
+                    start_date: "$start_date", // Map to frontend's "start_date"
                     due: "$end_date", // Map to frontend's "due"
                     points: { $literal: 100 } // Add a placeholder value for "points"
                 }

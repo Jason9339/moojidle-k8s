@@ -1,10 +1,182 @@
-import React from "react";
-import "./CourseTab.css";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import styles from "./CourseTab.module.css";
+import { DownloadFile } from "@/services/FileApi";
 
-function CourseTab({ courseId, course, materials, assignments }) {
+function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
+    const [editingMaterials, setEditingMaterials] = useState([]);
+    // 確定課程週數，如果不存在則默認為16週
+    const weekNum = useMemo(() => {
+        let result = 16; // 默認值
+        const parsedWeekNum = parseInt(course.week_num, 10);     
+        if (!isNaN(parsedWeekNum) && parsedWeekNum > 0) {
+            result = parsedWeekNum;
+            //console.log("使用解析後的週數:", result);
+        } else {
+            console.log("解析失敗，使用默認週數:", result);
+        }
+        return result;
+    }, [course]);
+    
+
+    // 使用 useMemo 優化按週次分組的教材，避免不必要的重新計算
+    const materialsByWeek = useMemo(() => {
+        return Array(weekNum).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        });
+    }, [materials, weekNum]);
+
+    // 當 materials 或 isEditMode 改變時，重新初始化編輯數據
+    useEffect(() => {
+        if (isEditMode) {
+            setEditingMaterials(materialsByWeek);
+        }
+    }, [materials, isEditMode, materialsByWeek]);
+
+    // 使用 useMemo 優化平面數組轉換，減少不必要的操作
+    const flattenedMaterials = useMemo(() => {
+        if (!isEditMode) return [];
+        
+        return editingMaterials.flatMap((weekMaterials, weekIndex) => {
+            return weekMaterials.map(material => ({
+                ...material,
+                week: weekIndex + 1
+            }));
+        });
+    }, [editingMaterials, isEditMode]);
+
+    // 當編輯的材料發生變化時，通知父組件 (使用防抖動來減少更新頻率)
+    useEffect(() => {
+        if (isEditMode && onMaterialsChange) {
+            const timer = setTimeout(() => {
+                onMaterialsChange(flattenedMaterials);
+            }, 300); // 300ms 防抖動
+            
+            return () => clearTimeout(timer);
+        }
+    }, [flattenedMaterials, isEditMode, onMaterialsChange]);
+
+    // 計算週次的日期範圍 (使用 useMemo 優化)
+    const weekDateRanges = useMemo(() => {
+        if (!course || !course.start_date) return Array(weekNum).fill('');
+        
+        const semesterStartDate = new Date(course.start_date);
+        // 將日期調整為該週的週日
+        const dayOfWeek = semesterStartDate.getDay();
+        const daysToSubtract = dayOfWeek === 0 ? 0 : dayOfWeek;
+        const adjustedStartDate = new Date(semesterStartDate);
+        adjustedStartDate.setDate(adjustedStartDate.getDate() - daysToSubtract);
+        
+        // 為所有週次計算日期範圍
+        return Array(weekNum).fill().map((_, weekIndex) => {
+            const weekNumber = weekIndex + 1;
+            // 計算第n週的起始日期（週日）
+            const weekStartDate = new Date(adjustedStartDate);
+            weekStartDate.setDate(adjustedStartDate.getDate() + (weekNumber - 1) * 7);
+            
+            // 計算第n週的結束日期（週六）
+            const weekEndDate = new Date(weekStartDate);
+            weekEndDate.setDate(weekStartDate.getDate() + 6);
+            
+            // 格式化日期為 MM/DD 格式
+            const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
+            return `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`;
+        });
+    }, [course, weekNum]);
+
+    // 使用 useCallback 優化處理函數，避免重新創建
+    const handleMaterialNameChange = useCallback((weekIndex, materialIndex, newName) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    name: newName
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 處理教材URL變更 (使用 useCallback 優化)
+    const handleMaterialUrlChange = useCallback((weekIndex, materialIndex, newUrl) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    url: newUrl
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 新增: 處理教材日期變更 (使用 useCallback 優化)
+    const handleMaterialDateChange = useCallback((weekIndex, materialIndex, newDate) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    displayDate: newDate
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 刪除教材 (使用 useCallback 優化)
+    const deleteMaterial = useCallback((weekIndex, materialIndex) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex]) {
+                updatedMaterials[weekIndex] = updatedMaterials[weekIndex].filter((_, idx) => idx !== materialIndex);
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
+    // 輔助函數：獲取特定週次的教材列表 (使用 useMemo 優化)
+    const getMaterialsForWeek = useCallback((weekIndex) => {
+        const currentWeek = weekIndex + 1;
+        
+        if (isEditMode && editingMaterials[weekIndex]) {
+            return editingMaterials[weekIndex];
+        } else {
+            return materials.filter(
+                m => m.week === currentWeek || (!m.week && currentWeek === 1)
+            );
+        }
+    }, [isEditMode, editingMaterials, materials]);
+
+    // 優化 assignments 的過濾，避免在渲染時重複計算
+    const assignmentsByWeek = useMemo(() => {
+        return Array(weekNum).fill().map((_, i) => {
+            const currentWeek = i + 1;
+            return assignments.filter(
+                a => a.week === currentWeek || (!a.week && currentWeek === 1)
+            );
+        });
+    }, [assignments, weekNum]);
+
+    // 將日期對象轉換為YYYY-MM-DD格式的字符串
+    const formatDateForInput = useCallback((dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date instanceof Date && !isNaN(date) 
+            ? date.toISOString().split('T')[0] 
+            : '';
+    }, []);
+
     return (
-        <div className="material-table-section">
-            <table className="material-table">
+        <div className={`${styles["material-table-section"]}`}>
+            <table className={`${styles["material-table"]}`}>
                 <thead>
                     <tr>
                         <th>Week</th>
@@ -14,49 +186,129 @@ function CourseTab({ courseId, course, materials, assignments }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {Array.from({ length: 16 }, (_, i) => {
+                    {Array.from({ length: weekNum }, (_, i) => {
                         const currentWeek = i + 1;
-                        const weekMaterials = materials.filter(
-                            (m) => m.week === currentWeek || (!m.week && currentWeek === 1)
-                        );
-                        const weekAssignments = assignments.filter(
-                            (a) => a.week === currentWeek || (!a.week && currentWeek === 1)
-                        );
+                        const weekMaterials = getMaterialsForWeek(i);
+                        const weekAssignments = assignmentsByWeek[i];
+                        const dateRange = weekDateRanges[i];
 
                         return (
                             <tr key={currentWeek}>
-                                <td>{currentWeek}</td>
                                 <td>
-                                    {weekMaterials.length > 0 ? (
-                                        weekMaterials.map((material, idx) => (
-                                            <div key={idx}>
-                                                {material.name}{" "}
-                                                <a
-                                                    href={material.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    [slide]
-                                                </a>
-                                            </div>
-                                        ))
+                                    {currentWeek}
+                                    <br />
+                                    <small className={`${styles["week-date-range"]}`}>{dateRange}</small>
+                                </td>
+                                <td>
+                                    {isEditMode ? (
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx} className={`${styles["edit-material-item"]}`}>
+                                                        <input
+                                                            type="text"
+                                                            value={material.name || ""}
+                                                            onChange={(e) => handleMaterialNameChange(i, idx, e.target.value)}
+                                                            className={`${styles["material-input"]}`}
+                                                            placeholder="教材名稱"
+                                                        />
+                                                        {/* 新增日期輸入框 */}
+                                                        <input
+                                                            type="date"
+                                                            value={formatDateForInput(material.displayDate)}
+                                                            onChange={(e) => handleMaterialDateChange(i, idx, e.target.value)}
+                                                            className={`${styles["material-date-input"]}`}
+                                                            placeholder="顯示日期"
+                                                        />
+                                                        <button 
+                                                            onClick={() => deleteMaterial(i, idx)}
+                                                            className={`${styles["delete-material-btn"]}`}
+                                                        >
+                                                            刪除
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>尚無教材</span>
+                                            )}
+                                        </>
                                     ) : (
-                                        <span>Week {currentWeek} Topic</span>
+                                        <>
+                                            {weekMaterials && weekMaterials.length > 0 ? (
+                                                weekMaterials.map((material, idx) => (
+                                                    <div key={idx}>
+                                                        {material.name}{" "}
+                                                        {material.displayDate && (
+                                                            <small className={`${styles["material-date"]}`}>
+                                                                ({new Date(material.displayDate).toLocaleDateString()})
+                                                            </small>
+                                                        )}
+                                                        <a
+                                                            href={material.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            [slide]
+                                                        </a>
+                                                        <button
+                                                            className={`${styles["download-button"]}`}
+                                                            onClick={() =>
+                                                                DownloadFile(material.path_to_file, material.filename)
+                                                            }
+                                                            style={{ marginLeft: "8px" }}
+                                                        >
+                                                            下載
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span>Week {currentWeek} Topic</span>
+                                            )}
+                                        </>
                                     )}
                                 </td>
                                 <td>
                                     {weekAssignments.length > 0 ? (
-                                        weekAssignments.map((assignment, idx) => (
-                                            <div key={idx}>
-                                                <a href={`/course/${courseId}/assignment/${assignment.id}`}>
-                                                    {assignment.name}
-                                                </a>
-                                            </div>
-                                        ))
+                                        weekAssignments.map(
+                                            (assignment, idx) => (
+                                                <div key={idx}>
+                                                    <a
+                                                        href={`/course/${courseId}/assignment/${assignment.id}`}
+                                                    >
+                                                        {assignment.name}
+                                                    </a>
+                                                    {assignment.attachments
+                                                        ?.length > 0 ? (
+                                                        assignment.attachments.map(
+                                                            (file, i) => (
+                                                                <button
+                                                                    key={i}
+                                                                    className={`${styles["download-button"]}`}
+                                                                    onClick={() =>
+                                                                        DownloadFile(
+                                                                            file.path_to_file,
+                                                                            file.filename
+                                                                        )
+                                                                    }
+                                                                    style={{ marginLeft: "8px" }}
+                                                                >
+                                                                    [{file.filename}]
+                                                                </button>
+                                                            )
+                                                        )
+                                                    ) : (
+                                                        <span style={{ marginLeft: "8px" }}>
+                                                            （無附件）
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )
+                                        )
                                     ) : (
                                         <span>-</span>
                                     )}
                                 </td>
+
                                 <td>
                                     <a href="#">Ref {currentWeek}</a>
                                 </td>
@@ -66,22 +318,27 @@ function CourseTab({ courseId, course, materials, assignments }) {
                 </tbody>
             </table>
 
-            <div className="todo-panel">
+            <div className={`${styles["todo-panel"]}`}>
                 <h4>To Do</h4>
                 {assignments.length > 0 ? (
                     assignments.slice(0, 3).map((assignment, idx) => (
-                        <div key={idx} className="todo-item">
+                        <div key={idx} className={`${styles["todo-item"]}`}>
                             <strong>{assignment.name}</strong>
                             <span>{course.title}</span>
                             <span>
                                 {assignment.points || "N/A"} pts •{" "}
-                                {new Date(assignment.dueDate).toLocaleDateString()} at{" "}
-                                {new Date(assignment.dueDate).toLocaleTimeString()}
+                                {new Date(
+                                    assignment.dueDate
+                                ).toLocaleDateString()}{" "}
+                                at{" "}
+                                {new Date(
+                                    assignment.dueDate
+                                ).toLocaleTimeString()}
                             </span>
                         </div>
                     ))
                 ) : (
-                    <div className="todo-item">
+                    <div className={`${styles["todo-item"]}`}>
                         <span>目前沒有待辦事項</span>
                     </div>
                 )}

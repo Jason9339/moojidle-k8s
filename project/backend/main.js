@@ -31,6 +31,7 @@ import todoAssignmentsRoute from "#src/routes/todo_assignments_route.js"
 import upcomingExamsRoute from "#src/routes/upcoming_exams_route.js"
 import courseMemberRoute from "#src/routes/member_route.js"
 import userRoute from "#src/routes/user_routes/user_route.js"
+import fileRouter from "#src/routes/file_routes/file_route.js";
 
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
@@ -41,6 +42,7 @@ app.use("/course/member", courseMemberRoute);
 
 app.use("/example", exampleRoute);
 app.use("/user", userRoute);
+app.use("/file", fileRouter);
 
 // Routes ends --------------------------------------------------------------------------
 

@@ -24,7 +24,14 @@
   border-top: 2px solid #ccc;
 }
 
-.course-list-header,
+.course-list-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr; /* 課名多、代碼少 */
+  align-items: center;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
 .course-list-item {
   display: grid;
   grid-template-columns: 1fr 1fr;
