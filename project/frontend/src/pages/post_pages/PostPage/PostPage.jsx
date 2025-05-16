@@ -69,37 +69,37 @@ function PostPage() {
     if (error) return <p>{error}</p>;
     if (!post) return <p>找不到貼文</p>;
 
+
     return (
         <>
             <LeftBar />
-            <div style={{ display: "flex", height: "100vh" }}>
-                <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
-                    <div className={styles.postContainer}>
-                        <button className={styles.backButton} onClick={() => navigate(-1)}>
-                            <FiCornerUpLeft size={24} />
-                        </button>
+            <div className={styles.pageWrapper}>
+                <div className={styles.postContainer}>
+                    <button className={styles.backButton} onClick={() => navigate(-1)}>
+                        <FiCornerUpLeft size={24} />
+                    </button>
 
-                        <PostContent
-                            post={post}
-                            currentUserId={currentUserId}
-                            showMenu={showMenu}
-                            setShowMenu={setShowMenu}
-                            handleDeletePost={handleDeletePost}
-                        />
+                    <PostContent
+                        post={post}
+                        currentUserId={currentUserId}
+                        showMenu={showMenu}
+                        setShowMenu={setShowMenu}
+                        handleDeletePost={handleDeletePost}
+                    />
 
-                        <CommentSection
-                            post={post}
-                            newComment={newComment}
-                            setNewComment={setNewComment}
-                            handleCommentSubmit={handleCommentSubmit}
-                            reflash={reflash}
-                            currentUserId={currentUserId}
-                        />
-                    </div>
+                    <CommentSection
+                        post={post}
+                        newComment={newComment}
+                        setNewComment={setNewComment}
+                        handleCommentSubmit={handleCommentSubmit}
+                        reflash={reflash}
+                        currentUserId={currentUserId}
+                    />
                 </div>
             </div>
         </>
     );
+
 }
 
 export default PostPage;
