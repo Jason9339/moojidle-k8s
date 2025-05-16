@@ -14,7 +14,7 @@ import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 function DiscussionBoard() {
     const { state } = useLocation();
 
-    console.log("[BoardPage] state=", state);
+    // console.log("[BoardPage] state=", state);
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
@@ -27,7 +27,7 @@ function DiscussionBoard() {
                 // TODO use Context to save userID
                 const userID = JSON.parse(localStorage.getItem("user")).user_id;
                 const data = await GetBoardsGroupByCourseByUserID(userID);
-                console.error(data)
+                // console.error(data)
                 setCourseBoardData(data);
                 setError(null);
             } catch (err) {
@@ -44,7 +44,7 @@ function DiscussionBoard() {
             // get data from services
             const result = await GetOverviewPostByBId(parseInt(param));
 
-            console.log(result)
+            // console.log(result)
             // Post user just created will show on top.
             if (state?.newPostId) {
                 const index = result.findIndex(post => post.post_id == state.newPostId);
@@ -85,6 +85,8 @@ function DiscussionBoard() {
 
                     currentCourse = { course_id: course_id, course_name: course_name };
                     currentBoard = { board_id: board_id, board_name: board_name };
+
+                    console.error(currentBoard, currentCourse);
                 }
             }
 
@@ -115,7 +117,7 @@ function DiscussionBoard() {
 
                                 <DiscussionBoardContent
                                     overviewPosts={overviewPostData}
-                                    courseName={currentCourse.name}
+                                    courseName={currentCourse.course_name}
                                     boardName={currentBoard.name}
                                 />
 
