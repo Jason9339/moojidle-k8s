@@ -194,11 +194,12 @@ function MembersTab({ courseId, userId }) {
       {loading && <p className={styles.loading}>載入中...</p>}
       {error && <p className={styles.error}>{error}</p>}
 
+     
       {!loading && !error && (
         <>
           {renderMemberTable('老師', members.teachers)}
           {renderMemberTable('助教', members.assistants, false, isTeacher())}
-          {renderMemberTable('學生', members.students, true, isTeacher())}
+          {renderMemberTable('學生', members.students?.filter(student => !members.assistants?.some(assistant => assistant.user_id === student.user_id)) || [], true, isTeacher())}
         </>
       )}
     </div>
