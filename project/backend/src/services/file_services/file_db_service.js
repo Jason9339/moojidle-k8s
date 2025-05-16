@@ -68,6 +68,7 @@ export const HandleUploadAndInsert = async (req) => {
             create_date: now,
             display_date: new Date(displayDate),
             path_to_file: savedFile.relativeUrl,
+            url: savedFile.relativeUrl, // 修正：新增 url 欄位，與 path_to_file 相同
         };
         return await InsertMaterialToDB(doc);
     }

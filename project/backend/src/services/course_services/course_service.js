@@ -139,7 +139,7 @@ async function getMaterialsByCourseId(courseId) {
             return {
                 id: material.m_id,
                 name: material.m_name,
-                url: material.url,
+                url: material.url || material.path_to_file, // 修正：優先用 url，否則用 path_to_file
                 description: material.description,
                 displayDate: material.display_date || material.create_date, // 優先使用 display_date
                 week: week,
@@ -368,10 +368,17 @@ async function updateMaterialsService(courseId, materials) {
                     description: material.description || ""
                 };
                 
-                // 如果提供了顯示日期，添加到更新對象中
-                if (material.displayDate) {
-                    updateObj.display_date = new Date(material.displayDate);
+                // 如果提供了顯示日期，添加到更新對象中，並強制轉型與防呆
+                if (typeof material.displayDate !== 'undefined' && material.displayDate !== null && material.displayDate !== '') {
+                    const dateObj = new Date(material.displayDate);
+                    if (!isNaN(dateObj.getTime())) {
+                        updateObj.display_date = dateObj;
+                    } else {
+                        console.warn('[updateMaterialsService] displayDate 轉換失敗:', material.displayDate);
+                    }
                 }
+                // debug log
+                 console.log('[updateMaterialsService] updateObj:', updateObj);
                 
                 // 更新現有教材
                 const result = await materialsCollection.updateOne(
@@ -383,6 +390,7 @@ async function updateMaterialsService(courseId, materials) {
                         $set: updateObj
                     }
                 );
+                console.log('[updateMaterialsService] update result:', result);
                 
                 if (result.matchedCount > 0) {
                     results.push({
@@ -411,28 +419,27 @@ async function deleteMaterialService(courseId, materialId) {
         const materialsCollection = mongoose.connection.db.collection('materials');
         const counterCollection = mongoose.connection.db.collection('counter');
         
-        // 先獲取教材資訊，以取得檔案路徑
-        const material = await materialsCollection.findOne({
-            m_id: parseInt(materialId),
-            in_course_id: parseInt(courseId)
-        });
+        // 強化查詢條件，允許字串與數字
+        const query = {
+            m_id: { $in: [parseInt(materialId), materialId] },
+            in_course_id: { $in: [parseInt(courseId), courseId] }
+        };
+        const material = await materialsCollection.findOne(query);
         
         if (!material) {
+            console.error(`[deleteMaterialService] 找不到教材，查詢條件:`, query);
             return { deletedCount: 0 };
         }
         
         // 如果存在檔案路徑，執行檔案刪除操作
         if (material.path_to_file) {
             // 導入並使用文件刪除服務
-            const { DeleteFile } = await import('@/services/file_services/file_storage_service.js');
+            const { DeleteFile } = await import('../file_services/file_storage_service.js');
             await DeleteFile(material.path_to_file);
         }
         
         // 刪除數據庫中的記錄
-        const result = await materialsCollection.deleteOne({
-            m_id: parseInt(materialId),
-            in_course_id: parseInt(courseId)
-        });
+        const result = await materialsCollection.deleteOne(query);
         
         // 如果刪除成功，更新 counter 集合
         if (result.deletedCount > 0) {
