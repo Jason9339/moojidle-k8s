@@ -8,6 +8,10 @@ import {
     GetAllUserCourseByUserId
 } from "#src/services/discussion_services/course_service.js";
 
+import { 
+    FindTeacherByCourseID,
+    FindAssistantByCourseID
+} from "#src/services/discussion_services/course_member_services.js";
 
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);
@@ -38,12 +42,21 @@ async function GetAllCourseDiscussionBoard(req, res) {
     }
 
     // Get all the discussion boards of the courses
-    const boardsList = await Promise.all(
+    let boardsList = await Promise.all(
         userCourses.map(async (course) => {
             const courseBoard = await GetCourseBoardByCourseId(course.course_id);
             return courseBoard;
         })
     );
+
+    // Get all teachers and assistant in the course
+    for(let i = 0; i < boardsList.length; i ++){
+        const teachers = await FindTeacherByCourseID(boardsList[i].course_id);
+        const assistants = await FindAssistantByCourseID(boardsList[i].course_id);
+
+        boardsList[i].teachers = teachers;
+        boardsList[i].assistants = assistants;
+    }
 
     res.status(200).send(boardsList);
 }
