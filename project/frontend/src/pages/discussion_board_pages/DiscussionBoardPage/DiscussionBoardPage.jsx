@@ -118,7 +118,7 @@ function DiscussionBoard() {
                                 <DiscussionBoardContent
                                     overviewPosts={overviewPostData}
                                     courseName={currentCourse.course_name}
-                                    boardName={currentBoard.name}
+                                    boardName={currentBoard.board_name}
                                 />
 
                                 <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow top:50px"
