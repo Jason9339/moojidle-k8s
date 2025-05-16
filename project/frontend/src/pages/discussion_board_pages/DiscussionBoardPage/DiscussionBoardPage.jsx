@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { data, useParams, Link } from "react-router-dom";
+import { data, useParams, Link, useLocation } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
@@ -12,6 +12,9 @@ import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_board_api/
 import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 
 function DiscussionBoard() {
+    const { state } = useLocation();
+
+    console.log("[BoardPage] state=", state);
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
@@ -41,6 +44,14 @@ function DiscussionBoard() {
             // get data from services
             const result = await GetOverviewPostByBId(parseInt(param));
 
+            console.log(result)
+            // Post user just created will show on top.
+            if (state.newPostId) {
+                const index = result.findIndex(post => post.post_id == state.newPostId);
+                const [newPost] = result.splice(index, 1);
+                result.unshift(newPost);
+
+            }
             setOverviewPostData(result);
         }
 

@@ -13,8 +13,6 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 const NOT_EXIST = -1;
 const PostEdit = () => {
     const { state } = useLocation();
-
-
     const { param } = useParams();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -111,9 +109,10 @@ const PostEdit = () => {
 
         const post = resData.post;
 
-        // TODO route back and pass data
-        console.log(resData)
-        navigate(-1, {
+        navigate(`/discussion/${state.currentBoardId}`, {
+            state: {
+                newPostId: post.post_id
+            }
 
         });
     }, [navigate, description, state.currentBoardId, state.currentCourseId, title, userTags]);
