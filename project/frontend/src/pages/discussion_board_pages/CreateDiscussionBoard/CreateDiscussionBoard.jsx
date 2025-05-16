@@ -26,7 +26,7 @@ const CreateDiscussion = () => {
         try {
             const response = await CreateDiscussionBoard({ course_id: courseId, name: boardName });
             if (response?.board_id) {
-                navigate(`/discussion/${courseId}`);
+                navigate(`/discussion/`);
             } else {
                 setError(response?.error || "無法建立討論版");
             }
