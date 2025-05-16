@@ -215,7 +215,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             [slide]
                                                         </a>
                                                         <button
-                                                            className="download-button"
+                                                            className={`${styles["download-button"]}`}
                                                             onClick={() =>
                                                                 DownloadFile(material.path_to_file, material.filename)
                                                             }
@@ -247,7 +247,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             (file, i) => (
                                                                 <button
                                                                     key={i}
-                                                                    className="download-button"
+                                                                    className={`${styles["download-button"]}`}
                                                                     onClick={() =>
                                                                         DownloadFile(
                                                                             file.path_to_file,
