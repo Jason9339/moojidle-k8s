@@ -7,7 +7,7 @@ import { CreatePost } from "@/services/discussion_api/PostApi";
 import { GetUserTagsById } from "@/services/user_api/UserApi";
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useLocation, useParams, useNavigate, data } from "react-router-dom";
 
 
 const NOT_EXIST = -1;
@@ -23,17 +23,30 @@ const PostEdit = () => {
     const [enable, setEnable] = useState(false);
     const navigate = useNavigate();
 
-
     const setCurrentCourseById = useCallback((courseId) => {
         const obj = state.data.find((d) => d.course_id == courseId);
 
         const data = obj.boards.map(
             (b) => ({ value: b.board_id, label: b.board_name })
         );
+
         setBoardData(data);
         const { boards, ...curr } = obj;
-        state.currentCourse = curr;
-        state.currentBoardId = boards[0].board_id ?? NOT_EXIST;
+        state.currentCourse = obj.course_name;
+
+        // check if current discussion board is in that course, when the board field is selected
+        if(data != [] && state.currentBoardId != undefined){
+            let isInCourse = false;
+            for(let i = 0; i < data.length; i ++){
+                if(state.currentBoardId == data[i].value){
+                    isInCourse = true;
+                }
+            }
+        
+            if(!isInCourse){
+                state.currentBoardId = boards[0].board_id ?? NOT_EXIST;
+            }
+        }
     }, [state]);
 
     const setCurrentBoardById = useCallback((boardId) => {
@@ -89,8 +102,7 @@ const PostEdit = () => {
         }
 
 
-    }, [state.data, state.currentCourseId,
-        setCurrentCourseById])
+    }, [state.data, state.currentCourseId, setCurrentCourseById]);
 
     // eslint-disable-next-line
     const handleTitleChange = useCallback((txt) => {
@@ -106,10 +118,9 @@ const PostEdit = () => {
         navigate(-1);
 
     }, [navigate]);
+
     // eslint-disable-next-line
     const handleSubmit = useCallback(async () => {
-
-
         // TODO use Context to save userID
         const userId = JSON.parse(localStorage.getItem("user")).user_id;
 
@@ -121,7 +132,6 @@ const PostEdit = () => {
             in_b_id: state.currentBoardId,
 
         }
-
 
         const resData = await CreatePost(data);
 
@@ -135,6 +145,12 @@ const PostEdit = () => {
         });
     }, [navigate, description, state.currentBoardId, title, userTags]);
 
+    // check a course has a discusiion board
+    for(let i = 0; i < state.data.length; i ++){
+        if(state.data[i].boards == [] || state.data[i].boards == undefined){
+            state.data.splice(i, 1);
+        }
+    }
 
     return (
 
