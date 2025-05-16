@@ -86,6 +86,7 @@ const PostEdit = () => {
 
     // eslint-disable-next-line
     const handleTitleChange = useCallback((txt) => {
+        txt = txt.replace(/[\r\n]+/g, '');
         setTitle(txt);
     }, [])
     // eslint-disable-next-line
@@ -132,7 +133,7 @@ const PostEdit = () => {
         <>
             <LeftBar />
 
-            <div className="flex flex-col px-[10vw] py-[5vh]">
+            <div className="flex flex-col px-[10vw] py-[1vh] h-screen overflow-scroll">
                 <PostEditHeader courseData={courseData} boardData={boardData}
                     defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}
                     onCourseFilterChange={(e) => setCurrentCourseById(e)}
@@ -141,11 +142,10 @@ const PostEdit = () => {
 
                 <form className="p-[10px]" onSubmit={handleSubmit}>
                     <label htmlFor="titile">標題</label>
-                    <textarea id="title" value={title} onChange={e => handleTitleChange(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-2 rounded-2xl" />
+                    <textarea id="title" maxLength="20" value={title} onChange={e => handleTitleChange(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-4 rounded-2xl resize-none overflow-hidden" />
 
                     <label htmlFor="description" >內文</label>
-                    <TextEditor className="mt-[1vh] h-[60vh]" rows={19} onChange={txt => handleDescriptionChange(txt)} />
-
+                    <TextEditor className="mt-[1vh]" height="60vh" rows={19} onChange={txt => handleDescriptionChange(txt)} />
 
                     <div className="flex justify-end mt-[1vh]">
                         <Button className="mr-[1vw]" onClick={() => { handleCancel() }}> 取消</Button>

@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Bold, Italic, Code as CodeIcon, List as ListIcon, ListOrdered, Quote, Heading } from "lucide-react"
 import Button from "@/components/Button/Button"
+import TextArea from "@/components/TextArea/TextArea"
 /* Basic UI components */
 const Card = ({ className = "", ...props }) => (
     <div {...props} className={`border rounded-2xl shadow ${className}`} />
@@ -13,7 +14,7 @@ const CardContent = ({ className = "", ...props }) => (
 )
 
 
-export default function TextEditor({ className = "", rows = 10, onChange, onSubmit }) {
+export default function TextEditor({ className = "", height, onChange }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
@@ -55,7 +56,7 @@ export default function TextEditor({ className = "", rows = 10, onChange, onSubm
     ]
 
     return (
-        <Card className={className}>
+        <Card className={`flex ${className}`} style={{ height: height }}>
             <CardContent className="flex-1 overflow-auto flex flex-col">
                 {/* Toolbar */}
 
@@ -85,20 +86,22 @@ export default function TextEditor({ className = "", rows = 10, onChange, onSubm
 
 
                 {preview ? (
-                    <div className="markdown-body prose prose-blue mx-auto p-4">
+                    <div className="flex-2 markdown-body prose prose-blue mx-auto p-4">
                         <ReactMarkdown remarkPlugins={[remarkGfm]} >
                             {text}
                         </ReactMarkdown>
                     </div>
                 ) : (
-                    <textarea
+
+                    <TextArea height={height}
                         ref={textareaRef}
                         value={text}
                         onChange={(e) => { setText(e.target.value); onChange && onChange(e.target.value) }}
                         placeholder=""
                         className={`flex-2 w-full p-4 font-mono outline-none overflow-scroll resize-none`}
-                        rows={rows}
-                    />
+                    >
+
+                    </TextArea>
                 )}
             </CardContent>
         </Card >
