@@ -7,6 +7,7 @@ function CourseListItem({ title, courseId, color, isTeacher, isStudent, isAssist
 
   const handleClick = () => {
     // 儲存當前課程的角色資訊到 localStorage
+    localStorage.removeItem("courseRole");
     localStorage.setItem(
       "courseRole",
       JSON.stringify({
@@ -15,6 +16,8 @@ function CourseListItem({ title, courseId, color, isTeacher, isStudent, isAssist
         isAssistant: isAssistant || false,
       })
     );
+
+    localStorage.setItem("courseId", courseId);
 
     // 導向課程細節頁
     navigate(`/course/${courseId}`);
