@@ -1,14 +1,15 @@
-import mongoose from 'mongoose';
-
 import { 
     getAllCourses as getAllCoursesService,
     getAnnouncementsByCourseId,
+    createAnnouncement as createAnnouncementService,
+    editAnnouncement as editAnnouncementService,
     getMaterialsByCourseId,
     getAssignmentsByCourseId,
     getCourseSyllabus as getCourseSyllabusService,
     getCourseLink as getCourseLinkService,
     getCourseDetails as getCourseDetailsService,
     getTeachingCourses as getTeachingCoursesService,
+    canUserEditAnnouncements as canUserEditAnnouncementsService,
     updateMaterialsService,
     deleteMaterialService
 } from '#src/services/course_services/course_service.js';
@@ -48,6 +49,30 @@ async function getCourseAnnouncements(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const createAnnouncement = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { context, userId, announceDate } = req.body;
+        const announcement = await createAnnouncementService(courseId, context, userId, announceDate);
+        res.json(announcement);
+    } catch (error) {
+        console.error("新增課程公告錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const editAnnouncement = async (req, res) => {
+    try {
+        const { announcementId } = req.params;
+        const { context, announceDate } = req.body;
+        const announcement = await editAnnouncementService(announcementId, context, announceDate);
+        res.json(announcement);
+    } catch (error) {
+        console.error("更改課程公告錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // 取得特定課程的檔案
 async function getCourseFiles(req, res) {
@@ -276,6 +301,17 @@ async function ReadInviteCode(req, res) {
         throw new Error(`Failed to retrieve invite code: ${error.message}`);
     }
 }
+
+export const canUserEditAnnouncements = async (req, res) => {
+    const { courseId, userId } = req.params;
+    try {
+        const enrolled = await canUserEditAnnouncementsService(courseId, userId);
+        res.status(200).json(enrolled);
+    } catch (error) {
+        console.error("Failed to check user enrollment:", error);
+        res.status(500).json({ message: "Failed to check user enrollment" });
+    }
+};
 
 export {
     getAllCourses,

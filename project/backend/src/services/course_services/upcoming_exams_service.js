@@ -8,7 +8,7 @@ async function FetchUpcomingExams(user_id) {
         const parsedUserId = parseInt(user_id);
 
         // Define a fixed current time for testing
-        const current_time = new Date("2022-05-01T00:00:00Z"); // Set to a date in 2023
+        const current_time = new Date("2025-01-08T00:00:00Z"); // Set to a date in 2025
         // const current_time = new Date(); // Comment this out for testing
 
         const result = await db.collection("exams").aggregate([
