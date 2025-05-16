@@ -13,6 +13,38 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [startDate, setStartDate] = useState(""); // for assignments
 
     const handleUpload = async () => {
+        // 必填欄位檢查
+        if (!name.trim()) {
+            alert("請輸入名稱");
+            return;
+        }
+        if (type === "assignment") {
+            if (!startDate) {
+                alert("請選擇開始日期時間");
+                return;
+            }
+            if (!endDate) {
+                alert("請選擇結束日期時間");
+                return;
+            }
+            if (new Date(endDate) <= new Date(startDate)) {
+                alert("結束日期必須在開始日期之後");
+                return;
+            }
+        }
+        if (type === "material" && !displayDate) {
+            alert("請選擇顯示日期");
+            return;
+        }
+        if (!description.trim()) {
+            alert("請輸入簡介/描述");
+            return;
+        }
+        if (!file) {
+            alert("請選擇檔案");
+            return;
+        }
+
         const user = JSON.parse(localStorage.getItem("user")); // 確保登入時有存
         const userId = user?.user_id;
         if (!userId) {
@@ -66,6 +98,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                     placeholder={type === "assignment" ? "作業名稱" : "教材名稱"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    required
                 />
             </div>
 
@@ -78,6 +111,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                             type="datetime-local"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
+                            required
                         />
                     </div>
                     <div className={`${styles["input-group"]}`}>
@@ -87,6 +121,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                             type="datetime-local"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
+                            required
                         />
                     </div>
                 </>
@@ -100,6 +135,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                         type="date"
                         value={displayDate}
                         onChange={(e) => setDisplayDate(e.target.value)}
+                        required
                     />
                 </div>
             )}
@@ -110,6 +146,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 placeholder="簡介/描述"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                required
             />
 
             <label htmlFor="file">選擇檔案</label>
@@ -117,6 +154,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 type="file"
                 accept="*"
                 onChange={(e) => setFile(e.target.files[0])}
+                required
             />
 
             <div className={`${styles["button-group"]}`}>

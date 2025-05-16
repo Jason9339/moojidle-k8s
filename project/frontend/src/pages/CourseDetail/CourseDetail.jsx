@@ -95,10 +95,25 @@ function CourseDetail() {
     const toggleEditMode = async () => {
         // 如果當前是編輯模式，則嘗試保存變更
         if (isEditMode) {
+            // 新增：完成編輯前二次確認
+            const confirmEdit = window.confirm("你確定要儲存這次的教材變更嗎？按下取消將不會儲存任何更動。");
+            if (!confirmEdit) {
+                // 取消時直接離開編輯模式，恢復原本資料
+                setEditedMaterials([]);
+                setIsEditMode(false);
+                return;
+            }
             try {
                 setIsSaving(true);
                 console.log("原始教材數據:", materials);
                 console.log("編輯後的教材數據:", editedMaterials);
+                
+                // 檢查教材名稱不可為空
+                if (editedMaterials.some(m => !m.name || m.name.trim() === "")) {
+                    alert("教材名稱不能為空，請檢查所有教材名稱！");
+                    setIsSaving(false);
+                    return;
+                }
                 
                 // 獲取要更新的教材
                 const materialsToUpdate = editedMaterials.filter(m => 
@@ -120,7 +135,16 @@ function CourseDetail() {
                 if (materialsToUpdate.length > 0) {
                     await updateCourseMaterials(courseId, materialsToUpdate);
                 }
-                
+                /*
+                // 防呆：若全部刪除，需二次確認
+                if (deletedMaterialIds.length === materials.length && materials.length > 0) {
+                    const confirmDeleteAll = window.confirm("你確定要刪除所有教材嗎？此動作無法復原。");
+                    if (!confirmDeleteAll) {
+                        setIsSaving(false);
+                        return;
+                    }
+                }*/
+
                 // 執行刪除操作（如果有要刪除的教材）
                 for (const materialId of deletedMaterialIds) {
                     console.log(`正在刪除教材 ID: ${materialId}`);
