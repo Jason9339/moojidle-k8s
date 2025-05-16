@@ -2,27 +2,6 @@ import {
     GetAllUserCourseByUserId 
 } from "#src/services/discussion_services/course_service.js";
 
-// This function is used to get all the courses of a user by user id
-// Example response:
-// [
-//     {
-//         course_id : 1,
-//         course_name : "course 1",
-//     },
-//     {
-//         course_id : 2,
-//         course_name  : "course 2",
-//     },
-//     {
-//         course_id : 3,
-//         course_name  : "course 3",
-//     },
-//     {
-//         course_id : 4,
-//         course_name  : "course 4",
-//     }
-// ]
-
 async function GetUserCourse(req, res) {
     //the userid in usl is a string, but in the database it is an int
     // so we need to convert it to an int

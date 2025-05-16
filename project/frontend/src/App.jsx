@@ -35,8 +35,6 @@ function App() {
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/post-edit/:param" element={<PostEdit />} />
-                        <Route path="/post/:id" element={<PostPage />} />
                         <Route path="*" element={<NotFoundPage />} />
 
                         {/* user pages related */}
@@ -48,6 +46,10 @@ function App() {
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
                         <Route path="/discussion/create" element={<CreateDiscussion />} />
                         <Route path="/discussion/delete" element={<DeleteDiscussion />} />
+
+                        {/* post pages relayed */}
+                        <Route path="/post-edit/:param" element={<PostEdit />} />
+                        <Route path="/post/:id" element={<PostPage />} />
                     </Route>
                 </Routes>
             </Router>
