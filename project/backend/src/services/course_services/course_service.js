@@ -417,8 +417,7 @@ async function updateMaterialsService(courseId, materials) {
 async function deleteMaterialService(courseId, materialId) {
     try {
         const materialsCollection = mongoose.connection.db.collection('materials');
-        const counterCollection = mongoose.connection.db.collection('counter');
-        
+
         // 強化查詢條件，允許字串與數字
         const query = {
             m_id: { $in: [parseInt(materialId), materialId] },
@@ -441,20 +440,6 @@ async function deleteMaterialService(courseId, materialId) {
         // 刪除數據庫中的記錄
         const result = await materialsCollection.deleteOne(query);
         
-        // 如果刪除成功，更新 counter 集合
-        if (result.deletedCount > 0) {
-            // 更新 counter 集合中的計數
-            await counterCollection.updateOne(
-                {}, // 對應於您的 counter 集合結構
-                { $inc: { materials: -1 } } // 將 materials 計數減 1
-            );
-            
-            console.log(`[deleteMaterialService] 已刪除 ID ${materialId} 的教材，並減少了 counter.materials 計數`);
-            
-            // 檢查更新後的值
-            const afterCounter = await counterCollection.findOne({});
-            console.log(`[deleteMaterialService] 更新後 counter.materials 值為: ${afterCounter?.materials || 0}`);
-        }
         
         return result;
     } catch (error) {
