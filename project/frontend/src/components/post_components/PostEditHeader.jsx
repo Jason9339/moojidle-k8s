@@ -5,12 +5,12 @@ const PostEditHeader = ({ courseData, boardData, defaultCourseId, defaultBoardId
     return (
 
         <>
-            <div className="flex w-[70vw] h-[5vh] p-[5px]">
+            <div className="flex w-[70vw] h-[7.5vh] p-[5px]">
                 <Combobox options={courseData} onChange={onCourseFilterChange} defaultValue={defaultCourseId} />
                 <Combobox options={boardData} onChange={onBoardFilterChange} defaultValue={defaultBoardId} />
             </div>
 
-            <div className="flex w-[70vw] h-[5vh] p-[5px]">
+            <div className="flex w-[70vw] h-[5vh] pl-[5px] text-center flex items-center">
                 {userTags.map((tag) => (
                     <span id={`user${tag.user_id}${tag.user_tag}`} className="text-[#548C00] pl-[2vw]">
                         {tag}
