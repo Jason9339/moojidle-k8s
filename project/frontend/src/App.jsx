@@ -5,7 +5,7 @@ import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
-import PostPage from "@/pages/post_pages/PostPage";
+import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
