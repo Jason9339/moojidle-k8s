@@ -44,6 +44,7 @@ app.use("/discussion-board", discussionBoardRoute);
 // post route
 app.use("/post", postRoute);
 
+
 // Routes ends --------------------------------------------------------------------------
 
 // Global error handler

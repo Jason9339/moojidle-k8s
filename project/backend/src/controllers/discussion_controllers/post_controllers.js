@@ -1,5 +1,5 @@
 import { FindBoardByID } from '#src/services/discussion_services/discussion_board_service.js';
-import { FindPostByID, DeletePost, FindProjectedPostsByBId } from '#src/services/discussion_services/post_services.js'
+import { FindPostByID, DeletePost, FindProjectedPostsByBId, GetNextPostId, CreatePostsByBId } from '#src/services/discussion_services/post_services.js'
 import { FindUserdataByID, FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
 import { FindCourseNameByID } from '#src/services/discussion_services/course_service.js';
 import { LeaveComment, DeleteComment } from '#src/services/discussion_services/comment_service.js';
@@ -85,7 +85,7 @@ async function Commender(req, res) {
 
 async function CommendDeleter(req, res) {
     const { post_id, user_id, comment_date, description } = req.body;
-    
+
     try {
         const result = await DeleteComment({
             post_id: parseInt(post_id),
@@ -134,8 +134,8 @@ async function GetOverviewPosts(req, res) {
     try {
         let result = await FindProjectedPostsByBId(inBoardId);
 
-        for (let i = 0; i < result.length; i ++){
-            if(result[i].description.length > maxContent){
+        for (let i = 0; i < result.length; i++) {
+            if (result[i].description.length > maxContent) {
                 result[i].description = result[i].description.substring(0, maxContent).concat("....");
             }
 
@@ -156,7 +156,56 @@ async function GetOverviewPosts(req, res) {
     }
 }
 
+async function AddPosts(req, res) {
+    try {
+        const {
+            post_by_user_id,
+            post_user_custom_tags,
+            description,
+            title,
+            public: isPublic = false,
+            in_b_id,
+            post_tags = []
+        } = req.body;
+
+        if (!post_by_user_id || !description || !title) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        const post_id = await GetNextPostId();
+        const post_date = new Date();
+
+
+        const customTagsArray = (post_user_custom_tags || []).map(tag =>
+            typeof tag === "string" ? { tag_name: tag } : tag
+        );
+        const postTagsArray = (post_tags || []).map(tag =>
+            typeof tag === "string" ? { tag_name: tag } : tag
+        );
+
+        const newPost = {
+            post_id,
+            post_by_user_id,
+            post_user_custom_tags: customTagsArray,
+            description,
+            title,
+            post_date,
+            public: isPublic,
+            comments: [],
+            in_b_id,
+            post_tags: postTagsArray
+        };
+
+        await CreatePostsByBId(newPost);
+
+        res.status(201).json({ message: "Post created successfully.", post: newPost });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to create post.", error: err.message });
+    }
+}
+
 export {
+    AddPosts,
     GetPostContent,
     Commender,
     PostDeleter,

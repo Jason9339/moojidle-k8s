@@ -1,4 +1,5 @@
 import api from "@/services/apiClient.js"
+import { data } from "react-router-dom";
 
 async function GetPostContent(postID) {
     try {
@@ -11,32 +12,32 @@ async function GetPostContent(postID) {
 }
 
 async function LeaveCommend(commendData) {
-    try{
+    try {
         const response = await api.post("post/commend", commendData);
 
         return response.data;
-    }catch (error) {
+    } catch (error) {
         console.error(error);
     }
 
 };
 
 async function DeleteCommend(commendData) {
-    try{
+    try {
         const response = await api.post("post/deletecommend", commendData);
 
         return response.data;
-    }catch (error) {
+    } catch (error) {
         console.error(error);
     }
 
 };
 
 async function DeletePost(postID) {
-    try{
+    try {
         const response = await api.delete(`post/delete/${postID}`);
         return response.data;
-    }catch (error) {
+    } catch (error) {
         console.error(error);
     }
 
@@ -52,5 +53,15 @@ async function GetOverviewPostByBId(inBoardId) {
     }
 }
 
-export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost, GetOverviewPostByBId};
+async function CreatePost(postData) {
+    console.log("postData=", postData)
+    try {
+        const response = await api.post("/post/create-post", postData);
+
+        return response.data;
+    } catch (err) {
+        console.error(err);
+    }
+}
+export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost, GetOverviewPostByBId, CreatePost };
 
