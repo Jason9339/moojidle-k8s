@@ -40,6 +40,15 @@ const PostEdit = () => {
 
         state.currentBoardId = boardId;
     }, [state])
+
+
+    if (!state?.data) {
+
+        return <Redirect />
+    }
+
+
+    // eslint-disable-next-line
     useEffect(() => {
 
         const fetchTag = async () => {
@@ -62,7 +71,7 @@ const PostEdit = () => {
 
     }, [])
 
-
+    // eslint-disable-next-line
     useEffect(() => {
 
 
@@ -75,20 +84,20 @@ const PostEdit = () => {
     }, [state.data, state.currentCourseId,
         setCurrentCourseById])
 
-
+    // eslint-disable-next-line
     const handleTitleChange = useCallback((txt) => {
         setTitle(txt);
     }, [])
-
+    // eslint-disable-next-line
     const handleDescriptionChange = useCallback((txt) => {
         setDescription(txt)
     }, [])
-
+    // eslint-disable-next-line
     const handleCancel = useCallback(() => {
         navigate(-1);
 
     }, [navigate]);
-
+    // eslint-disable-next-line
     const handleSubmit = useCallback(async () => {
 
 
@@ -115,18 +124,14 @@ const PostEdit = () => {
             }
 
         });
-    }, [navigate, description, state.currentBoardId, state.currentCourseId, title, userTags]);
+    }, [navigate, description, state.currentBoardId, title, userTags]);
 
-    if (!state?.currentBoardId || !state?.currentBoardId) {
 
-        return <Redirect />
-    }
     return (
 
         <>
             <LeftBar />
 
-            {param == "new" ? "new" : "edit"}
             <div className="flex flex-col px-[10vw] py-[5vh]">
                 <PostEditHeader courseData={courseData} boardData={boardData}
                     defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}

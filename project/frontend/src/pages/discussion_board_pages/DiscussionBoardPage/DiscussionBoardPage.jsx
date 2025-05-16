@@ -46,7 +46,7 @@ function DiscussionBoard() {
 
             console.log(result)
             // Post user just created will show on top.
-            if (state.newPostId) {
+            if (state?.newPostId) {
                 const index = result.findIndex(post => post.post_id == state.newPostId);
                 const [newPost] = result.splice(index, 1);
                 result.unshift(newPost);
