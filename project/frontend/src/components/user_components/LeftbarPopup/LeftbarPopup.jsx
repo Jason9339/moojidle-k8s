@@ -6,7 +6,8 @@ function LeftbarPopup({ onClose }) {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem("user");
+        // localStorage.removeItem("user");
+        localStorage.clear();
         navigate("/login");
     };
 

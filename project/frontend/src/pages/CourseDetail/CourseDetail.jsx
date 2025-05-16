@@ -20,9 +20,14 @@ import AnnouncementsTab from "@/components/course/AnnouncementsTab/Announcements
 import UploadModal from "@/components/course/UploadModal/UploadModal";
 import MembersTab from "@/components/course/MembersTab/MembersTab";
 
+import { useLocation } from "react-router-dom";
+
 function CourseDetail() {
     const user = JSON.parse(localStorage.getItem("user"));
     const currentUserId = user?.user_id;
+
+    const location = useLocation();
+    const isTeacher = location.state?.isTeacher || false;
 
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
@@ -156,21 +161,23 @@ function CourseDetail() {
                 {/* Tab 對應內容渲染 */}
                 {activeTab === "課程" && (
                     <>
-                        <div className={`${styles["material-bar"]}`}>
-                            <button
+                        {isTeacher && (
+                            <div className={`${styles["material-bar"]}`}>
+                                <button
                                 className={`${styles["material-button"]}`}
                                 onClick={() => setShowUploadModal(true)}
-                            >
+                                >
                                 上傳教材/作業
-                            </button>
-                            <button 
+                                </button>
+                                <button 
                                 className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
                                 onClick={toggleEditMode}
                                 disabled={isSaving}
-                            >
+                                >
                                 {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
-                            </button>
-                        </div>
+                                </button>
+                            </div>
+                        )}
                         <CourseTab
                             courseId={courseId}
                             course={course}

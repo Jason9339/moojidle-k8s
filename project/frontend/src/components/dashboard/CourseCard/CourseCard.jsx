@@ -10,7 +10,9 @@ function CourseCard({ title, courseId, color, isTeacher, isStudent, isAssistant,
   const [showEditModal, setShowEditModal] = useState(false);
 
   const handleCardClick = () => {
-    navigate(`/course/${courseId}`);
+    navigate(`/course/${courseId}`, {
+      state: { isTeacher, isStudent, isAssistant }
+    });
   };
 
   return (
