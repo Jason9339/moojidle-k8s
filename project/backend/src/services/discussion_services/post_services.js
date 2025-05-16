@@ -35,23 +35,29 @@ async function FindProjectedPostsByBId(in_b_id) {
     return result;
 }
 
-async function GetNextPostId() {
-    const db = mongoose.connection.db;
-    const counter = await db.collection('counter').findOne({});
-    if (!counter) {
-        throw new Error("Counter document not found. Please initialize your counter collection.");
-    }
-    const postId = (counter.post || 0) + 1;
-    await db.collection('counter').updateOne(
-        { _id: counter._id },
-        { $set: { post: postId } }
-    );
-    return postId;
-}
-
 async function CreatePostsByBId(post) {
     try {
-        const result = await mongoose.connection.db.collection('post').insertOne(post);
+        const counter = await mongoose.connection.db.collection('counter').findOne();
+        const nextPostId = counter.post + 1;
+
+        const result = await mongoose.connection.db.collection('post').insertOne({
+            post_id: nextPostId,
+            post_by_user_id: post.post_by_user_id,
+            post_user_custom_tags: post.post_user_custom_tags,
+            description: post.description,
+            title: post.title,
+            post_date: post.post_date,
+            public: post.public,
+            comments: [],
+            in_b_id: post.in_b_id,
+            post_tags: post.post_tags
+        });
+
+        await mongoose.connection.db.collection('counter').updateOne(
+            {},
+            { $inc: { post: 1 } }
+        );
+
         return result;
     } catch (err) {
         throw new Error("Failed to create post: " + err.message);
@@ -60,7 +66,6 @@ async function CreatePostsByBId(post) {
 
 export {
     FindProjectedPostsByBId,
-    GetNextPostId,
     CreatePostsByBId,
     FindPostByID,
     DeletePost,
