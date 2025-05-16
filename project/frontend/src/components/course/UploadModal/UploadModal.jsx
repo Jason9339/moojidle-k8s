@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./UploadModal.css";
+import styles from "./UploadModal.module.css";
 import { UploadFile } from "@/services/FileApi";
 
 const UploadModal = ({ onClose, courseId, onSuccess }) => {
@@ -47,9 +47,9 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
     };
 
     return (
-        <div className="upload-modal">
+        <div className={`${styles["upload-modal"]}`}>
             <h2>上傳檔案</h2>
-            <div className="input-group">
+            <div className={`${styles["input-group"]}`}>
                 <label htmlFor="type">選擇類型</label>
                 <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
                     <option value="material">教材</option>
@@ -57,7 +57,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 </select>
             </div>
 
-            <div className="input-group">
+            <div className={`${styles["input-group"]}`}>
                 <label htmlFor="name">{type === "assignment" ? "作業名稱" : "教材名稱"}</label>
                 <input
                     id="name"
@@ -70,7 +70,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
 
             {type === "assignment" && (
                 <>
-                    <div className="input-group">
+                    <div className={`${styles["input-group"]}`}>
                         <label htmlFor="startDate">開始日期時間</label>
                         <input
                             id="startDate"
@@ -79,7 +79,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                             onChange={(e) => setStartDate(e.target.value)}
                         />
                     </div>
-                    <div className="input-group">
+                    <div className={`${styles["input-group"]}`}>
                         <label htmlFor="endDate">結束日期時間</label>
                         <input
                             id="endDate"
@@ -92,7 +92,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             )}
 
             {type === "material" && (
-                <div className="input-group">
+                <div className={`${styles["input-group"]}`}>
                     <label htmlFor="displayDate">顯示日期</label>
                     <input
                         id="displayDate"
@@ -118,7 +118,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 onChange={(e) => setFile(e.target.files[0])}
             />
 
-            <div className="button-group">
+            <div className={`${styles["button-group"]}`}>
                 <button onClick={onClose}>取消</button>
                 <button onClick={handleUpload}>上傳</button>
             </div>

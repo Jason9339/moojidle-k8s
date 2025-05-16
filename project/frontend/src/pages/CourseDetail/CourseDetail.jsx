@@ -156,9 +156,9 @@ function CourseDetail() {
                 {/* Tab 對應內容渲染 */}
                 {activeTab === "課程" && (
                     <>
-                        <div className="material-bar">
+                        <div className={`${styles["material-bar"]}`}>
                             <button
-                                className="material-button"
+                                className={`${styles["material-button"]}`}
                                 onClick={() => setShowUploadModal(true)}
                             >
                                 上傳教材/作業
@@ -182,7 +182,7 @@ function CourseDetail() {
                         {/* 顯示 UploadModal */}
                         {showUploadModal && (
                             <>
-                                <div className="modal-overlay" onClick={() => setShowUploadModal(false)} />
+                                <div className={`${styles["modal-overlay"]}`} onClick={() => setShowUploadModal(false)} />
                                 <UploadModal
                                 onClose={() => setShowUploadModal(false)}
                                 courseId={courseId}
