@@ -3,12 +3,16 @@ import { SaveFile } from "./file_storage_service.js";
 
 export const GetNextId = async (collectionName) => {
     try {
-        const result = await mongoose.connection.db.collection("counter").findOneAndUpdate(
+        const counter = await mongoose.connection.db.collection("counter").findOne();
+        const nextId = (counter?.[collectionName] ?? 0) + 1;
+
+        await mongoose.connection.db.collection("counter").updateOne(
             {},
-            { $inc: { [collectionName]: 1 } },
-            { upsert: true, returnDocument: "after" }
+            { $set: { [collectionName]: nextId } },
+            { upsert: true }
         );
-        return result.value[collectionName];
+
+        return nextId;
     } catch (error) {
         console.error(`Error getting next ID for ${collectionName}:`, error);
         throw error;
