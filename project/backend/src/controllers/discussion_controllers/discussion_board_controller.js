@@ -6,7 +6,7 @@ import {
 
 import { 
     GetAllUserCourseByUserId
-} from "#src/services/course_services/course_service.js";
+} from "#src/services/discussion_services/course_service.js";
 
 
 async function GetCourseDiscussionBoard(req, res) {
