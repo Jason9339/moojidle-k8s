@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./AddCourseModal.css";
-import { addCourse } from "@/services/DashboardApi"
+import { addCourse } from "@/services/dashboard_api/DashboardApi"
 
 
 function AddCourseModal({ onClose, onAddCourse, currentUserId }) {

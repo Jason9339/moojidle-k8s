@@ -1,4 +1,4 @@
-import axios from "./apiClient";
+import axios from "@/services/apiClient";
 
 export const UploadFile = async (formData) => {
     try {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./UploadModal.css";
-import { UploadFile } from "@/services/FileApi";
+import { UploadFile } from "@/services/file_api/FileApi";
 
 const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [file, setFile] = useState(null);

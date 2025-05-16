@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './EditCourseModal.css';
-import { deleteCourse } from '@/services/DashboardApi';
+import { deleteCourse } from '@/services/dashboard_api/DashboardApi';
 
 function EditCourseModal({ course, onClose, onDeleteCourse }) {
   const [newName, setNewName] = useState(course.title);

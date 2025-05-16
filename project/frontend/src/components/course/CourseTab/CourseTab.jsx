@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./CourseTab.css";
-import { DownloadFile } from "@/services/FileApi";
+import { DownloadFile } from "@/services/file_api/FileApi";
 
 function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
     const [editingMaterials, setEditingMaterials] = useState([]);

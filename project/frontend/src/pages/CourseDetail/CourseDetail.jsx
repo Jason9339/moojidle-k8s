@@ -8,7 +8,7 @@ import {
   getCourseMaterials, 
   updateCourseMaterials,
   deleteCourseMaterial
-} from "@/services/CoursepageApi";
+} from "@/services/coursepage_api/CoursepageApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 

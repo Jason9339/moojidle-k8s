@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getCourseMembers, manualAddStudent, switchCharacter,getInviteCode  } from "@/services/CoursepageApi"
+import { getCourseMembers, manualAddStudent, switchCharacter,getInviteCode  } from "@/services/coursepage_api/CoursepageApi"
 import { useEffect, useState } from 'react';
 import './MembersTab.css';
 
