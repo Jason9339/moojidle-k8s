@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./AnnouncementsTab.css";
+import styles from "./AnnouncementsTab.module.css";
 import { getAnnouncements, createAnnouncement, canUserEditAnnouncements, editAnnouncement } from "@/services/AnnouncementTabApi.js";
 
 function AnnouncementsTab({ courseId, currentUserId }) {
@@ -116,39 +116,37 @@ function AnnouncementsTab({ courseId, currentUserId }) {
     };
 
     return (
-        <div className="announcements-tab">
-            {/* Filter and search bar */}
-            <div className="announcements-header">
-                <select className="filter-dropdown">
+        <div className={styles["announcements-tab"]}>
+            <div className={styles["announcements-header"]}>
+                <select className={styles["filter-dropdown"]}>
                     <option value="all">Announced</option>
                 </select>
                 <input
                     type="text"
-                    className="search-bar"
+                    className={styles["search-bar"]}
                     placeholder="Search"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {canEdit && (
-                    <button className="create-announcement-button" onClick={openCreateModal}>
+                    <button className={styles["create-announcement-button"]} onClick={openCreateModal}>
                         + 新創公告
                     </button>
                 )}
             </div>
-
-            {/* Announcements list */}
-            <div className="announcements-list">
+    
+            <div className={styles["announcements-list"]}>
                 {filteredAnnouncements.map((announcement) => (
-                    <div key={announcement.a_id} className="announcement-item">
+                    <div key={announcement.a_id} className={styles["announcement-item"]}>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                             <div>
-                                <p className="announcement-content">{announcement.context}</p>
-                                <p className="announcement-posted">
+                                <p className={styles["announcement-content"]}>{announcement.context}</p>
+                                <p className={styles["announcement-posted"]}>
                                     Posted on: {new Date(announcement.create_date).toLocaleString()}
                                 </p>
                             </div>
                             {canEdit && (
-                                <button className="edit-announcement-button" onClick={() => openEditModal(announcement)}>
+                                <button className={styles["edit-announcement-button"]} onClick={() => openEditModal(announcement)}>
                                     編輯公告
                                 </button>
                             )}
@@ -156,12 +154,11 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                     </div>
                 ))}
             </div>
-
-            {/* Modal for creating a new announcement */}
+    
             {isCreateModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={closeCreateModal}>
+                <div className={styles["modal"]}>
+                    <div className={styles["modal-content"]}>
+                        <span className={styles["close"]} onClick={closeCreateModal}>
                             &times;
                         </span>
                         <h2>Create New Announcement</h2>
@@ -180,19 +177,18 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                                 onChange={(e) => setNewAnnouncementContext(e.target.value)}
                             />
                         </label>
-                        <div className="modal-actions">
+                        <div className={styles["modal-actions"]}>
                             <button onClick={handleCreateAnnouncement}>Create</button>
                             <button onClick={closeCreateModal}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
-
-            {/* Modal for editing an announcement */}
+    
             {isEditModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={closeEditModal}>
+                <div className={styles["modal"]}>
+                    <div className={styles["modal-content"]}>
+                        <span className={styles["close"]} onClick={closeEditModal}>
                             &times;
                         </span>
                         <h2>Edit Announcement</h2>
@@ -211,7 +207,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                                 onChange={(e) => setNewAnnouncementContext(e.target.value)}
                             />
                         </label>
-                        <div className="modal-actions">
+                        <div className={styles["modal-actions"]}>
                             <button onClick={handleEditAnnouncement}>Save</button>
                             <button onClick={closeEditModal}>Cancel</button>
                         </div>
@@ -219,7 +215,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                 </div>
             )}
         </div>
-    );
+    );    
 }
 
 export default AnnouncementsTab;
