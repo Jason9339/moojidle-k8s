@@ -8,7 +8,6 @@ import {
     Delete,
     UpdatePassword,
     GetUserTags,
-    GoogleSignUp
 } from '#src/controllers/user_controllers/user_controller.js';
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
@@ -43,7 +42,6 @@ router.get("/get-user-by-id/:userId", GetUserData);
 router.get("/get-user-tags-by-id/:userId", GetUserTags);
 router.post("/register", Register);
 router.post("/login", Login);
-router.post("/google-signup", GoogleSignUp);
 
 router.delete("/delete/:id", Delete);
 

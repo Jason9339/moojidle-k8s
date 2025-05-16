@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-   
+
 async function FindOneUserById(user_id) {
     let result;
-    
+
     try {
         result = await mongoose.connection.db.collection('user').findOne(
             // { _id: mongoose.Types.ObjectId.createFromHexString(user_id) }
@@ -47,7 +47,7 @@ async function RegisterUser(userData) {
 
         await mongoose.connection.db.collection('counter').updateOne(
             {},
-            {$inc: {user: 1}}
+            { $inc: { user: 1 } }
         );
     } catch (err) {
         console.log(err); // Log any errors that occur
@@ -69,8 +69,8 @@ async function LoginUser(email, password) {
     try {
         // Query the 'user' collection to find a user with the specified email and password
         result = await mongoose.connection.db.collection('user').findOne({
-            email: email, 
-            pw: password 
+            email: email,
+            pw: password
         });
     } catch (err) {
         console.log(err); // Log any errors that occur
@@ -95,7 +95,7 @@ async function DeleteUser(userId) {
 
 async function FindOnesTagById(user_id) {
     let result;
-    
+
     try {
         result = await mongoose.connection.db.collection('custom_tag').find(
             { user_id: parseInt(user_id) }
@@ -116,50 +116,12 @@ async function UpdateUserPassword(userId, newPassword) {
             { $set: { pw: newPassword } }
         );
     } catch (err) {
-        console.log(err); 
-    }
-
-    return result; 
-}
-
-async function SignUpByGoogleApi(userData) {
-    let result;
-
-    try {
-        const existingUser = await mongoose.connection.db.collection('user').findOne({ email: userData.email });
-        if (existingUser) {
-            return { alreadyExists: true, user: existingUser };
-        }
-
-        const counter = await mongoose.connection.db.collection('counter').findOne();
-        const nextUserId = counter.user + 1;
-
-        result = await mongoose.connection.db.collection('user').insertOne({
-            user_id: nextUserId,
-            name: userData.name,
-            email: userData.email,
-            pw: "", 
-            create_date: new Date(),
-            contact_ways: [
-                {
-                    approach: "email",
-                    details: userData.email
-                }
-            ],
-            path_to_profile_pic: userData.picture || "" 
-        });
-
-        await mongoose.connection.db.collection('counter').updateOne(
-            {},
-            { $inc: { user: 1 } }
-        );
-    } catch (err) {
         console.log(err);
-        throw err;
     }
 
     return result;
 }
+
 
 export {
     RegisterUser,
@@ -168,5 +130,4 @@ export {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    SignUpByGoogleApi
 }

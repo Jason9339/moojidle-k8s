@@ -192,7 +192,6 @@ export {
     GetUserData,
     GetUserTags,
     UpdatePassword,
-    GoogleSignUp
 }
 
 
