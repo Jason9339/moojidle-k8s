@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './EditCourseModal.css';
+import styles from './EditCourseModal.module.css';
 import { deleteCourse } from '@/services/DashboardApi';
 
 function EditCourseModal({ course, onClose, onDeleteCourse }) {
@@ -26,9 +26,9 @@ function EditCourseModal({ course, onClose, onDeleteCourse }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className={`${styles["modal-backdrop"]}`} onClick={onClose}>
       <div
-        className="modal"
+        className={`${styles["modal"]}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h3>編輯課程</h3>
@@ -37,9 +37,9 @@ function EditCourseModal({ course, onClose, onDeleteCourse }) {
           onChange={(e) => setNewName(e.target.value)}
           disabled={isDeleting}
         />
-        <div className="modal-btn-group">
+        <div className={`${styles["modal-btn-group"]}`}>
           <button onClick={handleSave} disabled={isDeleting}>儲存修改</button>
-          <button onClick={handleDelete} className="danger" disabled={isDeleting}>
+          <button onClick={handleDelete} className={`${styles["danger"]}`} disabled={isDeleting}>
             {isDeleting ? "刪除中..." : "刪除課程"}
           </button>
           <button onClick={onClose} disabled={isDeleting}>取消</button>

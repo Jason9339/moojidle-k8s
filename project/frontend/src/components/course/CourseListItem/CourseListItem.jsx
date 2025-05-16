@@ -1,5 +1,5 @@
 import React from "react";
-import "./CourseListItem.css";
+import styles from "./CourseListItem.module.css";
 import { useNavigate } from "react-router-dom";
 
 function CourseListItem({ title, courseId, color }) {
@@ -7,15 +7,15 @@ function CourseListItem({ title, courseId, color }) {
 
   return (
     <div
-      className="course-list-item"
+      className={`${styles["course-list-item"]}`}
       onClick={() => navigate(`/course/${courseId}`)}
       style={{ cursor: "pointer" }}
     >
-      <div className="course-title">
-        <div className="course-color-indicator" style={{ backgroundColor: color }} />
+      <div className={`${styles["course-title"]}`}>
+        <div className={`${styles["course-color-indicator"]}`} style={{ backgroundColor: color }} />
         <span>{title}</span>
       </div>
-      <span className="course-id">{courseId}</span>
+      <span className={`${styles["course-id"]}`}>{courseId}</span>
     </div>
   );
 }

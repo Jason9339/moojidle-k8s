@@ -1,5 +1,5 @@
 import React from 'react';
-import './ToDoItem.css';
+import styles from './ToDoItem.module.css';
 
 function ToDoItem({ todoList }) {
   const getStatus = (startDate, dueDate) => {
@@ -37,13 +37,13 @@ function ToDoItem({ todoList }) {
       {todoList.map((item, index) => {
         const status = getStatus(item.start_date, item.due);
         return (
-          <div key={index} className="todo-item">
-            <p className="todo-title">{item.title}</p>
-            <p className="todo-course">{item.course}</p>
-            {/* <p className="todo-meta-row">
+          <div key={index} className={`${styles["todo-item"]}`}>
+            <p className={`${styles["todo-title"]}`}>{item.title}</p>
+            <p className={`${styles["todo-course"]}`}>{item.course}</p>
+            {/* <p className={`${styles["todo-meta-row"]}`}>
               <span>開始：{formatDate(item.start_date)}</span>
             </p> */}
-            <p className="todo-meta-row">
+            <p className={`${styles["todo-meta-row"]}`}>
               <span>截止：{formatDate(item.due)}</span>
               {renderStatus(status)}
             </p>
