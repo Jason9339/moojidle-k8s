@@ -10,6 +10,17 @@ async function GetUserDataById(userId) {
     }
 }
 
+async function GetUserTagsById(userId) {
+    try {
+        const respone = await api.get(`/user/get-user-tags-by-id/${userId}`);
+
+        return respone.data;
+    } catch (err) {
+        console.error(err);
+    }
+
+}
+
 async function UpdateUserPassword(userId, data) {
     try {
         const response = await api.put(`/user/update-password/${userId}`, data);
@@ -22,5 +33,6 @@ async function UpdateUserPassword(userId, data) {
 
 export {
     GetUserDataById,
-    UpdateUserPassword
+    UpdateUserPassword,
+    GetUserTagsById
 }

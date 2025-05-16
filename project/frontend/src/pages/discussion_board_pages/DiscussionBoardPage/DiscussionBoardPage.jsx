@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { data, useParams } from "react-router-dom";
+import { data, useParams, Link, useLocation } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
-
 // css styling
 import styles from "./DiscussionBoardPage.module.css"
 
@@ -13,14 +12,15 @@ import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_api/Discus
 import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 
 function DiscussionBoard() {
+    const { state } = useLocation();
+
+    // console.log("[BoardPage] state=", state);
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
-
-    let currentCourseName;
-    let currentBoardName;
-
+    let currentCourse;
+    let currentBoard;
     useEffect(() => {
         const fetchCourseBoards = async () => {
             try {
@@ -44,6 +44,7 @@ function DiscussionBoard() {
             // get data from services
             const result = await GetOverviewPostByBId(parseInt(param));
 
+            // console.log(result)
             setOverviewPostData(result);
         }
 
@@ -72,10 +73,15 @@ function DiscussionBoard() {
             for (let j = 0; j < courseBoardData[i].boards.length; j++) {
                 if (courseBoardData[i].boards[j].board_id == currentBoardId) {
                     // find the correct path
-                    currentCourseName = courseBoardData[i].course_name;
-                    currentBoardName = courseBoardData[i].boards[j].board_name;
+                    const { course_id, course_name } = courseBoardData[i];
+                    const { board_id, board_name } = courseBoardData[i].boards[j];
+
+                    currentCourse = { course_id: course_id, course_name: course_name };
+                    currentBoard = { board_id: board_id, board_name: board_name };
+
                 }
             }
+
         }
     }
 
@@ -97,15 +103,36 @@ function DiscussionBoard() {
                 <div className={styles["main-container"]}>
                     {
                         param == "home" || param == null ?
-                            <DiscussionBoardInitContent />
+                            <div className="flex relative">
+                                <DiscussionBoardInitContent />
+
+                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
+                                    state={{ data: courseBoardData }}>
+                                    新增貼文
+                                </Link>
+                            </div>
+
                             :
-                            <DiscussionBoardContent
-                                overviewPosts={overviewPostData}
-                                courseName={currentCourseName}
-                                boardName={currentBoardName}
-                            />
+                            <div className="flex">
+
+                                <DiscussionBoardContent
+                                    overviewPosts={overviewPostData}
+                                    courseName={currentCourse.course_name}
+                                    boardName={currentBoard.board_name}
+                                />
+
+
+                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
+                                    state={{ data: courseBoardData, currentCourseId: currentCourse.course_id, currentBoardId: currentBoard.board_id }}>
+                                    新增貼文
+                                </Link>
+                            </div>
+
                     }
+
                 </div>
+
+
             </div >
 
         </>

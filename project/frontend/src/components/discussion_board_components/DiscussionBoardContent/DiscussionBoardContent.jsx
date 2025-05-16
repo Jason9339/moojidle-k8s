@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import OverviewPostCard from '@/components/discussion_board_components/OverviewPostCard/OverviewPostCard';
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 // style
@@ -48,7 +48,7 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
             <div className={styles["content-flex-box"]}>
                 {/* foreach overviewPost in overviewPosts */}
                 {overviewPosts && overviewPosts.length > 0 ? (
-                    overviewPosts.map((overviewPost, index) => (
+                    overviewPosts.slice().reverse().map((overviewPost, index) => (
                         <OverviewPostCard
                             key={overviewPost.post_id}
                             userPfp={overviewPost.post_by_user_name}

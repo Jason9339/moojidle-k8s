@@ -1,4 +1,4 @@
-import { 
+import {
     RegisterUser,
     LoginUser,
     DeleteUser,
@@ -34,7 +34,7 @@ async function Register(req, res) {
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
- // If a matching user is found, return the user data
+// If a matching user is found, return the user data
 //  {
 //     "user_id": 2,
 //     "name": "User 2",
@@ -94,6 +94,17 @@ async function GetUserData(req, res) {
     }
 }
 
+async function GetUserTags(req, res) {
+    const userId = req.params.userId;
+
+    const tags = await FindOnesTagById(userId);
+
+    if (!tags) {
+        res.status(404).send({ message: "User tags not found" });
+    }
+
+    res.status(200).send(tags);
+}
 // Update user password by user ID
 // In Postman send this json format in the body
 // {
@@ -131,12 +142,14 @@ async function UpdatePassword(req, res) {
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
+
 export {
     Register,
     Login,
     Delete,
     GetUserData,
-    UpdatePassword
+    GetUserTags,
+    UpdatePassword,
 }
 
 
