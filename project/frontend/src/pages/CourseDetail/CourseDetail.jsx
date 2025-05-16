@@ -194,6 +194,18 @@ function CourseDetail() {
                             >
                                 {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
                             </button>
+                            {isEditMode && (
+                                <button
+                                className={`${styles["material-button"]} ${styles["cancel"]}`}
+                                    onClick={() => {
+                                        setEditedMaterials([]);
+                                        setIsEditMode(false);
+                                    }}
+                                    disabled={isSaving}
+                                >
+                                    取消
+                                </button>
+                            )}
                         </div>
                         <CourseTab
                             courseId={courseId}
