@@ -75,18 +75,54 @@
   color: white;
 }
 
-.role-badge.teacher {
+.role-badge-teacher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
   background-color: #e74c3c; /* Red */
 }
-.role-badge.teacher.edit-icon {
+.role-badge-teacher-edit-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.role-badge.assistant {
+.role-badge-assistant {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
   background-color: #f39c12; /* Orange/Yellow */
 }
 
-.role-badge.student {
+.role-badge-student {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
   background-color: #27ae60; /* Green */
 }
 

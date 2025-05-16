@@ -8,7 +8,7 @@ import {
   getCourseMaterials, 
   updateCourseMaterials,
   deleteCourseMaterial
-} from "@/services/CoursepageApi";
+} from "@/services/coursepage_api/CoursepageApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 
@@ -164,7 +164,7 @@ function CourseDetail() {
                                 上傳教材/作業
                             </button>
                             <button 
-                                className={`material-button ${isEditMode ? 'active' : ''}`}
+                                className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
                                 onClick={toggleEditMode}
                                 disabled={isSaving}
                             >

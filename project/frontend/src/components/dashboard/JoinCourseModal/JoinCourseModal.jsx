@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
+import { fetchCourseIdByCode , inviteStudent } from "@/services/dashboard_api/DashboardApi"
 import styles from "./JoinCourseModal.module.css";
-import { fetchCourseIdByCode , inviteStudent } from "@/services/DashboardApi"
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
   const [inviteCode, setInviteCode] = useState("");

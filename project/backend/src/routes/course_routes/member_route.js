@@ -9,7 +9,7 @@ import {
     switchCharacter,
     inviteStudent,
     getIdViaInviteCode 
-} from '#src/controllers/course_members_controller.js';
+} from '#src/controllers/course_controllers/course_members_controller.js';
 
 
 router.get("/:courseId", getCourseMembers)

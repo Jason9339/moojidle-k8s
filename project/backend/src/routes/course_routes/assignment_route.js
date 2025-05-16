@@ -1,5 +1,5 @@
 import express from 'express';
-import { getTodoAssignments } from '#src/controllers/assignment_controller.js';
+import { getTodoAssignments } from '#src/controllers/course_controllers/assignment_controller.js';
 
 const router = express.Router();
 

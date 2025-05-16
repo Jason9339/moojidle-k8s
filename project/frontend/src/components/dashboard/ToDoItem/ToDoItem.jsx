@@ -18,7 +18,11 @@ function ToDoItem({ todoList }) {
       ongoing: '進行中',
       expired: '已過期',
     };
-    return <span className={`todo-status status-${status}`}>{labelMap[status]}</span>;
+    return (
+      <span className={`${styles["todo-status"]} ${styles[`status-${status}`]}`}>
+        {labelMap[status]}
+      </span>
+    );
   };
 
   const formatDate = (dateString) => {

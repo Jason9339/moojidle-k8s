@@ -1,4 +1,4 @@
-import axios from "./apiClient";
+import axios from "@/services/apiClient";
 
 // 從 DashboardApi.js 移動過來的課程專頁相關 API
 

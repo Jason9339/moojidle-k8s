@@ -28,7 +28,7 @@ import {
   // 教材操作控制器
   updateCourseMaterials,
   deleteCourseMaterial
-} from '#src/controllers/course_controller.js';
+} from '#src/controllers/course_controllers/course_controller.js';
 
 // 路由基礎地址: http://localhost:PORT/course
 

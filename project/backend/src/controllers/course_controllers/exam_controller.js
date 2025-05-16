@@ -1,4 +1,4 @@
-import { getComingExams as getComingExamsService } from '#src/services/exam_service.js';
+import { getComingExams as getComingExamsService } from '#src/services/course_services/exam_service.js';
 
 // 取得即將到來的考試/活動
 export const getComingExams = async (req, res) => {
