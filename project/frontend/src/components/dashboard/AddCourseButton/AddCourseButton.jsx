@@ -1,11 +1,11 @@
 import React from "react";
 import { FaPlus } from "react-icons/fa";
-import "./AddCourseButton.css";
+import styles from "./AddCourseButton.module.css";
 
 function AddCourseButton({ onClick }) {
     return (
         <button
-            className="add-course-button"
+            className={`${styles["add-course-button"]}`}
             onClick={onClick}
             title="新增或加入課程"
         >

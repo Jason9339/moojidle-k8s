@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./AddCourseModal.css";
+import styles from "./AddCourseModal.module.css";
 import { addCourse } from "@/services/DashboardApi"
 
 
@@ -50,13 +50,13 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
+    <div className={`${styles["modal-backdrop"]}`}>
+      <div className={`${styles["modal"]}`}>
 
         <h3>新增課程</h3>
 
-        <div className="form-row">
-          <label htmlFor="course-title">課程名稱 <span className="required">*</span></label>
+        <div className={`${styles["form-row"]}`}>
+          <label htmlFor="course-title">課程名稱 <span className={`${styles["required"]}`}>*</span></label>
           <input
             id="course-title"
             placeholder="請輸入課程名稱"
@@ -67,7 +67,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
           />
         </div>
 
-        <div className="form-row">
+        <div className={`${styles["form-row"]}`}>
           <label htmlFor="course-description">課程描述</label>
           <textarea
             id="course-description"
@@ -78,7 +78,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
           />
         </div>
 
-        <div className="form-row">
+        <div className={`${styles["form-row"]}`}>
           <label htmlFor="course-time">課程時間</label>
           <input
             id="course-time"
@@ -89,11 +89,11 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
           />
         </div>
 
-        <div className="form-row">
+        <div className={`${styles["form-row"]}`}>
           <label htmlFor="course-weeks">
-            課程週數 <span className="required">*</span>
+            課程週數 <span className={`${styles["required"]}`}>*</span>
           </label>
-          <div className="input-with-help">
+          <div className={`${styles["input-with-help"]}`}>
             <input
               id="course-weeks"
               type="number"
@@ -104,11 +104,11 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
               onChange={(e) => setWeeks(e.target.value)}
               disabled={isSubmitting}
             />
-            <small className="help-text">請輸入 5-30 之間的週數</small>
+            <small className={`${styles["help-text"]}`}>請輸入 5-30 之間的週數</small>
           </div>
         </div>
 
-        <div className="form-row">
+        <div className={`${styles["form-row"]}`}>
           <label htmlFor="course-color">課程顏色</label>
           <input
             id="course-color"
@@ -118,7 +118,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
             disabled={isSubmitting}
           />
         </div>
-        <div className="modal-btn-group">
+        <div className={`${styles["modal-btn-group"]}`}>
           <button onClick={handleAdd} disabled={isSubmitting}>
             {isSubmitting ? "新增中..." : "確定新增"}
           </button>

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { getCourseMembers, manualAddStudent, switchCharacter,getInviteCode  } from "@/services/CoursepageApi"
 import { useEffect, useState } from 'react';
-import './MembersTab.css';
+import styles from './MembersTab.module.css';
 
 // 模擬目前登入的 user_id
 // const currentUserId = 1;
@@ -112,22 +112,22 @@ function MembersTab({ courseId, userId }) {
 
 
     return (
-        <div className="membersContainer">
+        <div className={`${styles["membersContainer"]}`}>
             <h3>助教與學生管理</h3>
             <h3>邀請碼：{code}</h3>
 
             {isTeacher() && false && (
-                <div className="addStudentSection">
+                <div className={`${styles["addStudentSection"]}`}>
                     <button 
-                        className="addButton"
+                        className={`${styles["addButton"]}`}
                         onClick={() => setShowAddForm(!showAddForm)}
                     >
                         {showAddForm ? '取消' : '手動加入學生'}
                     </button>
                     
                     {showAddForm && (
-                        <form className="addStudentForm" onSubmit={handleAddStudentFormSubmit}>
-                            <div className="formGroup">
+                        <form className={`${styles["addStudentForm"]}`} onSubmit={handleAddStudentFormSubmit}>
+                            <div className={`${styles["formGroup"]}`}>
                                 <label htmlFor="userId">User ID:</label>
                                 <input
                                     type="text"
@@ -139,7 +139,7 @@ function MembersTab({ courseId, userId }) {
                                 />
                             </div>
                             
-                            <div className="formGroup">
+                            <div className={`${styles["formGroup"]}`}>
                                 <label htmlFor="studentId">學號:</label>
                                 <input
                                     type="text"
@@ -151,22 +151,22 @@ function MembersTab({ courseId, userId }) {
                                 />
                             </div>
                             
-                            <button type="submit" className="submitButton">加入學生</button>
+                            <button type="submit" className={`${styles["submitButton"]}`}>加入學生</button>
                         </form>
                     )}
                 </div>
             )}
 
 
-            {loading && <p className="loading">Loading course members...</p>}
-            {error && <p className="error">{error}</p>}
+            {loading && <p className={`${styles["loading"]}`}>Loading course members...</p>}
+            {error && <p className={`${styles["error"]}`}>{error}</p>}
 
             {!loading && !error && (
                 <>
-                    <div className="memberSection">
+                    <div className={`${styles["memberSection"]}`}>
                         <h4>老師 ({members.teachers?.length || 0})</h4>
                         {members.teachers?.length > 0 ? (
-                            <table className="memberTable">
+                            <table className={`${styles["memberTable"]}`}>
                                 <thead>
                                     <tr>
                                         <th>姓名</th>
@@ -183,7 +183,7 @@ function MembersTab({ courseId, userId }) {
                                                 {Array.isArray(teacher.contact_ways) && teacher.contact_ways.length > 0 ? (
                                                     <div>
                                                         {teacher.contact_ways.map((contact, index) => (
-                                                            <div key={index} className="contactItem">
+                                                            <div key={index} className={`${styles["contactItem"]}`}>
                                                                 <strong>{contact.approach}:</strong> {contact.details}
                                                             </div>
                                                         ))}
@@ -197,14 +197,14 @@ function MembersTab({ courseId, userId }) {
                                 </tbody>
                             </table>
                         ) : (
-                                <div className="emptyState">尚無教師</div>
+                                <div className={`${styles["emptyState"]}`}>尚無教師</div>
                             )}
                     </div>
 
-                    <div className="memberSection">
+                    <div className={`${styles["memberSection"]}`}>
                         <h4>助教 ({members.assistants?.length || 0})</h4>
                         {members.assistants?.length > 0 ? (
-                            <table className="memberTable">
+                            <table className={`${styles["memberTable"]}`}>
                                 <thead>
                                     <tr>
                                         <th>姓名</th>
@@ -222,7 +222,7 @@ function MembersTab({ courseId, userId }) {
                                                 {Array.isArray(assistant.contact_ways) && assistant.contact_ways.length > 0 ? (
                                                     <div>
                                                         {assistant.contact_ways.map((contact, index) => (
-                                                            <div key={index} className="contactItem">
+                                                            <div key={index} className={`${styles["contactItem"]}`}>
                                                                 <strong>{contact.approach}:</strong> {contact.details}
                                                             </div>
                                                         ))}
@@ -243,14 +243,14 @@ function MembersTab({ courseId, userId }) {
                                     ))}                                </tbody>
                             </table>
                         ) : (
-                                <div className="emptyState">尚無助教</div>
+                                <div className={`${styles["emptyState"]}`}>尚無助教</div>
                             )}
                     </div>
 
-                    <div className="memberSection">
+                    <div className={`${styles["memberSection"]}`}>
                         <h4>學生 ({members.students?.length || 0})</h4>
                         {members.students?.length > 0 ? (
-                            <table className="memberTable">
+                            <table className={`${styles["memberTable"]}`}>
                                 <thead>
                                     <tr>
                                         <th>姓名</th>
@@ -271,7 +271,7 @@ function MembersTab({ courseId, userId }) {
                                                 {Array.isArray(student.contact_ways) && student.contact_ways.length > 0 ? (
                                                     <div>
                                                         {student.contact_ways.map((contact, index) => (
-                                                            <div key={index} className="contactItem">
+                                                            <div key={index} className={`${styles["contactItem"]}`}>
                                                                 <strong>{contact.approach}:</strong> {contact.details}
                                                             </div>
                                                         ))}
@@ -282,7 +282,7 @@ function MembersTab({ courseId, userId }) {
                                             </td>
                                             <td>
                                                 {isTeacher()  && !isAssistant(student.user_id)&& (
-                                                <button className="roleButton"
+                                                <button className={`${styles["roleButton"]}`}
                                                     onClick={() => handleMakeAssistant(student.user_id)}>
                                                     設為助教
                                                 </button>
@@ -294,7 +294,7 @@ function MembersTab({ courseId, userId }) {
                                 </tbody>
                             </table>
                         ) : (
-                                <div className="emptyState">尚無學生</div>
+                                <div className={`${styles["emptyState"]}`}>尚無學生</div>
                             )}
                     </div>
                 </>

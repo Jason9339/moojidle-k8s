@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import "./JoinCourseModal.css";
+import styles from "./JoinCourseModal.module.css";
 import { fetchCourseIdByCode , inviteStudent } from "@/services/DashboardApi"
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
@@ -38,8 +38,8 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
 
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
+    <div className={`${styles["modal-backdrop"]}`}>
+      <div className={`${styles["modal"]}`}>
         <h3>加入課程</h3>
 
         <input
@@ -49,7 +49,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
           disabled={isSubmitting}
         />
 
-        <div className="modal-btn-group-join">
+        <div className={`${styles["modal-btn-group-join"]}`}>
           <button onClick={handleJoin} disabled={isSubmitting}>
             {isSubmitting ? "加入中..." : "加入課程"}
           </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import "./CourseTab.css";
+import styles from "./CourseTab.module.css";
 import { DownloadFile } from "@/services/FileApi";
 
 function CourseTab({ courseId, course, materials, assignments, isEditMode, onMaterialsChange }) {
@@ -175,8 +175,8 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
     }, []);
 
     return (
-        <div className="material-table-section">
-            <table className="material-table">
+        <div className={`${styles["material-table-section"]}`}>
+            <table className={`${styles["material-table"]}`}>
                 <thead>
                     <tr>
                         <th>Week</th>
@@ -197,19 +197,19 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                 <td>
                                     {currentWeek}
                                     <br />
-                                    <small className="week-date-range">{dateRange}</small>
+                                    <small className={`${styles["week-date-range"]}`}>{dateRange}</small>
                                 </td>
                                 <td>
                                     {isEditMode ? (
                                         <>
                                             {weekMaterials && weekMaterials.length > 0 ? (
                                                 weekMaterials.map((material, idx) => (
-                                                    <div key={idx} className="edit-material-item">
+                                                    <div key={idx} className={`${styles["edit-material-item"]}`}>
                                                         <input
                                                             type="text"
                                                             value={material.name || ""}
                                                             onChange={(e) => handleMaterialNameChange(i, idx, e.target.value)}
-                                                            className="material-input"
+                                                            className={`${styles["material-input"]}`}
                                                             placeholder="教材名稱"
                                                         />
                                                         {/* 新增日期輸入框 */}
@@ -222,7 +222,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                         />
                                                         <button 
                                                             onClick={() => deleteMaterial(i, idx)}
-                                                            className="delete-material-btn"
+                                                            className={`${styles["delete-material-btn"]}`}
                                                         >
                                                             刪除
                                                         </button>
@@ -251,7 +251,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             [slide]
                                                         </a>
                                                         <button
-                                                            className="download-button"
+                                                            className={`${styles["download-button"]}`}
                                                             onClick={() =>
                                                                 DownloadFile(material.path_to_file, material.filename)
                                                             }
@@ -283,7 +283,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             (file, i) => (
                                                                 <button
                                                                     key={i}
-                                                                    className="download-button"
+                                                                    className={`${styles["download-button"]}`}
                                                                     onClick={() =>
                                                                         DownloadFile(
                                                                             file.path_to_file,
@@ -318,11 +318,11 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                 </tbody>
             </table>
 
-            <div className="todo-panel">
+            <div className={`${styles["todo-panel"]}`}>
                 <h4>To Do</h4>
                 {assignments.length > 0 ? (
                     assignments.slice(0, 3).map((assignment, idx) => (
-                        <div key={idx} className="todo-item">
+                        <div key={idx} className={`${styles["todo-item"]}`}>
                             <strong>{assignment.name}</strong>
                             <span>{course.title}</span>
                             <span>
@@ -338,7 +338,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                         </div>
                     ))
                 ) : (
-                    <div className="todo-item">
+                    <div className={`${styles["todo-item"]}`}>
                         <span>目前沒有待辦事項</span>
                     </div>
                 )}
