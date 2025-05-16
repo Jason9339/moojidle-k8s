@@ -1,4 +1,4 @@
-import { SaveFile } from "#src/services/file_services/file_storage_service.js";
+import { SaveFile, DeleteFile } from "#src/services/file_services/file_storage_service.js";
 import {
     InsertAssignmentToDB,
     InsertMaterialToDB,
@@ -113,4 +113,30 @@ export const DownloadFile = (req, res) => {
             }
         });
     });
+};
+
+/**
+ * 刪除檔案控制器
+ * 接收路徑參數並刪除對應的檔案
+ */
+export const DeleteFileController = async (req, res) => {
+    try {
+        const { path: filePath } = req.query;
+        
+        if (!filePath) {
+            return res.status(400).json({ message: "缺少檔案路徑參數" });
+        }
+        
+        // 使用 DeleteFile 服務函數刪除檔案
+        const result = await DeleteFile(filePath);
+        
+        if (result) {
+            return res.status(200).json({ message: "檔案刪除成功" });
+        } else {
+            return res.status(404).json({ message: "檔案不存在或刪除失敗" });
+        }
+    } catch (error) {
+        console.error("刪除檔案時發生錯誤:", error);
+        res.status(500).json({ message: "刪除檔案時發生錯誤", error: error.message });
+    }
 };

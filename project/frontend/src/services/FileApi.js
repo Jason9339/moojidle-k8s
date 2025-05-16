@@ -39,3 +39,15 @@ export const DownloadFile = async (pathToFile, filename) => {
         console.error("Download error:", error);
     }
 };
+
+export const DeleteFile = async (pathToFile) => {
+    try {
+        const response = await axios.delete('/file/delete', {
+            params: { path: pathToFile }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("刪除檔案失敗", error);
+        throw new Error(error.response?.data?.message || "刪除檔案時發生錯誤");
+    }
+};

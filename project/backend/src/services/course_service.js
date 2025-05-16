@@ -315,6 +315,24 @@ async function deleteMaterialService(courseId, materialId) {
     try {
         const materialsCollection = mongoose.connection.db.collection('materials');
         
+        // 先獲取教材資訊，以取得檔案路徑
+        const material = await materialsCollection.findOne({
+            m_id: parseInt(materialId),
+            in_course_id: parseInt(courseId)
+        });
+        
+        if (!material) {
+            return { deletedCount: 0 };
+        }
+        
+        // 如果存在檔案路徑，執行檔案刪除操作
+        if (material.path_to_file) {
+            // 導入並使用文件刪除服務
+            const { DeleteFile } = await import('./file_services/file_storage_service.js');
+            await DeleteFile(material.path_to_file);
+        }
+        
+        // 刪除數據庫中的記錄
         const result = await materialsCollection.deleteOne({
             m_id: parseInt(materialId),
             in_course_id: parseInt(courseId)
