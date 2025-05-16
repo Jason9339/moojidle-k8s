@@ -7,8 +7,6 @@ const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
 
 const BoardSideBar = memo(({ itemData }) => {
-
-
     const { state } = useLocation();
 
     // Whether a MenuItem is currently selectewd
@@ -23,13 +21,33 @@ const BoardSideBar = memo(({ itemData }) => {
      *
      */
     const navigate = useNavigate()
+
+    const userId = JSON.parse(localStorage.getItem("user")).user_id;
+
+    // check if user is teacher or assistant
+    function canEdit (index){
+        for(let i = 0; i < itemData[index].teachers.length; i ++){
+            if(userId == itemData[index].teachers[i].user_id){  // is a teacher
+                return true;
+            }
+        }
+
+        for(let i = 0; i < itemData[index].assistants.length; i ++){
+            if(userId == itemData[index].assistants[i].user_id){  // is an assistant
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     return (
         <StyledSidebar width="200px">
             <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
             >
 
                 {
-                    itemData.map(({ course_id, course_name, boards }) => (
+                    itemData.map(({ course_id, course_name, boards }, index) => (
 
                         <SubMenu key={course_id} label={course_name} className="text-white bg-[#1f2a40]">
 
@@ -44,20 +62,22 @@ const BoardSideBar = memo(({ itemData }) => {
                                             navigate(`/discussion/${board_id}`);
                                         }}
                                         suffix={
-                                            <button
-                                                onClick={e => {
-                                                    e.stopPropagation();
-                                                    navigate("/discussion/delete/", {
-                                                        state: {
-                                                            boardId: board_id,
-                                                            boardName: board_name,
-                                                        }
-                                                    });
-                                                }}
-                                                className="p-1 hover:text-[#5961d4] cursor-pointer"
-                                            >
-                                                <FaEdit className="w-4 h-4" />
-                                            </button>
+                                            canEdit(index) ? (
+                                                <button
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        navigate("/discussion/delete/", {
+                                                            state: {
+                                                                boardId: board_id,
+                                                                boardName: board_name,
+                                                            }
+                                                        });
+                                                    }}
+                                                    className="p-1 hover:text-[#5961d4] cursor-pointer"
+                                                >
+                                                    <FaEdit className="w-4 h-4" />
+                                                </button>
+                                            ) : null
                                         }
                                     >
                                         <span >{board_name}</span>
