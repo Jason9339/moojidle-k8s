@@ -217,7 +217,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             type="date"
                                                             value={formatDateForInput(material.displayDate)}
                                                             onChange={(e) => handleMaterialDateChange(i, idx, e.target.value)}
-                                                            className="material-date-input"
+                                                            className={`${styles["material-date-input"]}`}
                                                             placeholder="顯示日期"
                                                         />
                                                         <button 
@@ -239,7 +239,7 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                     <div key={idx}>
                                                         {material.name}{" "}
                                                         {material.displayDate && (
-                                                            <small className="material-date">
+                                                            <small className={`${styles["material-date"]}`}>
                                                                 ({new Date(material.displayDate).toLocaleDateString()})
                                                             </small>
                                                         )}
