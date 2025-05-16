@@ -1,71 +1,225 @@
 import React, { useState, useEffect } from "react";
 import "./AnnouncementsTab.css";
-import { getAnnouncements } from "@/services/AnnouncementTabApi.js";
+import { getAnnouncements, createAnnouncement, canUserEditAnnouncements, editAnnouncement } from "@/services/AnnouncementTabApi.js";
 
-function AnnouncementsTab({ courseId }) {
-  const [announcements, setAnnouncements] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function AnnouncementsTab({ courseId, currentUserId }) {
+    const [announcements, setAnnouncements] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [newAnnouncementContext, setNewAnnouncementContext] = useState("");
+    const [newAnnounceDate, setNewAnnounceDate] = useState(new Date().toISOString());
+    const [canEdit, setCanEdit] = useState(false);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        setLoading(true);
-        const data = await getAnnouncements(courseId);
-        setAnnouncements(data);
-      } catch (err) {
-        setError("Failed to load announcements.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                setLoading(true);
+                const data = await getAnnouncements(courseId);
+                setAnnouncements(data);
+            } catch (err) {
+                setError("Failed to load announcements.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const checkEditPermissions = async () => {
+            try {
+                const editPermission = await canUserEditAnnouncements(currentUserId, courseId);
+                setCanEdit(editPermission);
+            } catch (err) {
+                console.error("Failed to check edit permissions:", err);
+                setCanEdit(false);
+            }
+        };
+
+        fetchAnnouncements();
+        checkEditPermissions();
+    }, [courseId, currentUserId]);
+
+    const filteredAnnouncements = announcements.filter((announcement) =>
+        announcement.context.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (loading) {
+        return <div>Loading announcements...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    const openCreateModal = () => {
+        setIsCreateModalOpen(true);
+        setNewAnnounceDate(new Date().toISOString());
     };
 
-    fetchAnnouncements();
-  }, [courseId]);
+    const closeCreateModal = () => {
+        setIsCreateModalOpen(false);
+        setNewAnnouncementContext("");
+        setNewAnnounceDate(new Date().toISOString());
+    };
 
-  const filteredAnnouncements = announcements.filter((announcement) =>
-    announcement.context.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const openEditModal = (announcement) => {
+        setSelectedAnnouncement(announcement);
+        setNewAnnouncementContext(announcement.context);
+        // Ensure the date is correctly formatted for the datetime-local input
+        const announceDate = new Date(announcement.announce_date);
+        setNewAnnounceDate(announceDate.toISOString().slice(0, 16));
+        setIsEditModalOpen(true);
+    };
 
-  if (loading) {
-    return <div>Loading announcements...</div>;
-  }
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setSelectedAnnouncement(null);
+        setNewAnnouncementContext("");
+        setNewAnnounceDate(new Date().toISOString());
+    };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+    const handleCreateAnnouncement = async () => {
+        if (!newAnnouncementContext.trim()) {
+            alert("Announcement context cannot be blank.");
+            return;
+        }
+        try {
+            await createAnnouncement(courseId, newAnnouncementContext, currentUserId, newAnnounceDate);
+            // Refresh announcements after creating
+            const data = await getAnnouncements(courseId);
+            setAnnouncements(data);
+            closeCreateModal();
+        } catch (err) {
+            setError("Failed to create announcement.");
+            console.error(err);
+        }
+    };
 
-  return (
-    <div className="announcements-tab">
-      {/* Filter and search bar */}
-      <div className="announcements-header">
-        <select className="filter-dropdown">
-          <option value="all">All</option>
-        </select>
-        <input
-          type="text"
-          className="search-bar"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+    const handleEditAnnouncement = async () => {
+        if (!newAnnouncementContext.trim()) {
+            alert("Announcement context cannot be blank.");
+            return;
+        }
+        try {
+            await editAnnouncement(selectedAnnouncement.a_id, newAnnouncementContext, newAnnounceDate);
+            // Refresh announcements after editing
+            const data = await getAnnouncements(courseId);
+            setAnnouncements(data);
+            closeEditModal();
+        } catch (err) {
+            setError("Failed to edit announcement.");
+            console.error(err);
+        }
+    };
 
-      {/* Announcements list */}
-      <div className="announcements-list">
-        {filteredAnnouncements.map((announcement) => (
-          <div key={announcement.a_id} className="announcement-item">
-            <p className="announcement-content">{announcement.context}</p>
-            <p className="announcement-posted">
-              Posted on: {new Date(announcement.create_date).toLocaleString()}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    return (
+        <div className="announcements-tab">
+            {/* Filter and search bar */}
+            <div className="announcements-header">
+                <select className="filter-dropdown">
+                    <option value="all">Announced</option>
+                </select>
+                <input
+                    type="text"
+                    className="search-bar"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {canEdit && (
+                    <button className="create-announcement-button" onClick={openCreateModal}>
+                        + 新創公告
+                    </button>
+                )}
+            </div>
+
+            {/* Announcements list */}
+            <div className="announcements-list">
+                {filteredAnnouncements.map((announcement) => (
+                    <div key={announcement.a_id} className="announcement-item">
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                            <div>
+                                <p className="announcement-content">{announcement.context}</p>
+                                <p className="announcement-posted">
+                                    Posted on: {new Date(announcement.create_date).toLocaleString()}
+                                </p>
+                            </div>
+                            {canEdit && (
+                                <button className="edit-announcement-button" onClick={() => openEditModal(announcement)}>
+                                    編輯公告
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Modal for creating a new announcement */}
+            {isCreateModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={closeCreateModal}>
+                            &times;
+                        </span>
+                        <h2>Create New Announcement</h2>
+                        <label>
+                            Announce Date:
+                            <input
+                                type="datetime-local"
+                                value={newAnnounceDate}
+                                onChange={(e) => setNewAnnounceDate(e.target.value)}
+                            />
+                        </label>
+                        <label>
+                            Context:
+                            <textarea
+                                value={newAnnouncementContext}
+                                onChange={(e) => setNewAnnouncementContext(e.target.value)}
+                            />
+                        </label>
+                        <div className="modal-actions">
+                            <button onClick={handleCreateAnnouncement}>Create</button>
+                            <button onClick={closeCreateModal}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal for editing an announcement */}
+            {isEditModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={closeEditModal}>
+                            &times;
+                        </span>
+                        <h2>Edit Announcement</h2>
+                        <label>
+                            Announce Date:
+                            <input
+                                type="datetime-local"
+                                value={newAnnounceDate}
+                                onChange={(e) => setNewAnnounceDate(e.target.value)}
+                            />
+                        </label>
+                        <label>
+                            Context:
+                            <textarea
+                                value={newAnnouncementContext}
+                                onChange={(e) => setNewAnnouncementContext(e.target.value)}
+                            />
+                        </label>
+                        <div className="modal-actions">
+                            <button onClick={handleEditAnnouncement}>Save</button>
+                            <button onClick={closeEditModal}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default AnnouncementsTab;

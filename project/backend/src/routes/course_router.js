@@ -15,10 +15,15 @@ import {
   // 課程詳細資訊控制器
   getAllCourses,
   getCourseAnnouncements, 
+  createAnnouncement,
+  editAnnouncement,
   getCourseFiles, 
   getCourseAssignments, 
   getCourseSyllabus, 
-  getCourseLink
+  getCourseLink,
+
+  // helper functions
+  canUserEditAnnouncements
 } from '#src/controllers/course_controller.js';
 
 // 路由基礎地址: http://localhost:PORT/course
@@ -41,12 +46,17 @@ router.get("/teaching", GetTeachingCourses);
 
 // ----- 課程詳情路由 -----
 router.get("/:courseId", GetCourseDetails);
-router.get("/:courseId/announcements", getCourseAnnouncements);
+router.get("/:courseId/announcements/read", getCourseAnnouncements);
+router.post("/:courseId/announcements/create", createAnnouncement);
+router.post("/:announcementId/announcements/edit", editAnnouncement);
 router.get("/:courseId/files", getCourseFiles);
 router.get("/:courseId/materials", getCourseFiles); // files 的別名
 router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
 router.get("/:courseId/inviteCode", ReadInviteCode);
+
+// helper functions
+router.get("/can_edit_announcements/:userId/:courseId", canUserEditAnnouncements);
 
 export default router;

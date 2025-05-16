@@ -100,7 +100,7 @@ function CourseDetail() {
                 {activeTab === "作業" && (
                     <AssignmentsTab assignments={assignments} />
                 )}
-                {activeTab === "公告" && <AnnouncementsTab courseId={courseId} />}
+                {activeTab === "公告" && <AnnouncementsTab courseId={courseId} currentUserId={currentUserId} />}
                 {activeTab === "成員" && <MembersTab courseId={courseId} userId={currentUserId} />}
             </div>
         </div>
