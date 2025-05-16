@@ -5,7 +5,7 @@ import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({ title, courseId, color, isTeacher, isStudent, isAssistant, onDeleteCourse }) {
-  console.log(title, courseId, color, isTeacher, isStudent, isAssistant);
+  // console.log(title, courseId, color, isTeacher, isStudent, isAssistant);
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -22,12 +22,12 @@ function CourseCard({ title, courseId, color, isTeacher, isStudent, isAssistant,
       <div className={`${styles["course-id-container"]}`}>
         <span className={`${styles["course-id"]}`}>{courseId}</span>
         <div className={`${styles["role-indicators"]}`}>
-          {isTeacher && <span className={`${styles["role-badge teacher"]}`}>教</span>}
-          {isAssistant && <span className={`${styles["role-badge assistant"]}`}>助</span>}
-          {!isAssistant && isStudent && <span className={`${styles["role-badge student"]}`}>學</span>}
+          {isTeacher && <span className={`${styles["role-badge-teacher"]}`}>教</span>}
+          {isAssistant && <span className={`${styles["role-badge-assistant"]}`}>助</span>}
+          {!isAssistant && isStudent && <span className={`${styles["role-badge-student"]}`}>學</span>}
           {isTeacher && (
               <FaEdit
-                className={`${styles["role-badge teacher edit-icon"]}`}
+                className={`${styles["role-badge-teacher-edit-icon"]}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowEditModal(true);

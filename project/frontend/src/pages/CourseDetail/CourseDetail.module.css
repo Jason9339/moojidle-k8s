@@ -73,6 +73,12 @@
     background-color: #bfd8f8;
 }
 
+.material-button.active {
+    background-color: #a6c8ff;
+    color: #06357a;
+}
+
+
 /* 主內容區：表格 + To Do */
 .material-table-section {
     display: flex;
