@@ -37,7 +37,7 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
     const navigate = useNavigate();
 
     const handleCardClick = (overviewPost) => {
-        console.log("Card clicked:", overviewPost);
+        // console.log("Card clicked:", overviewPost);
         navigate(`/post/${overviewPost.post_id}`);
 
     };
