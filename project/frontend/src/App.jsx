@@ -4,8 +4,8 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
 import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
-import Post from "@/pages/post_pages/Post";
 import PostEdit from "@/pages/post_pages/PostEdit";
+import PostPage from "@/pages/post_pages/PostPage";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
@@ -13,6 +13,8 @@ import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 import Register from "@/pages/login_register_pages/Register.jsx";
 import Login from "@/pages/login_register_pages/Login.jsx";
+import CreateDiscussion from "@/pages/discussion_board_pages/CreateDiscussionBoard/CreateDiscussionBoard.jsx";
+import DeleteDiscussion from "@/pages/discussion_board_pages/DeleteDiscussionBoard/DeleteDiscussionBoard.jsx";
 
 function App() {
     let login;
@@ -33,8 +35,8 @@ function App() {
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/post/:id" element={<Post />} />
                         <Route path="/post-edit/:param" element={<PostEdit />} />
+                        <Route path="/post/:id" element={<PostPage />} />
                         <Route path="*" element={<NotFoundPage />} />
 
                         {/* user pages related */}
@@ -44,6 +46,8 @@ function App() {
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
+                        <Route path="/discussion/create" element={<CreateDiscussion />} />
+                        <Route path="/discussion/delete" element={<DeleteDiscussion />} />
                     </Route>
                 </Routes>
             </Router>

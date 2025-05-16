@@ -2,30 +2,13 @@ import {
     GetCourseBoardByCourseId,
     AddDiscussionBoardService, 
     DeleteDiscussionBoardService
-} from "#src/services/discussion_board_services/discussion_board_service.js";
+} from "#src/services/discussion_services/discussion_board_service.js";
 
 import { 
     GetAllUserCourseByUserId
 } from "#src/services/course_services/course_service.js";
 
-// This function is used to get the discussion board of a course by course id
-// Example response:
-// { course_id: 1,
-//   course_name : "Computer Graphics",
-//   boards:  [{
-//                board_id: 1,
-//                board_name: "作業一討論版"
-//             },
-//             {
-//                board_id: 2,
-//                board_name : "期末專題討論版"
-//             }]
-//  }
-//  or
-// { course_id: 1,
-//   course_name : "Computer Graphics",
-//   boards:  []
-//  }
+
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);
     if (isNaN(courseId)) {
@@ -38,24 +21,6 @@ async function GetCourseDiscussionBoard(req, res) {
     res.status(200).send(result);
 }
 
-// This function is used to get all the discussion boards of a course by course id
-// Example response:
-// [{ course_id: 1, 
-//    course_name : "Computer Graphics", 
-//    boards:  [{
-//                 board_id: 1, 
-//                 board_name: "作業一討論版"
-//              }, 
-//              {
-//                 board_id: 2, 
-//                 board_name : "期末專題討論版"
-//              }]
-//  },
-//  { course_id: 2, 
-//    course_name : "計算機組織", 
-//    boards:  []
-//   }
-// ]
 async function GetAllCourseDiscussionBoard(req, res) {
     const userId = parseInt(req.params.userId, 10);
 
@@ -83,12 +48,6 @@ async function GetAllCourseDiscussionBoard(req, res) {
     res.status(200).send(boardsList);
 }
 
-// add a discussion board
-// Example request body:
-// {
-//   "course_id": 2,
-//   "name": "新的討論版名稱"
-// }
 async function AddDiscussionBoard(req, res) {
     const courseId = parseInt(req.body.course_id, 10);
     const courseName = req.body.name;
@@ -106,7 +65,7 @@ async function AddDiscussionBoard(req, res) {
     res.status(201).send(result);
 }
 
-// delete a discussion board
+
 async function DeleteDiscussionBoard(req, res) {
     const board_id = parseInt(req.params.boardId, 10);
     if (isNaN(board_id)) {

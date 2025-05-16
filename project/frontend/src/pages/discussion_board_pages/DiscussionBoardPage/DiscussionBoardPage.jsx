@@ -27,7 +27,7 @@ function DiscussionBoard() {
                 // TODO use Context to save userID
                 const userID = JSON.parse(localStorage.getItem("user")).user_id;
                 const data = await GetBoardsGroupByCourseByUserID(userID);
-                // console.error(data)
+                console.error(data)
                 setCourseBoardData(data);
                 setError(null);
             } catch (err) {

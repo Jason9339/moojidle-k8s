@@ -22,6 +22,8 @@ async function GetCourseBoardByCourseId(courseId) {
     };
 }
 
+
+
 // this function is used to get the next board id
 // by retrieving the poperties of collection counter then incrementing it
 // and returning the new value
@@ -64,8 +66,20 @@ async function DeleteDiscussionBoardService(board_id) {
     const result = await db.collection('discussion_board').deleteOne({ board_id });
     return result.deletedCount > 0;
 }
+
+
+async function FindBoardByID(boardID) {
+    try {
+        const post = await mongoose.connection.db.collection('discussion_board').findOne({ board_id: boardID });
+        return post;
+    } catch (err) {
+        throw new Error("Failed to fetch post: " + err.message);
+    }
+}
+
 export {
     GetCourseBoardByCourseId,
     AddDiscussionBoardService,
     DeleteDiscussionBoardService,
+    FindBoardByID
 }

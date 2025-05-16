@@ -1,13 +1,13 @@
 import express from 'express';
-const router = express.Router();
+const postRouter = express.Router();
+import { GetPostContent, Commender, PostDeleter, CommendDeleter, GetOverviewPosts, AddPosts } from '#src/controllers/discussion_controllers/post_controllers.js'
 
-import {
-    GetOverviewPosts,
-    AddPosts
-} from '#src/controllers/discussion_controllers/post_controllers.js';
+postRouter.get("/content/:id", GetPostContent);
+postRouter.post("/commend", Commender);
+postRouter.delete("/delete/:id", PostDeleter);
+postRouter.post("/deletecommend", CommendDeleter);
+postRouter.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 
-// the route address start from:
-// http://localhost:PORT/post
 
 // frontend gives discussion board ID and backend sends an array of abjects
 // axios are expected to get an object:
@@ -31,7 +31,7 @@ import {
 //     },
 //     ......
 // ]
-router.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
+postRouter.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 
 //  add a new post
 //  the example:
@@ -42,6 +42,6 @@ router.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 //     "title": "這是測試標題",
 //     "public": true
 // }
-router.post("/create-post", AddPosts);
+postRouter.post("/create-post", AddPosts);
 
-export default router;
+export default postRouter;

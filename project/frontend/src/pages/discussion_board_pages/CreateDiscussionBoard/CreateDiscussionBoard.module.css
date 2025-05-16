@@ -1,0 +1,69 @@
+.create-board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    width: 100vw;
+    background-color: #f8f9fa;
+    font-size: 3rem;
+}
+
+.create-board-form {
+    background-color: #fff;
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    min-width: 100%;
+    min-height: 100%;
+    
+}
+
+.create-board-form h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    cursor: pointer;
+}
+
+
+.submit-btn:hover,
+.cancel-btn:hover {
+    opacity: 0.9;
+}
