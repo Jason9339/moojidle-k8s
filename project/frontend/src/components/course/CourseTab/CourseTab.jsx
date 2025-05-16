@@ -116,6 +116,21 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
         });
     }, []);
 
+    // 新增: 處理教材日期變更 (使用 useCallback 優化)
+    const handleMaterialDateChange = useCallback((weekIndex, materialIndex, newDate) => {
+        setEditingMaterials(prevMaterials => {
+            const updatedMaterials = [...prevMaterials];
+            if (updatedMaterials[weekIndex] && updatedMaterials[weekIndex][materialIndex]) {
+                updatedMaterials[weekIndex] = [...updatedMaterials[weekIndex]];
+                updatedMaterials[weekIndex][materialIndex] = {
+                    ...updatedMaterials[weekIndex][materialIndex],
+                    displayDate: newDate
+                };
+            }
+            return updatedMaterials;
+        });
+    }, []);
+
     // 刪除教材 (使用 useCallback 優化)
     const deleteMaterial = useCallback((weekIndex, materialIndex) => {
         setEditingMaterials(prevMaterials => {
@@ -149,6 +164,15 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
             );
         });
     }, [assignments, weekNum]);
+
+    // 將日期對象轉換為YYYY-MM-DD格式的字符串
+    const formatDateForInput = useCallback((dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date instanceof Date && !isNaN(date) 
+            ? date.toISOString().split('T')[0] 
+            : '';
+    }, []);
 
     return (
         <div className={`${styles["material-table-section"]}`}>
@@ -188,7 +212,14 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                             className={`${styles["material-input"]}`}
                                                             placeholder="教材名稱"
                                                         />
-                                                        {/* URL 輸入框已移除，連結將保持不變 */}
+                                                        {/* 新增日期輸入框 */}
+                                                        <input
+                                                            type="date"
+                                                            value={formatDateForInput(material.displayDate)}
+                                                            onChange={(e) => handleMaterialDateChange(i, idx, e.target.value)}
+                                                            className={`${styles["material-date-input"]}`}
+                                                            placeholder="顯示日期"
+                                                        />
                                                         <button 
                                                             onClick={() => deleteMaterial(i, idx)}
                                                             className={`${styles["delete-material-btn"]}`}
@@ -207,6 +238,11 @@ function CourseTab({ courseId, course, materials, assignments, isEditMode, onMat
                                                 weekMaterials.map((material, idx) => (
                                                     <div key={idx}>
                                                         {material.name}{" "}
+                                                        {material.displayDate && (
+                                                            <small className={`${styles["material-date"]}`}>
+                                                                ({new Date(material.displayDate).toLocaleDateString()})
+                                                            </small>
+                                                        )}
                                                         <a
                                                             href={material.url}
                                                             target="_blank"
