@@ -15,12 +15,12 @@ export default function Combobox({
     defaultValue = null,
     onChange = () => { },
     className = '',
+    enable = true
 }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
     const containerRef = useRef(null);
 
-    // 初始化預設選項
     useEffect(() => {
         if (defaultValue !== null) {
             const opt = options.find(o => o.value === defaultValue);
@@ -30,7 +30,6 @@ export default function Combobox({
         }
     }, [defaultValue, options]);
 
-    // 點擊外部關閉
     useEffect(() => {
         const onClickOutside = e => {
             if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -58,7 +57,7 @@ export default function Combobox({
                 className="w-full border border-gray-300 rounded-md px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder={placeholder}
                 value={query}
-                onClick={() => setOpen(v => !v)}
+                onClick={() => { if (enable) setOpen(v => !v) }}
             />
 
             {open && (

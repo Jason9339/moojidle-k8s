@@ -44,6 +44,44 @@ export default function TextEditor({ className = "", height, onChange }) {
         setTimeout(() => ta.focus(), 0)
     }
 
+    const handleKeyDown = e => {
+
+        if (e.key == "Enter") {
+            const ta = textareaRef.current
+            const { selectionStart, selectionEnd } = ta
+            // console.log("selectionStart:", selectionStart, "selectionEnd:", selectionEnd)
+            const val = text
+            const before = val.slice(0, selectionStart)
+            const after = val.slice(selectionEnd)
+
+            // console.log("before:", before, "after:", after);
+            // find current line
+            const lastNL = before.lastIndexOf("\n")
+            const line = before.slice(lastNL + 1)
+
+            // console.log("line", line)
+            // capture > , #, or 1. prefixes (with trailing space)
+            const regex = /^(\s*(?:>#{1,3}|\#{1,6}|\d+\.|-|)\s+)/
+            const m = line.match(regex)
+
+            // console.log("m=", m)
+            if (m) {
+                e.preventDefault()
+                const prefix = m[1]
+                // console.log("prefix:", prefix)
+                // if line is just the prefix (empty after it), don't re-insert
+                const insert = "\n" + (line.length > prefix.length ? prefix : "")
+                const newText = before + insert + after
+
+                setText(newText)
+                // restore cursor right after our inserted text
+                const newPos = selectionStart + insert.length
+                setTimeout(() => {
+                    ta.selectionStart = ta.selectionEnd = newPos
+                }, 0)
+            }
+        }
+    }
     // Toolbar buttons definition with original icons
     const toolbarItems = [
         { icon: <Bold size={16} />, action: () => wrapSelection("**", "**"), title: "Bold" },
@@ -96,7 +134,8 @@ export default function TextEditor({ className = "", height, onChange }) {
                     <TextArea height={height}
                         ref={textareaRef}
                         value={text}
-                        onChange={(e) => { setText(e.target.value); onChange && onChange(e.target.value) }}
+                        onChange={(e) => { setText(e.target.value); onChange?.(e.target.value) }}
+                        onKeyDown={handleKeyDown}
                         placeholder=""
                         className={`flex-2 w-full p-4 font-mono outline-none overflow-scroll resize-none`}
                     >

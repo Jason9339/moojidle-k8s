@@ -45,13 +45,6 @@ function DiscussionBoard() {
             const result = await GetOverviewPostByBId(parseInt(param));
 
             // console.log(result)
-            // Post user just created will show on top.
-            if (state?.newPostId) {
-                const index = result.findIndex(post => post.post_id == state.newPostId);
-                const [newPost] = result.splice(index, 1);
-                result.unshift(newPost);
-
-            }
             setOverviewPostData(result);
         }
 
@@ -86,7 +79,6 @@ function DiscussionBoard() {
                     currentCourse = { course_id: course_id, course_name: course_name };
                     currentBoard = { board_id: board_id, board_name: board_name };
 
-                    console.error(currentBoard, currentCourse);
                 }
             }
 
@@ -111,7 +103,15 @@ function DiscussionBoard() {
                 <div className={styles["main-container"]}>
                     {
                         param == "home" || param == null ?
-                            <DiscussionBoardInitContent />
+                            <div className="flex relative">
+                                <DiscussionBoardInitContent />
+
+                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
+                                    state={{ data: courseBoardData }}>
+                                    新增貼文
+                                </Link>
+                            </div>
+
                             :
                             <div className="flex">
 
@@ -121,13 +121,18 @@ function DiscussionBoard() {
                                     boardName={currentBoard.board_name}
                                 />
 
-                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow top:50px"
+
+                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
                                     state={{ data: courseBoardData, currentCourseId: currentCourse.course_id, currentBoardId: currentBoard.board_id }}>
                                     新增貼文
                                 </Link>
                             </div>
+
                     }
+
                 </div>
+
+
             </div >
 
         </>

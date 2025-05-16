@@ -20,7 +20,7 @@ const PostEdit = () => {
     const [boardData, setBoardData] = useState([]);
     const [courseData, setCourseData] = useState([])
     const [error, setError] = useState(null);
-
+    const [enable, setEnable] = useState(false);
     const navigate = useNavigate();
 
 
@@ -60,6 +60,9 @@ const PostEdit = () => {
                 setUserTags(tags.map(t => t.user_tag));
 
 
+                setEnable(!state.hasOwnProperty("currentCourseId"));
+
+
             }
 
             catch (e) {
@@ -79,7 +82,12 @@ const PostEdit = () => {
             { value: d.course_id, label: d.course_name }
         ));
         setCourseData(courses);
-        setCurrentCourseById(state.currentCourseId);
+
+        if (state.hasOwnProperty("currentCourseId")) {
+
+            setCurrentCourseById(state.currentCourseId);
+        }
+
 
     }, [state.data, state.currentCourseId,
         setCurrentCourseById])
@@ -137,7 +145,9 @@ const PostEdit = () => {
                 <PostEditHeader courseData={courseData} boardData={boardData}
                     defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}
                     onCourseFilterChange={(e) => setCurrentCourseById(e)}
-                    onBoardFilterChange={(e) => setCurrentBoardById(e)} />
+                    onBoardFilterChange={(e) => setCurrentBoardById(e)}
+                    enable={enable}
+                />
                 <hr />
 
                 <form className="p-[10px]" onSubmit={handleSubmit}>

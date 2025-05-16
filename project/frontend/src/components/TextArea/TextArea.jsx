@@ -1,7 +1,6 @@
-import { useState, useRef, useLayoutEffect } from "react";
-const TextArea = ({ height = "200px", className, ...props }) => {
+import { useState, useLayoutEffect, forwardRef } from "react";
+const TextArea = forwardRef(({ height = "200px", className, ...props }, ref) => {
 
-    const ref = useRef(null);
     const [rows, setRows] = useState(1);
 
     useLayoutEffect(() => {
@@ -16,17 +15,16 @@ const TextArea = ({ height = "200px", className, ...props }) => {
 
         const computedRows = Math.max(1, Math.floor(heightPx / lineHeight));
         setRows(computedRows);
-    }, [height]);
+    }, [height, ref]);
     return (
         <textarea
             {...props}
-            ref={ref}
-            rows={rows}
+            ref={ref} rows={rows}
             className={`${className} h-[${height}]`
             }
         />)
 
 
 }
-
+);
 export default TextArea;
