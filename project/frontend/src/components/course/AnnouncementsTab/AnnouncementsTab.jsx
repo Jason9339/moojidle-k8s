@@ -86,6 +86,11 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             alert("Announcement context cannot be blank.");
             return;
         }
+        const now = new Date();
+        const announceDate = new Date(newAnnounceDate);
+        if (announceDate > now) {
+            alert("公告時間在未來，公告將於該時間才會顯示");
+        }
         try {
             await createAnnouncement(courseId, newAnnouncementContext, currentUserId, newAnnounceDate);
             // Refresh announcements after creating
@@ -102,6 +107,11 @@ function AnnouncementsTab({ courseId, currentUserId }) {
         if (!newAnnouncementContext.trim()) {
             alert("Announcement context cannot be blank.");
             return;
+        }
+        const now = new Date();
+        const announceDate = new Date(newAnnounceDate);
+        if (announceDate > now) {
+            alert("公告時間在未來，公告將於該時間才會顯示");
         }
         try {
             await editAnnouncement(selectedAnnouncement.a_id, newAnnouncementContext, newAnnounceDate);
