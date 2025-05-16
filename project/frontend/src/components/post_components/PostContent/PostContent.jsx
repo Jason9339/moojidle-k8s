@@ -40,8 +40,8 @@ function PostContent({ post, currentUserId, showMenu, setShowMenu, handleDeleteP
                 {!post.post_user_custom_tags || post.post_user_custom_tags.length === 0 ? (
                     <p>目前尚無留言。</p>
                 ) : (
-                    post.post_user_custom_tags.slice().reverse().map((tag) => (
-                        <p className={styles.tag}>{tag.tag_name}</p>
+                    post.post_user_custom_tags.slice().reverse().map((tag, idx) => (
+                        <p className={styles.tag} key={tag.tag_name + idx}>{tag.tag_name}</p>
                     ))
                 )}
 
