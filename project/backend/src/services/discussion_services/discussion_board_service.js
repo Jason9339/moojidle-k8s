@@ -11,7 +11,7 @@ async function GetCourseBoardByCourseId(courseId) {
         .project({ _id: 0, board_id: 1, name: 1 })
         .toArray();
 
-    
+
     return {
         course_id: course.course_id,
         course_name: course.name,
@@ -22,42 +22,33 @@ async function GetCourseBoardByCourseId(courseId) {
     };
 }
 
-
-
-// this function is used to get the next board id
-// by retrieving the poperties of collection counter then incrementing it
-// and returning the new value
-async function getNextBoardId() {
-    const db = mongoose.connection.db;
-    const counter = await db.collection('counter').findOne({});
-    if (!counter) {
-        throw new Error("Counter document not found. Please initialize your counter collection.");
-    }
-    const boardId = (counter.discussion_board || 0) + 1;
-    await db.collection('counter').updateOne(
-        { _id: counter._id },
-        { $set: { discussion_board: boardId } }
-    );
-    return boardId;
-}
-
-
 // add discussion board
 async function AddDiscussionBoardService(courseId, courseName) {
     const db = mongoose.connection.db;
     // Check if course exists
     const course = await db.collection('course').findOne({ course_id: courseId });
     if (!course) {
-        return null; 
+        return null;
     }
-    const boardId = await getNextBoardId();
+
+    const counter = await db.collection('counter').findOne({});
+    if (!counter) {
+        throw new Error("Counter document not found. Please initialize your counter collection.");
+    }
+    const NextboardId = (counter.discussion_board || 0) + 1;
+
     await db.collection('discussion_board').insertOne({
-        board_id : boardId,
-        course_id : courseId,
-        name : courseName
+        board_id: NextboardId,
+        course_id: courseId,
+        name: courseName
     });
 
-    return {board_id: boardId, course_id: courseId, name: courseName};
+    await mongoose.connection.db.collection('counter').updateOne(
+        {},
+        { $inc: { discussion_board: 1 } }
+    );
+
+    return { board_id: NextboardId, course_id: courseId, name: courseName };
 }
 
 // delete discussion board

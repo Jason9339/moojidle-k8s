@@ -1,5 +1,5 @@
 import { FindBoardByID } from '#src/services/discussion_services/discussion_board_service.js';
-import { FindPostByID, DeletePost, FindProjectedPostsByBId, GetNextPostId, CreatePostsByBId } from '#src/services/discussion_services/post_services.js'
+import { FindPostByID, DeletePost, FindProjectedPostsByBId, CreatePostsByBId } from '#src/services/discussion_services/post_services.js'
 import { FindUserdataByID, FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
 import { FindCourseNameByID } from '#src/services/discussion_services/course_service.js';
 import { LeaveComment, DeleteComment } from '#src/services/discussion_services/comment_service.js';
@@ -171,7 +171,6 @@ async function AddPosts(req, res) {
             return res.status(400).json({ message: "Missing required fields." });
         }
 
-        const post_id = await GetNextPostId();
         const post_date = new Date();
 
 
@@ -183,7 +182,6 @@ async function AddPosts(req, res) {
         );
 
         const newPost = {
-            post_id,
             post_by_user_id,
             post_user_custom_tags: customTagsArray,
             description,
