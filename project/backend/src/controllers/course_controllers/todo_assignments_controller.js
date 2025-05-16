@@ -1,4 +1,4 @@
-import { FetchToDoAssignments } from "#src/services/todo_assignments_service.js";
+import { FetchToDoAssignments } from "#src/services/course_services/todo_assignments_service.js";
 
 async function GetToDoAssignments(req, res) {
     try {

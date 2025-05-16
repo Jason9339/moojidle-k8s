@@ -1,4 +1,4 @@
-import { FetchUpcomingExams } from "#src/services/upcoming_exams_service.js";
+import { FetchUpcomingExams } from "#src/services/course_services/upcoming_exams_service.js";
 
 async function GetUpcomingExams(req, res) {
     try {

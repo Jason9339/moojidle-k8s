@@ -11,7 +11,7 @@ import {
     getTeachingCourses as getTeachingCoursesService,
     updateMaterialsService,
     deleteMaterialService
-} from '#src/services/course_service.js';
+} from '#src/services/course_services/course_service.js';
 
 import { 
     AddCourse, 
@@ -19,13 +19,13 @@ import {
     RemoveCourse, 
     RemoveCourseRelationships, 
     ChangeCourseName 
-} from "#src/services/modify_course.js";
+} from "#src/services/course_services/modify_course.js";
 
 import { 
     ViewCourses, 
     GetTeachIn,
     getInviteCode,
-} from "#src/services/view_course.js";
+} from "#src/services/course_services/view_course.js";
 
 // 取得所有課程列表
 async function getAllCourses(req, res) {

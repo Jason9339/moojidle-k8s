@@ -328,7 +328,7 @@ async function deleteMaterialService(courseId, materialId) {
         // 如果存在檔案路徑，執行檔案刪除操作
         if (material.path_to_file) {
             // 導入並使用文件刪除服務
-            const { DeleteFile } = await import('./file_services/file_storage_service.js');
+            const { DeleteFile } = await import('../file_services/file_storage_service.js');
             await DeleteFile(material.path_to_file);
         }
         

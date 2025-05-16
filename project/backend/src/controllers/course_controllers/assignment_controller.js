@@ -1,4 +1,4 @@
-import { getTodoAssignments as getTodoAssignmentsService } from '#src/services/assignment_service.js';
+import { getTodoAssignments as getTodoAssignmentsService } from '#src/services/course_services/assignment_service.js';
 
 // 取得待辦作業列表
 export const getTodoAssignments = async (req, res) => {
