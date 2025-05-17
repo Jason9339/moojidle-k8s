@@ -26,7 +26,6 @@ const CreateDiscussionBoardModal = ({ courseId, userId, onClose, pushNewBoard })
         onClose();
     };
 
-    console.log("courseId", courseId)
 
     return (
 

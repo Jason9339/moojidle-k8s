@@ -5,7 +5,6 @@ async function GetBoardsGroupByCourseByUserID(userID) {
     try {
 
         const response = await apiClient.get(`/discussion-board/user-course-boards/${userID}`);
-        console.log("api:", response)
         return response.data;
     } catch (err) {
         console.error("Fail to get board(group by course) data");

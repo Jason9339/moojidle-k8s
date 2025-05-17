@@ -7,7 +7,6 @@ import DiscussionBoardContent from "@/components/discussion_board_components/Dis
 import CreateDiscussionBoardModal from "@/components/discussion_board_components/CreateDiscussionBoardModal/CreateDiscussionBoardModal";
 
 import EditDiscussionBoardModal from "@/components/discussion_board_components/EditDiscussionBoardModal/EditDiscussionBoardModal";
-// css styling
 import styles from "./DiscussionBoardPage.module.css";
 import { LuPlus } from "react-icons/lu";
 
@@ -16,7 +15,6 @@ import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 import { useRef } from "react";
 
 function DiscussionBoard() {
-    const { state } = useLocation();
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
@@ -36,7 +34,6 @@ function DiscussionBoard() {
 
 
                 const data = await GetBoardsGroupByCourseByUserID(userIdRef.current);
-                console.log(data)
                 setCourseBoardData(data);
                 setError(null);
             } catch (err) {
@@ -70,7 +67,6 @@ function DiscussionBoard() {
                 course.boards.forEach(board => {
                     if (board.board_id === currentBoardId) {
 
-                        console.log("ofund")
                         setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
                         setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
                     }
@@ -78,9 +74,7 @@ function DiscussionBoard() {
 
             })
 
-
         }
-
 
     }, [courseBoardData, param]);
 
@@ -134,13 +128,14 @@ function DiscussionBoard() {
                                     to="/post-edit/new"
                                     className={styles.fab}
                                     state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}
+
                                     title="新增貼文"
                                 >
                                     <LuPlus />
                                 </Link>
-                            </div>
+                            </div >
                     }
-                </div>
+                </div >
 
 
             </div >
@@ -159,17 +154,21 @@ function DiscussionBoard() {
             )}
 
 
-            {showEditPopup && (
-                <EditDiscussionBoardModal
-                    boardId={currentBoard?.board_id}
-                    onClose={() => setShowEditPopup(false)}
-                    deleteBoard={(toDeleteBoardId) => {
+            {
+                showEditPopup && (
+                    <EditDiscussionBoardModal
+                        boardId={currentBoard?.board_id}
+                        onClose={() => setShowEditPopup(false)}
+                        deleteBoard={(toDeleteBoardId) => {
 
-                        const index = courseBoardData.findIndex(course => course.course_id == currentCourse.course_id);
-                        courseBoardData[index].boards.filter(b => b.board_id !== toDeleteBoardId)
-                    }}
-                />
-            )}
+                            const courseIndex = courseBoardData.findIndex(course => course.course_id === currentCourse.course_id);
+                            const boardIndex = courseBoardData[courseIndex].boards.find(board => board.board_id === toDeleteBoardId);
+                            courseBoardData[courseIndex].boards.splice(boardIndex, 1);
+
+                        }}
+                    />
+                )
+            }
 
         </>
     );
