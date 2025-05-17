@@ -1,135 +1,135 @@
 .sectionContainer {
-  border-top: 1px solid #ccc;
-  padding-top: 16px;
+    border-top: 1px solid #ccc;
+    padding-top: 16px;
 }
 
 .commentTitle {
-  margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 
 .commentInputWrapper {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
 .commentTextarea {
-  resize: none;
-  font-size: 15px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-family: inherit;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  overflow: auto;
+    resize: none;
+    font-size: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow: auto;
 }
 
 .commentButton {
-  align-self: flex-end;
-  background-color: #2e3e6e;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    align-self: flex-end;
+    background-color: #2e3e6e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .commentButton:hover {
-  background-color: #1f2a50;
+    background-color: #1f2a50;
 }
 
 .commentCardWrapper {
-  position: relative;
+    position: relative;
 }
 
 .commentCardContainer {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 10px;
-  position: relative;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    position: relative;
 }
 
 .moreOptionsWrapper {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
 }
 
 .moreButton {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .dropdownMenu {
-  position: absolute;
-  top: 28px;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  list-style: none;
-  padding: 8px 0;
-  margin: 0;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: absolute;
+    top: 28px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdownItem {
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .dropdownItem:hover {
-  background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
 .commentInfo {
-  font-size: 13px;
-  color: #888;
+    font-size: 13px;
+    color: #888;
 }
 
 .commentText {
-  font-size: 16px;
-  color: #333;
-  white-space: pre-wrap;
-  width: 100%;
-  border: none;
-  background: transparent;
-  outline: none;
-  padding: 8px 0;
-  font-family: inherit;
-  line-height: 1.4;
-  box-sizing: border-box;
-  resize: none;
-  overflow: hidden;
+    font-size: 16px;
+    color: #333;
+    white-space: pre-wrap;
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 8px 0;
+    font-family: inherit;
+    line-height: 1.4;
+    box-sizing: border-box;
+    resize: none;
+    overflow: hidden;
 }
 
 .expandButton {
-  background: none;
-  border: none;
-  color: #2e3e6e;
-  font-size: 10px;
-  cursor: pointer;
-  margin-top: 4px;
-  padding: 0;
+    background: none;
+    border: none;
+    color: #2e3e6e;
+    font-size: 10px;
+    cursor: pointer;
+    margin-top: 4px;
+    padding: 0;
 }
 
 .expandButton:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
