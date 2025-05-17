@@ -45,18 +45,16 @@ function PostPage() {
     fetchPost();
   }, [id, refreshTrigger]);
 
-  // 當 post 更新時，更新 description
   useEffect(() => {
     if (post) {
       setDescription(post.description || "");
     }
   }, [post]);
 
-  // 自動調整 textarea 高度
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // 先重置高度
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; // 設定為內容高度
+      textareaRef.current.style.height = "auto"; 
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; 
     }
   }, [description]);
 
@@ -108,7 +106,6 @@ function PostPage() {
     setRefreshTrigger((prev) => prev + 1);
   };
 
-  // 關閉留言選單 dropdown
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {

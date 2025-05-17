@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./CommentSection.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 
@@ -61,6 +61,22 @@ function CommentCard({
   isMenuOpen,
   onToggleMenu,
 }) {
+  const [expanded, setExpanded] = useState(false);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      if (expanded) {
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      } else {
+        textareaRef.current.style.height = "50px"; 
+      }
+    }
+  }, [expanded]);
+
+  const shouldTruncate = comment.description.split("\n").length > 3 ||
+    comment.description.length > 100;
+
   return (
     <div className={styles.commentCardWrapper}>
       <div className={styles.commentCardContainer}>
@@ -73,9 +89,7 @@ function CommentCard({
               {currentUserId === comment.comment_by_user_id && (
                 <li
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    handleCommentDelete(comment);
-                  }}
+                  onClick={() => handleCommentDelete(comment)}
                 >
                   刪除留言
                 </li>
@@ -91,14 +105,24 @@ function CommentCard({
         </p>
 
         <textarea
+          ref={textareaRef}
           className={styles.commentText}
           value={comment.description}
           readOnly
-          rows={Math.max(3, comment.description.split("\n").length)}
         />
+
+        {shouldTruncate && (
+          <button
+            className={styles.expandButton}
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            {expanded ? "收起" : "展開更多"}
+          </button>
+        )}
       </div>
     </div>
   );
 }
+
 
 export default CommentSection;
