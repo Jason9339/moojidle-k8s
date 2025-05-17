@@ -24,6 +24,12 @@ function CommentSection({
     const endIndex = startIndex + commentsPerPage;
     const commentsToDisplay = post.comments?.slice(startIndex, endIndex).reverse() || [];
 
+    useEffect(() => {
+        if (!(post.comments && post.comments.length > 3)) {
+            setCurrentPage(1);
+        }
+    }, [post.comments]);
+
     return (
         <div className={styles.sectionContainer}>
             <h3 className={styles.commentTitle}>留言：</h3>
@@ -61,7 +67,8 @@ function CommentSection({
                         下一頁
                     </button>
                 </div>
-            )}
+            )
+            }
 
 
             {!post.comments || post.comments.length === 0 ? (
