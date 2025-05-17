@@ -1,13 +1,13 @@
 import React from "react";
 import { DeleteDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css"
+import { useNavigate } from "react-router-dom";
+export default function EditDiscussionBoardModal({ boardId, onClose }) {
 
-export default function EditDiscussionBoardModal({ boardId, onClose, deleteBoard }) {
-
+    const navigate = useNavigate();
     const handleSubmit = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
-            deleteBoard(boardId);
             alert("討論版已成功刪除");
         } catch (err) {
             alert("刪除失敗，請稍後再試");
@@ -15,6 +15,7 @@ export default function EditDiscussionBoardModal({ boardId, onClose, deleteBoard
         }
 
         onClose();
+        navigate("/discussion/home");
     };
     return (
         // Backdrop

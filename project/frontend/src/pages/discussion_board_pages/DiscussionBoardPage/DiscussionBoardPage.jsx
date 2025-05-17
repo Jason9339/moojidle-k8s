@@ -25,21 +25,22 @@ function DiscussionBoard() {
     const [currentCourse, setCurrentCourse] = useState(null);
     const [currentBoard, setCurrentBoard] = useState(null);
 
+    const fetchCourseBoards = async () => {
+        try {
+            // TODO use Context to save userID
+            const uid = JSON.parse(localStorage.getItem("user")).user_id;
+            userIdRef.current = uid;
+
+
+            const data = await GetBoardsGroupByCourseByUserID(userIdRef.current);
+            setCourseBoardData(data);
+            setError(null);
+        } catch (err) {
+            setError("無法載入討論資料");
+        }
+    };
     useEffect(() => {
-        const fetchCourseBoards = async () => {
-            try {
-                // TODO use Context to save userID
-                const uid = JSON.parse(localStorage.getItem("user")).user_id;
-                userIdRef.current = uid;
 
-
-                const data = await GetBoardsGroupByCourseByUserID(userIdRef.current);
-                setCourseBoardData(data);
-                setError(null);
-            } catch (err) {
-                setError("無法載入討論資料");
-            }
-        };
         fetchCourseBoards();
     }, []);
 
@@ -92,62 +93,58 @@ function DiscussionBoard() {
     }, [])
 
     if (error) return (<p className="text-red-500">{error}</p>);
-
+    if (!courseBoardData) return (<p>Loading...</p>)
 
     return (
         <>
             <LeftBar />
-            <div className="flex">
-                <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} handleEditBoard={handleEditBoard} />
+            <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} handleEditBoard={handleEditBoard} />
 
 
-                <div className={styles["main-container"]}>
-                    {
-                        param == "home" || param == null ?
-                            <div className="flex relative">
-                                <DiscussionBoardInitContent />
-                                <Link
-                                    to="/post-edit/new"
-                                    className={styles.fab}
-                                    state={{ data: courseBoardData }}
-                                    title="新增貼文"
-                                >
-                                    <LuPlus />
-                                </Link>
-                            </div>
-                            :
-                            <div className="flex">
-                                <DiscussionBoardContent
-                                    overviewPosts={overviewPostData}
-                                    courseName={currentCourse?.course_name}
-                                    boardName={currentBoard?.board_name}
-                                />
+            <div className={styles["main-container"]}>
+                {
+                    param == "home" || param == null ?
+                        <div className="flex relative">
+                            <DiscussionBoardInitContent />
+                            <Link
+                                to="/post-edit/new"
+                                className={styles.fab}
+                                state={{ data: courseBoardData }}
+                                title="新增貼文"
+                            >
+                                <LuPlus />
+                            </Link>
+                        </div>
+                        :
+                        <div className="flex">
+                            <DiscussionBoardContent
+                                overviewPosts={overviewPostData}
+                                courseName={currentCourse?.course_name}
+                                boardName={currentBoard?.board_name}
+                            />
 
 
-                                <Link
-                                    to="/post-edit/new"
-                                    className={styles.fab}
-                                    state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}
+                            <Link
+                                to="/post-edit/new"
+                                className={styles.fab}
+                                state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}
 
-                                    title="新增貼文"
-                                >
-                                    <LuPlus />
-                                </Link>
-                            </div >
-                    }
-                </div >
-
-
+                                title="新增貼文"
+                            >
+                                <LuPlus />
+                            </Link>
+                        </div >
+                }
             </div >
+
+
             {showCreatePopup && (
                 <CreateDiscussionBoardModal
                     courseId={currentCourse?.course_id}
                     userId={userIdRef.current}
-                    onClose={() => setShowCreatePopup(false)}
-                    pushNewBoard={(newBoardData) => {
-
-                        const index = courseBoardData.findIndex(course => course.course_id == currentCourse.course_id);
-                        courseBoardData[index].boards.push(newBoardData);
+                    onClose={() => {
+                        setShowCreatePopup(false);
+                        fetchCourseBoards();
                     }}
 
                 />
@@ -158,13 +155,9 @@ function DiscussionBoard() {
                 showEditPopup && (
                     <EditDiscussionBoardModal
                         boardId={currentBoard?.board_id}
-                        onClose={() => setShowEditPopup(false)}
-                        deleteBoard={(toDeleteBoardId) => {
-
-                            const courseIndex = courseBoardData.findIndex(course => course.course_id === currentCourse.course_id);
-                            const boardIndex = courseBoardData[courseIndex].boards.find(board => board.board_id === toDeleteBoardId);
-                            courseBoardData[courseIndex].boards.splice(boardIndex, 1);
-
+                        onClose={() => {
+                            setShowEditPopup(false)
+                            fetchCourseBoards();
                         }}
                     />
                 )

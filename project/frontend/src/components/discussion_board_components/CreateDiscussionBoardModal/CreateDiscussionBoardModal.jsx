@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { CreateDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi";
 import styles from "./CreateDiscussionBoardModal.module.css";
 
-const CreateDiscussionBoardModal = ({ courseId, userId, onClose, pushNewBoard }) => {
+const CreateDiscussionBoardModal = ({ courseId, userId, onClose }) => {
     const [boardName, setBoardName] = useState("");
     const [error, setError] = useState("");
 
@@ -11,12 +11,7 @@ const CreateDiscussionBoardModal = ({ courseId, userId, onClose, pushNewBoard })
         e.preventDefault();
         setError("");
         try {
-            const response = await CreateDiscussionBoard(courseId, boardName);
-            if (response?.board_id) {
-                pushNewBoard(response);
-            } else {
-                setError("無法建立討論版");
-            }
+            await CreateDiscussionBoard(courseId, boardName);
 
         } catch (err) {
             console.error("Error creating discussion board:", err);
