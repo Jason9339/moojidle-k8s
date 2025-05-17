@@ -1,111 +1,127 @@
-.postHeader {
-  margin-bottom: 16px;
-}
-
-.headerTop {
+.card {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  box-sizing: border-box;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.backButton {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  margin-right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #2e3e6e;
-}
-
-.backButton:hover {
-  color: #1f2a50;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+  min-height: 700px;
 }
 
 .moreOptionsWrapper {
   position: relative;
+  align-self: flex-end;
 }
 
 .moreButton {
-  background: transparent;
+  background: none;
   border: none;
-  font-size: 20px;
   cursor: pointer;
-  padding: 4px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 20px;
 }
 
 .dropdownMenu {
   position: absolute;
   top: 30px;
   right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   list-style: none;
   padding: 8px 0;
   margin: 0;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdownItem {
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .dropdownItem:hover {
-  background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
-.title {
-  margin-bottom: 8px;
-  font-size: 40px;
-}
-
-.boardName {
-  color: #2e3e6e;
-}
-
-.courseName {
-  color: red;
-}
-
-.postTitleText {
-  color: black;
-}
-
-.info {
+.breadcrumb {
+  font-size: 14px;
   color: #666;
-  font-size: 20px;
 }
 
-.tag {
-  color: #666;
-  font-size: 12px;
-}
-
-.description {
-  font-size: 25px;
-  margin-bottom: 24px;
-  white-space: pre-wrap;
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .pfp {
-    width: 50px;
-    height: 50px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
-    border-radius: 25px;
-    border-style: solid;
-    border-width: 2px;
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.usernameDateWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.date {
+  font-size: 14px;
+  color: #999;
+}
+
+.customTag {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.postTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.description {
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  font-family: inherit;
+  outline: none;
+  min-height: 100px; /* 确保 description 至少有 100px 的高度 */
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
