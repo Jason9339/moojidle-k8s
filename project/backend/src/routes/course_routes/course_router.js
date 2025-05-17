@@ -13,13 +13,7 @@ import {
   ReadInviteCode,
   
   // 課程詳細資訊控制器
-  GetAllCourses,
-  GetCourseAnnouncements, 
-  CreateAnnouncement,
-  EditAnnouncement,
-
-  // helper functions
-  CanUserEditAnnouncements
+  GetAllCourses
 } from '#src/controllers/course_controllers/course_controller.js';
 
 import assignmentRouter from './assignment_route.js';
@@ -45,16 +39,10 @@ router.get("/teaching", GetTeachingCourses);
 
 // ----- 課程詳情路由 -----
 router.get("/:courseId", GetCourseDetails);
-router.get("/:courseId/announcements/read", GetCourseAnnouncements);
-router.post("/:courseId/announcements/create", CreateAnnouncement);
-router.post("/:announcementId/announcements/edit", EditAnnouncement);
 router.get("/:courseId/inviteCode", ReadInviteCode);
 
 // 掛載 assignment/material 子路由
 router.use('/', assignmentRouter);
 router.use('/', materialRouter);
-
-// helper functions
-router.get("/can_edit_announcements/:userId/:courseId", CanUserEditAnnouncements);
 
 export default router;

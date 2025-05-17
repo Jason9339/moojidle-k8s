@@ -1,11 +1,7 @@
 import { 
     GetAllCourses,
-    GetAnnouncementsByCourseId,
-    CreateAnnouncement,
-    EditAnnouncement,
     GetCourseDetails,
     GetTeachingCourses,
-    CanUserEditAnnouncements,
     AddCourse,
     AddTeachIn,
     RemoveCourse,
@@ -25,42 +21,6 @@ async function GetAllCoursesController(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
-
-// 取得特定課程的公告
-async function GetCourseAnnouncements(req, res) {
-    try {
-        const { courseId } = req.params;
-        const announcements = await GetAnnouncementsByCourseId(courseId);
-        res.json(announcements);
-    } catch (error) {
-        console.error("取得課程公告錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-}
-
-const CreateAnnouncementController = async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const { context, userId, announceDate } = req.body;
-        const announcement = await CreateAnnouncement(courseId, context, userId, announceDate);
-        res.json(announcement);
-    } catch (error) {
-        console.error("新增課程公告錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const EditAnnouncementController = async (req, res) => {
-    try {
-        const { announcementId } = req.params;
-        const { context, announceDate } = req.body;
-        const announcement = await EditAnnouncement(announcementId, context, announceDate);
-        res.json(announcement);
-    } catch (error) {
-        console.error("更改課程公告錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-};
 
 // 創建課程
 async function CreateCourse(req, res) {
@@ -204,22 +164,8 @@ async function ReadInviteCode(req, res) {
     }
 }
 
-const CanUserEditAnnouncementsController = async (req, res) => {
-    const { courseId, userId } = req.params;
-    try {
-        const enrolled = await CanUserEditAnnouncements(courseId, userId);
-        res.status(200).json(enrolled);
-    } catch (error) {
-        console.error("Failed to check user enrollment:", error);
-        res.status(500).json({ message: "Failed to check user enrollment" });
-    }
-};
-
 export {
     GetAllCoursesController as GetAllCourses,
-    GetCourseAnnouncements,
-    CreateAnnouncementController as CreateAnnouncement,
-    EditAnnouncementController as EditAnnouncement,
     CreateCourse,
     DeleteCourse,
     ReadCourse,
@@ -227,6 +173,5 @@ export {
     GetTeachingCoursesController as GetTeachingCourses,
     ReadTeachIn,
     EditCourse,
-    ReadInviteCode,
-    CanUserEditAnnouncementsController as CanUserEditAnnouncements
+    ReadInviteCode
 };
