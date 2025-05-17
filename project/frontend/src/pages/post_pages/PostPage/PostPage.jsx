@@ -9,97 +9,95 @@ import PostContent from "@/components/post_components/PostContent/PostContent.js
 import { GetPostContent, LeaveCommend, DeletePost } from "@/services/discussion_api/PostApi";
 
 function PostPage() {
-    const { id } = useParams();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [post, setPost] = useState(null);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [newComment, setNewComment] = useState("");
-    const [showMenu, setShowMenu] = useState(false);
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [post, setPost] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [newComment, setNewComment] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
 
-    const storedUser = localStorage.getItem("user");
-    const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
-    const navigate = useNavigate();
+  const storedUser = localStorage.getItem("user");
+  const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const data = await GetPostContent(id);
-                setPost(data);
-            } catch (err) {
-                setError("載入貼文失敗：" + (err.message || "未知錯誤"));
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPost();
-    }, [id, refreshTrigger]);
-
-    const handleCommentSubmit = async () => {
-        if (!newComment.trim()) return;
-        const commenData = {
-            post_id: post.post_id,
-            user_id: currentUserId,
-            custom_tag: "訪客",
-            description: newComment
-        };
-        try {
-            await LeaveCommend(commenData);
-            setNewComment("");
-            reflash();
-        } catch (err) {
-            alert("留言送出失敗：" + (err.message || "未知錯誤"));
-        }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const data = await GetPostContent(id);
+        setPost(data);
+      } catch (err) {
+        setError("載入貼文失敗：" + (err.message || "未知錯誤"));
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchPost();
+  }, [id, refreshTrigger]);
 
-    const handleDeletePost = async () => {
-        try {
-            await DeletePost(post.post_id);
-            alert("貼文刪除成功");
-            navigate(`/discussion/${post.in_b_id}`);
-        } catch (err) {
-            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
-        }
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
+    const commenData = {
+      post_id: post.post_id,
+      user_id: currentUserId,
+      custom_tag: "訪客",
+      description: newComment,
     };
+    try {
+      await LeaveCommend(commenData);
+      setNewComment("");
+      reflash();
+    } catch (err) {
+      alert("留言送出失敗：" + (err.message || "未知錯誤"));
+    }
+  };
 
-    const reflash = () => {
-        setRefreshTrigger(prev => prev + 1);
-    };
+  const handleDeletePost = async () => {
+    try {
+      await DeletePost(post.post_id);
+      alert("貼文刪除成功");
+      navigate(`/discussion/${post.in_b_id}`);
+    } catch (err) {
+      alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+    }
+  };
 
-    if (error) return <p>{error}</p>;
-    if (!post) return <p>找不到貼文</p>;
+  const reflash = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
+  if (error) return <p>{error}</p>;
+  if (!post) return <p>找不到貼文</p>;
 
-    return (
-        <>
-            <LeftBar />
-            <div className={styles.pageWrapper}>
-                <div className={styles.postContainer}>
-                    <button className={styles.backButton} onClick={() => navigate(-1)}>
-                        <FiCornerUpLeft size={24} />
-                    </button>
+  return (
+    <>
+      <LeftBar />
+      <div className={styles.pageWrapper}>
+        <div className={styles.postContainer}>
+          <button className={styles.backButton} onClick={() => navigate(-1)}>
+            <FiCornerUpLeft size={24} />
+          </button>
 
-                    <PostContent
-                        post={post}
-                        currentUserId={currentUserId}
-                        showMenu={showMenu}
-                        setShowMenu={setShowMenu}
-                        handleDeletePost={handleDeletePost}
-                    />
+          <PostContent
+            post={post}
+            currentUserId={currentUserId}
+            showMenu={showMenu}
+            setShowMenu={setShowMenu}
+            handleDeletePost={handleDeletePost}
+          />
 
-                    <CommentSection
-                        post={post}
-                        newComment={newComment}
-                        setNewComment={setNewComment}
-                        handleCommentSubmit={handleCommentSubmit}
-                        reflash={reflash}
-                        currentUserId={currentUserId}
-                    />
-                </div>
-            </div>
-        </>
-    );
-
+          <CommentSection
+            post={post}
+            newComment={newComment}
+            setNewComment={setNewComment}
+            handleCommentSubmit={handleCommentSubmit}
+            reflash={reflash}
+            currentUserId={currentUserId}
+          />
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default PostPage;
