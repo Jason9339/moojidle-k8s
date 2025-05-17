@@ -35,14 +35,15 @@ import announcementRoute from "#src/routes/course_routes/announcement_route.js";
 
 // try hit http://localhost:3000/example
 app.use("/course", courseRouter);
-app.use("/course", announcementRoute);
+app.use("/assignment", assignmentRoute);
+app.use("/material", materialRouter);
+app.use("/announcement", announcementRoute);
+
 app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
-app.use("/assignments", assignmentRoute);
 app.use("/example", exampleRoute);
 app.use("/user", userRoute);
 app.use("/file", fileRouter);
-app.use("/course", materialRouter);
 
 // Routes ends --------------------------------------------------------------------------
 
