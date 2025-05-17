@@ -15,24 +15,26 @@ function PostContent({
 
     return (
         <div className={styles.card}>
-            <div className={styles.moreOptionsWrapper}>
-                <button className={styles.moreButton} onClick={() => setShowMenu(!showMenu)}>
-                    <FiMoreVertical size={25} />
-                </button>
-                {showMenu && (
-                    <ul className={styles.dropdownMenu}>
-                        {currentUserId === post.post_by_user_id && (
-                            <li className={styles.dropdownItem} onClick={handleDeletePost}>
-                                刪除貼文
-                            </li>
-                        )}
-                        <li className={styles.dropdownItem}>檢舉</li>
-                    </ul>
-                )}
-            </div>
-
-            <div className={styles.breadcrumb}>
-                {post.course_name} &gt; {post.board_name}
+            {/* Header Row: breadcrumb + more options */}
+            <div className={styles.headerRow}>
+                <div className={styles.breadcrumb}>
+                    {post.course_name} &gt; {post.board_name}
+                </div>
+                <div className={styles.moreOptionsWrapper}>
+                    <button className={styles.moreButton} onClick={() => setShowMenu(!showMenu)}>
+                        <FiMoreVertical size={25} />
+                    </button>
+                    {showMenu && (
+                        <ul className={styles.dropdownMenu}>
+                            {currentUserId === post.post_by_user_id && (
+                                <li className={styles.dropdownItem} onClick={handleDeletePost}>
+                                    刪除貼文
+                                </li>
+                            )}
+                            <li className={styles.dropdownItem}>檢舉</li>
+                        </ul>
+                    )}
+                </div>
             </div>
 
             <div className={styles.userSection}>
