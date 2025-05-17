@@ -30,16 +30,17 @@ import courseRouter from "#src/routes/course_routes/course_router.js"
 import courseMemberRoute from "#src/routes/course_routes/member_route.js"
 import userRoute from "#src/routes/user_routes/user_route.js"
 import fileRouter from "#src/routes/file_routes/file_route.js";
+import materialRouter from "#src/routes/course_routes/material_route.js";
 
 // try hit http://localhost:3000/example
-app.use("/example", exampleRoute);
 app.use("/course", courseRouter);
 app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
-
+app.use("/assignments", assignmentRoute);
 app.use("/example", exampleRoute);
 app.use("/user", userRoute);
 app.use("/file", fileRouter);
+app.use("/course", materialRouter);
 
 // Routes ends --------------------------------------------------------------------------
 

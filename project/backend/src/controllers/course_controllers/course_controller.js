@@ -1,13 +1,13 @@
 import { 
-    getAllCourses as getAllCoursesService,
-    getAnnouncementsByCourseId,
-    createAnnouncement as createAnnouncementService,
-    editAnnouncement as editAnnouncementService,
-    getCourseSyllabus as getCourseSyllabusService,
-    getCourseLink as getCourseLinkService,
-    getCourseDetails as getCourseDetailsService,
-    getTeachingCourses as getTeachingCoursesService,
-    canUserEditAnnouncements as canUserEditAnnouncementsService
+    GetAllCourses as GetAllCoursesService,
+    GetAnnouncementsByCourseId,
+    CreateAnnouncement as CreateAnnouncementService,
+    EditAnnouncement as EditAnnouncementService,
+    GetCourseSyllabus as GetCourseSyllabusService,
+    GetCourseLink as GetCourseLinkService,
+    GetCourseDetails as GetCourseDetailsService,
+    GetTeachingCourses as GetTeachingCoursesService,
+    CanUserEditAnnouncements as CanUserEditAnnouncementsService
 } from '#src/services/course_services/course_service.js';
 
 import { 
@@ -25,9 +25,9 @@ import {
 } from "#src/services/course_services/view_course.js";
 
 // 取得所有課程列表
-async function getAllCourses(req, res) {
+async function GetAllCourses(req, res) {
     try {
-        const courses = await getAllCoursesService();
+        const courses = await GetAllCoursesService();
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -35,10 +35,10 @@ async function getAllCourses(req, res) {
 }
 
 // 取得特定課程的公告
-async function getCourseAnnouncements(req, res) {
+async function GetCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
-        const announcements = await getAnnouncementsByCourseId(courseId);
+        const announcements = await GetAnnouncementsByCourseId(courseId);
         res.json(announcements);
     } catch (error) {
         console.error("取得課程公告錯誤:", error);
@@ -46,11 +46,11 @@ async function getCourseAnnouncements(req, res) {
     }
 }
 
-export const createAnnouncement = async (req, res) => {
+export const CreateAnnouncement = async (req, res) => {
     try {
         const { courseId } = req.params;
         const { context, userId, announceDate } = req.body;
-        const announcement = await createAnnouncementService(courseId, context, userId, announceDate);
+        const announcement = await CreateAnnouncementService(courseId, context, userId, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("新增課程公告錯誤:", error);
@@ -58,11 +58,11 @@ export const createAnnouncement = async (req, res) => {
     }
 };
 
-export const editAnnouncement = async (req, res) => {
+export const EditAnnouncement = async (req, res) => {
     try {
         const { announcementId } = req.params;
         const { context, announceDate } = req.body;
-        const announcement = await editAnnouncementService(announcementId, context, announceDate);
+        const announcement = await EditAnnouncementService(announcementId, context, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("更改課程公告錯誤:", error);
@@ -71,10 +71,10 @@ export const editAnnouncement = async (req, res) => {
 };
 
 // 取得特定課程的 syllabus
-async function getCourseSyllabus(req, res) {
+async function GetCourseSyllabus(req, res) {
     try {
         const { courseId } = req.params;
-        const syllabusData = await getCourseSyllabusService(courseId);
+        const syllabusData = await GetCourseSyllabusService(courseId);
         res.json(syllabusData);
     } catch (error) {
         console.error("取得課程大綱錯誤:", error);
@@ -83,10 +83,10 @@ async function getCourseSyllabus(req, res) {
 }
 
 // 取得特定課程的連結
-async function getCourseLink(req, res) {
+async function GetCourseLink(req, res) {
     try {
         const { courseId } = req.params;
-        const linkData = await getCourseLinkService(courseId);
+        const linkData = await GetCourseLinkService(courseId);
         res.json(linkData);
     } catch (error) {
         console.error("取得課程連結錯誤:", error);
@@ -163,7 +163,7 @@ async function ReadCourse(req, res) {
 async function GetCourseDetails(req, res) {
     try {
         const { courseId } = req.params;
-        const courseDetails = await getCourseDetailsService(courseId);
+        const courseDetails = await GetCourseDetailsService(courseId);
         res.status(200).json(courseDetails);
     } catch (error) {
         console.error("獲取課程詳情錯誤:", error);
@@ -185,7 +185,7 @@ async function GetTeachingCourses(req, res) {
             return res.status(400).json({ message: '缺少用戶ID參數' });
         }
         
-        const formattedCourses = await getTeachingCoursesService(userId);
+        const formattedCourses = await GetTeachingCoursesService(userId);
         res.json(formattedCourses);
     } catch (error) {
         console.error("獲取教師課程錯誤:", error);
@@ -236,10 +236,10 @@ async function ReadInviteCode(req, res) {
     }
 }
 
-export const canUserEditAnnouncements = async (req, res) => {
+export const CanUserEditAnnouncements = async (req, res) => {
     const { courseId, userId } = req.params;
     try {
-        const enrolled = await canUserEditAnnouncementsService(courseId, userId);
+        const enrolled = await CanUserEditAnnouncementsService(courseId, userId);
         res.status(200).json(enrolled);
     } catch (error) {
         console.error("Failed to check user enrollment:", error);
@@ -248,10 +248,10 @@ export const canUserEditAnnouncements = async (req, res) => {
 };
 
 export {
-    getAllCourses,
-    getCourseAnnouncements,
-    getCourseSyllabus,
-    getCourseLink,
+    GetAllCourses,
+    GetCourseAnnouncements,
+    GetCourseSyllabus,
+    GetCourseLink,
     CreateCourse,
     DeleteCourse,
     ReadCourse,

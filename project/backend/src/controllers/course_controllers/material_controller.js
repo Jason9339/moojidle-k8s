@@ -1,10 +1,10 @@
-import { getMaterialsByCourseId, updateMaterialsService, deleteMaterialService } from '#src/services/course_services/material_service.js';
+import { GetMaterialsByCourseId, UpdateMaterialsService, DeleteMaterialService } from '#src/services/course_services/material_service.js';
 
 // 取得特定課程的檔案
-async function getCourseFiles(req, res) {
+async function GetCourseFiles(req, res) {
     try {
         const { courseId } = req.params;
-        const files = await getMaterialsByCourseId(courseId);
+        const files = await GetMaterialsByCourseId(courseId);
         res.json(files);
     } catch (error) {
         console.error("取得課程檔案錯誤:", error);
@@ -13,14 +13,14 @@ async function getCourseFiles(req, res) {
 }
 
 // 更新課程教材
-async function updateCourseMaterials(req, res) {
+async function UpdateCourseMaterials(req, res) {
     try {
         const { courseId } = req.params;
         const materials = req.body;
         if (!materials || !Array.isArray(materials) || materials.length === 0) {
             return res.status(400).json({ message: '請提供有效的教材數據' });
         }
-        const updatedMaterials = await updateMaterialsService(parseInt(courseId), materials);
+        const updatedMaterials = await UpdateMaterialsService(parseInt(courseId), materials);
         res.status(200).json(updatedMaterials);
     } catch (error) {
         console.error(`更新課程 ${req.params.courseId} 教材失敗:`, error);
@@ -29,10 +29,10 @@ async function updateCourseMaterials(req, res) {
 }
 
 // 刪除課程教材
-async function deleteCourseMaterial(req, res) {
+async function DeleteCourseMaterial(req, res) {
     try {
         const { courseId, materialId } = req.params;
-        const result = await deleteMaterialService(parseInt(courseId), parseInt(materialId));
+        const result = await DeleteMaterialService(parseInt(courseId), parseInt(materialId));
         if (result.deletedCount === 0) {
             return res.status(404).json({ message: '未找到指定教材' });
         }
@@ -43,4 +43,4 @@ async function deleteCourseMaterial(req, res) {
     }
 }
 
-export { getCourseFiles, updateCourseMaterials, deleteCourseMaterial };
+export { GetCourseFiles, UpdateCourseMaterials, DeleteCourseMaterial };

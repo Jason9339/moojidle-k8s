@@ -1,15 +1,15 @@
 import express from 'express';
-import { getCourseFiles, updateCourseMaterials, deleteCourseMaterial } from '#src/controllers/course_controllers/material_controller.js';
+import { GetCourseFiles, UpdateCourseMaterials, DeleteCourseMaterial } from '#src/controllers/course_controllers/material_controller.js';
 
 const router = express.Router();
 
 // 取得特定課程的檔案
-router.get('/:courseId/files', getCourseFiles);
-router.get('/:courseId/materials', getCourseFiles); // files 的別名
+router.get('/:courseId/files', GetCourseFiles);
+router.get('/:courseId/materials', GetCourseFiles); // files 的別名
 
 // 更新課程教材
-router.post('/:courseId/materials', updateCourseMaterials);
+router.post('/:courseId/materials', UpdateCourseMaterials);
 // 刪除課程教材
-router.delete('/:courseId/materials/:materialId', deleteCourseMaterial);
+router.delete('/:courseId/materials/:materialId', DeleteCourseMaterial);
 
 export default router;

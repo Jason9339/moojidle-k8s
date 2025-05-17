@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 // 查詢課程教材
-async function getMaterialsByCourseId(courseId) {
+async function GetMaterialsByCourseId(courseId) {
     try {
-        const { getCourseById, calculateWeek } = await import('./course_service.js');
-        const course = await getCourseById(courseId);
+        const { GetCourseById, CalculateWeek } = await import('./course_service.js');
+        const course = await GetCourseById(courseId);
         if (!course) {
             throw new Error('找不到課程');
         }
@@ -16,7 +16,7 @@ async function getMaterialsByCourseId(courseId) {
             .toArray();
         return Promise.all(materials.map(async (material) => {
             const materialDate = material.display_date || material.create_date;
-            const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
+            const week = CalculateWeek(courseStartDate, materialDate, courseWeekNum);
             return {
                 id: material.m_id,
                 name: material.m_name,
@@ -29,19 +29,19 @@ async function getMaterialsByCourseId(courseId) {
             };
         }));
     } catch (error) {
-        console.error(`[getMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
+        console.error(`[GetMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course materials: ${error.message}`);
     }
 }
 
 // 更新課程教材
-async function updateMaterialsService(courseId, materials) {
+async function UpdateMaterialsService(courseId, materials) {
     try {
         const materialsCollection = mongoose.connection.db.collection('materials');
         const results = [];
         
-        const { getCourseById, calculateWeek } = await import('./course_service.js');
-        const course = await getCourseById(courseId);
+        const { GetCourseById, CalculateWeek } = await import('./course_service.js');
+        const course = await GetCourseById(courseId);
         if (!course) {
             throw new Error('找不到課程');
         }
@@ -65,7 +65,7 @@ async function updateMaterialsService(courseId, materials) {
                     if (existingMaterial) {
                         // 使用 display_date 或備用 create_date
                         const materialDate = existingMaterial.display_date || existingMaterial.create_date;
-                        week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
+                        week = CalculateWeek(courseStartDate, materialDate, courseWeekNum);
                     } else {
                         week = 1; // 默認值
                     }
@@ -84,11 +84,11 @@ async function updateMaterialsService(courseId, materials) {
                     if (!isNaN(dateObj.getTime())) {
                         updateObj.display_date = dateObj;
                     } else {
-                        console.warn('[updateMaterialsService] displayDate 轉換失敗:', material.displayDate);
+                        console.warn('[UpdateMaterialsService] displayDate 轉換失敗:', material.displayDate);
                     }
                 }
                 // debug log
-                 console.log('[updateMaterialsService] updateObj:', updateObj);
+                 console.log('[UpdateMaterialsService] updateObj:', updateObj);
                 
                 // 更新現有教材
                 const result = await materialsCollection.updateOne(
@@ -100,7 +100,7 @@ async function updateMaterialsService(courseId, materials) {
                         $set: updateObj
                     }
                 );
-                console.log('[updateMaterialsService] update result:', result);
+                console.log('[UpdateMaterialsService] update result:', result);
                 
                 if (result.matchedCount > 0) {
                     results.push({
@@ -118,13 +118,13 @@ async function updateMaterialsService(courseId, materials) {
         
         return results;
     } catch (error) {
-        console.error(`[updateMaterialsService] Error updating materials for course ID ${courseId}:`, error);
+        console.error(`[UpdateMaterialsService] Error updating materials for course ID ${courseId}:`, error);
         throw new Error(`Failed to update course materials: ${error.message}`);
     }
 }
 
 // 刪除教材
-async function deleteMaterialService(courseId, materialId) {
+async function DeleteMaterialService(courseId, materialId) {
     try {
         const materialsCollection = mongoose.connection.db.collection('materials');
 
@@ -136,7 +136,7 @@ async function deleteMaterialService(courseId, materialId) {
         const material = await materialsCollection.findOne(query);
         
         if (!material) {
-            console.error(`[deleteMaterialService] 找不到教材，查詢條件:`, query);
+            console.error(`[DeleteMaterialService] 找不到教材，查詢條件:`, query);
             return { deletedCount: 0 };
         }
         
@@ -153,9 +153,9 @@ async function deleteMaterialService(courseId, materialId) {
         
         return result;
     } catch (error) {
-        console.error(`[deleteMaterialService] Error deleting material ID ${materialId} from course ID ${courseId}:`, error);
+        console.error(`[DeleteMaterialService] Error deleting material ID ${materialId} from course ID ${courseId}:`, error);
         throw new Error(`Failed to delete material: ${error.message}`);
     }
 }
 
-export { getMaterialsByCourseId, updateMaterialsService, deleteMaterialService };
+export { GetMaterialsByCourseId, UpdateMaterialsService, DeleteMaterialService };

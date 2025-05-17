@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // 計算週次的輔助函數
-function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
+function CalculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
     const courseDate = new Date(courseStartDate);
     const itemDate2 = new Date(itemDate);
 
@@ -20,7 +20,7 @@ function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
 
 
 // 查詢課程基本資訊
-async function getCourseById(courseId) {
+async function GetCourseById(courseId) {
     try {
         return await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
     } catch (error) {
@@ -30,7 +30,7 @@ async function getCourseById(courseId) {
 }
 
 // 查詢課程公告
-async function getAnnouncementsByCourseId(courseId) {
+async function GetAnnouncementsByCourseId(courseId) {
     try {
         const now = new Date();
         return await mongoose.connection.db.collection('announcement')
@@ -47,7 +47,7 @@ async function getAnnouncementsByCourseId(courseId) {
 }
 
 // Helper to get next a_id from counter collection
-async function getNextSequenceValue(collectionName) {
+async function GetNextSequenceValue(collectionName) {
     // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
     const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
 
@@ -69,9 +69,9 @@ async function getNextSequenceValue(collectionName) {
 }
 
 // 建立課程公告
-async function createAnnouncement(courseId, context, user_id, announce_date) {
+async function CreateAnnouncement(courseId, context, user_id, announce_date) {
     try {
-        const a_id = await getNextSequenceValue('announcement');
+        const a_id = await GetNextSequenceValue('announcement');
         const now = new Date();
         const announcement = {
             a_id,
@@ -92,7 +92,7 @@ async function createAnnouncement(courseId, context, user_id, announce_date) {
 }
 
 // 編輯課程公告
-async function editAnnouncement(announcementId, context, announce_date) {
+async function EditAnnouncement(announcementId, context, announce_date) {
     try {
         const result = await mongoose.connection.db.collection('announcement').updateOne(
             { a_id: parseInt(announcementId) },
@@ -113,7 +113,7 @@ async function editAnnouncement(announcementId, context, announce_date) {
 }
 
 // 獲取所有課程
-async function getAllCourses() {
+async function GetAllCourses() {
     try {
         return await mongoose.connection.db.collection('course')
             .find({})
@@ -126,7 +126,7 @@ async function getAllCourses() {
 }
 
 // 獲取課程大綱
-async function getCourseSyllabus(courseId) {
+async function GetCourseSyllabus(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -143,7 +143,7 @@ async function getCourseSyllabus(courseId) {
 }
 
 // 獲取課程連結
-async function getCourseLink(courseId) {
+async function GetCourseLink(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -160,7 +160,7 @@ async function getCourseLink(courseId) {
 }
 
 // 獲取課程詳細資訊
-async function getCourseDetails(courseId) {
+async function GetCourseDetails(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -190,7 +190,7 @@ async function getCourseDetails(courseId) {
 
 
 // 獲取用戶教授的課程
-async function getTeachingCourses(userId) {
+async function GetTeachingCourses(userId) {
     try {
         if (!userId) {
             throw new Error('缺少用戶ID參數');
@@ -228,7 +228,7 @@ async function getTeachingCourses(userId) {
     }
 }
 
-async function canUserEditAnnouncements(courseId, userId) {
+async function CanUserEditAnnouncements(courseId, userId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const parsedUserId = parseInt(userId);
@@ -245,15 +245,15 @@ async function canUserEditAnnouncements(courseId, userId) {
 }
 
 export {
-    getCourseById,
-    getAnnouncementsByCourseId,
-    createAnnouncement,
-    editAnnouncement,
-    getAllCourses,
-    getCourseSyllabus,
-    getCourseLink,
-    getCourseDetails,
-    getTeachingCourses,
-    canUserEditAnnouncements,
-    calculateWeek
+    GetCourseById,
+    GetAnnouncementsByCourseId,
+    CreateAnnouncement,
+    EditAnnouncement,
+    GetAllCourses,
+    GetCourseSyllabus,
+    GetCourseLink,
+    GetCourseDetails,
+    GetTeachingCourses,
+    CanUserEditAnnouncements,
+    CalculateWeek
 };

@@ -117,11 +117,11 @@ async function GetToDoAssignmentsByUserId(user_id) {
 }
 
 // 取得特定課程的作業
-async function getAssignmentsByCourseId(courseId) {
+async function GetAssignmentsByCourseId(courseId) {
     try {
         // 先獲取課程信息，以獲取開始日期
-        const { getCourseById, calculateWeek } = await import('./course_service.js');
-        const course = await getCourseById(courseId);
+        const { GetCourseById, CalculateWeek } = await import('./course_service.js');
+        const course = await GetCourseById(courseId);
         if (!course) {
             throw new Error('找不到課程');
         }
@@ -135,7 +135,7 @@ async function getAssignmentsByCourseId(courseId) {
         return Promise.all(assignments.map(async (assignment) => { // Ensure Promise.all is used
             // 計算週次 - 使用 start_date 而非 create_date
             const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = calculateWeek(courseStartDate, assignmentDate, courseWeekNum); // calculateWeek is already imported
+            const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum); // calculateWeek is already imported
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,
@@ -155,5 +155,5 @@ async function getAssignmentsByCourseId(courseId) {
 export {
     GetToDoAssignments,
     GetToDoAssignmentsByUserId,
-    getAssignmentsByCourseId
+    GetAssignmentsByCourseId
 };
