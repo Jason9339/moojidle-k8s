@@ -68,7 +68,7 @@
 .create-announcement-button {
     margin-left: 10px;
     padding: 8px 12px;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     border-radius: 6px;
     cursor: pointer;
@@ -130,7 +130,7 @@
 }
 
 .modal-content button {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     padding: 10px 15px;
     border-radius: 6px;
@@ -153,7 +153,7 @@
 }
 
 .modal-actions button:first-child {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
 }
 

@@ -10,119 +10,121 @@ import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseMo
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 import {
-  getCourses,
-  getTodoList,
-  getComingUpList,
+    getCourses,
+    getTodoList,
+    getComingUpList,
 } from "@/services/dashboard_api/DashboardApi";
 
 // 模擬目前登入的 user_id
 // const currentUserId = 1;
 
 function Dashboard() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const currentUserId = user?.user_id;
+    const user = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = user?.user_id;
 
-  const [dashboardData, setDashboardData] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showJoinModal, setShowJoinModal] = useState(false);
+    const [dashboardData, setDashboardData] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showJoinModal, setShowJoinModal] = useState(false);
 
-  const fetchAll = async () => {
-    try {
-      const [courses, todoList, comingUpList] =
-        await Promise.all([
-          getCourses(currentUserId),
-          getTodoList(currentUserId),
-          getComingUpList(currentUserId),
-        ]);
+    const fetchAll = async () => {
+        try {
+            const [courses, todoList, comingUpList] = await Promise.all([
+                getCourses(currentUserId),
+                getTodoList(currentUserId),
+                getComingUpList(currentUserId),
+            ]);
 
+            setDashboardData({
+                courses,
+                todoList,
+                comingUpList,
+            });
+            console.log(courses);
+        } catch (err) {
+            console.error("Failed to fetch dashboard data:", err);
+        }
+    };
 
-      setDashboardData({
-        courses,
-        todoList,
-        comingUpList,
-      });
-          console.log(courses);
+    useEffect(() => {
+        fetchAll();
+    }, []);
 
-    } catch (err) {
-      console.error("Failed to fetch dashboard data:", err);
-    }
-  };
+    const handleAddCourse = async () => {
+        await fetchAll();
+    };
+    const handleJoinCourse = async () => {
+        await fetchAll();
+    };
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+    const handleDeleteCourse = async (courseId) => {
+        try {
+            await fetchAll();
+        } catch (error) {
+            console.error("刪除課程後重新抓取資料失敗：", error);
+        }
+    };
 
-  const handleAddCourse = async () => {
-    await fetchAll();
-  };
-  const handleJoinCourse = async () => {
-    await fetchAll();
-  };
+    if (!dashboardData) return <p>Loading...</p>;
 
-  const handleDeleteCourse = async (courseId) => {
-    try {
-      await fetchAll();
-    } catch (error) {
-      console.error("刪除課程後重新抓取資料失敗：", error);
-    }
-  };
+    const { courses, todoList, comingUpList } = dashboardData;
 
-  if (!dashboardData) return <p>Loading...</p>;
+    return (
+        <div className={`${styles["app-layout"]}`}>
+            <LeftBar />
+            <div className={`${styles["dashboard-container"]}`}>
+                <div className={`${styles["dashboard-left"]}`}>
+                    <div className={`${styles["dashboard-heading-row"]}`}>
+                        <h2 className={`${styles["dashboard-heading"]}`}>
+                            Dashboard
+                        </h2>
+                        <div className={`${styles["dashboard-button-group"]}`}>
+                            <AddCourseButton
+                                onClick={() => setShowAddModal(true)}
+                            />
+                            <JoinCourseButton
+                                onClick={() => setShowJoinModal(true)}
+                            />
+                        </div>
+                    </div>
+                    <hr className={`${styles["dashboard-heading-divider"]}`} />
 
-  const { courses, todoList, comingUpList } = dashboardData;
+                    <div className={`${styles["course-grid"]}`}>
+                        {courses.map((course, index) => (
+                            <CourseCard
+                                key={index}
+                                {...course}
+                                onDeleteCourse={handleDeleteCourse}
+                            />
+                        ))}
+                    </div>
+                </div>
 
-  return (
-    <div className={`${styles["app-layout"]}`}>
-      <LeftBar />
-      <div className={`${styles["dashboard-container"]}`}>
-        <div className={`${styles["dashboard-left"]}`}>
-          <div className={`${styles["dashboard-heading-row"]}`}>
-            <h2 className={`${styles["dashboard-heading"]}`}>Dashboard</h2>
-            <div className={`${styles["dashboard-button-group"]}`}>
-              <AddCourseButton onClick={() => setShowAddModal(true)} />
-              <JoinCourseButton onClick={() => setShowJoinModal(true)} />
+                <div className={`${styles["dashboard-right"]}`}>
+                    <h3>To Do</h3>
+                    <ToDoItem todoList={todoList} />
+                    <hr />
+                    <h3>Coming Up</h3>
+                    <ComingUpItem comingUpList={comingUpList} />
+                </div>
             </div>
-          </div>
-          <hr className={`${styles["dashboard-heading-divider"]}`} />
 
-          <div className={`${styles["course-grid"]}`}>
-            {courses.map((course, index) => (
-              <CourseCard
-                key={index}
-                {...course}
-                onDeleteCourse={handleDeleteCourse}
-              />
-            ))}
-          </div>
+            {showAddModal && (
+                <AddCourseModal
+                    onClose={() => setShowAddModal(false)}
+                    onAddCourse={handleAddCourse}
+                    currentUserId={currentUserId}
+                />
+            )}
+
+            {showJoinModal && (
+                <JoinCourseModal
+                    onClose={() => setShowJoinModal(false)}
+                    onJoinCourse={handleJoinCourse}
+                    currentUserId={currentUserId}
+                />
+            )}
         </div>
-
-        <div className={`${styles["dashboard-right"]}`}>
-          <h3>To Do</h3>
-          <ToDoItem todoList={todoList} />
-          <hr />
-          <h3>Coming Up</h3>
-          <ComingUpItem comingUpList={comingUpList} />
-        </div>
-      </div>
-
-      {showAddModal && (
-        <AddCourseModal
-          onClose={() => setShowAddModal(false)}
-          onAddCourse={handleAddCourse}
-          currentUserId={currentUserId}
-        />
-      )}
-
-      {showJoinModal && (
-        <JoinCourseModal
-          onClose={() => setShowJoinModal(false)}
-          onJoinCourse={handleJoinCourse}
-          currentUserId={currentUserId}
-        />
-
-      )}
-    </div>
-  );
+    );
 }
 
 export default Dashboard;

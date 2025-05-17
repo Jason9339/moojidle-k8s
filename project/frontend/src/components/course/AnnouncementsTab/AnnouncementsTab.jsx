@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AnnouncementsTab.module.css";
-import { getAnnouncements, createAnnouncement, canUserEditAnnouncements, editAnnouncement } from "@/services/AnnouncementTabApi.js";
+import {
+    getAnnouncements,
+    createAnnouncement,
+    canUserEditAnnouncements,
+    editAnnouncement,
+} from "@/services/AnnouncementTabApi.js";
 
 function AnnouncementsTab({ courseId, currentUserId }) {
     const [announcements, setAnnouncements] = useState([]);
@@ -10,7 +15,9 @@ function AnnouncementsTab({ courseId, currentUserId }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [newAnnouncementContext, setNewAnnouncementContext] = useState("");
-    const [newAnnounceDate, setNewAnnounceDate] = useState(new Date().toISOString());
+    const [newAnnounceDate, setNewAnnounceDate] = useState(
+        new Date().toISOString()
+    );
     const [canEdit, setCanEdit] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
@@ -30,7 +37,10 @@ function AnnouncementsTab({ courseId, currentUserId }) {
 
         const checkEditPermissions = async () => {
             try {
-                const editPermission = await canUserEditAnnouncements(currentUserId, courseId);
+                const editPermission = await canUserEditAnnouncements(
+                    currentUserId,
+                    courseId
+                );
                 setCanEdit(editPermission);
             } catch (err) {
                 console.error("Failed to check edit permissions:", err);
@@ -92,7 +102,12 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             alert("公告時間在未來，公告將於該時間才會顯示");
         }
         try {
-            await createAnnouncement(courseId, newAnnouncementContext, currentUserId, newAnnounceDate);
+            await createAnnouncement(
+                courseId,
+                newAnnouncementContext,
+                currentUserId,
+                newAnnounceDate
+            );
             // Refresh announcements after creating
             const data = await getAnnouncements(courseId);
             setAnnouncements(data);
@@ -114,7 +129,11 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             alert("公告時間在未來，公告將於該時間才會顯示");
         }
         try {
-            await editAnnouncement(selectedAnnouncement.a_id, newAnnouncementContext, newAnnounceDate);
+            await editAnnouncement(
+                selectedAnnouncement.a_id,
+                newAnnouncementContext,
+                newAnnounceDate
+            );
             // Refresh announcements after editing
             const data = await getAnnouncements(courseId);
             setAnnouncements(data);
@@ -139,24 +158,47 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {canEdit && (
-                    <button className={styles["create-announcement-button"]} onClick={openCreateModal}>
+                    <button
+                        className={styles["create-announcement-button"]}
+                        onClick={openCreateModal}
+                    >
                         + 新創公告
                     </button>
                 )}
             </div>
-    
+
             <div className={styles["announcements-list"]}>
                 {filteredAnnouncements.map((announcement) => (
-                    <div key={announcement.a_id} className={styles["announcement-item"]}>
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                    <div
+                        key={announcement.a_id}
+                        className={styles["announcement-item"]}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%",
+                            }}
+                        >
                             <div>
-                                <p className={styles["announcement-content"]}>{announcement.context}</p>
+                                <p className={styles["announcement-content"]}>
+                                    {announcement.context}
+                                </p>
                                 <p className={styles["announcement-posted"]}>
-                                    Posted on: {new Date(announcement.create_date).toLocaleString()}
+                                    Posted on:{" "}
+                                    {new Date(
+                                        announcement.create_date
+                                    ).toLocaleString()}
                                 </p>
                             </div>
                             {canEdit && (
-                                <button className={styles["edit-announcement-button"]} onClick={() => openEditModal(announcement)}>
+                                <button
+                                    className={
+                                        styles["edit-announcement-button"]
+                                    }
+                                    onClick={() => openEditModal(announcement)}
+                                >
                                     編輯公告
                                 </button>
                             )}
@@ -164,11 +206,14 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                     </div>
                 ))}
             </div>
-    
+
             {isCreateModalOpen && (
                 <div className={styles["modal"]}>
                     <div className={styles["modal-content"]}>
-                        <span className={styles["close"]} onClick={closeCreateModal}>
+                        <span
+                            className={styles["close"]}
+                            onClick={closeCreateModal}
+                        >
                             &times;
                         </span>
                         <h2>Create New Announcement</h2>
@@ -177,28 +222,37 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             <input
                                 type="datetime-local"
                                 value={newAnnounceDate}
-                                onChange={(e) => setNewAnnounceDate(e.target.value)}
+                                onChange={(e) =>
+                                    setNewAnnounceDate(e.target.value)
+                                }
                             />
                         </label>
                         <label>
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
-                                onChange={(e) => setNewAnnouncementContext(e.target.value)}
+                                onChange={(e) =>
+                                    setNewAnnouncementContext(e.target.value)
+                                }
                             />
                         </label>
                         <div className={styles["modal-actions"]}>
-                            <button onClick={handleCreateAnnouncement}>Create</button>
+                            <button onClick={handleCreateAnnouncement}>
+                                Create
+                            </button>
                             <button onClick={closeCreateModal}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
-    
+
             {isEditModalOpen && (
                 <div className={styles["modal"]}>
                     <div className={styles["modal-content"]}>
-                        <span className={styles["close"]} onClick={closeEditModal}>
+                        <span
+                            className={styles["close"]}
+                            onClick={closeEditModal}
+                        >
                             &times;
                         </span>
                         <h2>Edit Announcement</h2>
@@ -207,25 +261,31 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             <input
                                 type="datetime-local"
                                 value={newAnnounceDate}
-                                onChange={(e) => setNewAnnounceDate(e.target.value)}
+                                onChange={(e) =>
+                                    setNewAnnounceDate(e.target.value)
+                                }
                             />
                         </label>
                         <label>
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
-                                onChange={(e) => setNewAnnouncementContext(e.target.value)}
+                                onChange={(e) =>
+                                    setNewAnnouncementContext(e.target.value)
+                                }
                             />
                         </label>
                         <div className={styles["modal-actions"]}>
-                            <button onClick={handleEditAnnouncement}>Save</button>
+                            <button onClick={handleEditAnnouncement}>
+                                Save
+                            </button>
                             <button onClick={closeEditModal}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
         </div>
-    );    
+    );
 }
 
 export default AnnouncementsTab;

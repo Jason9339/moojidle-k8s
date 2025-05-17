@@ -57,7 +57,6 @@
     color: white;
 }
 
-
 .upload-modal label {
     font-weight: bold;
     margin-bottom: 4px;
@@ -96,5 +95,3 @@
 .button-group button:last-of-type {
     margin-right: 0;
 }
-
-

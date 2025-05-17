@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { UploadFile } from "@/services/file_api/FileApi";
 import styles from "./UploadModal.module.css";
 
-
 const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [file, setFile] = useState(null);
     const [type, setType] = useState("material");
@@ -84,18 +83,26 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             <h2>上傳檔案</h2>
             <div className={`${styles["input-group"]}`}>
                 <label htmlFor="type">選擇類型</label>
-                <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
+                <select
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                >
                     <option value="material">教材</option>
                     <option value="assignment">作業</option>
                 </select>
             </div>
 
             <div className={`${styles["input-group"]}`}>
-                <label htmlFor="name">{type === "assignment" ? "作業名稱" : "教材名稱"}</label>
+                <label htmlFor="name">
+                    {type === "assignment" ? "作業名稱" : "教材名稱"}
+                </label>
                 <input
                     id="name"
                     type="text"
-                    placeholder={type === "assignment" ? "作業名稱" : "教材名稱"}
+                    placeholder={
+                        type === "assignment" ? "作業名稱" : "教材名稱"
+                    }
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
