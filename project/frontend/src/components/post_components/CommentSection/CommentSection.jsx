@@ -1,16 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./CommentSection.module.css";
 import { FiMoreVertical } from "react-icons/fi";
-import { DeleteCommend } from "@/services/discussion_api/PostApi";
 
 function CommentSection({
     post,
     newComment,
     setNewComment,
     handleCommentSubmit,
-    reflash,
-    currentUserId
+    currentUserId,
+    handleCommentDelete,
+    activeCommentId,
+    setActiveCommentId,
 }) {
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const commentsPerPage = 3;
+
+    // Get the total number of pages
+    const totalPages = Math.ceil((post.comments?.length || 0) / commentsPerPage);
+
+    // Calculate the starting and ending index for the current page's comments
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    const commentsToDisplay = post.comments?.slice(startIndex, endIndex).reverse() || [];
+
     return (
         <div className={styles.sectionContainer}>
             <h3 className={styles.commentTitle}>留言：</h3>
@@ -28,54 +41,89 @@ function CommentSection({
                 </button>
             </div>
 
+            {post.comments && post.comments.length > 3 && (
+                <div className={styles.pagination}>
+                    <button
+                        className={styles.pageButton}
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                    >
+                        上一頁
+                    </button>
+                    <span className={styles.pageInfo}>
+                        第 {currentPage} 頁 / 共 {totalPages} 頁
+                    </span>
+                    <button
+                        className={styles.pageButton}
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                    >
+                        下一頁
+                    </button>
+                </div>
+            )}
+
+
             {!post.comments || post.comments.length === 0 ? (
                 <p>目前尚無留言。</p>
             ) : (
-                post.comments.slice().reverse().map((comment) => (
+                commentsToDisplay.map((comment) => (
                     <CommentCard
-                        key={currentUserId + comment.comment_date}
+                        key={comment.comment_date + currentUserId}
                         comment={comment}
-                        currentPostId={post.post_id}
                         currentUserId={currentUserId}
-                        reflash={reflash}
+                        handleCommentDelete={handleCommentDelete}
+                        isMenuOpen={activeCommentId === comment.comment_date}
+                        onToggleMenu={() =>
+                            setActiveCommentId(
+                                activeCommentId === comment.comment_date ? null : comment.comment_date
+                            )
+                        }
                     />
                 ))
             )}
+
         </div>
     );
 }
 
-function CommentCard({ comment, currentPostId, currentUserId, reflash }) {
-    const [showMenu, setShowMenu] = useState(false);
+function CommentCard({
+    comment,
+    currentUserId,
+    handleCommentDelete,
+    isMenuOpen,
+    onToggleMenu,
+}) {
+    const [expanded, setExpanded] = useState(false);
+    const textareaRef = useRef(null);
 
-    const handleCommentDelete = async () => {
-        const commenData = {
-            post_id: currentPostId,
-            user_id: currentUserId,
-            comment_date: comment.comment_date,
-            description: comment.description
-        };
-        try {
-            await DeleteCommend(commenData);
-            alert("留言刪除成功");
-        } catch (err) {
-            alert("留言刪除失敗：" + (err.message || "未知錯誤"));
+    useEffect(() => {
+        if (textareaRef.current) {
+            if (expanded) {
+                textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+            } else {
+                textareaRef.current.style.height = "50px";
+            }
         }
-        setShowMenu(false);
-        reflash();
-    };
+    }, [expanded]);
+
+    const shouldTruncate = comment.description.split("\n").length > 3 ||
+        comment.description.length > 100;
 
     return (
         <div className={styles.commentCardWrapper}>
             <div className={styles.commentCardContainer}>
                 <div className={styles.moreOptionsWrapper}>
-                    <button className={styles.moreButton} onClick={() => setShowMenu(!showMenu)}>
+                    <button className={styles.moreButton} onClick={onToggleMenu}>
                         <FiMoreVertical size={20} />
                     </button>
-                    {showMenu && (
+                    {isMenuOpen && (
                         <ul className={styles.dropdownMenu}>
                             {currentUserId === comment.comment_by_user_id && (
-                                <li className={styles.dropdownItem} onClick={handleCommentDelete}>
+                                <li
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleCommentDelete(comment)}
+                                >
                                     刪除留言
                                 </li>
                             )}
@@ -88,7 +136,22 @@ function CommentCard({ comment, currentPostId, currentUserId, reflash }) {
                     使用者 {comment.comment_by_user_name}（{comment.comment_user_custom_tag}）於{" "}
                     {new Date(comment.comment_date).toLocaleString()}：
                 </p>
-                <p className={styles.commentText}>{comment.description}</p>
+
+                <textarea
+                    ref={textareaRef}
+                    className={styles.commentText}
+                    value={comment.description}
+                    readOnly
+                />
+
+                {shouldTruncate && (
+                    <button
+                        className={styles.expandButton}
+                        onClick={() => setExpanded((prev) => !prev)}
+                    >
+                        {expanded ? "收起" : "展開更多"}
+                    </button>
+                )}
             </div>
         </div>
     );

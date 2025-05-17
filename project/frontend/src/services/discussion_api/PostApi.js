@@ -54,7 +54,7 @@ async function GetOverviewPostByBId(inBoardId) {
 }
 
 async function CreatePost(postData) {
-    try {
+        try {
         const response = await api.post("/post/create-post", postData);
 
         return response.data;
