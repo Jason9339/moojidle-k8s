@@ -41,8 +41,4 @@ router.get("/teaching", GetTeachingCourses);
 router.get("/:courseId", GetCourseDetails);
 router.get("/:courseId/inviteCode", ReadInviteCode);
 
-// 掛載 assignment/material 子路由
-router.use('/', assignmentRouter);
-router.use('/', materialRouter);
-
 export default router;

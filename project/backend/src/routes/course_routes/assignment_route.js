@@ -3,10 +3,11 @@ import { GetToDoAssignments, GetToDoAssignmentsByUserId, GetCourseAssignments } 
 
 const router = express.Router();
 
-// 取得待辦作業列表
+// GET /assignment/todo
 router.get('/todo', GetToDoAssignmentsByUserId);
 
-// 取得特定課程的作業
-router.get('/:courseId/assignments', GetCourseAssignments);
+// GET /assignment/course/:courseId
+router.get('/course/:courseId', GetCourseAssignments);
+
 
 export default router;
