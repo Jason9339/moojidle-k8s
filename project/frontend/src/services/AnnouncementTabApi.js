@@ -13,5 +13,5 @@ export const editAnnouncement = async (announcementId, context, announceDate) =>
 };
 
 export const canUserEditAnnouncements = async (userId, courseId) => {
-  return (await axios.get(`/announcement/can_edit/${userId}/${courseId}`)).data;
+  return (await axios.get(`/course/member/can_edit/${userId}/${courseId}`)).data;
 };

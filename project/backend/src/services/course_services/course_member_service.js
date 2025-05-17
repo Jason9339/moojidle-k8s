@@ -202,6 +202,22 @@ async function AddTeachIn(userId, courseId) {
     }
 }
 
+async function CanUserEditAnnouncements(courseId, userId) {
+    try {
+        const parsedCourseId = parseInt(courseId);
+        const parsedUserId = parseInt(userId);
+
+        // Check if the user is in teach_in or study_in collections
+        const isTeacher = await mongoose.connection.db.collection('teach_in').findOne({ user_id: parsedUserId, course_id: parsedCourseId });
+        const isAssistant = await mongoose.connection.db.collection('assist_in').findOne({ user_id: parsedUserId, course_id: parsedCourseId });
+
+        return !!(isTeacher || isAssistant); // 只有老師或助教才能發公告
+    } catch (error) {
+        console.error("Failed to check user enrollment:", error);
+        throw new Error("Failed to check user enrollment");
+    }
+}
+
 export {
     GetStudyIn,
     GetAssistIn,
@@ -209,6 +225,7 @@ export {
     SwitchStudyAssist,
     AddStudent,
     FindInviteCodeId,
-    AddTeachIn
+    AddTeachIn,
+    CanUserEditAnnouncements
 }
 

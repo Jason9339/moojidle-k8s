@@ -4,7 +4,8 @@ import {
     GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent, 
-    FindInviteCodeId
+    FindInviteCodeId,
+    CanUserEditAnnouncements as CanUserEditAnnouncementsService
 } from '#src/services/course_services/course_member_service.js';
 
 
@@ -60,15 +61,22 @@ async function InviteStudent(req, res) {
     }
 }
 
-
-
-
-
+const CanUserEditAnnouncements = async (req, res) => {
+    const { courseId, userId } = req.params;
+    try {
+        const enrolled = await CanUserEditAnnouncementsService(courseId, userId);
+        res.status(200).json(enrolled);
+    } catch (error) {
+        console.error("Failed to check user enrollment:", error);
+        res.status(500).json({ message: "Failed to check user enrollment" });
+    }
+};
 
 export {
     GetCourseMembers,
     SwitchCharacter,
     InviteStudent,
+    CanUserEditAnnouncements
 }
 
 

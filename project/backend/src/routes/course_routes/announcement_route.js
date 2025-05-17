@@ -4,8 +4,7 @@ const router = express.Router();
 import {
     GetCourseAnnouncements,
     CreateAnnouncement,
-    EditAnnouncement,
-    CanUserEditAnnouncements
+    EditAnnouncement
 } from '#src/controllers/course_controllers/announcement_controller.js';
 
 // ----- Announcement Routes -----
@@ -19,9 +18,6 @@ router.post("/course/:courseId", CreateAnnouncement);
 
 // POST /announcement/:announcementId/edit
 router.post("/:announcementId/edit", EditAnnouncement);
-
-// GET /announcement/can_edit/:userId/:courseId
-router.get("/can_edit/:userId/:courseId", CanUserEditAnnouncements);
 
 
 export default router; 

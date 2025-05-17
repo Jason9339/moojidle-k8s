@@ -2,7 +2,6 @@ import {
     GetAnnouncementsByCourseId,
     CreateAnnouncement as CreateAnnouncementService,
     EditAnnouncement as EditAnnouncementService,
-    CanUserEditAnnouncements as CanUserEditAnnouncementsService
 } from '#src/services/course_services/announcement_service.js';
 
 // 取得特定課程的公告
@@ -41,20 +40,8 @@ const EditAnnouncementController = async (req, res) => {
     }
 };
 
-const CanUserEditAnnouncementsController = async (req, res) => {
-    const { courseId, userId } = req.params;
-    try {
-        const enrolled = await CanUserEditAnnouncementsService(courseId, userId);
-        res.status(200).json(enrolled);
-    } catch (error) {
-        console.error("Failed to check user enrollment:", error);
-        res.status(500).json({ message: "Failed to check user enrollment" });
-    }
-};
-
 export {
     GetCourseAnnouncements,
     CreateAnnouncementController as CreateAnnouncement,
-    EditAnnouncementController as EditAnnouncement,
-    CanUserEditAnnouncementsController as CanUserEditAnnouncements
+    EditAnnouncementController as EditAnnouncement
 }; 
