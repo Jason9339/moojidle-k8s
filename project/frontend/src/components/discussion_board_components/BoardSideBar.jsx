@@ -1,12 +1,13 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 
+
 const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
 
-const BoardSideBar = memo(({ itemData }) => {
+const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     const { state } = useLocation();
 
     // Whether a MenuItem is currently selectewd
@@ -25,15 +26,15 @@ const BoardSideBar = memo(({ itemData }) => {
     const userId = JSON.parse(localStorage.getItem("user")).user_id;
 
     // check if user is teacher or assistant
-    function canEdit (index){
-        for(let i = 0; i < itemData[index].teachers.length; i ++){
-            if(userId == itemData[index].teachers[i].user_id){  // is a teacher
+    function canEdit(index) {
+        for (let i = 0; i < itemData[index].teachers.length; i++) {
+            if (userId == itemData[index].teachers[i].user_id) {  // is a teacher
                 return true;
             }
         }
 
-        for(let i = 0; i < itemData[index].assistants.length; i ++){
-            if(userId == itemData[index].assistants[i].user_id){  // is an assistant
+        for (let i = 0; i < itemData[index].assistants.length; i++) {
+            if (userId == itemData[index].assistants[i].user_id) {  // is an assistant
                 return true;
             }
         }
@@ -42,10 +43,9 @@ const BoardSideBar = memo(({ itemData }) => {
     }
 
     return (
-        <StyledSidebar width="200px">
+        <StyledSidebar width="220px">
             <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
             >
-
                 {
                     itemData.map(({ course_id, course_name, boards }, index) => (
 
@@ -64,15 +64,7 @@ const BoardSideBar = memo(({ itemData }) => {
                                         suffix={
                                             canEdit(index) ? (
                                                 <button
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        navigate("/discussion/delete/", {
-                                                            state: {
-                                                                boardId: board_id,
-                                                                boardName: board_name,
-                                                            }
-                                                        });
-                                                    }}
+                                                    onClick={() => handleEditBoard({ course_id: course_id, course_name: course_name }, { board_id: board_id, board_name: board_name })}
                                                     className="p-1 hover:text-[#5961d4] cursor-pointer"
                                                 >
                                                     <FaEdit className="w-4 h-4" />
@@ -84,29 +76,29 @@ const BoardSideBar = memo(({ itemData }) => {
                                     </MenuItem>))
 
                             }
-                            <MenuItem className="addBoard" onClick={
-                                () => {
-                                    navigate("/discussion/create", {
-                                        state : {
-                                            courseId: course_id
-                                        }
-                                    })
-                                }
-                            }>
-                                新增討論版
-                            </MenuItem>
+
+
+                            {
+                                canEdit(index) ? (
+                                    <MenuItem
+                                        className="addBoard"
+                                        onClick={() => handleAddBoard({ course_id: course_id, course_name: course_name })}
+                                    >
+                                        新增討論版
+                                    </MenuItem>
+
+                                ) : null
+                            }
+
 
                         </SubMenu>
 
-                    ))
+                    ))}
 
-
-
-                }
             </Menu >
         </StyledSidebar >
     );
-});
+};
 export default BoardSideBar;
 
 const StyledSidebar = styled(Sidebar)`
@@ -144,3 +136,4 @@ const StyledSidebar = styled(Sidebar)`
 
     }
 `;
+

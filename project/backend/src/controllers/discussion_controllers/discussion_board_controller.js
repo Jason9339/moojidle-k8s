@@ -68,6 +68,7 @@ async function GetAllCourseDiscussionBoard(req, res) {
 
 async function AddDiscussionBoard(req, res) {
     const courseId = parseInt(req.body.course_id, 10);
+    
     const courseName = req.body.name;
 
     if (isNaN(courseId)) {
