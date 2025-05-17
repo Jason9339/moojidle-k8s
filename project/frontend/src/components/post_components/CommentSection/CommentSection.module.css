@@ -133,3 +133,34 @@
 .expandButton:hover {
     text-decoration: underline;
 }
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.pageButton {
+    background-color: #2e3e6e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pageButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pageButton:hover {
+    background-color: #1f2a50;
+}
+
+.pageInfo {
+    font-size: 14px;
+    color: #888;
+}

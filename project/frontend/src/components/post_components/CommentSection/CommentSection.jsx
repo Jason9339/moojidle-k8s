@@ -12,6 +12,18 @@ function CommentSection({
     activeCommentId,
     setActiveCommentId,
 }) {
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const commentsPerPage = 3;
+
+    // Get the total number of pages
+    const totalPages = Math.ceil((post.comments?.length || 0) / commentsPerPage);
+
+    // Calculate the starting and ending index for the current page's comments
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    const commentsToDisplay = post.comments?.slice(startIndex, endIndex).reverse() || [];
+
     return (
         <div className={styles.sectionContainer}>
             <h3 className={styles.commentTitle}>留言：</h3>
@@ -32,24 +44,42 @@ function CommentSection({
             {!post.comments || post.comments.length === 0 ? (
                 <p>目前尚無留言。</p>
             ) : (
-                post.comments
-                    .slice()
-                    .reverse()
-                    .map((comment) => (
-                        <CommentCard
-                            key={comment.comment_date + currentUserId}
-                            comment={comment}
-                            currentUserId={currentUserId}
-                            handleCommentDelete={handleCommentDelete}
-                            isMenuOpen={activeCommentId === comment.comment_date}
-                            onToggleMenu={() =>
-                                setActiveCommentId(
-                                    activeCommentId === comment.comment_date ? null : comment.comment_date
-                                )
-                            }
-                        />
-                    ))
+                commentsToDisplay.map((comment) => (
+                    <CommentCard
+                        key={comment.comment_date + currentUserId}
+                        comment={comment}
+                        currentUserId={currentUserId}
+                        handleCommentDelete={handleCommentDelete}
+                        isMenuOpen={activeCommentId === comment.comment_date}
+                        onToggleMenu={() =>
+                            setActiveCommentId(
+                                activeCommentId === comment.comment_date ? null : comment.comment_date
+                            )
+                        }
+                    />
+                ))
             )}
+
+            {/* Pagination Controls */}
+            <div className={styles.pagination}>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                >
+                    上一頁
+                </button>
+                <span className={styles.pageInfo}>
+                    第 {currentPage} 頁 / 共 {totalPages} 頁
+                </span>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                >
+                    下一頁
+                </button>
+            </div>
         </div>
     );
 }
@@ -123,6 +153,5 @@ function CommentCard({
         </div>
     );
 }
-
 
 export default CommentSection;

@@ -9,6 +9,7 @@
   flex-direction: column;
   gap: 16px;
   overflow: visible;
+  min-height: 700px;
 }
 
 .moreOptionsWrapper {
@@ -116,6 +117,7 @@
   color: #333;
   font-family: inherit;
   outline: none;
+  min-height: 100px; /* 确保 description 至少有 100px 的高度 */
 }
 
 .headerRow {
