@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import CourseCard from "@/components/dashboard/CourseCard/CourseCard";
 import ToDoItem from "@/components/dashboard/ToDoItem/ToDoItem";
@@ -9,14 +8,12 @@ import JoinCourseButton from "@/components/dashboard/JoinCourseButton/JoinCourse
 import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseModal";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
+
 import {
     getCourses,
     getTodoList,
     getComingUpList,
 } from "@/services/dashboard_api/DashboardApi";
-
-// 模擬目前登入的 user_id
-// const currentUserId = 1;
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -39,7 +36,6 @@ function Dashboard() {
                 todoList,
                 comingUpList,
             });
-            console.log(courses);
         } catch (err) {
             console.error("Failed to fetch dashboard data:", err);
         }
@@ -52,6 +48,7 @@ function Dashboard() {
     const handleAddCourse = async () => {
         await fetchAll();
     };
+
     const handleJoinCourse = async () => {
         await fetchAll();
     };
@@ -69,15 +66,15 @@ function Dashboard() {
     const { courses, todoList, comingUpList } = dashboardData;
 
     return (
-        <div className={`${styles["app-layout"]}`}>
+        <div className={styles["app-layout"]}>
             <LeftBar />
-            <div className={`${styles["dashboard-container"]}`}>
-                <div className={`${styles["dashboard-left"]}`}>
-                    <div className={`${styles["dashboard-heading-row"]}`}>
-                        <h2 className={`${styles["dashboard-heading"]}`}>
+            <div className={styles["dashboard-container"]}>
+                <div className={styles["dashboard-left"]}>
+                    <div className={styles["dashboard-heading-row"]}>
+                        <h2 className={styles["dashboard-heading"]}>
                             Dashboard
                         </h2>
-                        <div className={`${styles["dashboard-button-group"]}`}>
+                        <div className={styles["dashboard-button-group"]}>
                             <AddCourseButton
                                 onClick={() => setShowAddModal(true)}
                             />
@@ -86,9 +83,8 @@ function Dashboard() {
                             />
                         </div>
                     </div>
-                    <hr className={`${styles["dashboard-heading-divider"]}`} />
-
-                    <div className={`${styles["course-grid"]}`}>
+                    <hr className={styles["dashboard-heading-divider"]} />
+                    <div className={styles["course-grid"]}>
                         {courses.map((course, index) => (
                             <CourseCard
                                 key={index}
@@ -99,11 +95,11 @@ function Dashboard() {
                     </div>
                 </div>
 
-                <div className={`${styles["dashboard-right"]}`}>
-                    <h3>To Do</h3>
+                <div className={styles["dashboard-right"]}>
+                    <h3 className={styles["section-title"]}>To Do</h3>
                     <ToDoItem todoList={todoList} />
                     <hr />
-                    <h3>Coming Up</h3>
+                    <h3 className={styles["section-title"]}>Coming Up</h3>
                     <ComingUpItem comingUpList={comingUpList} />
                 </div>
             </div>

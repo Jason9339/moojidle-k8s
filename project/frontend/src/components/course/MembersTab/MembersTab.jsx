@@ -99,7 +99,7 @@ function MembersTab({ courseId, userId }) {
         showSwitch = false
     ) => (
         <div className={styles.memberSection}>
-            <h4>
+            <h4 className={styles.memberTitle}>
                 {title} ({list?.length || 0})
             </h4>
             {list?.length > 0 ? (
@@ -182,7 +182,7 @@ function MembersTab({ courseId, userId }) {
 
     return (
         <div className={styles.membersContainer}>
-            <h3>成員管理</h3>
+            <h3 className={styles.sectionTitle}>成員管理</h3>
             <div className={styles.inviteCodeBox}>
                 <strong>課程邀請碼：</strong> <code>{code}</code>
             </div>
