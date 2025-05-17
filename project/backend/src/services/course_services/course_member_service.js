@@ -194,6 +194,20 @@ async function FindInviteCodeId(code) {
     return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
 }
 
+async function AddTeachIn(userId, courseId) {
+    try {
+        const newTeachInDocument = {
+            user_id: userId,
+            course_id: courseId,
+        };
+        const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
+        return result.insertedId;
+    } catch (err) {
+        console.error("Error adding teach_in entry:", err);
+        throw new Error(`Failed to add teach_in entry: ${err.message}`);
+    }
+}
+
 export {
     GetStudyIn,
     GetAssistIn,
@@ -202,5 +216,6 @@ export {
     AddStudent,
     InviteStudentByCode,
     FindInviteCodeId,
+    AddTeachIn
 }
 
