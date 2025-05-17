@@ -41,6 +41,29 @@ function CommentSection({
                 </button>
             </div>
 
+            {post.comments && post.comments.length > 3 && (
+                <div className={styles.pagination}>
+                    <button
+                        className={styles.pageButton}
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                    >
+                        上一頁
+                    </button>
+                    <span className={styles.pageInfo}>
+                        第 {currentPage} 頁 / 共 {totalPages} 頁
+                    </span>
+                    <button
+                        className={styles.pageButton}
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                    >
+                        下一頁
+                    </button>
+                </div>
+            )}
+
+
             {!post.comments || post.comments.length === 0 ? (
                 <p>目前尚無留言。</p>
             ) : (
@@ -60,26 +83,6 @@ function CommentSection({
                 ))
             )}
 
-            {/* Pagination Controls */}
-            <div className={styles.pagination}>
-                <button
-                    className={styles.pageButton}
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                >
-                    上一頁
-                </button>
-                <span className={styles.pageInfo}>
-                    第 {currentPage} 頁 / 共 {totalPages} 頁
-                </span>
-                <button
-                    className={styles.pageButton}
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                >
-                    下一頁
-                </button>
-            </div>
         </div>
     );
 }
