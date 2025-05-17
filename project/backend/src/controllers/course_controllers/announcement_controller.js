@@ -2,7 +2,6 @@ import {
     GetAnnouncementsByCourseId,
     CreateAnnouncement as CreateAnnouncementService,
     EditAnnouncement as EditAnnouncementService,
-    CanUserEditAnnouncements as CanUserEditAnnouncementsService
 } from '#src/services/course_services/announcement_service.js';
 
 // 取得特定課程的公告
@@ -55,6 +54,5 @@ const CanUserEditAnnouncementsController = async (req, res) => {
 export {
     GetCourseAnnouncements,
     CreateAnnouncementController as CreateAnnouncement,
-    EditAnnouncementController as EditAnnouncement,
-    CanUserEditAnnouncementsController as CanUserEditAnnouncements
+    EditAnnouncementController as EditAnnouncement
 }; 
