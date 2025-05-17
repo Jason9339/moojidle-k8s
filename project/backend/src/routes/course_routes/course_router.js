@@ -17,18 +17,15 @@ import {
   getCourseAnnouncements, 
   createAnnouncement,
   editAnnouncement,
-  getCourseFiles, 
-  getCourseAssignments, 
   getCourseSyllabus, 
   getCourseLink,
 
   // helper functions
-  canUserEditAnnouncements,
-  
-  // 教材操作控制器
-  updateCourseMaterials,
-  deleteCourseMaterial
+  canUserEditAnnouncements
 } from '#src/controllers/course_controllers/course_controller.js';
+
+import assignmentRouter from './assignment_route.js';
+import materialRouter from './material_route.js';
 
 // 路由基礎地址: http://localhost:PORT/course
 
@@ -53,17 +50,18 @@ router.get("/:courseId", GetCourseDetails);
 router.get("/:courseId/announcements/read", getCourseAnnouncements);
 router.post("/:courseId/announcements/create", createAnnouncement);
 router.post("/:announcementId/announcements/edit", editAnnouncement);
-router.get("/:courseId/files", getCourseFiles);
-router.get("/:courseId/materials", getCourseFiles); // files 的別名
-
-// ----- 教材管理路由 -----
-router.post("/:courseId/materials", updateCourseMaterials); // 更新教材
-router.delete("/:courseId/materials/:materialId", deleteCourseMaterial); // 刪除教材
-
-router.get("/:courseId/assignments", getCourseAssignments);
+// router.get("/:courseId/files", getCourseFiles);
+// router.get("/:courseId/materials", getCourseFiles); // files 的別名
+// router.post("/:courseId/materials", updateCourseMaterials); // 更新教材
+// router.delete("/:courseId/materials/:materialId", deleteCourseMaterial); // 刪除教材
+// router.get("/:courseId/assignments", getCourseAssignments);
 router.get("/:courseId/syllabus", getCourseSyllabus);
 router.get("/:courseId/link", getCourseLink);
 router.get("/:courseId/inviteCode", ReadInviteCode);
+
+// 掛載 assignment/material 子路由
+router.use('/', assignmentRouter);
+router.use('/', materialRouter);
 
 // helper functions
 router.get("/can_edit_announcements/:userId/:courseId", canUserEditAnnouncements);

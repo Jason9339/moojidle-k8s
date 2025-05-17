@@ -34,7 +34,6 @@ import fileRouter from "#src/routes/file_routes/file_route.js";
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
 app.use("/course", courseRouter);
-app.use("/assignments", assignmentRoute);
 app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
 
