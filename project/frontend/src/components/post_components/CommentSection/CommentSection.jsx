@@ -16,19 +16,21 @@ function CommentSection({
     const [currentPage, setCurrentPage] = useState(1);
     const commentsPerPage = 3;
 
-    // Get the total number of pages
-    const totalPages = Math.ceil((post.comments?.length || 0) / commentsPerPage);
-
-    // Calculate the starting and ending index for the current page's comments
-    const startIndex = (currentPage - 1) * commentsPerPage;
-    const endIndex = startIndex + commentsPerPage;
-    const commentsToDisplay = post.comments?.slice(startIndex, endIndex).reverse() || [];
-
+    // Reset page to 1 if comments length drops below pagination threshold
     useEffect(() => {
         if (!(post.comments && post.comments.length > 3)) {
             setCurrentPage(1);
         }
     }, [post.comments]);
+
+    // Get the total number of pages
+    const totalPages = Math.ceil((post.comments?.length || 0) / commentsPerPage);
+
+    // Reverse and paginate comments (latest first)
+    const orderedComments = [...(post.comments || [])].reverse();
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    const commentsToDisplay = orderedComments.slice(startIndex, endIndex);
 
     return (
         <div className={styles.sectionContainer}>
@@ -67,9 +69,7 @@ function CommentSection({
                         下一頁
                     </button>
                 </div>
-            )
-            }
-
+            )}
 
             {!post.comments || post.comments.length === 0 ? (
                 <p>目前尚無留言。</p>
@@ -89,7 +89,6 @@ function CommentSection({
                     />
                 ))
             )}
-
         </div>
     );
 }
@@ -114,8 +113,8 @@ function CommentCard({
         }
     }, [expanded]);
 
-    const shouldTruncate = comment.description.split("\n").length > 3 ||
-        comment.description.length > 100;
+    const shouldTruncate =
+        comment.description.split("\n").length > 3 || comment.description.length > 100;
 
     return (
         <div className={styles.commentCardWrapper}>
