@@ -6,7 +6,7 @@
     align-items: start;
 
     min-height: 50vh;
-    min-width: calc(85vw - 400px);
+    width: 90%;
     background-color: rgba(221, 221, 221, 0.452);
     border-radius: 20px;
     margin-top: 1.5vh;
@@ -107,9 +107,9 @@
     font-size: 20px;
     text-align: start;
     overflow-wrap: break-word;
+    word-break: break-word; 
     resize: none;
-
-    width: 80%;
+    width: 98%;
 }
 
 .post-date {
