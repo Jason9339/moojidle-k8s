@@ -19,19 +19,8 @@
 }
 
 .padder-each-block {
-    padding-left: 8vw;
+    padding-left: 2vw;
     padding-top: 1.5vh;
-    padding-bottom: 1.5vh;
-
-    width: 100%;
-}
-
-.padder-content-block {
-    display: flex;
-    justify-content: center;
-    
-    align-self: center;
-    padding-top: 5vh;
     padding-bottom: 1.5vh;
 
     width: 100%;
@@ -40,18 +29,48 @@
 .course-name {
     display: inline;
     font-size: 25px;
-    color: red;
+    color: gray;
 }
 
 .board-name {
     display: inline;
     font-size: 25px;
-    color: blue;
+    color: gray;
+}
+
+.name-tag-pfp-flex-box {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    padding-left: 2vw;
+    padding-top: 1.5vh;
+    padding-bottom: 1.5vh;
+
+    width: 100%;
+}
+
+.user-pfp {
+    width: 80px;
+    height: 80px;
+
+    border-radius: 40px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.name-tag-flex-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
 }
 
 .user-name {
     display: inline;
     font-size: 25px;
+
+    padding-left: 15px;
 }
 
 .user-tag {
@@ -62,15 +81,31 @@
     padding-left: 15px;
 }
 
+.seperate-line {
+    align-self: center;
+    height: 1px;
+    width: 95%;
+
+    color: gray;
+}
+
 .title {
     font-size: 40px;
     font-weight: bold;
 }
 
-.content {
+.padder-content-block {   
     align-self: center;
+    padding-top: 2vh;
+    padding-bottom: 1.5vh;
+    padding-left: 2vw;
+
+    width: 100%;
+}
+
+.content {
     font-size: 20px;
-    text-align: center;
+    text-align: start;
     overflow-wrap: break-word;
     resize: none;
 
@@ -79,18 +114,6 @@
 
 .post-date {
     position: absolute;
-    bottom: 1vh;
-    right: 1vw;
-}
-
-.user-pfp {
-    position: absolute;
     top: 1vh;
-    left: 1vw;
-    width: 80px;
-    height: 80px;
-
-    border-radius: 40px;
-    border-style: solid;
-    border-width: 1px;
+    right: 1vw;
 }

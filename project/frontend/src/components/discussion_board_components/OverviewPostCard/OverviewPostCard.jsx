@@ -23,20 +23,31 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
         <>
             <div className={styles["card"]} onClick={onClick}>
                 <div className={styles["padder-each-block"]}>
-                    <p className={styles["course-name"]}>{courseName} / </p> <p className={styles["board-name"]}>{boardName}</p>
+                    <p className={styles["course-name"]}>{courseName} &gt; </p> <p className={styles["board-name"]}>{boardName}</p>
                 </div>
-                <div className={styles["padder-each-block"]}>
-                    <p className={styles["user-name"]}>{userName}</p>
-                    {userTags && userTags.length > 0 ? (
-                        userTags.map((userTag, index) => (
-                            <p className={styles["user-tag"]} key={index}>
-                                {userTag.tag_name}
-                            </p>
-                        ))
-                    ) : (
-                        <p className={styles["user-tag"]}>No specific tags</p>
-                    )}
+                <div className={styles["name-tag-pfp-flex-box"]}>
+                    <img
+                        src={imgSrc}
+                        onError={() => setImgSrc("/user_pfp/default.png")}
+                        className={styles["user-pfp"]}
+                        alt="profile"
+                    />
+                    <div className={styles["name-tag-flex-box"]}>
+                        <p className={styles["user-name"]}>{userName}</p>
+                        <div>
+                            {userTags && userTags.length > 0 ? (
+                                userTags.map((userTag, index) => (
+                                    <p className={styles["user-tag"]} key={index}>
+                                        {userTag.tag_name}
+                                    </p>
+                                ))
+                            ) : (
+                                <p className={styles["user-tag"]}>No specific tags</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
+                <hr className={styles["seperate-line"]} />
                 <div className={styles["padder-each-block"]}>
                     <p className={styles["title"]}>
                         {title}
@@ -44,19 +55,13 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
                 </div>
                 <div className={styles["padder-content-block"]}>
                     <textarea className={styles["content"]} readOnly>
-                        {/* {content} */}
-                        {test}
+                        {content}
+                        {/* {test} */}
                     </textarea>
                 </div>
                 <div className={styles["post-date"]}>
                     {postDate.substring(0, 10)}
                 </div>
-                <img
-                    src={imgSrc}
-                    onError={() => setImgSrc("/user_pfp/default.png")}
-                    className={styles["user-pfp"]}
-                    alt="profile"
-                />
             </div>
         </>
     )
