@@ -3,6 +3,11 @@
     height: 100vh;
     overflow: hidden;
     width: 100vw;
+
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
 }
 .course-page {
     padding: 24px;
@@ -32,13 +37,6 @@
     padding: 10px 0;
 }
 
-.course-list-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 10px 0;
-}
-
 .course-list-header {
     font-weight: bold;
     border-bottom: 2px solid #ccc;
@@ -48,6 +46,7 @@
 .course-list {
     display: flex;
     flex-direction: column;
+    gap: 12px;
 }
 
 .course-item-title {

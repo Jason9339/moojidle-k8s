@@ -3,6 +3,11 @@
     height: 100vh;
     overflow: hidden;
     width: 100vw;
+
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
 }
 
 .course-detail-container {
