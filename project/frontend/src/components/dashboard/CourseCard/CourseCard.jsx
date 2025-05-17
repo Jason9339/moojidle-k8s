@@ -78,7 +78,10 @@ function CourseCard({
                     )}
                 </div>
             </div>
-            <div className={`${styles["course-title"]}`}>{title}</div>
+            <div className={`${styles["course-title"]}`}>
+                <div className={styles["course-title-text"]} title={title}>{title}</div>
+            </div>
+
             <div
                 className={`${styles["course-footer"]}`}
                 onClick={(e) => e.stopPropagation()}

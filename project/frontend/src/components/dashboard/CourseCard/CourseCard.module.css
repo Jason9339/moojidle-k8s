@@ -26,6 +26,22 @@
     margin-top: 10px;
     font-size: 16px;
     font-weight: bold;
+    height: 42px; /* 控制高度（兩行16px +行距） */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.course-title-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
 }
 
 .course-footer {
