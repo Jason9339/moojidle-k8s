@@ -226,37 +226,20 @@ function CourseTab({
                                               </div>
                                           ))
                                         : weekMaterials.map((m, idx) => (
-                                              <div
-                                                  key={idx}
-                                                  className={
-                                                      styles[
-                                                          "clickable-material"
-                                                      ]
-                                                  }
-                                                  onClick={() =>
-                                                      handleDownload(
-                                                          m.path_to_file,
-                                                          m.filename
-                                                      )
-                                                  }
-                                              >
-                                                  {m.name}
-                                                  {m.displayDate && (
-                                                      <small
-                                                          className={
-                                                              styles[
-                                                                  "material-date"
-                                                              ]
-                                                          }
-                                                      >
-                                                          (
-                                                          {new Date(
-                                                              m.displayDate
-                                                          ).toLocaleDateString()}
-                                                          )
-                                                      </small>
-                                                  )}
-                                              </div>
+                                            <div
+                                                key={idx}
+                                                className={styles["clickable-material"]}
+                                                onClick={() => handleDownload(m.path_to_file, m.filename)}
+                                            >
+                                                <span className={styles["material-name"]} title={m.name}>
+                                                    {m.name}
+                                                </span>
+                                                {m.displayDate && (
+                                                    <span className={styles["material-date"]}>
+                                                        ({new Date(m.displayDate).toLocaleDateString()})
+                                                    </span>
+                                                )}
+                                            </div>
                                           ))}
                                 </td>
                                 <td>
