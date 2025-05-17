@@ -116,7 +116,44 @@ async function GetToDoAssignmentsByUserId(user_id) {
     }
 }
 
+// 取得特定課程的作業
+async function GetAssignmentsByCourseId(courseId) {
+    try {
+        // 先獲取課程信息，以獲取開始日期
+        const { GetCourseById, CalculateWeek } = await import('./course_service.js');
+        const course = await GetCourseById(courseId);
+        if (!course) {
+            throw new Error('找不到課程');
+        }
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
+        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
+        const assignments = await mongoose.connection.db.collection('assignments')
+            .find({ in_course_id: parseInt(courseId) })
+            .sort({ end_date: 1 }) // 依截止日期升序排列
+            .toArray();
+        return Promise.all(assignments.map(async (assignment) => { // Ensure Promise.all is used
+            // 計算週次 - 使用 start_date 而非 create_date
+            const assignmentDate = assignment.start_date || assignment.create_date;
+            const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum); // calculateWeek is already imported
+            return {
+                id: assignment.ass_id,
+                name: assignment.ass_name,
+                description: assignment.description,
+                dueDate: assignment.end_date,
+                startDate: assignment.start_date,
+                attachments: assignment.attachments || [],
+                week: week
+            };
+        }));
+    } catch (error) {
+        console.error(`[getAssignmentsByCourseId] Error fetching assignments for course ID ${courseId}:`, error);
+        throw new Error(`Failed to retrieve course assignments: ${error.message}`);
+    }
+}
+
 export {
     GetToDoAssignments,
-    GetToDoAssignmentsByUserId
+    GetToDoAssignmentsByUserId,
+    GetAssignmentsByCourseId
 };

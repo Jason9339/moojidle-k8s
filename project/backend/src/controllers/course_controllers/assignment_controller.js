@@ -1,6 +1,7 @@
 import {
     GetToDoAssignments as GetToDoAssignmentsService,
-    GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService
+    GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
+    GetAssignmentsByCourseId
 } from '#src/services/course_services/assignment_service.js';
 
 // 取得待辦作業列表
@@ -26,7 +27,20 @@ async function GetToDoAssignmentsByUserId(req, res) {
     }
 }
 
+// 取得特定課程的作業
+async function GetCourseAssignments(req, res) {
+    try {
+        const { courseId } = req.params;
+        const formattedAssignments = await GetAssignmentsByCourseId(courseId);
+        res.json(formattedAssignments);
+    } catch (error) {
+        console.error("取得課程作業錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     GetToDoAssignments,
-    GetToDoAssignmentsByUserId
+    GetToDoAssignmentsByUserId,
+    GetCourseAssignments
 };

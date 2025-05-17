@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // 計算週次的輔助函數
-function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
+function CalculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
     const courseDate = new Date(courseStartDate);
     const itemDate2 = new Date(itemDate);
 
@@ -20,7 +20,7 @@ function calculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
 
 
 // 查詢課程基本資訊
-async function getCourseById(courseId) {
+async function GetCourseById(courseId) {
     try {
         return await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
     } catch (error) {
@@ -30,7 +30,7 @@ async function getCourseById(courseId) {
 }
 
 // 查詢課程公告
-async function getAnnouncementsByCourseId(courseId) {
+async function GetAnnouncementsByCourseId(courseId) {
     try {
         const now = new Date();
         return await mongoose.connection.db.collection('announcement')
@@ -47,7 +47,7 @@ async function getAnnouncementsByCourseId(courseId) {
 }
 
 // Helper to get next a_id from counter collection
-async function getNextSequenceValue(collectionName) {
+async function GetNextSequenceValue(collectionName) {
     // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
     const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
 
@@ -69,9 +69,9 @@ async function getNextSequenceValue(collectionName) {
 }
 
 // 建立課程公告
-async function createAnnouncement(courseId, context, user_id, announce_date) {
+async function CreateAnnouncement(courseId, context, user_id, announce_date) {
     try {
-        const a_id = await getNextSequenceValue('announcement');
+        const a_id = await GetNextSequenceValue('announcement');
         const now = new Date();
         const announcement = {
             a_id,
@@ -92,7 +92,7 @@ async function createAnnouncement(courseId, context, user_id, announce_date) {
 }
 
 // 編輯課程公告
-async function editAnnouncement(announcementId, context, announce_date) {
+async function EditAnnouncement(announcementId, context, announce_date) {
     try {
         const result = await mongoose.connection.db.collection('announcement').updateOne(
             { a_id: parseInt(announcementId) },
@@ -112,88 +112,8 @@ async function editAnnouncement(announcementId, context, announce_date) {
     }
 }
 
-// 查詢課程教材
-async function getMaterialsByCourseId(courseId) {
-    try {
-        // 先獲取課程信息，以獲取創建日期
-        const course = await getCourseById(courseId);
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        
-        // 使用 start_date 而不是 create_date
-        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
-        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
-        
-        const materials = await mongoose.connection.db.collection('materials')
-            .find({ in_course_id: parseInt(courseId) })
-            .sort({ display_date: -1, create_date: -1 }) // 先依 display_date 再依 create_date 降序排列
-            .toArray();
-        
-        return materials.map(material => {
-            // 如果材料已有週次信息，則使用該信息；否則，計算週次
-            // 使用 display_date 或備用 create_date
-            const materialDate = material.display_date || material.create_date;
-            const week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
-
-            return {
-                id: material.m_id,
-                name: material.m_name,
-                url: material.url || material.path_to_file, // 修正：優先用 url，否則用 path_to_file
-                description: material.description,
-                displayDate: material.display_date || material.create_date, // 優先使用 display_date
-                week: week,
-                path_to_file: material.path_to_file,
-                filename: material.filename
-            };
-        });
-    } catch (error) {
-        console.error(`[getMaterialsByCourseId] Error fetching materials for course ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course materials: ${error.message}`);
-    }
-}
-
-// 查詢課程作業
-async function getAssignmentsByCourseId(courseId) {
-    try {
-        // 先獲取課程信息，以獲取開始日期
-        const course = await getCourseById(courseId);
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        
-        // 使用 start_date 而非 create_date
-        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
-        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
-        
-        const assignments = await mongoose.connection.db.collection('assignments')
-            .find({ in_course_id: parseInt(courseId) })
-            .sort({ end_date: 1 }) // 依截止日期升序排列
-            .toArray();
-        
-        return assignments.map(assignment => {
-            // 計算週次 - 使用 start_date 而非 create_date
-            const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = calculateWeek(courseStartDate, assignmentDate, courseWeekNum);
-          
-            return {
-                id: assignment.ass_id,
-                name: assignment.ass_name,
-                description: assignment.description,
-                dueDate: assignment.end_date,
-                startDate: assignment.start_date,
-                attachments: assignment.attachments || [],
-                week: week
-            };
-        });
-    } catch (error) {
-        console.error(`[getAssignmentsByCourseId] Error fetching assignments for course ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course assignments: ${error.message}`);
-    }
-}
-
 // 獲取所有課程
-async function getAllCourses() {
+async function GetAllCourses() {
     try {
         return await mongoose.connection.db.collection('course')
             .find({})
@@ -206,7 +126,7 @@ async function getAllCourses() {
 }
 
 // 獲取課程大綱
-async function getCourseSyllabus(courseId) {
+async function GetCourseSyllabus(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -223,7 +143,7 @@ async function getCourseSyllabus(courseId) {
 }
 
 // 獲取課程連結
-async function getCourseLink(courseId) {
+async function GetCourseLink(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -240,7 +160,7 @@ async function getCourseLink(courseId) {
 }
 
 // 獲取課程詳細資訊
-async function getCourseDetails(courseId) {
+async function GetCourseDetails(courseId) {
     try {
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
@@ -270,7 +190,7 @@ async function getCourseDetails(courseId) {
 
 
 // 獲取用戶教授的課程
-async function getTeachingCourses(userId) {
+async function GetTeachingCourses(userId) {
     try {
         if (!userId) {
             throw new Error('缺少用戶ID參數');
@@ -308,7 +228,7 @@ async function getTeachingCourses(userId) {
     }
 }
 
-async function canUserEditAnnouncements(courseId, userId) {
+async function CanUserEditAnnouncements(courseId, userId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const parsedUserId = parseInt(userId);
@@ -324,144 +244,16 @@ async function canUserEditAnnouncements(courseId, userId) {
     }
 }
 
-// 更新課程教材
-async function updateMaterialsService(courseId, materials) {
-    try {
-        const materialsCollection = mongoose.connection.db.collection('materials');
-        const results = [];
-        
-        // 獲取課程創建日期和週數，用於計算週次
-        const course = await getCourseById(courseId);
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        // 使用 start_date 而非 create_date
-        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
-        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數
-        
-        // 只處理現有教材的更新
-        for (const material of materials) {
-            // 檢查是否是已存在的教材
-            if (material.id) {
-                // 如果沒有提供週次，嘗試計算
-                let week = material.week;
-                if (!week) {
-                    // 獲取教材的顯示日期或創建日期
-                    const existingMaterial = await materialsCollection.findOne({
-                        m_id: parseInt(material.id),
-                        in_course_id: parseInt(courseId)
-                    });
-                    
-                    if (existingMaterial) {
-                        // 使用 display_date 或備用 create_date
-                        const materialDate = existingMaterial.display_date || existingMaterial.create_date;
-                        week = calculateWeek(courseStartDate, materialDate, courseWeekNum);
-                    } else {
-                        week = 1; // 默認值
-                    }
-                }
-                
-                // 創建更新對象
-                const updateObj = {
-                    m_name: material.name,
-                    url: material.url,
-                    description: material.description || ""
-                };
-                
-                // 如果提供了顯示日期，添加到更新對象中，並強制轉型與防呆
-                if (typeof material.displayDate !== 'undefined' && material.displayDate !== null && material.displayDate !== '') {
-                    const dateObj = new Date(material.displayDate);
-                    if (!isNaN(dateObj.getTime())) {
-                        updateObj.display_date = dateObj;
-                    } else {
-                        console.warn('[updateMaterialsService] displayDate 轉換失敗:', material.displayDate);
-                    }
-                }
-                // debug log
-                 console.log('[updateMaterialsService] updateObj:', updateObj);
-                
-                // 更新現有教材
-                const result = await materialsCollection.updateOne(
-                    { 
-                        m_id: parseInt(material.id),
-                        in_course_id: parseInt(courseId)
-                    },
-                    {
-                        $set: updateObj
-                    }
-                );
-                console.log('[updateMaterialsService] update result:', result);
-                
-                if (result.matchedCount > 0) {
-                    results.push({
-                        id: material.id,
-                        name: material.name,
-                        url: material.url,
-                        description: material.description || "",
-                        displayDate: material.displayDate || "",
-                        week: week,
-                        status: 'updated'
-                    });
-                }
-            }
-        }
-        
-        return results;
-    } catch (error) {
-        console.error(`[updateMaterialsService] Error updating materials for course ID ${courseId}:`, error);
-        throw new Error(`Failed to update course materials: ${error.message}`);
-    }
-}
-
-// 刪除教材
-async function deleteMaterialService(courseId, materialId) {
-    try {
-        const materialsCollection = mongoose.connection.db.collection('materials');
-
-        // 強化查詢條件，允許字串與數字
-        const query = {
-            m_id: { $in: [parseInt(materialId), materialId] },
-            in_course_id: { $in: [parseInt(courseId), courseId] }
-        };
-        const material = await materialsCollection.findOne(query);
-        
-        if (!material) {
-            console.error(`[deleteMaterialService] 找不到教材，查詢條件:`, query);
-            return { deletedCount: 0 };
-        }
-        
-        // 如果存在檔案路徑，執行檔案刪除操作
-        if (material.path_to_file) {
-            // 導入並使用文件刪除服務
-            const { DeleteFile } = await import('../file_services/file_storage_service.js');
-            await DeleteFile(material.path_to_file);
-        }
-        
-        // 刪除數據庫中的記錄
-        const result = await materialsCollection.deleteOne(query);
-        
-        
-        return result;
-    } catch (error) {
-        console.error(`[deleteMaterialService] Error deleting material ID ${materialId} from course ID ${courseId}:`, error);
-        throw new Error(`Failed to delete material: ${error.message}`);
-    }
-}
-
 export {
-    getCourseById,
-    getAnnouncementsByCourseId,
-    createAnnouncement,
-    editAnnouncement,
-    getMaterialsByCourseId,
-    getAssignmentsByCourseId,
-    getAllCourses,
-    getCourseSyllabus,
-    getCourseLink,
-    getCourseDetails,
-    getTeachingCourses,
-    canUserEditAnnouncements,
-    // 教材操作服務
-    updateMaterialsService,
-    deleteMaterialService
+    GetCourseById,
+    GetAnnouncementsByCourseId,
+    CreateAnnouncement,
+    EditAnnouncement,
+    GetAllCourses,
+    GetCourseSyllabus,
+    GetCourseLink,
+    GetCourseDetails,
+    GetTeachingCourses,
+    CanUserEditAnnouncements,
+    CalculateWeek
 };
