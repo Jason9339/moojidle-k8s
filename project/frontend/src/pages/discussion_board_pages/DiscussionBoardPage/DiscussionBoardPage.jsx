@@ -11,27 +11,28 @@ import styles from "./DiscussionBoardPage.module.css"
 // services
 import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_api/DiscussionBoardApi";
 import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
+import { useRef } from "react";
 
 function DiscussionBoard() {
     const { state } = useLocation();
 
-    // console.log("[BoardPage] state=", state);
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
     const [showCreatePopup, setShowCreatePopup] = useState(false);
-    let userId;
-    let currentCourse;
-    let currentBoard;
+    const userIdRef = useRef(null);
+    const [currentCourse, setCurrentCourse] = useState(null);
+    const [currentBoard, setCurrentBoard] = useState(null);
 
     useEffect(() => {
         const fetchCourseBoards = async () => {
             try {
                 // TODO use Context to save userID
-                userId = JSON.parse(localStorage.getItem("user")).user_id;
-                const data = await GetBoardsGroupByCourseByUserID(userId);
-                // console.error(data)
+                const uid = JSON.parse(localStorage.getItem("user")).user_id;
+                userIdRef.current = uid;
+
+                const data = await GetBoardsGroupByCourseByUserID(userIdRef.current);
                 setCourseBoardData(data);
                 setError(null);
             } catch (err) {
@@ -48,7 +49,6 @@ function DiscussionBoard() {
             // get data from services
             const result = await GetOverviewPostByBId(parseInt(param));
 
-            // console.log(result)
             setOverviewPostData(result);
         }
 
@@ -57,42 +57,40 @@ function DiscussionBoard() {
         }
     }, [param]);
 
-    const handleAddBoard = useCallback(() => {
+    // show modal and set current course
+    const handleAddBoard = useCallback((course) => {
+
+        console.log("[handleAddBoard] course=", course);
+        setCurrentCourse(course);
+
         setShowCreatePopup(true);
     }, []);
 
-    // board data is missing
-    if (!courseBoardData) {
-        return (<p>載入中...</p>);
-    }
 
-    // want to get over view posts
-    if (param != null && param !== "home") {
-        if (!overviewPostData) {  // over view posts are missing...
-            return (<p>載入中...</p>);
-        }
+    useEffect(() => {
+        // want to get over view posts
+        if (param != null && param !== "home") {
 
-        // find course name and board name
-        let currentBoardId = parseInt(param);
+            // find course name and board name
+            const currentBoardId = parseInt(param);
 
-        // for each course
-        for (let i = 0; i < courseBoardData.length; i++) {
-            // for each board in that course
-            for (let j = 0; j < courseBoardData[i].boards.length; j++) {
-                if (courseBoardData[i].boards[j].board_id == currentBoardId) {
-                    // find the correct path
-                    const { course_id, course_name } = courseBoardData[i];
-                    const { board_id, board_name } = courseBoardData[i].boards[j];
 
-                    currentCourse = { course_id: course_id, course_name: course_name };
-                    currentBoard = { board_id: board_id, board_name: board_name };
+            courseBoardData?.forEach((course) => {
 
-                }
-            }
+                course.boards.forEach(board => {
+                    if (board.board_id === currentBoardId) {
+
+                        setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
+                        setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
+                    }
+                });
+
+            })
 
         }
-        console.log("[DiscussionBoard] currentCourse=", currentCourse);
-    }
+
+
+    }, [courseBoardData, param]);
 
     if (error) return (<p className="text-red-500">{error}</p>);
 
@@ -101,7 +99,7 @@ function DiscussionBoard() {
 
             <LeftBar />
             <div className="flex">
-                <BoardSideBar itemData={courseBoardData} handleAddBoard={handleAddBoard} />
+                <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} />
 
                 {/* <header className={styles["category"]}>
                     討論版
@@ -126,13 +124,13 @@ function DiscussionBoard() {
 
                                 <DiscussionBoardContent
                                     overviewPosts={overviewPostData}
-                                    courseName={currentCourse.course_name}
-                                    boardName={currentBoard.board_name}
+                                    courseName={currentCourse?.course_name}
+                                    boardName={currentBoard?.board_name}
                                 />
 
 
                                 <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
-                                    state={{ data: courseBoardData, currentCourseId: currentCourse.course_id, currentBoardId: currentBoard.board_id }}>
+                                    state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}>
                                     新增貼文
                                 </Link>
                             </div>
@@ -145,13 +143,15 @@ function DiscussionBoard() {
             </div >
             {showCreatePopup && (
                 <CreateDiscussionModal
-                    courseId={currentCourse?.course_id}
-                    userId={userId}
+                    courseId={currentCourse.course_id}
+                    userId={userIdRef.current}
                     onClose={() => setShowCreatePopup(false)}
-                    pushNewBoard={(boardData) => {
-                        courseBoardData.find(course => course.course_id === currentCourse.course_id).boards.push(boardData);
-                    
+                    pushNewBoard={(newBoardData) => {
+
+                        const index = courseBoardData.findIndex(course => course.course_id == currentCourse.course_id);
+                        courseBoardData[index].boards.push(newBoardData);
                     }}
+
                 />
             )}
 

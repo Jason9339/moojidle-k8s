@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -10,6 +10,7 @@ import { FaEdit } from "react-icons/fa";
 const BoardSideBar = ({ itemData, handleAddBoard }) => {
     const { state } = useLocation();
 
+    console.log("sidebar: itemdata=", itemData)
     // Whether a MenuItem is currently selectewd
     const [selectedID, setSelectedID] = useState((state == null) ? NO_SELECTED : state.initBoardID);
 
@@ -84,12 +85,20 @@ const BoardSideBar = ({ itemData, handleAddBoard }) => {
                                     </MenuItem>))
 
                             }
-                            <MenuItem
-                                className="addBoard"
-                                onClick={handleAddBoard}
-                            >
-                                新增討論版
-                            </MenuItem>
+
+
+                            {
+                                canEdit(index) ? (
+                                    <MenuItem
+                                        className="addBoard"
+                                        onClick={() => handleAddBoard({ course_id: course_id, course_name: course_name })}
+                                    >
+                                        新增討論版
+                                    </MenuItem>
+
+                                ) : null
+                            }
+
 
                         </SubMenu>
 

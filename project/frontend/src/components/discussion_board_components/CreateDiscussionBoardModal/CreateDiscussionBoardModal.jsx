@@ -6,12 +6,6 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
     const [boardName, setBoardName] = useState("");
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        if (!courseId) {
-            alert("發生錯誤");
-        }
-    }, [courseId, userId]);
-
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -19,9 +13,9 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
         try {
             const response = await CreateDiscussionBoard(courseId, boardName);
             if (response?.board_id) {
-                pushNewBoard(response); 
+                pushNewBoard(response);
             } else {
-                setError(response?.error || "無法建立討論版");
+                setError("無法建立討論版");
             }
 
             onClose();
@@ -31,8 +25,11 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
         }
     };
 
+    console.log("courseId", courseId)
+
     return (
-        <div className={styles.modalOverlay}>
+
+        < div className={styles.modalOverlay} >
             <div className={styles.modalContent}>
                 <h2>新增討論版</h2>
                 {error && <p className="error-message">{error}</p>}
@@ -50,7 +47,8 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
                     </div>
                 </form>
             </div>
-        </div>
+        </div >
+
     );
 };
 
