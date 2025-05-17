@@ -17,11 +17,11 @@ async function GetAllUserCourses(userId) {
   }
 
 
-async function CreateDiscussionBoard({course_id, name}) {
+async function CreateDiscussionBoard(course_id, name) {
     try {
       const response = await apiClient.post("/discussion-board/course-boards", {
-        course_id,
-        name,
+        course_id : course_id,
+        name : name
       });
       return response.data;
     } catch (err) {

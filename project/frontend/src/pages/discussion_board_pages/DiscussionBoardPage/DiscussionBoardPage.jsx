@@ -4,6 +4,7 @@ import BoardSideBar from "@/components/discussion_board_components/BoardSideBar"
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
+import CreateDiscussionModal from "@/components/discussion_board_components/CreateDiscussionBoardModal/CreateDiscussionBoardModal";
 // css styling
 import styles from "./DiscussionBoardPage.module.css"
 
@@ -19,14 +20,17 @@ function DiscussionBoard() {
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
+    const [showCreatePopup, setShowCreatePopup] = useState(false);
+    let userId;
     let currentCourse;
     let currentBoard;
+
     useEffect(() => {
         const fetchCourseBoards = async () => {
             try {
                 // TODO use Context to save userID
-                const userID = JSON.parse(localStorage.getItem("user")).user_id;
-                const data = await GetBoardsGroupByCourseByUserID(userID);
+                userId = JSON.parse(localStorage.getItem("user")).user_id;
+                const data = await GetBoardsGroupByCourseByUserID(userId);
                 // console.error(data)
                 setCourseBoardData(data);
                 setError(null);
@@ -52,6 +56,10 @@ function DiscussionBoard() {
             FetchOverviewPost();
         }
     }, [param]);
+
+    const handleAddBoard = useCallback(() => {
+        setShowCreatePopup(true);
+    }, []);
 
     // board data is missing
     if (!courseBoardData) {
@@ -83,6 +91,7 @@ function DiscussionBoard() {
             }
 
         }
+        console.log("[DiscussionBoard] currentCourse=", currentCourse);
     }
 
     if (error) return (<p className="text-red-500">{error}</p>);
@@ -92,7 +101,7 @@ function DiscussionBoard() {
 
             <LeftBar />
             <div className="flex">
-                <BoardSideBar itemData={courseBoardData} />
+                <BoardSideBar itemData={courseBoardData} handleAddBoard={handleAddBoard} />
 
                 {/* <header className={styles["category"]}>
                     討論版
@@ -134,6 +143,17 @@ function DiscussionBoard() {
 
 
             </div >
+            {showCreatePopup && (
+                <CreateDiscussionModal
+                    courseId={currentCourse?.course_id}
+                    userId={userId}
+                    onClose={() => setShowCreatePopup(false)}
+                    pushNewBoard={(boardData) => {
+                        courseBoardData.find(course => course.course_id === currentCourse.course_id).boards.push(boardData);
+                    
+                    }}
+                />
+            )}
 
         </>
     );
