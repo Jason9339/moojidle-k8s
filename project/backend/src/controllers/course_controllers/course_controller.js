@@ -25,7 +25,7 @@ import {
 import { 
     ViewCourses, 
     GetTeachIn,
-    getInviteCode,
+    GetInviteCode,
 } from "#src/services/course_services/view_course.js";
 
 // 取得所有課程列表
@@ -295,7 +295,7 @@ async function ReadInviteCode(req, res) {
     try {
         const courseId = req.params.courseId;
         // console.log(courseId);
-        const code = await getInviteCode(courseId);
+        const code = await GetInviteCode(courseId);
         return res.status(200).json({ code: code });
     } catch (error) {
         throw new Error(`Failed to retrieve invite code: ${error.message}`);

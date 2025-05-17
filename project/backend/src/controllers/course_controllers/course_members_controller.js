@@ -1,23 +1,22 @@
 import {
-    getStudyIn,
-    getAssistIn,
-    getTeachIn,
-    switchStudyAssist,
-    addStudent, 
-    inviteStudentByCode,
-    findInviteCodeId
+    GetStudyIn,
+    GetAssistIn,
+    GetTeachIn,
+    SwitchStudyAssist,
+    AddStudent, 
+    InviteStudentByCode,
+    FindInviteCodeId
 } from '#src/services/course_services/course_member_management.js';
 
-import {getInviteCode} from '#src/services/course_services/view_course.js';
 
 
-async function getCourseMembers(req, res) {
+async function GetCourseMembers(req, res) {
     try {
         const courseId = req.params.courseId;
         
-        const students = await getStudyIn(courseId);
-        const assistants = await getAssistIn(courseId);
-        const teachers = await getTeachIn(courseId);
+        const students = await GetStudyIn(courseId);
+        const assistants = await GetAssistIn(courseId);
+        const teachers = await GetTeachIn(courseId);
         
         res.status(200).json({
             students,
@@ -30,12 +29,12 @@ async function getCourseMembers(req, res) {
     }
 }
 
-async function switchCharacter(req, res) {
+async function SwitchCharacter(req, res) {
     try {
         const userId = req.params.userId;
         const courseId = req.params.courseId;
         
-        const result = await switchStudyAssist(userId, courseId);
+        const result = await SwitchStudyAssist(userId, courseId);
         res.status(200).json(result);
     } catch (error) {
         console.error("Error switching character:", error);
@@ -43,7 +42,7 @@ async function switchCharacter(req, res) {
     }
 }
 
-async function inviteStudent(req, res) {
+async function InviteStudent(req, res) {
     try {
         const userId = req.body.userId;
         const studentId = req.body.studentId;
@@ -54,7 +53,7 @@ async function inviteStudent(req, res) {
         }
         console.log("user:",userId, "student:",studentId,"course:", courseId);
         
-        const result = await addStudent(userId, studentId, courseId);
+        const result = await AddStudent(userId, studentId, courseId);
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);
@@ -64,10 +63,10 @@ async function inviteStudent(req, res) {
 
 
 
-async function getIdViaInviteCode(req, res) {
+async function GetIdViaInviteCode(req, res) {
    try {
         const code = req.params.code;
-        const courseId = await findInviteCodeId(code);
+        const courseId = await FindInviteCodeId(code);
         if (courseId) {
             res.status(200).json({ courseId: courseId.course_id });
         }  
@@ -85,10 +84,10 @@ async function getIdViaInviteCode(req, res) {
 
 
 export {
-    getCourseMembers,
-    switchCharacter,
-    inviteStudent,
-    getIdViaInviteCode
+    GetCourseMembers,
+    SwitchCharacter,
+    InviteStudent,
+    GetIdViaInviteCode
 }
 
 
