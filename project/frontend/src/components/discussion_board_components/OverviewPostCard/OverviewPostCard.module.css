@@ -22,12 +22,19 @@
     padding-left: 8vw;
     padding-top: 1.5vh;
     padding-bottom: 1.5vh;
+
+    width: 100%;
 }
 
 .padder-content-block {
+    display: flex;
+    justify-content: center;
+    
     align-self: center;
     padding-top: 5vh;
     padding-bottom: 1.5vh;
+
+    width: 100%;
 }
 
 .course-name {
@@ -61,11 +68,13 @@
 }
 
 .content {
+    align-self: center;
     font-size: 20px;
     text-align: center;
     overflow-wrap: break-word;
+    resize: none;
 
-    width: 100%;
+    width: 80%;
 }
 
 .post-date {

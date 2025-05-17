@@ -15,6 +15,8 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
     Flow and Coherence:
     The sentences flow logically together, creating a cohesive and engaging reading experience. The use of transition words and phrases (e.g., "from," "to," "while") further enhances the flow.`;
 
+    test = `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`;
+
     test = test.substring(0, 400).concat("....");
 
     return (
@@ -41,10 +43,10 @@ const OverviewPostCard = ({ userPfp, courseName, boardName, userName, userTags, 
                     </p>
                 </div>
                 <div className={styles["padder-content-block"]}>
-                    <p className={styles["content"]}>
-                        {content}
-                        {/* {test} */}
-                    </p>
+                    <textarea className={styles["content"]} readOnly>
+                        {/* {content} */}
+                        {test}
+                    </textarea>
                 </div>
                 <div className={styles["post-date"]}>
                     {postDate.substring(0, 10)}
