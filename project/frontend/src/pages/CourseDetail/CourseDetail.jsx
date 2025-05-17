@@ -20,9 +20,23 @@ import AnnouncementsTab from "@/components/course/AnnouncementsTab/Announcements
 import UploadModal from "@/components/course/UploadModal/UploadModal";
 import MembersTab from "@/components/course/MembersTab/MembersTab";
 
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
 function CourseDetail() {
+    const navigate = useNavigate();
+    
     const user = JSON.parse(localStorage.getItem("user"));
     const currentUserId = user?.user_id;
+
+    const location = useLocation();
+    const savedRole = JSON.parse(localStorage.getItem("courseRole")) || {};
+
+    const isTeacher = location.state?.isTeacher ?? savedRole.isTeacher ?? false;
+    const isAssistant = location.state?.isAssistant ?? savedRole.isAssistant ?? false;
+    const isEditor = isTeacher || isAssistant;
+
 
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
@@ -61,6 +75,16 @@ function CourseDetail() {
 
         fetchCourseData();
     }, [courseId]);
+
+    useEffect(() => {
+        const storedCourseId = localStorage.getItem("courseId");
+        console.log("storedCourseId", storedCourseId);
+        if (!storedCourseId || storedCourseId !== courseId) {
+            alert("請從 Dashboard 或課程頁進入課程。");
+            navigate("/dashboard"); // 或導回首頁
+        }
+    }, [courseId]);
+      
 
     // 處理從 CourseTab 傳來的教材變更
     const handleMaterialsChange = (updatedMaterials) => {
@@ -180,33 +204,35 @@ function CourseDetail() {
                 {/* Tab 對應內容渲染 */}
                 {activeTab === "課程" && (
                     <>
-                        <div className={`${styles["material-bar"]}`}>
-                            <button
-                                className={`${styles["material-button"]}`}
-                                onClick={() => setShowUploadModal(true)}
-                            >
-                                上傳教材/作業
-                            </button>
-                            <button 
-                                className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
-                                onClick={toggleEditMode}
-                                disabled={isSaving}
-                            >
-                                {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
-                            </button>
-                            {isEditMode && (
+                        {isEditor && (
+                            <div className={`${styles["material-bar"]}`}>
                                 <button
-                                className={`${styles["material-button"]} ${styles["cancel"]}`}
-                                    onClick={() => {
-                                        setEditedMaterials([]);
-                                        setIsEditMode(false);
-                                    }}
+                                    className={`${styles["material-button"]}`}
+                                    onClick={() => setShowUploadModal(true)}
+                                >
+                                    上傳教材/作業
+                                </button>
+                                <button 
+                                    className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
+                                    onClick={toggleEditMode}
                                     disabled={isSaving}
                                 >
-                                    取消
+                                    {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
                                 </button>
-                            )}
-                        </div>
+                                {isEditMode && (
+                                    <button
+                                        className={`${styles["material-button"]} ${styles["cancel"]}`}
+                                        onClick={() => {
+                                            setEditedMaterials([]);
+                                            setIsEditMode(false);
+                                        }}
+                                        disabled={isSaving}
+                                    >
+                                        取消
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         <CourseTab
                             courseId={courseId}
                             course={course}

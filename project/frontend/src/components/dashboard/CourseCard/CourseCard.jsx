@@ -9,8 +9,31 @@ function CourseCard({ title, courseId, color, isTeacher, isStudent, isAssistant,
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
 
+  
+
   const handleCardClick = () => {
-    navigate(`/course/${courseId}`);
+    console.log("📦 儲存角色資訊:", {
+      isTeacher,
+      isStudent,
+      isAssistant,
+    });
+    
+    // 儲存角色資訊到 localStorage，防止 F5 後丟失
+    localStorage.removeItem("courseRole");
+    localStorage.setItem(
+      "courseRole",
+      JSON.stringify({
+        isTeacher: isTeacher || false,
+        isStudent: isStudent || false,
+        isAssistant: isAssistant || false,
+      })
+    );
+
+    localStorage.setItem("courseId", courseId);
+
+    navigate(`/course/${courseId}`, {
+      state: { isTeacher, isStudent, isAssistant }
+    });
   };
 
   return (
