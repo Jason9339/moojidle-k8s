@@ -90,6 +90,7 @@ function PostPage() {
             alert("留言刪除失敗：" + (err.message || "未知錯誤"));
         }
         setActiveCommentId(null);
+        reflash();
     };
 
     const handleDeletePost = async () => {
