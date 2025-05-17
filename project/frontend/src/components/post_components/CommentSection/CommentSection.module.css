@@ -1,5 +1,3 @@
-/* CommentSection.module.css */
-
 .sectionContainer {
   border-top: 1px solid #ccc;
   padding-top: 16px;
@@ -107,4 +105,13 @@
   color: #333;
   margin-top: 4px;
   white-space: pre-wrap;
+
+  width: 95%;
+  border: none;
+  resize: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  font-family: inherit;
+  line-height: 1.4;
 }

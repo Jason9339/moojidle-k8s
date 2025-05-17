@@ -1,15 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import styles from "./CommentSection.module.css";
 import { FiMoreVertical } from "react-icons/fi";
-import { DeleteCommend } from "@/services/discussion_api/PostApi";
 
 function CommentSection({
   post,
   newComment,
   setNewComment,
   handleCommentSubmit,
-  reflash,
   currentUserId,
+  handleCommentDelete,
+  activeCommentId,
+  setActiveCommentId,
 }) {
   return (
     <div className={styles.sectionContainer}>
@@ -38,9 +39,14 @@ function CommentSection({
             <CommentCard
               key={comment.comment_date + currentUserId}
               comment={comment}
-              currentPostId={post.post_id}
               currentUserId={currentUserId}
-              reflash={reflash}
+              handleCommentDelete={handleCommentDelete}
+              isMenuOpen={activeCommentId === comment.comment_date}
+              onToggleMenu={() =>
+                setActiveCommentId(
+                  activeCommentId === comment.comment_date ? null : comment.comment_date
+                )
+              }
             />
           ))
       )}
@@ -48,56 +54,29 @@ function CommentSection({
   );
 }
 
-function CommentCard({ comment, currentPostId, currentUserId, reflash }) {
-  const [showMenu, setShowMenu] = useState(false);
-  const moreOptionsRef = useRef(null);
-
-  const handleCommentDelete = async () => {
-    const commenData = {
-      post_id: currentPostId,
-      user_id: currentUserId,
-      comment_date: comment.comment_date,
-      description: comment.description,
-    };
-    try {
-      await DeleteCommend(commenData);
-      alert("留言刪除成功");
-    } catch (err) {
-      alert("留言刪除失敗：" + (err.message || "未知錯誤"));
-    }
-    setShowMenu(false);
-    reflash();
-  };
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (moreOptionsRef.current && !moreOptionsRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    }
-
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMenu]);
-
+function CommentCard({
+  comment,
+  currentUserId,
+  handleCommentDelete,
+  isMenuOpen,
+  onToggleMenu,
+}) {
   return (
     <div className={styles.commentCardWrapper}>
       <div className={styles.commentCardContainer}>
-        <div className={styles.moreOptionsWrapper} ref={moreOptionsRef}>
-          <button className={styles.moreButton} onClick={() => setShowMenu(!showMenu)}>
+        <div className={styles.moreOptionsWrapper}>
+          <button className={styles.moreButton} onClick={onToggleMenu}>
             <FiMoreVertical size={20} />
           </button>
-          {showMenu && (
+          {isMenuOpen && (
             <ul className={styles.dropdownMenu}>
               {currentUserId === comment.comment_by_user_id && (
-                <li className={styles.dropdownItem} onClick={handleCommentDelete}>
+                <li
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    handleCommentDelete(comment);
+                  }}
+                >
                   刪除留言
                 </li>
               )}
@@ -110,7 +89,13 @@ function CommentCard({ comment, currentPostId, currentUserId, reflash }) {
           使用者 {comment.comment_by_user_name}（{comment.comment_user_custom_tag}）於{" "}
           {new Date(comment.comment_date).toLocaleString()}：
         </p>
-        <p className={styles.commentText}>{comment.description}</p>
+
+        <textarea
+          className={styles.commentText}
+          value={comment.description}
+          readOnly
+          rows={Math.max(3, comment.description.split("\n").length)}
+        />
       </div>
     </div>
   );
