@@ -5,17 +5,17 @@ import express from 'express';
 const router = express.Router();
 
 import {  
-    getCourseMembers,
-    switchCharacter,
-    inviteStudent,
-    getIdViaInviteCode 
+    GetCourseMembers,
+    SwitchCharacter,
+    InviteStudent,
+    GetIdViaInviteCode 
 } from '#src/controllers/course_controllers/course_members_controller.js';
 
 
-router.get("/:courseId", getCourseMembers)
-router.post("/switch/:userId/:courseId", switchCharacter)
-router.post("/add/:courseId", inviteStudent) // 手動加入學生
-router.get("/invite/:code", getIdViaInviteCode) // 邀請碼
+router.get("/:courseId", GetCourseMembers)
+router.post("/switch/:userId/:courseId", SwitchCharacter)
+router.post("/add/:courseId", InviteStudent) // 手動加入學生
+router.get("/invite/:code", GetIdViaInviteCode) // 邀請碼
 
 
 
