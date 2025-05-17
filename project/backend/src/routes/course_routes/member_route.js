@@ -8,9 +8,11 @@ import {
     GetCourseMembers,
     SwitchCharacter,
     InviteStudent,
-    GetIdViaInviteCode 
 } from '#src/controllers/course_controllers/course_members_controller.js';
 
+import {
+    GetIdViaInviteCode,
+} from '#src/controllers/course_controllers/course_controller.js';
 
 router.get("/:courseId", GetCourseMembers)
 router.post("/switch/:userId/:courseId", SwitchCharacter)
