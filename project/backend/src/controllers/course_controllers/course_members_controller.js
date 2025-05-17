@@ -8,7 +8,6 @@ import {
     findInviteCodeId
 } from '#src/services/course_services/course_member_management.js';
 
-import {getInviteCode} from '#src/services/course_services/view_course.js';
 
 
 async function getCourseMembers(req, res) {
