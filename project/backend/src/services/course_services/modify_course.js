@@ -1,14 +1,13 @@
 import mongoose from "mongoose"
 
-const inviteLinkBase = "https://localhost:3000/course/join/";
 
 // Service to add a new course
 async function AddCourse(courseData) {
     try {
         // 1. Generate the next course_id
-        const nextCourseId = await getNextSequenceValue("course");
+        const nextCourseId = await GetNextSequenceValue("course");
         console.log("Next course_id:", nextCourseId);
-        const inviteLink = await generateInviteCode(); //generateInviteLink(nextCourseId);
+        const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
         const newCourseDocument = {
@@ -46,7 +45,7 @@ async function AddCourse(courseData) {
 }
 
 
-async function getNextSequenceValue(collectionName) {
+async function GetNextSequenceValue(collectionName) {
     // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
     const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
 
@@ -67,11 +66,8 @@ async function getNextSequenceValue(collectionName) {
     return result[collectionName] ?? 1;
 }
 
-async function generateInviteLink(course_id) {
-    return inviteLinkBase + course_id;
-}
 
-async function generateInviteCode() {
+async function GenerateInviteCode() {
     const db = mongoose.connection.db;
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let code;

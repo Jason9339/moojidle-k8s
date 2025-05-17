@@ -120,7 +120,7 @@ async function GetTeachIn(userId) {
     }
 }
 
-async function getInviteCode(courseId) {
+async function GetInviteCode(courseId) {
     try {
         const parsedId = parseInt(courseId, 10);
         if (isNaN(parsedId)) {
@@ -152,7 +152,7 @@ async function getInviteCode(courseId) {
 export {
     ViewCourses,
     GetTeachIn,
-    getInviteCode,
+    GetInviteCode,
 };
 
 
