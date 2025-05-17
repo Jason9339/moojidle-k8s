@@ -13,6 +13,11 @@ import {
     FindAssistantByCourseID
 } from "#src/services/discussion_services/course_member_services.js";
 
+import{
+    DeletePost,
+    FindProjectedPostsByBId
+}from "#src/services/discussion_services/post_services.js"
+
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);
     if (isNaN(courseId)) {
@@ -82,10 +87,20 @@ async function AddDiscussionBoard(req, res) {
 
 async function DeleteDiscussionBoard(req, res) {
     const board_id = parseInt(req.params.boardId, 10);
+    const broadPosts = await FindProjectedPostsByBId(board_id);
+    
+    if (broadPosts.length > 0) {
+        for (let i = 0; i < broadPosts.length; i++) {
+            await DeletePost(broadPosts[i].post_id);
+        }
+    }
+
     if (isNaN(board_id)) {
         return res.status(400).send({ error: "Invalid board_id" });
     }
+
     const success = await DeleteDiscussionBoardService(board_id);
+    
     if (!success) {
         return res.status(404).send({ error: "Board not found" });
     }

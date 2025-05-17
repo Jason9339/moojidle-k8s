@@ -157,7 +157,7 @@ const PostEdit = () => {
         <>
             <LeftBar />
 
-            <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] py-[1vh] h-screen overflow-scroll-y">
+            <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] py-[1vh] h-screen overflow-scroll-y bg-[#eff2f5]">
                 <PostEditHeader courseData={courseData} boardData={boardData}
                     defaultCourseId={state.currentCourseId} defaultBoardId={state.currentBoardId} userTags={userTags}
                     onCourseFilterChange={(e) => setCurrentCourseById(e)}
@@ -168,7 +168,7 @@ const PostEdit = () => {
 
                 <form className="p-[10px]" onSubmit={handleSubmit}>
                     <label htmlFor="titile">標題</label>
-                    <textarea id="title" maxLength="20" value={title} onChange={e => handleTitleChange(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-4 rounded-2xl resize-none overflow-hidden" />
+                    <textarea id="title" maxLength="20" value={title} onChange={e => handleTitleChange(e.target.value)} placeholder="輸入標題..." rows={1} wrap="off" className="w-full mt-[1vh] mb-[2vh] border p-4 rounded-2xl resize-none overflow-hidden bg-[#ffffff]" />
 
                     <label htmlFor="description" >內文</label>
                     <TextEditor className="mt-[1vh]" height="60vh" rows={19} onChange={txt => handleDescriptionChange(txt)} />

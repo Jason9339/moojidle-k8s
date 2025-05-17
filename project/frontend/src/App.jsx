@@ -14,8 +14,6 @@ import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePas
 import Register from "@/pages/login_register_pages/Register.jsx";
 import Login from "@/pages/login_register_pages/Login.jsx";
 
-import DeleteDiscussion from "@/pages/discussion_board_pages/DeleteDiscussionBoard/DeleteDiscussionBoard.jsx";
-
 function App() {
     let login;
 
@@ -44,7 +42,6 @@ function App() {
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
-                        <Route path="/discussion/delete" element={<DeleteDiscussion />} />
 
                         {/* post pages relayed */}
                         <Route path="/post-edit/:param" element={<PostEdit />} />

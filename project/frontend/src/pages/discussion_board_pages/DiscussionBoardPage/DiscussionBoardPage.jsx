@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { data, useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from '@/components/LeftBar/LeftBar.jsx'
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
-import CreateDiscussionModal from "@/components/discussion_board_components/CreateDiscussionBoardModal/CreateDiscussionBoardModal";
-// css styling
-import styles from "./DiscussionBoardPage.module.css"
+import CreateDiscussionBoardModal from "@/components/discussion_board_components/CreateDiscussionBoardModal/CreateDiscussionBoardModal";
 
-// services
+import EditDiscussionBoardModal from "@/components/discussion_board_components/EditDiscussionBoardModal/EditDiscussionBoardModal";
+// css styling
+import styles from "./DiscussionBoardPage.module.css";
+import { LuPlus } from "react-icons/lu";
+
 import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_api/DiscussionBoardApi";
 import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
 import { useRef } from "react";
 
 function DiscussionBoard() {
     const { state } = useLocation();
-
     const { param } = useParams();
     const [error, setError] = useState(null);
     const [courseBoardData, setCourseBoardData] = useState(null);
     const [overviewPostData, setOverviewPostData] = useState(null);
     const [showCreatePopup, setShowCreatePopup] = useState(false);
+    const [showEditPopup, setShowEditPopup] = useState(false);
     const userIdRef = useRef(null);
     const [currentCourse, setCurrentCourse] = useState(null);
     const [currentBoard, setCurrentBoard] = useState(null);
@@ -32,39 +34,27 @@ function DiscussionBoard() {
                 const uid = JSON.parse(localStorage.getItem("user")).user_id;
                 userIdRef.current = uid;
 
+
                 const data = await GetBoardsGroupByCourseByUserID(userIdRef.current);
+                console.log(data)
                 setCourseBoardData(data);
                 setError(null);
             } catch (err) {
                 setError("無法載入討論資料");
-            } finally {
             }
         };
-
         fetchCourseBoards();
     }, []);
 
     useEffect(() => {
         async function FetchOverviewPost() {
-            // get data from services
             const result = await GetOverviewPostByBId(parseInt(param));
-
             setOverviewPostData(result);
         }
-
         if (param != null && param != "home") {
             FetchOverviewPost();
         }
     }, [param]);
-
-    // show modal and set current course
-    const handleAddBoard = useCallback((course) => {
-
-        console.log("[handleAddBoard] course=", course);
-        setCurrentCourse(course);
-
-        setShowCreatePopup(true);
-    }, []);
 
 
     useEffect(() => {
@@ -80,6 +70,7 @@ function DiscussionBoard() {
                 course.boards.forEach(board => {
                     if (board.board_id === currentBoardId) {
 
+                        console.log("ofund")
                         setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
                         setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
                     }
@@ -87,41 +78,51 @@ function DiscussionBoard() {
 
             })
 
+
         }
 
 
     }, [courseBoardData, param]);
 
+    const handleAddBoard = useCallback((course, board) => {
+
+        setCurrentCourse(course);
+        setCurrentBoard(board);
+        setShowCreatePopup(true);
+    }, []);
+
+    const handleEditBoard = useCallback((course) => {
+
+        setCurrentCourse(course);
+        setShowEditPopup(true);
+    }, [])
+
     if (error) return (<p className="text-red-500">{error}</p>);
+
 
     return (
         <>
-
             <LeftBar />
             <div className="flex">
-                <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} />
+                <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} handleEditBoard={handleEditBoard} />
 
-                {/* <header className={styles["category"]}>
-                    討論版
-                </header>
-                <hr /> */}
 
-                {/* <div className="p-5 flex-1 flex flex-col h-screen w-[180px]"> */}
                 <div className={styles["main-container"]}>
                     {
                         param == "home" || param == null ?
                             <div className="flex relative">
                                 <DiscussionBoardInitContent />
-
-                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
-                                    state={{ data: courseBoardData }}>
-                                    新增貼文
+                                <Link
+                                    to="/post-edit/new"
+                                    className={styles.fab}
+                                    state={{ data: courseBoardData }}
+                                    title="新增貼文"
+                                >
+                                    <LuPlus />
                                 </Link>
                             </div>
-
                             :
                             <div className="flex">
-
                                 <DiscussionBoardContent
                                     overviewPosts={overviewPostData}
                                     courseName={currentCourse?.course_name}
@@ -129,21 +130,23 @@ function DiscussionBoard() {
                                 />
 
 
-                                <Link to="/post-edit/new" className="text-[2rem] p-[5px] mt-[2vh] h-[8vh] rounded-[10px] bg-[#E0E0E0] hover:shadow absolute right-[50px] top-[50px]"
-                                    state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}>
-                                    新增貼文
+                                <Link
+                                    to="/post-edit/new"
+                                    className={styles.fab}
+                                    state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}
+                                    title="新增貼文"
+                                >
+                                    <LuPlus />
                                 </Link>
                             </div>
-
                     }
-
                 </div>
 
 
             </div >
             {showCreatePopup && (
-                <CreateDiscussionModal
-                    courseId={currentCourse.course_id}
+                <CreateDiscussionBoardModal
+                    courseId={currentCourse?.course_id}
                     userId={userIdRef.current}
                     onClose={() => setShowCreatePopup(false)}
                     pushNewBoard={(newBoardData) => {
@@ -152,6 +155,19 @@ function DiscussionBoard() {
                         courseBoardData[index].boards.push(newBoardData);
                     }}
 
+                />
+            )}
+
+
+            {showEditPopup && (
+                <EditDiscussionBoardModal
+                    boardId={currentBoard?.board_id}
+                    onClose={() => setShowEditPopup(false)}
+                    deleteBoard={(toDeleteBoardId) => {
+
+                        const index = courseBoardData.findIndex(course => course.course_id == currentCourse.course_id);
+                        courseBoardData[index].boards.filter(b => b.board_id !== toDeleteBoardId)
+                    }}
                 />
             )}
 

@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const NO_SELECTED = -1;
 import { FaEdit } from "react-icons/fa";
 
-const BoardSideBar = ({ itemData, handleAddBoard }) => {
+const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     const { state } = useLocation();
 
     console.log("sidebar: itemdata=", itemData)
@@ -65,15 +65,7 @@ const BoardSideBar = ({ itemData, handleAddBoard }) => {
                                         suffix={
                                             canEdit(index) ? (
                                                 <button
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        navigate("/discussion/delete/", {
-                                                            state: {
-                                                                boardId: board_id,
-                                                                boardName: board_name,
-                                                            }
-                                                        });
-                                                    }}
+                                                    onClick={() => handleEditBoard({ course_id: course_id, course_name: course_name }, { board_id: board_id, board_name: board_name })}
                                                     className="p-1 hover:text-[#5961d4] cursor-pointer"
                                                 >
                                                     <FaEdit className="w-4 h-4" />

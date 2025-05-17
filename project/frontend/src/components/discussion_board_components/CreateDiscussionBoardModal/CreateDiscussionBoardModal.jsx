@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CreateDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi";
 import styles from "./CreateDiscussionBoardModal.module.css";
 
-const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
+const CreateDiscussionBoardModal = ({ courseId, userId, onClose, pushNewBoard }) => {
     const [boardName, setBoardName] = useState("");
     const [error, setError] = useState("");
 
@@ -18,11 +18,12 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
                 setError("無法建立討論版");
             }
 
-            onClose();
         } catch (err) {
             console.error("Error creating discussion board:", err);
             setError("發生錯誤，請稍後再試");
         }
+
+        onClose();
     };
 
     console.log("courseId", courseId)
@@ -52,4 +53,4 @@ const CreateDiscussionModal = ({ courseId, userId, onClose, pushNewBoard }) => {
     );
 };
 
-export default CreateDiscussionModal;
+export default CreateDiscussionBoardModal;

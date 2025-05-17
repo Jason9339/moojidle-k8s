@@ -1,9 +1,16 @@
 import apiClient from "@/services/apiClient";
 
 async function GetBoardsGroupByCourseByUserID(userID) {
-    const response = await apiClient.get(`/discussion-board/user-course-boards/${userID}`);
 
-    return response.data;
+    try {
+
+        const response = await apiClient.get(`/discussion-board/user-course-boards/${userID}`);
+        console.log("api:", response)
+        return response.data;
+    } catch (err) {
+        console.error("Fail to get board(group by course) data");
+    }
+
 }
 
 async function GetAllUserCourses(userId) {

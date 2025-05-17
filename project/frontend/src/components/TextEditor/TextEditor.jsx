@@ -137,7 +137,7 @@ export default function TextEditor({ className = "", height, onChange }) {
                         onChange={(e) => { setText(e.target.value); onChange?.(e.target.value) }}
                         onKeyDown={handleKeyDown}
                         placeholder=""
-                        className={`flex-2 w-full p-4 font-mono outline-none overflow-scroll resize-none`}
+                        className={`flex-2 w-full p-4 font-mono outline-none overflow-y-scroll resize-none bg-[#ffffff] rounded-[15px]`}
                     >
 
                     </TextArea>
