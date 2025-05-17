@@ -4,7 +4,6 @@ import {
     GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent, 
-    InviteStudentByCode,
     FindInviteCodeId
 } from '#src/services/course_services/course_member_service.js';
 
