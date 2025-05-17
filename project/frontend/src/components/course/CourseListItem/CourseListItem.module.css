@@ -3,6 +3,15 @@
     grid-template-columns: 3fr 1fr;
     align-items: center;
     border-bottom: 1px solid #e0e0e0;
+
+    padding: 14px 16px;
+    border-radius: 8px;
+    transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.course-list-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
 }
 
 .course-title {
@@ -11,6 +20,8 @@
     gap: 10px;
     font-weight: 500;
     margin: 0;
+    font-size: 16px;
+    color: #222;
 }
 
 .course-color-indicator {
