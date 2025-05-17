@@ -43,9 +43,9 @@ function PostContent({
           alt="profile"
         />
         <div className={styles.userInfo}>
-          <div className={styles.usernameDateWrapper} style={{ display: "flex", alignItems: "center" }}>
+          <div className={styles.usernameDateWrapper}>
             <div className={styles.username}>{post.author_name}</div>
-            <div className={styles.date} style={{ marginLeft: "10px" }}>
+            <div className={styles.date}>
               {new Date(post.post_date).toISOString().split("T")[0]}
             </div>
           </div>

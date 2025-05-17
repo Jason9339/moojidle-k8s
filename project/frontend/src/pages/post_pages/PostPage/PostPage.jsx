@@ -53,8 +53,8 @@ function PostPage() {
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; 
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; 
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
     }
   }, [description]);
 
@@ -130,26 +130,32 @@ function PostPage() {
             <FiCornerUpLeft size={24} />
           </button>
 
-          <PostContent
-            post={post}
-            currentUserId={currentUserId}
-            showMenu={showMenu}
-            setShowMenu={setShowMenu}
-            handleDeletePost={handleDeletePost}
-            description={description}
-            textareaRef={textareaRef}
-          />
+          <div className={styles.contentWrapper}>
+            <div className={styles.postContentSection}>
+              <PostContent
+                post={post}
+                currentUserId={currentUserId}
+                showMenu={showMenu}
+                setShowMenu={setShowMenu}
+                handleDeletePost={handleDeletePost}
+                description={description}
+                textareaRef={textareaRef}
+              />
+            </div>
 
-          <CommentSection
-            post={post}
-            newComment={newComment}
-            setNewComment={setNewComment}
-            handleCommentSubmit={handleCommentSubmit}
-            currentUserId={currentUserId}
-            handleCommentDelete={handleCommentDelete}
-            activeCommentId={activeCommentId}
-            setActiveCommentId={setActiveCommentId}
-          />
+            <div className={styles.commentSection}>
+              <CommentSection
+                post={post}
+                newComment={newComment}
+                setNewComment={setNewComment}
+                handleCommentSubmit={handleCommentSubmit}
+                currentUserId={currentUserId}
+                handleCommentDelete={handleCommentDelete}
+                activeCommentId={activeCommentId}
+                setActiveCommentId={setActiveCommentId}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>
