@@ -27,8 +27,6 @@ import exampleRoute from "#src/routes/example_route.js"
 import assignmentRoute from "#src/routes/course_routes/assignment_route.js"
 import examRoute from "#src/routes/course_routes/exam_route.js"
 import courseRouter from "#src/routes/course_routes/course_router.js"
-import todoAssignmentsRoute from "#src/routes/course_routes/todo_assignments_route.js"
-import upcomingExamsRoute from "#src/routes/course_routes/upcoming_exams_route.js"
 import courseMemberRoute from "#src/routes/course_routes/member_route.js"
 import userRoute from "#src/routes/user_routes/user_route.js"
 import fileRouter from "#src/routes/file_routes/file_route.js";
@@ -36,8 +34,8 @@ import fileRouter from "#src/routes/file_routes/file_route.js";
 // try hit http://localhost:3000/example
 app.use("/example", exampleRoute);
 app.use("/course", courseRouter);
-app.use("/assignments", todoAssignmentsRoute);
-app.use("/exams", upcomingExamsRoute);
+app.use("/assignments", assignmentRoute);
+app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
 
 app.use("/example", exampleRoute);

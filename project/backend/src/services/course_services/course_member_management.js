@@ -7,7 +7,7 @@
 
 import mongoose from "mongoose";
 
-async function getStudyIn(courseId) {
+async function GetStudyIn(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
@@ -36,7 +36,7 @@ async function getStudyIn(courseId) {
     }
 }
 
-async function getAssistIn(courseId) {
+async function GetAssistIn(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
@@ -62,7 +62,7 @@ async function getAssistIn(courseId) {
     }
 }
 
-async function getTeachIn(courseId) {
+async function GetTeachIn(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
@@ -88,7 +88,7 @@ async function getTeachIn(courseId) {
     }
 }
 
-async function switchStudyAssist(userId, courseId) {
+async function SwitchStudyAssist(userId, courseId) {
     try {
         const parsedUserId = parseInt(userId);
         const parsedCourseId = parseInt(courseId);
@@ -136,7 +136,7 @@ async function switchStudyAssist(userId, courseId) {
     }
 }
 
-async function addStudent(userId, studentId, courseId) {
+async function AddStudent(userId, studentId, courseId) {
     try {
         // Parse the parameters to ensure they are integers
         const parsedUserId = parseInt(userId);
@@ -180,25 +180,25 @@ async function addStudent(userId, studentId, courseId) {
     }
 }
 
-async function inviteStudentByCode(code, userId) {
+async function InviteStudentByCode(code, userId) {
     const parsedUserId = parseInt(userId); 
     const courseId = await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} }) //WARN: link / code
     const tempStudentId = 6969696969;
-    return await addStudent(parsedUserId, tempStudentId, courseId.course_id);
+    return await AddStudent(parsedUserId, tempStudentId, courseId.course_id);
 }
 
-async function findInviteCodeId(code) {
+async function FindInviteCodeId(code) {
     console.log(code); 
     return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
 }
 
 export {
-    getStudyIn,
-    getAssistIn,
-    getTeachIn,
-    switchStudyAssist,
-    addStudent,
-    inviteStudentByCode,
-    findInviteCodeId
+    GetStudyIn,
+    GetAssistIn,
+    GetTeachIn,
+    SwitchStudyAssist,
+    AddStudent,
+    InviteStudentByCode,
+    FindInviteCodeId
 }
 
