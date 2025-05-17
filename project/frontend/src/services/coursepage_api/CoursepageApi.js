@@ -23,18 +23,6 @@ export const getCourseSyllabus = async (courseId) => {
   return (await axios.get(`/course/${courseId}/syllabus`)).data;
 };
 
-// 如果後端有 /course/:courseId/link 和 /course/:courseId/weeks API，也可以加在這裡
-export const getCourseLink = async (courseId) => {
-  try {
-      const response = await axios.get(`/course/${courseId}/link`);
-      return response.data;
-  } catch (error) {
-      console.error(`獲取課程 ${courseId} 連結失敗:`, error);
-      // 根據需要返回預設值或拋出錯誤
-      return { link: "" }; // 返回空連結或提示信息
-  }
-};
-
 // 更新課程教材資料
 export const updateCourseMaterials = async (courseId, materials) => {
   try {
