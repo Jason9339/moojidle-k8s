@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import CalculateWeek from '#src/utils/calculateWeek.js';
+import { GetCourseById } from '#src/services/course_services/course_service.js';
 
 // Service function to retrieve all upcoming assignments
 async function GetToDoAssignments() {
@@ -119,8 +121,6 @@ async function GetToDoAssignmentsByUserId(user_id) {
 // 取得特定課程的作業
 async function GetAssignmentsByCourseId(courseId) {
     try {
-        // 先獲取課程信息，以獲取開始日期
-        const { GetCourseById, CalculateWeek } = await import('./course_service.js');
         const course = await GetCourseById(courseId);
         if (!course) {
             throw new Error('找不到課程');
@@ -135,7 +135,7 @@ async function GetAssignmentsByCourseId(courseId) {
         return Promise.all(assignments.map(async (assignment) => { // Ensure Promise.all is used
             // 計算週次 - 使用 start_date 而非 create_date
             const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum); // calculateWeek is already imported
+            const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum);
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,
