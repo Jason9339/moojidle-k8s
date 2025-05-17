@@ -2,6 +2,7 @@
     width: calc(100vw - 380px);
     height: 100vh;
     overflow-y: scroll;
+    background: #eff2f5;
 }
 
 .category {
