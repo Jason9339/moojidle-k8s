@@ -11,7 +11,8 @@ import {
 } from '#src/services/course_services/course_service.js';
 
 import {
-    AddTeachIn
+    AddTeachIn,
+    FindInviteCodeId
 } from '#src/services/course_services/course_member_service.js';
 
 
@@ -150,6 +151,25 @@ async function ReadInviteCode(req, res) {
     }
 }
 
+async function GetIdViaInviteCode(req, res) {
+   try {
+        const code = req.params.code;
+        const courseId = await FindInviteCodeId(code);
+        if (courseId) {
+            res.status(200).json({ courseId: courseId.course_id });
+        }  
+        else {
+            res.status(404).json({ message: "Course not found" });
+        }
+        
+    } 
+    catch (error) {
+        console.error("Error getting course ID via invite code:", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
 export {
     GetAllCoursesController as GetAllCourses,
     CreateCourse,
@@ -158,5 +178,6 @@ export {
     GetCourseDetailsController as GetCourseDetails,
     ReadTeachIn,
     EditCourse,
-    ReadInviteCode
+    ReadInviteCode,
+    GetIdViaInviteCode
 };
