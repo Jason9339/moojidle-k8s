@@ -62,7 +62,7 @@ async function GetAssistIn(courseId) {
     }
 }
 
-async function GetTeachIn(courseId) {
+async function GetTeachersByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
@@ -71,19 +71,21 @@ async function GetTeachIn(courseId) {
         const userCollection = db.collection("user");
 
         const teachers = await teachInCollection.find({ course_id: parsedCourseId }).toArray();
-        
-        // Fetch user details for each teacher
-        const teachersWithDetails = await Promise.all(teachers.map(async (teacher) => {
-            const user = await userCollection.findOne(
-                { user_id: teacher.user_id },
-                { projection: {  _id: 0, pw: 0, create_date: 0, path_to_profile_pic: 0  } }
-            );
-            return user;
-        }));
-        
+
+        // 依序查找每位老師的用戶資料，過濾掉敏感欄位
+        const teachersWithDetails = await Promise.all(
+            teachers.map(async (teacher) => {
+                const user = await userCollection.findOne(
+                    { user_id: teacher.user_id },
+                    { projection: { _id: 0, pw: 0, create_date: 0, path_to_profile_pic: 0 } }
+                );
+                return user;
+            })
+        );
+
         return teachersWithDetails;
     } catch (error) {
-        console.error("Error in getTeachIn:", error);
+        console.error("Error in GetTeachersByCourseId:", error);
         throw error;
     }
 }
@@ -195,10 +197,10 @@ async function FindInviteCodeId(code) {
 export {
     GetStudyIn,
     GetAssistIn,
-    GetTeachIn,
+    GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent,
     InviteStudentByCode,
-    FindInviteCodeId
+    FindInviteCodeId,
 }
 

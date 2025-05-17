@@ -17,8 +17,6 @@ import {
   GetCourseAnnouncements, 
   CreateAnnouncement,
   EditAnnouncement,
-  GetCourseSyllabus, 
-  GetCourseLink,
 
   // helper functions
   CanUserEditAnnouncements
@@ -50,13 +48,6 @@ router.get("/:courseId", GetCourseDetails);
 router.get("/:courseId/announcements/read", GetCourseAnnouncements);
 router.post("/:courseId/announcements/create", CreateAnnouncement);
 router.post("/:announcementId/announcements/edit", EditAnnouncement);
-// router.get("/:courseId/files", GetCourseFiles);
-// router.get("/:courseId/materials", GetCourseFiles); // files 的別名
-// router.post("/:courseId/materials", UpdateCourseMaterials); // 更新教材
-// router.delete("/:courseId/materials/:materialId", DeleteCourseMaterial); // 刪除教材
-// router.get("/:courseId/assignments", GetCourseAssignments);
-router.get("/:courseId/syllabus", GetCourseSyllabus);
-router.get("/:courseId/link", GetCourseLink);
 router.get("/:courseId/inviteCode", ReadInviteCode);
 
 // 掛載 assignment/material 子路由

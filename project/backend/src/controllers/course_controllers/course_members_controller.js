@@ -1,7 +1,7 @@
 import {
     GetStudyIn,
     GetAssistIn,
-    GetTeachIn,
+    GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent, 
     InviteStudentByCode,
@@ -16,7 +16,7 @@ async function GetCourseMembers(req, res) {
         
         const students = await GetStudyIn(courseId);
         const assistants = await GetAssistIn(courseId);
-        const teachers = await GetTeachIn(courseId);
+        const teachers = await GetTeachersByCourseId(courseId);
         
         res.status(200).json({
             students,

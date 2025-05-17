@@ -1,33 +1,25 @@
 import { 
-    GetAllCourses as GetAllCoursesService,
+    GetAllCourses,
     GetAnnouncementsByCourseId,
-    CreateAnnouncement as CreateAnnouncementService,
-    EditAnnouncement as EditAnnouncementService,
-    GetCourseSyllabus as GetCourseSyllabusService,
-    GetCourseLink as GetCourseLinkService,
-    GetCourseDetails as GetCourseDetailsService,
-    GetTeachingCourses as GetTeachingCoursesService,
-    CanUserEditAnnouncements as CanUserEditAnnouncementsService
+    CreateAnnouncement,
+    EditAnnouncement,
+    GetCourseDetails,
+    GetTeachingCourses,
+    CanUserEditAnnouncements,
+    AddCourse,
+    AddTeachIn,
+    RemoveCourse,
+    RemoveCourseRelationships,
+    ChangeCourseName,
+    GetInviteCode,
+    GetCoursesByTeacherId,
+    ViewCourses
 } from '#src/services/course_services/course_service.js';
 
-import { 
-    AddCourse, 
-    AddTeachIn, 
-    RemoveCourse, 
-    RemoveCourseRelationships, 
-    ChangeCourseName 
-} from "#src/services/course_services/modify_course.js";
-
-import { 
-    ViewCourses, 
-    GetTeachIn,
-    GetInviteCode,
-} from "#src/services/course_services/view_course.js";
-
 // 取得所有課程列表
-async function GetAllCourses(req, res) {
+async function GetAllCoursesController(req, res) {
     try {
-        const courses = await GetAllCoursesService();
+        const courses = await GetAllCourses();
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -46,11 +38,11 @@ async function GetCourseAnnouncements(req, res) {
     }
 }
 
-export const CreateAnnouncement = async (req, res) => {
+const CreateAnnouncementController = async (req, res) => {
     try {
         const { courseId } = req.params;
         const { context, userId, announceDate } = req.body;
-        const announcement = await CreateAnnouncementService(courseId, context, userId, announceDate);
+        const announcement = await CreateAnnouncement(courseId, context, userId, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("新增課程公告錯誤:", error);
@@ -58,41 +50,17 @@ export const CreateAnnouncement = async (req, res) => {
     }
 };
 
-export const EditAnnouncement = async (req, res) => {
+const EditAnnouncementController = async (req, res) => {
     try {
         const { announcementId } = req.params;
         const { context, announceDate } = req.body;
-        const announcement = await EditAnnouncementService(announcementId, context, announceDate);
+        const announcement = await EditAnnouncement(announcementId, context, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("更改課程公告錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 };
-
-// 取得特定課程的 syllabus
-async function GetCourseSyllabus(req, res) {
-    try {
-        const { courseId } = req.params;
-        const syllabusData = await GetCourseSyllabusService(courseId);
-        res.json(syllabusData);
-    } catch (error) {
-        console.error("取得課程大綱錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-}
-
-// 取得特定課程的連結
-async function GetCourseLink(req, res) {
-    try {
-        const { courseId } = req.params;
-        const linkData = await GetCourseLinkService(courseId);
-        res.json(linkData);
-    } catch (error) {
-        console.error("取得課程連結錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-}
 
 // 創建課程
 async function CreateCourse(req, res) {
@@ -160,10 +128,10 @@ async function ReadCourse(req, res) {
 }
 
 // 獲取課程詳細資訊
-async function GetCourseDetails(req, res) {
+async function GetCourseDetailsController(req, res) {
     try {
         const { courseId } = req.params;
-        const courseDetails = await GetCourseDetailsService(courseId);
+        const courseDetails = await GetCourseDetails(courseId);
         res.status(200).json(courseDetails);
     } catch (error) {
         console.error("獲取課程詳情錯誤:", error);
@@ -177,7 +145,7 @@ async function GetCourseDetails(req, res) {
 }
 
 // 獲取用戶教授的課程
-async function GetTeachingCourses(req, res) {
+async function GetTeachingCoursesController(req, res) {
     try {
         const { userId } = req.query;
         
@@ -185,7 +153,7 @@ async function GetTeachingCourses(req, res) {
             return res.status(400).json({ message: '缺少用戶ID參數' });
         }
         
-        const formattedCourses = await GetTeachingCoursesService(userId);
+        const formattedCourses = await GetTeachingCourses(userId);
         res.json(formattedCourses);
     } catch (error) {
         console.error("獲取教師課程錯誤:", error);
@@ -197,7 +165,7 @@ async function GetTeachingCourses(req, res) {
 async function ReadTeachIn(req, res) {
     try {
         // 調用服務函數獲取教學關係
-        const teach_in = await GetTeachIn(req.query.user_id);
+        const teach_in = await GetCoursesByTeacherId(req.query.user_id);
 
         // 返回結果給客戶端
         res.status(200).json(teach_in);
@@ -236,10 +204,10 @@ async function ReadInviteCode(req, res) {
     }
 }
 
-export const CanUserEditAnnouncements = async (req, res) => {
+const CanUserEditAnnouncementsController = async (req, res) => {
     const { courseId, userId } = req.params;
     try {
-        const enrolled = await CanUserEditAnnouncementsService(courseId, userId);
+        const enrolled = await CanUserEditAnnouncements(courseId, userId);
         res.status(200).json(enrolled);
     } catch (error) {
         console.error("Failed to check user enrollment:", error);
@@ -248,16 +216,17 @@ export const CanUserEditAnnouncements = async (req, res) => {
 };
 
 export {
-    GetAllCourses,
+    GetAllCoursesController as GetAllCourses,
     GetCourseAnnouncements,
-    GetCourseSyllabus,
-    GetCourseLink,
+    CreateAnnouncementController as CreateAnnouncement,
+    EditAnnouncementController as EditAnnouncement,
     CreateCourse,
     DeleteCourse,
     ReadCourse,
-    GetCourseDetails,
-    GetTeachingCourses,
+    GetCourseDetailsController as GetCourseDetails,
+    GetTeachingCoursesController as GetTeachingCourses,
     ReadTeachIn,
     EditCourse,
-    ReadInviteCode
+    ReadInviteCode,
+    CanUserEditAnnouncementsController as CanUserEditAnnouncements
 };
