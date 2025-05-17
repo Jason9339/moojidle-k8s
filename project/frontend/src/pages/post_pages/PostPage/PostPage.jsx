@@ -28,6 +28,9 @@ function PostPage() {
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
+  const textareaRef = useRef(null);
+  const [description, setDescription] = useState("");
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -41,6 +44,21 @@ function PostPage() {
     };
     fetchPost();
   }, [id, refreshTrigger]);
+
+  // 當 post 更新時，更新 description
+  useEffect(() => {
+    if (post) {
+      setDescription(post.description || "");
+    }
+  }, [post]);
+
+  // 自動調整 textarea 高度
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // 先重置高度
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px"; // 設定為內容高度
+    }
+  }, [description]);
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -121,6 +139,8 @@ function PostPage() {
             showMenu={showMenu}
             setShowMenu={setShowMenu}
             handleDeletePost={handleDeletePost}
+            description={description}
+            textareaRef={textareaRef}
           />
 
           <CommentSection

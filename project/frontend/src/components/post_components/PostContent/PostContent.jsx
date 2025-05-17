@@ -2,12 +2,20 @@ import React, { useState } from "react";
 import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 
-function PostContent({ post, currentUserId, showMenu, setShowMenu, handleDeletePost, moreOptionsRef }) {
+function PostContent({
+  post,
+  currentUserId,
+  showMenu,
+  setShowMenu,
+  handleDeletePost,
+  description,
+  textareaRef,
+}) {
   const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
 
   return (
     <div className={styles.card}>
-      <div className={styles.moreOptionsWrapper} ref={moreOptionsRef}>
+      <div className={styles.moreOptionsWrapper}>
         <button className={styles.moreButton} onClick={() => setShowMenu(!showMenu)}>
           <FiMoreVertical size={25} />
         </button>
@@ -48,7 +56,14 @@ function PostContent({ post, currentUserId, showMenu, setShowMenu, handleDeleteP
       </div>
 
       <h2 className={styles.postTitle}>{post.title}</h2>
-      <p className={styles.description}>{post.description}</p>
+
+      <textarea
+        ref={textareaRef}
+        className={styles.description}
+        value={description}
+        readOnly
+        rows={1}
+      />
     </div>
   );
 }

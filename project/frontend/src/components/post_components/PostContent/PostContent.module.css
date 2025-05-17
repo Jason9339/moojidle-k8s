@@ -119,8 +119,19 @@
 }
 
 .description {
+  width: 100%;       /* 寬度填滿父元素 */
+  box-sizing: border-box;  /* 含 padding 和 border */
   font-size: 16px;
   color: #333;
   margin-bottom: 16px;
   white-space: pre-wrap;
+  border: none;
+  background-color: transparent;
+  resize: none;
+  font-family: inherit;
+  outline: none;
+  cursor: default;
+  padding: 8px 0;   /* 你可以調整上下 padding，不要左右padding */
 }
+
+
