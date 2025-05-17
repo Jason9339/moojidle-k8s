@@ -7,7 +7,6 @@ import {
   DeleteCourse,
   ReadCourse,
   GetCourseDetails,
-  GetTeachingCourses,
   ReadTeachIn,
   EditCourse,
   ReadInviteCode,
@@ -34,8 +33,6 @@ router.get("/list", GetAllCourses); // 獲取所有課程列表
 router.get("/read/teach_in", ReadTeachIn);
 router.post("/edit/:id", EditCourse);
 
-// 獲取教師的課程列表 - 注意：此路由必須在 /:courseId 路由之前
-router.get("/teaching", GetTeachingCourses);
 
 // ----- 課程詳情路由 -----
 router.get("/:courseId", GetCourseDetails);

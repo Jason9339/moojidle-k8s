@@ -120,45 +120,6 @@ async function GetCourseDetails(courseId) {
 }
 
 
-// 獲取用戶教授的課程
-async function GetTeachingCourses(userId) {
-    try {
-        if (!userId) {
-            throw new Error('缺少用戶ID參數');
-        }
-        
-        // 從 teach_in 集合中查詢用戶授課的所有課程ID
-        const teachInRecords = await mongoose.connection.db.collection('teach_in')
-            .find({ user_id: parseInt(userId) })
-            .toArray();
-        
-        // 如果沒有找到任何教授記錄
-        if (!teachInRecords || teachInRecords.length === 0) {
-            return []; // 返回空數組
-        }
-        
-        // 提取所有課程ID
-        const courseIds = teachInRecords.map(record => record.course_id);
-        
-        // 查詢這些課程的詳細資訊
-        const courses = await mongoose.connection.db.collection('course')
-            .find({ course_id: { $in: courseIds } })
-            .toArray();
-        
-        // 將課程資訊轉換為前端需要的格式
-        return courses.map(course => ({
-            title: course.name,
-            courseId: course.course_id,
-            description: course.description,
-            color: "#4A90E2", // 預設顏色
-            isTeacher: true
-        }));
-    } catch (error) {
-        console.error(`[getTeachingCourses] Error fetching teaching courses for user ID ${userId}:`, error);
-        throw new Error(`Failed to retrieve teaching courses: ${error.message}`);
-    }
-}
-
 // Service to add a new course
 async function AddCourse(courseData) {
     try {
@@ -431,7 +392,6 @@ export {
     GetAllCourses,
     GetInviteCode,
     GetCourseDetails,
-    GetTeachingCourses,
     CalculateWeek,
     AddCourse, 
     AddTeachIn,

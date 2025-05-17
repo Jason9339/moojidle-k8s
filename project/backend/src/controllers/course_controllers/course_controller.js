@@ -1,7 +1,6 @@
 import { 
     GetAllCourses,
     GetCourseDetails,
-    GetTeachingCourses,
     AddCourse,
     AddTeachIn,
     RemoveCourse,
@@ -105,21 +104,21 @@ async function GetCourseDetailsController(req, res) {
 }
 
 // 獲取用戶教授的課程
-async function GetTeachingCoursesController(req, res) {
-    try {
-        const { userId } = req.query;
+// async function GetTeachingCoursesController(req, res) {
+//     try {
+//         const { userId } = req.query;
         
-        if (!userId) {
-            return res.status(400).json({ message: '缺少用戶ID參數' });
-        }
+//         if (!userId) {
+//             return res.status(400).json({ message: '缺少用戶ID參數' });
+//         }
         
-        const formattedCourses = await GetTeachingCourses(userId);
-        res.json(formattedCourses);
-    } catch (error) {
-        console.error("獲取教師課程錯誤:", error);
-        res.status(500).json({ message: "伺服器錯誤", error: error.message });
-    }
-}
+//         const formattedCourses = await GetTeachingCourses(userId);
+//         res.json(formattedCourses);
+//     } catch (error) {
+//         console.error("獲取教師課程錯誤:", error);
+//         res.status(500).json({ message: "伺服器錯誤", error: error.message });
+//     }
+// }
 
 // 讀取教學關係
 async function ReadTeachIn(req, res) {
@@ -170,7 +169,7 @@ export {
     DeleteCourse,
     ReadCourse,
     GetCourseDetailsController as GetCourseDetails,
-    GetTeachingCoursesController as GetTeachingCourses,
+    // GetTeachingCoursesController as GetTeachingCourses,
     ReadTeachIn,
     EditCourse,
     ReadInviteCode
