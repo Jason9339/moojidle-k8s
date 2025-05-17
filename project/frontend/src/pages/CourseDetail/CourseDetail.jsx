@@ -207,18 +207,30 @@ function CourseDetail() {
                         {isEditor && (
                             <div className={`${styles["material-bar"]}`}>
                                 <button
-                                className={`${styles["material-button"]}`}
-                                onClick={() => setShowUploadModal(true)}
+                                    className={`${styles["material-button"]}`}
+                                    onClick={() => setShowUploadModal(true)}
                                 >
-                                上傳教材/作業
+                                    上傳教材/作業
                                 </button>
                                 <button 
-                                className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
-                                onClick={toggleEditMode}
-                                disabled={isSaving}
+                                    className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
+                                    onClick={toggleEditMode}
+                                    disabled={isSaving}
                                 >
-                                {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
+                                    {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
                                 </button>
+                                {isEditMode && (
+                                    <button
+                                        className={`${styles["material-button"]} ${styles["cancel"]}`}
+                                        onClick={() => {
+                                            setEditedMaterials([]);
+                                            setIsEditMode(false);
+                                        }}
+                                        disabled={isSaving}
+                                    >
+                                        取消
+                                    </button>
+                                )}
                             </div>
                         )}
                         <CourseTab
