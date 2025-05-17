@@ -50,21 +50,21 @@ select {
 }
 
 
-.submit-btn {
+.confirmBtn {
     background-color: #007bff;
     color: white;
     cursor: pointer;
 }
 
-.cancel-btn {
+.cancelBtn {
     background-color: #6c757d;
     color: white;
     cursor: pointer;
 }
 
 
-.submit-btn:hover,
-.cancel-btn:hover {
+.confirmBtn:hover,
+.cancelBtn:hover {
     opacity: 0.9;
 }
 .modalOverlay {

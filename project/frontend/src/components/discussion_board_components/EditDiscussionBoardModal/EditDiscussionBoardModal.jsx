@@ -24,18 +24,18 @@ export default function EditDiscussionBoardModal({ boardId, onClose, deleteBoard
         >
             {/* Modal box */}
             <div
-                className={styles["modal"]}
+                className={styles.modal}
                 onClick={e => e.stopPropagation()}>
-                <h2 className={styles["title"]}>確定要刪除嗎?</h2>
-                <div className={styles["buttons"]}>
+                <h2 className={styles.title}>確定要刪除嗎?</h2>
+                <div className={styles.buttons}>
                     <button
                         onClick={onClose}
-                        className={styles["cancelButton"]}>
+                        className={styles.cancelButton}>
                         取消
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className={styles["confirmButton"]}>
+                        className={styles.confirmButton}>
                         確認
                     </button>
                 </div>

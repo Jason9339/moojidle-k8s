@@ -43,8 +43,8 @@ const CreateDiscussionBoardModal = ({ courseId, userId, onClose, pushNewBoard })
                         required
                     />
                     <div className={styles.buttonGroup}>
-                        <button type="button" onClick={onClose}>取消</button>
-                        <button type="submit">發布</button>
+                        <button className={styles.cancelBtn} type="button" onClick={onClose}>取消</button>
+                        <button className={styles.confirmBtn} type="submit">確認</button>
                     </div>
                 </form>
             </div>
