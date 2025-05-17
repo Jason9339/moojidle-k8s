@@ -10,7 +10,7 @@ const PostEditHeader = ({ courseData, boardData, defaultCourseId, defaultBoardId
                 <Combobox options={boardData} onChange={onBoardFilterChange} defaultValue={defaultBoardId} enable={enable} />
             </div>
 
-            <div className="flex w-[70vw] h-[5vh] pl-[5px] text-center flex items-center">
+            <div className="flex w-[70vw] h-[5vh] pl-[5px] text-center items-center">
                 {userTags.map((tag, index) => (
                     <span id={`user${tag.user_id}${tag.user_tag}`} className="text-[#548C00] pl-[2vw]" key={index}>
                         {tag}

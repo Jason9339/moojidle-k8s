@@ -35,15 +35,15 @@ const PostEdit = () => {
         state.currentCourse = obj.course_name;
 
         // check if current discussion board is in that course, when the board field is selected
-        if(data != [] && state.currentBoardId != undefined){
+        if (data != [] && state.currentBoardId != undefined) {
             let isInCourse = false;
-            for(let i = 0; i < data.length; i ++){
-                if(state.currentBoardId == data[i].value){
+            for (let i = 0; i < data.length; i++) {
+                if (state.currentBoardId == data[i].value) {
                     isInCourse = true;
                 }
             }
-        
-            if(!isInCourse){
+
+            if (!isInCourse) {
                 state.currentBoardId = boards[0].board_id ?? NOT_EXIST;
             }
         }
@@ -146,8 +146,8 @@ const PostEdit = () => {
     }, [navigate, description, state.currentBoardId, title, userTags]);
 
     // check a course has a discusiion board
-    for(let i = 0; i < state.data.length; i ++){
-        if(state.data[i].boards == [] || state.data[i].boards == undefined){
+    for (let i = 0; i < state.data.length; i++) {
+        if (state.data[i].boards == [] || state.data[i].boards == undefined) {
             state.data.splice(i, 1);
         }
     }
