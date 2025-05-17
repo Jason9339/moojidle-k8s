@@ -2,10 +2,35 @@
     width: calc(100vw - 380px);
     height: 100vh;
     overflow-y: scroll;
+    background: #eff2f5;
 }
 
 .category {
     display: block;
     padding-left: 2vw;
     font-size: 5vh;
+}
+
+.fab {
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #0e3c61;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 100;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.fab:hover {
+    background: #1769aa;
 }
