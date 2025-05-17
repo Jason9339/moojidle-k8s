@@ -19,10 +19,6 @@ export const getCourseAnnouncements = async (courseId) => {
   return (await axios.get(`/course/${courseId}/announcements`)).data;
 };
 
-export const getCourseSyllabus = async (courseId) => {
-  return (await axios.get(`/course/${courseId}/syllabus`)).data;
-};
-
 // 更新課程教材資料
 export const updateCourseMaterials = async (courseId, materials) => {
   try {
