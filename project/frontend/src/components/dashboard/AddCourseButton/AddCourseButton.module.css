@@ -1,0 +1,17 @@
+.add-course-button {
+    background-color: #5a8dee;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.add-course-button:hover {
+    background-color: #3d6ed4;
+}

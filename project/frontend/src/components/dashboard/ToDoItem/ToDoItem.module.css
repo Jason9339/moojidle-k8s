@@ -1,0 +1,57 @@
+.todo-item {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.todo-title {
+    font-weight: bold;
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.todo-course {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: #555;
+}
+
+.todo-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.todo-meta {
+    margin: 0;
+}
+
+.todo-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 12px;
+}
+
+.status-upcoming {
+    background-color: #e0f7fa;
+    color: #00796b;
+}
+
+.status-ongoing {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status-expired {
+    background-color: #ffebee;
+    color: #c62828;
+}

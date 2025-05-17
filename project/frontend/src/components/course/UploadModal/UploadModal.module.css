@@ -1,0 +1,97 @@
+.upload-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    z-index: 1000;
+    width: 400px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.upload-modal h2 {
+    margin: 0;
+    font-size: 20px;
+    text-align: center;
+}
+
+.upload-modal select,
+.upload-modal input[type="text"],
+.upload-modal input[type="date"],
+.upload-modal textarea,
+.upload-modal input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.upload-modal textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+.upload-modal button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.upload-modal button:first-of-type {
+    background-color: #f44336;
+    color: white;
+}
+
+.upload-modal button:last-of-type {
+    background-color: #4caf50;
+    color: white;
+}
+
+.upload-modal label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    flex: 1;
+}
+
+.upload-modal .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-modal .input-group input,
+.upload-modal .input-group select {
+    flex: 2;
+}
+
+.upload-modal .input-group textarea {
+    flex: 1;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-group button {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.button-group button:first-of-type {
+    margin-left: 0;
+}
+
+.button-group button:last-of-type {
+    margin-right: 0;
+}

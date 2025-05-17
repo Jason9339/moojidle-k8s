@@ -1,0 +1,76 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
+}
+.course-page {
+    padding: 24px;
+    width: calc(100% - 250px);
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.course-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.course-heading-divider {
+    margin-bottom: 20px;
+    border: none;
+    border-top: 2px solid #ccc;
+}
+
+.course-list-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* 課名多、代碼少 */
+    align-items: center;
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+.course-list-header {
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 8px;
+}
+
+.course-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.course-item-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.course-color-block {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.course-item-id {
+    text-align: left;
+    color: #555;
+    font-size: 14px;
+}
+
+.past-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #666;
+    margin-top: 40px;
+    margin-bottom: 8px;
+}
