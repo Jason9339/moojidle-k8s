@@ -13,7 +13,7 @@
     width: calc(100% - 180px);
     height: 100vh;
     box-sizing: border-box;
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 .course-header {
@@ -132,13 +132,13 @@
 .download-button {
     background-color: #cfe2ff;
     color: #084298;
-    border: 2px solid #084298; 
+    border: 2px solid #084298;
     padding: 0px 2px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: bold; 
-    margin-left: 12px; 
+    font-weight: bold;
+    margin-left: 12px;
 }
 
 .download-button:hover {
@@ -240,4 +240,3 @@
     font-size: 12px;
     color: #6c757d;
 }
-

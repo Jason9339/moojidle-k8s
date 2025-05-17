@@ -1,29 +1,29 @@
 .course-list-item {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .course-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
-  margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    margin: 0;
 }
 
 .course-color-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .course-id {
-  color: #555;
-  font-size: 14px;
-  text-align: left;
+    color: #555;
+    font-size: 14px;
+    text-align: left;
 }
