@@ -6,7 +6,7 @@ import {
     AddStudent, 
     InviteStudentByCode,
     FindInviteCodeId
-} from '#src/services/course_services/course_member_management.js';
+} from '#src/services/course_services/course_member_service.js';
 
 
 
