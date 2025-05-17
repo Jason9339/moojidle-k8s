@@ -152,3 +152,12 @@
     background: rgba(0, 0, 0, 0.3);
     z-index: 999;
 }
+
+.course-title {
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: bottom;
+}

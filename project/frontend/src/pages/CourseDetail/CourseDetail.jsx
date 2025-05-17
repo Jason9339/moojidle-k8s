@@ -184,7 +184,7 @@ function CourseDetail() {
             <div className={`${styles["course-detail-container"]}`}>
                 {/* 課程標題列 */}
                 <div className={`${styles["course-header"]}`}>
-                    <span>{course.title}</span>
+                    <span className={styles["course-title"]} title={course.title}>{course.title}</span>
                     <span>{courseId}</span>
                 </div>
 
