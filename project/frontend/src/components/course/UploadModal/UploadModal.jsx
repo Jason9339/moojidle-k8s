@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react"; // 引入 useRef
 import { UploadFile } from "@/services/file_api/FileApi";
 import styles from "./UploadModal.module.css";
 
@@ -7,12 +7,14 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [type, setType] = useState("material");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [endDate, setEndDate] = useState(""); // only for assignments
-    const [displayDate, setDisplayDate] = useState(""); // for materials
-    const [startDate, setStartDate] = useState(""); // for assignments
+    const [endDate, setEndDate] = useState("");
+    const [displayDate, setDisplayDate] = useState("");
+    const [startDate, setStartDate] = useState("");
+
+    // 建立一個 ref 來存取隱藏的 file input
+    const fileInputRef = useRef(null);
 
     const handleUpload = async () => {
-        // 必填欄位檢查
         if (!name.trim()) {
             alert("請輸入名稱");
             return;
@@ -44,7 +46,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             return;
         }
 
-        const user = JSON.parse(localStorage.getItem("user")); // 確保登入時有存
+        const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
             alert("請先登入");
@@ -78,10 +80,24 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
         }
     };
 
+    // 處理檔案選擇按鈕點擊事件
+    const handleFileButtonClick = () => {
+        fileInputRef.current?.click(); // 觸發隱藏的 file input 的點擊事件
+    };
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setFile(e.target.files[0]);
+        } else {
+            setFile(null);
+        }
+    };
+
     return (
-        <div className={`${styles["upload-modal"]}`}>
+        <div className={styles["upload-modal"]}>
             <h2>上傳檔案</h2>
-            <div className={`${styles["input-group"]}`}>
+
+            <div className={styles["input-group"]}>
                 <label htmlFor="type">選擇類型</label>
                 <select
                     id="type"
@@ -93,16 +109,14 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 </select>
             </div>
 
-            <div className={`${styles["input-group"]}`}>
+            <div className={styles["input-group"]}>
                 <label htmlFor="name">
                     {type === "assignment" ? "作業名稱" : "教材名稱"}
                 </label>
                 <input
                     id="name"
                     type="text"
-                    placeholder={
-                        type === "assignment" ? "作業名稱" : "教材名稱"
-                    }
+                    placeholder={type === "assignment" ? "作業名稱" : "教材名稱"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -111,7 +125,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
 
             {type === "assignment" && (
                 <>
-                    <div className={`${styles["input-group"]}`}>
+                    <div className={styles["input-group"]}>
                         <label htmlFor="startDate">開始日期時間</label>
                         <input
                             id="startDate"
@@ -121,7 +135,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                             required
                         />
                     </div>
-                    <div className={`${styles["input-group"]}`}>
+                    <div className={styles["input-group"]}>
                         <label htmlFor="endDate">結束日期時間</label>
                         <input
                             id="endDate"
@@ -135,7 +149,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             )}
 
             {type === "material" && (
-                <div className={`${styles["input-group"]}`}>
+                <div className={styles["input-group"]}>
                     <label htmlFor="displayDate">顯示日期</label>
                     <input
                         id="displayDate"
@@ -147,24 +161,44 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                 </div>
             )}
 
-            <label htmlFor="description">簡介/描述</label>
-            <textarea
-                id="description"
-                placeholder="簡介/描述"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-            />
+            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
+                <label htmlFor="description">簡介/描述</label>
+                <textarea
+                    id="description"
+                    placeholder="簡介/描述"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                />
+            </div>
 
-            <label htmlFor="file">選擇檔案</label>
-            <input
-                type="file"
-                accept="*"
-                onChange={(e) => setFile(e.target.files[0])}
-                required
-            />
+            {/* 修改後的檔案選擇區塊 */}
+            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
+                <label>選擇檔案</label> {/* 這個 label 是給整個檔案選擇區塊的 */}
+                <div className={styles["file-input-custom-area"]}>
+                    <button
+                        type="button"
+                        onClick={handleFileButtonClick}
+                        className={styles["custom-file-button"]}
+                    >
+                        選擇檔案
+                    </button>
+                    <input
+                        id="file" // id 仍然需要，但 input 本身被隱藏
+                        type="file"
+                        accept="*"
+                        onChange={handleFileChange}
+                        ref={fileInputRef} // 綁定 ref
+                        style={{ display: "none" }} // 直接隱藏 input
+                        required
+                    />
+                    <span className={styles["file-name-display"]}>
+                        {file ? file.name : "尚未選擇任何檔案"}
+                    </span>
+                </div>
+            </div>
 
-            <div className={`${styles["button-group"]}`}>
+            <div className={styles["button-group"]}>
                 <button onClick={onClose}>取消</button>
                 <button onClick={handleUpload}>上傳</button>
             </div>
