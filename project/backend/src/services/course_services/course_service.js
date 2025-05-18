@@ -1,167 +1,5 @@
 import mongoose from 'mongoose';
 
-// 查詢課程基本資訊
-async function GetCourseById(courseId) {
-    try {
-        return await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
-    } catch (error) {
-        console.error(`[getCourseById] Error fetching course with ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course: ${error.message}`);
-    }
-}
-
-// 獲取所有課程
-async function GetAllCourses() {
-    try {
-        return await mongoose.connection.db.collection('course')
-            .find({})
-            .project({ course_id: 1, name: 1, description: 1, create_date: 1, _id: 0 })
-            .toArray();
-    } catch (error) {
-        console.error("[getAllCourses] Error fetching all courses:", error);
-        throw new Error(`Failed to retrieve all courses: ${error.message}`);
-    }
-}
-
-async function GetInviteCode(courseId) {
-    try {
-        const parsedId = parseInt(courseId, 10);
-        if (isNaN(parsedId)) {
-            throw new Error("Invalid course ID format. Course ID must be an integer.");
-        }
-        
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const course = await coursesCollection.findOne(
-            { course_id: parsedId },
-            { projection: { _id: 0, invite_link: 1 }} //WARN: link
-        );
-
-        // console.log(course);
-        
-        if (!course) {
-            throw new Error(`Course with ID ${parsedId} not found`);
-        }
-        
-        return course.invite_link;
-    } catch (error) {
-        throw new Error(`Failed to retrieve invite code: ${error.message}`);
-    }
-}
-
-
-// 獲取課程詳細資訊
-async function GetCourseDetails(courseId) {
-    try {
-        const course = await mongoose.connection.db.collection('course')
-            .findOne({ course_id: parseInt(courseId) });
-        
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        
-        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
-        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
-        
-        return {
-            id: course.course_id,
-            title: course.name,
-            description: course.description,
-            syllabus: course.syllabus || "",
-            createDate: course.create_date,
-            start_date: course.start_date,
-            inviteLink: course.invite_link || "",
-            week_num: course.week_num,
-        };
-    } catch (error) {
-        console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course details: ${error.message}`);
-    }
-}
-
-// Service function to delete related data from other collections based on course_id
-async function RemoveCourseRelationships(courseIdInt) {
-    console.log(`[DeleteCourseRelationships] Deleting relationships for course_id: ${courseIdInt}`);
-    try {
-        // List of collections that have a direct course_id relationship
-        const relatedCollections = [
-            'teach_in',
-            'assist_in',
-            'study_in',
-            'announcement',
-            'discussion_board', // Note: Posts within boards might need separate handling if not cascading
-            'exams',
-            'materials',
-            'assignments', // Note: Submitted assignments might need separate handling
-            'course_tag'
-        ];
-
-        const deletionPromises = relatedCollections.map(collectionName =>
-            mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
-        );
-
-        // Execute all deletion operations concurrently
-        const results = await Promise.allSettled(deletionPromises);
-
-        results.forEach((result, index) => {
-            const collectionName = relatedCollections[index];
-            if (result.status === 'fulfilled') {
-                console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
-            } else {
-                console.error(`[DeleteCourseRelationships] Error deleting documents from ${collectionName} for course_id: ${courseIdInt}:`, result.reason);
-                // Decide if you want to throw an error here or just log it
-            }
-        });
-
-        // Optionally, you could check if any promise failed and throw an error
-        // if (!results.every(r => r.status === 'fulfilled')) {
-        //     throw new Error("Failed to delete some course relationships.");
-        // }
-
-    } catch (err) {
-        console.error(`[DeleteCourseRelationships] General error deleting relationships for course_id ${courseIdInt}:`, err);
-        // Re-throw the error to be caught by the controller
-        throw new Error(`Failed to delete course relationships: ${err.message}`);
-    }
-}
-
-async function GetCoursesByTeacherId(userId) {
-    try {
-        const userIdInt = parseInt(userId, 10);
-        if (isNaN(userIdInt)) {
-            throw new Error("Invalid user ID format. User ID must be an integer.");
-        }
-
-        const teachInCollection = mongoose.connection.db.collection('teach_in');
-        const teachingRecords = await teachInCollection.find(
-            { user_id: userIdInt },
-            { projection: { _id: 0, course_id: 1 } }
-        ).toArray();
-
-        if (teachingRecords.length === 0) {
-            return [];
-        }
-
-        const courseIds = teachingRecords.map(record => record.course_id);
-
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const courses = await coursesCollection.find(
-            { course_id: { $in: courseIds } },
-            { projection: { _id: 0, course_id: 1, name: 1 } }
-        ).toArray();
-
-        const formattedCourses = courses.map(course => ({
-            title: course.name,
-            courseId: course.course_id,
-        }));
-
-        return formattedCourses;
-    } catch (error) {
-        console.error("Error in GetCoursesByTeacherId:", error);
-        throw new Error(`Failed to retrieve courses taught by user: ${error.message}`);
-    }
-}
-
-// -----------------------------------------------------------------------------------------------------------------------------
 async function GenerateInviteCode() {
     const db = mongoose.connection.db;
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -199,7 +37,7 @@ async function FindCourseByUserId(userId) {
     try {
         // Convert userId to integer if provided
         const userIdInt = userId ? parseInt(userId, 10) : null;
-        
+
         // Get all courses
         const coursesCollection = mongoose.connection.db.collection('course');
         const courses = await coursesCollection.find().toArray();
@@ -250,7 +88,7 @@ async function InsertCourse(courseData) {
             invite_link: inviteLink,
             // Add other optional fields from schema if needed
             week_num: courseData.week || 16, // Default to 16 if not provided
-            color : courseData.color || "#4A90E2", // Default to blue if not provided
+            color: courseData.color || "#4A90E2", // Default to blue if not provided
         };
 
         // 3. Insert the document into the 'course' collection
@@ -290,7 +128,7 @@ async function UpdateCourseName(courseId, newName) {
         return updatedCourse; // Return the updated course
     } catch (err) {
         console.error("Error updating course name:", err);
-        throw new Error(`Failed to update course name: ${err.message}`); 
+        throw new Error(`Failed to update course name: ${err.message}`);
     }
 }
 
@@ -306,6 +144,10 @@ async function DeleteCourse(id) {
         // 2. Delete the document matching the course_id
         const result = await mongoose.connection.db.collection('course').deleteOne({ course_id: courseIdInt });
 
+        if (result.deletedCount > 0) {
+            await DeleteCourseRelationships(courseIdInt);
+        }
+
         // 3. Return the number of documents deleted (0 or 1)
         return result.deletedCount;
 
@@ -316,18 +158,100 @@ async function DeleteCourse(id) {
     }
 }
 
+// Service function to delete related data from other collections based on course_id
+async function DeleteCourseRelationships(courseIdInt) {
+    try {
+        // List of collections that have a direct course_id relationship
+        const relatedCollections = [
+            'teach_in',
+            'assist_in',
+            'study_in',
+            'announcement',
+            'discussion_board', // Note: Posts within boards might need separate handling if not cascading
+            'exams',
+            'materials',
+            'assignments', // Note: Submitted assignments might need separate handling
+            'course_tag'
+        ];
+
+        const deletionPromises = relatedCollections.map((collectionName) => {
+            mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
+            if(collectionName == "discussion_board"){
+                // delete post in that discussion board
+                // TODO
+            }else if (collectionName == "assignments"){
+                // delete submitted assigns
+                // TODO
+            }
+        });
+
+        // Execute all deletion operations concurrently
+        const results = await Promise.allSettled(deletionPromises);
+
+        results.forEach((result, index) => {
+            const collectionName = relatedCollections[index];
+            if (result.status === 'fulfilled') {
+                console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
+            } else {
+                console.error(`[DeleteCourseRelationships] Error deleting documents from ${collectionName} for course_id: ${courseIdInt}:`, result.reason);
+                // Decide if you want to throw an error here or just log it
+            }
+        });
+
+        // Optionally, you could check if any promise failed and throw an error
+        // if (!results.every(r => r.status === 'fulfilled')) {
+        //     throw new Error("Failed to delete some course relationships.");
+        // }
+
+    } catch (err) {
+        console.error(`[DeleteCourseRelationships] General error deleting relationships for course_id ${courseIdInt}:`, err);
+        // Re-throw the error to be caught by the controller
+        throw new Error(`Failed to delete course relationships: ${err.message}`);
+    }
+}
+
+// 獲取課程詳細資訊
+async function FindCourseById(courseId) {
+    try {
+        const course = await mongoose.connection.db.collection('course')
+            .findOne({ course_id: parseInt(courseId) });
+
+        if (!course) {
+            throw new Error('找不到課程');
+        }
+
+        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
+
+        return {
+            id: course.course_id,
+            title: course.name,
+            description: course.description,
+            syllabus: course.syllabus || "",
+            createDate: course.create_date,
+            start_date: course.start_date,
+            inviteLink: course.invite_link || "",
+            week_num: course.week_num,
+        };
+    } catch (error) {
+        console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
+        throw new Error(`Failed to retrieve course details: ${error.message}`);
+    }
+}
+
+async function FindCourseIdByInviteCode(code) {
+    // console.log(code);
+    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
+}
+
 export {
-    GetCourseById,
     GetNextSequenceValue,
-    GetAllCourses,
-    GetInviteCode,
-    GetCourseDetails,
-    RemoveCourseRelationships,
-    GetCoursesByTeacherId,
-    
+
     FindCourseByUserId,
+    FindCourseById,
     FindAllCourses,
     FindCourseInCourseId,
+    FindCourseIdByInviteCode,
     InsertCourse,
     UpdateCourseName,
     DeleteCourse

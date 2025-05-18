@@ -55,7 +55,7 @@ export const deleteCourse = async (courseId) => {
 // 邀請碼
 export const fetchCourseIdByCode = async (code) => {
     try {
-        const response = await axios.get(`/course/member/invite/${code}`);
+        const response = await axios.get(`/course/invite/${code}`);
         return response.data;
     } catch (error) {
         console.error(

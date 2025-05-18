@@ -4,7 +4,6 @@ import {
     GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent, 
-    FindInviteCodeId,
     CanUserEditAnnouncements as CanUserEditAnnouncementsService
 } from '#src/services/course_services/course_member_service.js';
 
@@ -78,7 +77,3 @@ export {
     InviteStudent,
     CanUserEditAnnouncements
 }
-
-
-
-

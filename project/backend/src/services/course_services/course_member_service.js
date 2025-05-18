@@ -182,12 +182,6 @@ async function AddStudent(userId, studentId, courseId) {
     }
 }
 
-
-async function FindInviteCodeId(code) {
-    console.log(code); 
-    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
-}
-
 async function CanUserEditAnnouncements(courseId, userId) {
     try {
         const parsedCourseId = parseInt(courseId);
@@ -264,7 +258,6 @@ export {
     GetTeachersByCourseId,
     SwitchStudyAssist,
     AddStudent,
-    FindInviteCodeId,
     CanUserEditAnnouncements,
 
     FindTeachInByUserId,

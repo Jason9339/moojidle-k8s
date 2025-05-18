@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
-import { GetCourseById } from '#src/services/course_services/course_service.js';
 import CalculateWeek from '#src/utils/calculateWeek.js';
 import { DeleteFile } from '#src/services/file_services/file_storage_service.js';
 
 // 查詢課程教材
 async function GetMaterialsByCourseId(courseId) {
     try {
-        const course = await GetCourseById(courseId);
+        const course = await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
         if (!course) {
             throw new Error('找不到課程');
         }
@@ -41,7 +40,7 @@ async function UpdateMaterialsService(courseId, materials) {
     try {
         const materialsCollection = mongoose.connection.db.collection('materials');
         const results = [];
-        const course = await GetCourseById(courseId);
+        const course = await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
         if (!course) {
             throw new Error('找不到課程');
         }

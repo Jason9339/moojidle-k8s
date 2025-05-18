@@ -2,17 +2,14 @@ import express from 'express';
 const router = express.Router();
 
 import {
-    // 課程基本操作控制器
     CreateCourse,
     RemoveCourse,
     ReadCourse,
-    GetCourseDetails,
+    GetCourseDetail,
     ReadTeachIn,
     EditCourse,
-    ReadInviteCode,
-
-    // 課程詳細資訊控制器
-    GetAllCourses
+    GetAllCourses,
+    GetCourseIdByInviteCode
 } from '#src/controllers/course_controllers/course_controller.js';
 
 // 路由基礎地址: http://localhost:PORT/course
@@ -63,10 +60,10 @@ router.post("/edit/:id", EditCourse);
 // deleters
 router.delete("/delete/:id", RemoveCourse);
 
-
 // ----- 課程詳情路由 -----
 // getters
-router.get("/:courseId", GetCourseDetails);
-router.get("/:courseId/inviteCode", ReadInviteCode);
+router.get("/:courseId", GetCourseDetail);
+
+router.get("/invite/:code", GetCourseIdByInviteCode)
 
 export default router;

@@ -1,19 +1,15 @@
 import {
-    GetCourseDetails,
-    RemoveCourseRelationships,
-    GetInviteCode,
-
     FindCourseByUserId,
     FindAllCourses,
     FindCourseInCourseId,
     InsertCourse,
     UpdateCourseName,
-    DeleteCourse
+    DeleteCourse,
+    FindCourseById,
+    FindCourseIdByInviteCode
 } from '#src/services/course_services/course_service.js';
 
 import {
-    FindInviteCodeId,
-
     FindTeachInByUserId,
     FindStudyInByUserId,
     FindAssistInByUserId,
@@ -22,7 +18,7 @@ import {
 
 
 // 取得所有課程列表
-async function GetAllCoursesController(req, res) {
+async function GetAllCourses(req, res) {
     try {
         const courses = await FindAllCourses();
         res.json(courses);
@@ -64,14 +60,8 @@ async function RemoveCourse(req, res) {
 
         // 根據刪除結果返回響應
         if (deletedRowCount > 0) {
-            // 刪除課程相關資料
-            const courseIdInt = parseInt(id, 10);
-            await RemoveCourseRelationships(courseIdInt);
-
-            // 發送成功響應
             res.status(200).send({ message: `Successfully deleted course and its related data with ID = ${id}.` });
         } else {
-            // 未找到對應 ID 的課程
             res.status(404).send({ message: `cannot find ID = ${id} course` });
         }
     } catch (error) {
@@ -118,10 +108,10 @@ async function ReadCourse(req, res) {
 }
 
 // 獲取課程詳細資訊
-async function GetCourseDetailsController(req, res) {
+async function GetCourseDetail(req, res) {
     try {
         const { courseId } = req.params;
-        const courseDetails = await GetCourseDetails(courseId);
+        const courseDetails = await FindCourseById(courseId);
         res.status(200).json(courseDetails);
     } catch (error) {
         console.error("獲取課程詳情錯誤:", error);
@@ -179,21 +169,10 @@ async function EditCourse(req, res) {
     }
 }
 
-async function ReadInviteCode(req, res) {
-    try {
-        const courseId = req.params.courseId;
-        // console.log(courseId);
-        const code = await GetInviteCode(courseId);
-        return res.status(200).json({ code: code });
-    } catch (error) {
-        throw new Error(`Failed to retrieve invite code: ${error.message}`);
-    }
-}
-
-async function GetIdViaInviteCode(req, res) {
+async function GetCourseIdByInviteCode(req, res) {
     try {
         const code = req.params.code;
-        const courseId = await FindInviteCodeId(code);
+        const courseId = await FindCourseIdByInviteCode(code);
         if (courseId) {
             res.status(200).json({ courseId: courseId.course_id });
         }
@@ -210,13 +189,12 @@ async function GetIdViaInviteCode(req, res) {
 
 
 export {
-    GetAllCoursesController as GetAllCourses,
+    GetAllCourses,
     CreateCourse,
     RemoveCourse,
     ReadCourse,
-    GetCourseDetailsController as GetCourseDetails,
+    GetCourseDetail,
     ReadTeachIn,
     EditCourse,
-    ReadInviteCode,
-    GetIdViaInviteCode
+    GetCourseIdByInviteCode
 };

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import CalculateWeek from '#src/utils/calculateWeek.js';
-import { GetCourseById } from '#src/services/course_services/course_service.js';
 
 // Service function to retrieve all upcoming assignments
 async function GetToDoAssignments() {
@@ -121,7 +120,7 @@ async function GetToDoAssignmentsByUserId(user_id) {
 // 取得特定課程的作業
 async function GetAssignmentsByCourseId(courseId) {
     try {
-        const course = await GetCourseById(courseId);
+        const course = await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
         if (!course) {
             throw new Error('找不到課程');
         }

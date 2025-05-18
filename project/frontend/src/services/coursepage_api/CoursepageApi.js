@@ -64,5 +64,6 @@ export const switchCharacter = async (userId, courseId) => {
 };
 
 export const getInviteCode = async (courseId) => {
-    return (await axios.get(`/course/${courseId}/inviteCode`)).data;
+    // return (await axios.get(`/course/${courseId}/inviteCode`)).data;
+    return (await axios.get(`/course/${courseId}`)).data.inviteLink;
 };
