@@ -112,10 +112,10 @@ export default BoardSideBar;
 const OuterWrapper = styled.div`
   padding-left: 32px;
   padding-top: 40px;
-  background-color: #eff2f5; /* 跟右側主區一致 */
+  background-color: #f9f9f9; /* 跟右側主區一致 */
   border-radius: 16px;
   padding: 12px;
-  height: 100vh;
+  height: fit-content;
 `;
 
 // 內部 Sidebar 卡片樣式
