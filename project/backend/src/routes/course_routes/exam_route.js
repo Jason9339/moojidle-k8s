@@ -6,6 +6,8 @@ import {
 
 const router = express.Router();
 
+// entry point http://localhost:PORT/exams
+
 // 取得即將到來的考試/活動
 router.get('/coming', GetUpcomingExamsByUserId);
 

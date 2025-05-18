@@ -1,12 +1,17 @@
 import express from 'express';
-import { GetToDoAssignments, GetToDoAssignmentsByUserId, GetCourseAssignments } from '#src/controllers/course_controllers/assignment_controller.js';
+import { 
+    GetToDoAssignmentsByUserId,
+    GetCourseAssignments 
+} from '#src/controllers/course_controllers/assignment_controller.js';
 
 const router = express.Router();
 
-// GET /assignment/todo
+// entry point http://localhost:PORT/assignment
+
+// TODO
+// this route is not working at ALL, not in the scope of refacting the code
 router.get('/todo', GetToDoAssignmentsByUserId);
 
-// GET /assignment/course/:courseId
 router.get('/course/:courseId', GetCourseAssignments);
 
 

@@ -41,7 +41,7 @@ function MembersTab({ courseId, userId }) {
     const fetchCode = async () => {
         try {
             const data = await getInviteCode(courseId);
-            setCode(data.code);
+            setCode(data);
         } catch (err) {
             console.error("Error fetching invite code:", err);
         }

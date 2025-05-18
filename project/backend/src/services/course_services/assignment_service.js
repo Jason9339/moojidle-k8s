@@ -1,36 +1,4 @@
 import mongoose from "mongoose";
-import CalculateWeek from '#src/utils/calculateWeek.js';
-import { GetCourseById } from '#src/services/course_services/course_service.js';
-
-// Service function to retrieve all upcoming assignments
-async function GetToDoAssignments() {
-    try {
-        // 取得當前日期
-        const currentDate = new Date();
-        
-        // 查詢未過期的作業（截止日期 > 當前日期）
-        const assignments = await mongoose.connection.db.collection('assignments')
-            .find({ end_date: { $gt: currentDate } })
-            .sort({ end_date: 1 }) // 依截止日期升序排序
-            .toArray();
-        
-        // 轉換為前端需要的格式
-        const formattedAssignments = assignments.map(assignment => ({
-            id: assignment.ass_id,
-            name: assignment.ass_name,
-            description: assignment.description,
-            dueDate: assignment.end_date,
-            courseId: assignment.in_course_id
-        }));
-        
-        return formattedAssignments;
-        
-    } catch (error) {
-        console.error("[getTodoAssignments] Error fetching assignments:", error);
-        // Re-throw the error for the controller to handle
-        throw new Error(`Failed to retrieve todo assignments: ${error.message}`);
-    }
-}
 
 // Fetch unsubmitted assignments for a specific user
 async function GetToDoAssignmentsByUserId(user_id) {
@@ -118,34 +86,15 @@ async function GetToDoAssignmentsByUserId(user_id) {
     }
 }
 
-// 取得特定課程的作業
-async function GetAssignmentsByCourseId(courseId) {
+async function FindAssignmentsByCourseId(courseId) {
     try {
-        const course = await GetCourseById(courseId);
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        // 使用 start_date 而非 create_date
-        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
-        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
+        courseId = parseInt(courseId);
         const assignments = await mongoose.connection.db.collection('assignments')
-            .find({ in_course_id: parseInt(courseId) })
-            .sort({ end_date: 1 }) // 依截止日期升序排列
-            .toArray();
-        return Promise.all(assignments.map(async (assignment) => { // Ensure Promise.all is used
-            // 計算週次 - 使用 start_date 而非 create_date
-            const assignmentDate = assignment.start_date || assignment.create_date;
-            const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum);
-            return {
-                id: assignment.ass_id,
-                name: assignment.ass_name,
-                description: assignment.description,
-                dueDate: assignment.end_date,
-                startDate: assignment.start_date,
-                attachments: assignment.attachments || [],
-                week: week
-            };
-        }));
+        .find({ in_course_id: parseInt(courseId) })
+        .sort({ end_date: 1 }) // 依截止日期升序排列
+        .toArray();
+
+        return assignments;
     } catch (error) {
         console.error(`[getAssignmentsByCourseId] Error fetching assignments for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course assignments: ${error.message}`);
@@ -153,7 +102,6 @@ async function GetAssignmentsByCourseId(courseId) {
 }
 
 export {
-    GetToDoAssignments,
     GetToDoAssignmentsByUserId,
-    GetAssignmentsByCourseId
+    FindAssignmentsByCourseId
 };

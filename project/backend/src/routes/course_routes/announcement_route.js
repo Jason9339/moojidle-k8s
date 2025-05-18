@@ -8,7 +8,7 @@ import {
 } from '#src/controllers/course_controllers/announcement_controller.js';
 
 // ----- Announcement Routes -----
-// Base path for these routes will be mounted on /course or similar in main.js
+// entry point http://localhost:PORT/announcement
 
 // GET /announcement/course/:courseId
 router.get("/course/:courseId", GetCourseAnnouncements);

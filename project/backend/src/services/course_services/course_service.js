@@ -1,112 +1,58 @@
 import mongoose from 'mongoose';
+import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
-// 查詢課程基本資訊
-async function GetCourseById(courseId) {
+async function GenerateInviteCode() {
+    const db = mongoose.connection.db;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code;
+    do {
+        code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    } while (await db.collection('courses').findOne({ invite_link: code }));
+    return code;
+};
+
+// Service function to retrieve all courses with user role information
+async function FindCourseByUserId(userId) {
     try {
-        return await mongoose.connection.db.collection('course').findOne({ course_id: parseInt(courseId) });
+        // Convert userId to integer if provided
+        const userIdInt = userId ? parseInt(userId, 10) : null;
+
+        // Get all courses
+        const coursesCollection = mongoose.connection.db.collection('course');
+        const courses = await coursesCollection.find().toArray();
+
+        return courses;
     } catch (error) {
-        console.error(`[getCourseById] Error fetching course with ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course: ${error.message}`);
+        console.error("[ViewCourses] Error fetching courses:", error);
+        throw new Error(`Failed to retrieve courses: ${error.message}`);
     }
 }
 
-// Helper to get next a_id from counter collection
-async function GetNextSequenceValue(collectionName) {
-    // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
-    const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
-
-    if (!existingCounter) {
-        throw new Error("Counter document does not exist. Please initialize the counter collection manually.");
-    }
-
-    const result = await mongoose.connection.db.collection("counter").findOneAndUpdate(
-        { _id: existingCounter._id },
-        { $inc: { [collectionName]: 1 } },
-        {
-            returnDocument: 'after',
-            upsert: false  // 強制只更新，不建立新 document
-        }
-    );
-    console.log("Counter update result:", result);
-    console.log("Counter result:", result.value?.[collectionName]);
-    return result[collectionName] ?? 1;
-}
-
-// 獲取所有課程
-async function GetAllCourses() {
+async function FindAllCourses() {
     try {
-        return await mongoose.connection.db.collection('course')
-            .find({})
-            .project({ course_id: 1, name: 1, description: 1, create_date: 1, _id: 0 })
-            .toArray();
+        return await mongoose.connection.db.collection('course').find().toArray();
     } catch (error) {
         console.error("[getAllCourses] Error fetching all courses:", error);
         throw new Error(`Failed to retrieve all courses: ${error.message}`);
     }
 }
 
-async function GetInviteCode(courseId) {
+async function FindCourseInCourseId(courseIds) {
     try {
-        const parsedId = parseInt(courseId, 10);
-        if (isNaN(parsedId)) {
-            throw new Error("Invalid course ID format. Course ID must be an integer.");
-        }
-        
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const course = await coursesCollection.findOne(
-            { course_id: parsedId },
-            { projection: { _id: 0, invite_link: 1 }} //WARN: link
-        );
-
-        // console.log(course);
-        
-        if (!course) {
-            throw new Error(`Course with ID ${parsedId} not found`);
-        }
-        
-        return course.invite_link;
+        return await mongoose.connection.db.collection('course').find(
+            { course_id: { $in: courseIds } }
+        ).toArray();
     } catch (error) {
-        throw new Error(`Failed to retrieve invite code: ${error.message}`);
+        console.error("[getAllCourses] Error fetching all courses:", error);
+        throw new Error(`Failed to retrieve all courses: ${error.message}`);
     }
 }
-
-
-// 獲取課程詳細資訊
-async function GetCourseDetails(courseId) {
-    try {
-        const course = await mongoose.connection.db.collection('course')
-            .findOne({ course_id: parseInt(courseId) });
-        
-        if (!course) {
-            throw new Error('找不到課程');
-        }
-        
-        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
-        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
-        
-        return {
-            id: course.course_id,
-            title: course.name,
-            description: course.description,
-            syllabus: course.syllabus || "",
-            createDate: course.create_date,
-            start_date: course.start_date,
-            inviteLink: course.invite_link || "",
-            week_num: course.week_num,
-        };
-    } catch (error) {
-        console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course details: ${error.message}`);
-    }
-}
-
 
 // Service to add a new course
-async function AddCourse(courseData) {
+async function InsertCourse(courseData) {
     try {
         // 1. Generate the next course_id
-        const nextCourseId = await GetNextSequenceValue("course");
-        console.log("Next course_id:", nextCourseId);
+        const nextCourseId = await GetNextCounterId("course");
         const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
@@ -118,11 +64,10 @@ async function AddCourse(courseData) {
             start_date: new Date(courseData.start_date) || new Date(), // Default to current date if not provided
             syllabus: courseData.syllabus || "",
             // Include optional fields if they exist in courseData
-             invite_link: inviteLink,
+            invite_link: inviteLink,
             // Add other optional fields from schema if needed
             week_num: courseData.week || 16, // Default to 16 if not provided
-            color : courseData.color || "#4A90E2", // Default to blue if not provided
-
+            color: courseData.color || "#4A90E2", // Default to blue if not provided
         };
 
         // 3. Insert the document into the 'course' collection
@@ -144,20 +89,30 @@ async function AddCourse(courseData) {
     }
 }
 
+// Service to change the course name and return the updated course
+async function UpdateCourseName(courseId, newName) {
+    try {
+        const result = await mongoose.connection.db.collection('course').updateOne(
+            { course_id: courseId }, // Filter by course_id
+            { $set: { name: newName } } // Update the name field
+        );
 
-async function GenerateInviteCode() {
-    const db = mongoose.connection.db;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let code;
-    do {
-        code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-    } while (await db.collection('courses').findOne({ inviteCode: code }));
-    return code;
-};
 
+        if (result.matchedCount === 0) {
+            throw new Error(`Course with ID ${courseId} not found.`);
+        }
+
+        // Fetch the updated course
+        const updatedCourse = await mongoose.connection.db.collection('course').findOne({ course_id: courseId });
+        return updatedCourse; // Return the updated course
+    } catch (err) {
+        console.error("Error updating course name:", err);
+        throw new Error(`Failed to update course name: ${err.message}`);
+    }
+}
 
 // Service to remove a course by its course_id
-async function RemoveCourse(id) {
+async function DeleteCourse(id) {
     try {
         // 1. Convert the incoming id (expected to be course_id) to an integer
         const courseIdInt = parseInt(id, 10);
@@ -167,6 +122,10 @@ async function RemoveCourse(id) {
 
         // 2. Delete the document matching the course_id
         const result = await mongoose.connection.db.collection('course').deleteOne({ course_id: courseIdInt });
+
+        if (result.deletedCount > 0) {
+            await DeleteCourseRelationships(courseIdInt);
+        }
 
         // 3. Return the number of documents deleted (0 or 1)
         return result.deletedCount;
@@ -179,8 +138,7 @@ async function RemoveCourse(id) {
 }
 
 // Service function to delete related data from other collections based on course_id
-async function RemoveCourseRelationships(courseIdInt) {
-    console.log(`[DeleteCourseRelationships] Deleting relationships for course_id: ${courseIdInt}`);
+async function DeleteCourseRelationships(courseIdInt) {
     try {
         // List of collections that have a direct course_id relationship
         const relatedCollections = [
@@ -195,9 +153,18 @@ async function RemoveCourseRelationships(courseIdInt) {
             'course_tag'
         ];
 
-        const deletionPromises = relatedCollections.map(collectionName =>
-            mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
-        );
+        const deletionPromises = relatedCollections.map((collectionName) => {
+            let promise = mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
+            if(collectionName == "discussion_board"){
+                // delete post in that discussion board
+                // TODO
+            }else if (collectionName == "assignments"){
+                // delete submitted assigns
+                // TODO
+            }
+
+            return promise;
+        });
 
         // Execute all deletion operations concurrently
         const results = await Promise.allSettled(deletionPromises);
@@ -224,145 +191,47 @@ async function RemoveCourseRelationships(courseIdInt) {
     }
 }
 
-// Service to change the course name and return the updated course
-async function ChangeCourseName(courseId, newName) {
+// 獲取課程詳細資訊
+async function FindCourseById(courseId) {
     try {
-        const result = await mongoose.connection.db.collection('course').updateOne(
-            { course_id: courseId }, // Filter by course_id
-            { $set: { name: newName } } // Update the name field
-        );
+        const course = await mongoose.connection.db.collection('course')
+            .findOne({ course_id: parseInt(courseId) });
 
-
-        if (result.matchedCount === 0) {
-            throw new Error(`Course with ID ${courseId} not found.`);
+        if (!course) {
+            throw new Error('找不到課程');
         }
 
-        // Fetch the updated course
-        const updatedCourse = await mongoose.connection.db.collection('course').findOne({ course_id: courseId });
-        console.log("Updated course:", updatedCourse);
-        return updatedCourse; // Return the updated course
-    } catch (err) {
-        console.error("Error updating course name:", err);
-        throw new Error(`Failed to update course name: ${err.message}`); 
-    }
-}
+        // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
+        //console.log("[getCourseDetails] 從數據庫獲取的 course.week_num:", course.week_num); // 新增日誌
 
-async function GetCoursesByTeacherId(userId) {
-    try {
-        const userIdInt = parseInt(userId, 10);
-        if (isNaN(userIdInt)) {
-            throw new Error("Invalid user ID format. User ID must be an integer.");
-        }
-
-        const teachInCollection = mongoose.connection.db.collection('teach_in');
-        const teachingRecords = await teachInCollection.find(
-            { user_id: userIdInt },
-            { projection: { _id: 0, course_id: 1 } }
-        ).toArray();
-
-        if (teachingRecords.length === 0) {
-            return [];
-        }
-
-        const courseIds = teachingRecords.map(record => record.course_id);
-
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const courses = await coursesCollection.find(
-            { course_id: { $in: courseIds } },
-            { projection: { _id: 0, course_id: 1, name: 1 } }
-        ).toArray();
-
-        const formattedCourses = courses.map(course => ({
+        return {
+            id: course.course_id,
             title: course.name,
-            courseId: course.course_id,
-        }));
-
-        return formattedCourses;
+            description: course.description,
+            syllabus: course.syllabus || "",
+            createDate: course.create_date,
+            start_date: course.start_date,
+            inviteLink: course.invite_link || "",
+            week_num: course.week_num,
+        };
     } catch (error) {
-        console.error("Error in GetCoursesByTeacherId:", error);
-        throw new Error(`Failed to retrieve courses taught by user: ${error.message}`);
+        console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
+        throw new Error(`Failed to retrieve course details: ${error.message}`);
     }
 }
 
-// Service function to retrieve all courses with user role information
-async function ViewCourses(userId) {
-    // console.log(`[ViewCourses] Attempting to fetch courses for user ID: ${userId}...`);
-    try {
-        // Convert userId to integer if provided
-        const userIdInt = userId ? parseInt(userId, 10) : null;
-        
-        // Get all courses
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const courses = await coursesCollection.find({}, {
-            projection: {
-                _id: 0,
-                course_id: 1,
-                name: 1,
-                color: 1
-            }
-        }).toArray();
-        
-        // If no userId provided, just return basic course information
-        if (!userId || isNaN(userIdInt)) {
-            return courses.map(course => ({
-                title: course.name,
-                courseId: course.course_id,
-                color: course.color
-            }));
-        }
-        
-        // Get courses where user is a teacher
-        const teachInCollection = mongoose.connection.db.collection('teach_in');
-        const teachingRecords = await teachInCollection.find(
-            { user_id: userIdInt }
-        ).toArray();
-        const teachingCourseIds = new Set(teachingRecords.map(record => record.course_id));
-        
-        // Get courses where user is a student
-        const studyInCollection = mongoose.connection.db.collection('study_in');
-        const studyingRecords = await studyInCollection.find(
-            { user_id: userIdInt }
-        ).toArray();
-        const studyingCourseIds = new Set(studyingRecords.map(record => record.course_id));
-        
-        // Get courses where user is an assistant
-        const assistInCollection = mongoose.connection.db.collection('assist_in');
-        const assistingRecords = await assistInCollection.find(
-            { user_id: userIdInt }
-        ).toArray();
-        const assistingCourseIds = new Set(assistingRecords.map(record => record.course_id));
-        
-        // Format courses with role information and filter out courses with no relationship
-        const formattedCourses = courses
-            .map(course => ({
-                title: course.name,
-                courseId: course.course_id,
-                color: course.color,
-                isTeacher: teachingCourseIds.has(course.course_id) || false,
-                isStudent: studyingCourseIds.has(course.course_id) || false,
-                isAssistant: assistingCourseIds.has(course.course_id) || false
-            }))
-            .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
-        
-        return formattedCourses;
-
-    } catch (error) {
-        console.error("[ViewCourses] Error fetching courses:", error);
-        throw new Error(`Failed to retrieve courses: ${error.message}`);
-    }
+async function FindCourseIdByInviteCode(code) {
+    // console.log(code);
+    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
 }
-
 
 export {
-    GetCourseById,
-    GetNextSequenceValue,
-    GetAllCourses,
-    GetInviteCode,
-    GetCourseDetails,
-    AddCourse, 
-    RemoveCourse,
-    RemoveCourseRelationships,
-    ChangeCourseName,
-    GetCoursesByTeacherId,
-    ViewCourses
+    FindCourseByUserId,
+    FindCourseById,
+    FindAllCourses,
+    FindCourseInCourseId,
+    FindCourseIdByInviteCode,
+    InsertCourse,
+    UpdateCourseName,
+    DeleteCourse
 };

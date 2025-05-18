@@ -7,7 +7,7 @@ export const getCourseDetails = async (courseId) => {
 };
 
 export const getCourseMaterials = async (courseId) => {
-    return (await axios.get(`/material/course/${courseId}/files`)).data;
+    return (await axios.get(`/material/course/${courseId}/materials`)).data;
 };
 
 export const getCourseAssignments = async (courseId) => {
@@ -64,5 +64,6 @@ export const switchCharacter = async (userId, courseId) => {
 };
 
 export const getInviteCode = async (courseId) => {
-    return (await axios.get(`/course/${courseId}/inviteCode`)).data;
+    // return (await axios.get(`/course/${courseId}/inviteCode`)).data;
+    return (await axios.get(`/course/${courseId}`)).data.inviteLink;
 };

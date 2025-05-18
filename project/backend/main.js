@@ -24,26 +24,27 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import exampleRoute from "#src/routes/example_route.js"
+app.use("/example", exampleRoute);
+
 import assignmentRoute from "#src/routes/course_routes/assignment_route.js"
 import examRoute from "#src/routes/course_routes/exam_route.js"
-import courseRouter from "#src/routes/course_routes/course_router.js"
-import courseMemberRoute from "#src/routes/course_routes/member_route.js"
+import courseRoute from "#src/routes/course_routes/course_router.js"
+import courseMemberRoute from "#src/routes/course_routes/course_member_route.js"
 import userRoute from "#src/routes/user_routes/user_route.js"
-import fileRouter from "#src/routes/file_routes/file_route.js";
-import materialRouter from "#src/routes/course_routes/material_route.js";
+import fileRoute from "#src/routes/file_routes/file_route.js";
+import materialRoute from "#src/routes/course_routes/material_route.js";
 import announcementRoute from "#src/routes/course_routes/announcement_route.js";
 
 // try hit http://localhost:3000/example
-app.use("/course", courseRouter);
+app.use("/course", courseRoute);
 app.use("/assignment", assignmentRoute);
-app.use("/material", materialRouter);
+app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
 
 app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
-app.use("/example", exampleRoute);
 app.use("/user", userRoute);
-app.use("/file", fileRouter);
+app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------
 

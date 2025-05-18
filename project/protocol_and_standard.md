@@ -48,7 +48,7 @@
     3. Router, Controller, Service 之間的架構關係
         - Router: API 的路徑
         - Controller: 處理 Request、Response 的邏輯，並呼叫 Service 取得資料
-        - Service: 和資料庫溝通
+        - Service: 和資料庫溝通，service 的更詳細解釋可以看[這裡](https://discord.com/channels/1342382586583842826/1342386906545131521/1373563681362939915)
     4. File Definition
         - 假設路徑 `#src/routes/user/user_routes.js`，代表**前端要拿 User 相關 data 時的路徑**
         - 假設路徑 `#src/controllers/user/user_controllers.js`，代表**後端有關 User 的 routes 時，會用的邏輯處理**
