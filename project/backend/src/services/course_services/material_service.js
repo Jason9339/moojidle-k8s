@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import CalculateWeek from '#src/utils/calculate_week.js';
 import { DeleteFile } from '#src/services/file_services/file_storage_service.js';
 
 async function FindMaterialsByCourseId(courseId) {
