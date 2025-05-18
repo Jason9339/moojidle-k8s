@@ -25,6 +25,8 @@ function DiscussionBoard() {
     const [currentCourse, setCurrentCourse] = useState(null);
     const [currentBoard, setCurrentBoard] = useState(null);
 
+    console.log("currentBoard", currentBoard);
+    console.log("currentCourse", currentCourse);
     const fetchCourseBoards = async () => {
         try {
             // TODO use Context to save userID
@@ -68,8 +70,8 @@ function DiscussionBoard() {
                 course.boards.forEach(board => {
                     if (board.board_id === currentBoardId) {
 
-                        setCurrentCourse({ value: course.course_id, label: course.course_name });
-                        setCurrentBoard({ value: board.board_id, label: board.board_name });
+                        setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
+                        setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
                     }
                 });
 
@@ -79,16 +81,16 @@ function DiscussionBoard() {
 
     }, [courseBoardData, param]);
 
-    const handleAddBoard = useCallback((course, board) => {
+    const handleAddBoard = useCallback((course) => {
 
         setCurrentCourse(course);
-        setCurrentBoard(board);
         setShowCreatePopup(true);
     }, []);
 
-    const handleEditBoard = useCallback((course) => {
+    const handleEditBoard = useCallback((course, board) => {
 
-        setCurrentCourse(course);
+        setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
+        setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
         setShowEditPopup(true);
     }, [])
 
@@ -127,7 +129,12 @@ function DiscussionBoard() {
                             <Link
                                 to="/post-edit/new"
                                 className={styles.fab}
-                                state={{ data: courseBoardData, current: { course: currentCourse, board: currentBoard } }}
+                                state={{
+                                    data: courseBoardData, current: {
+                                        course: { value: currentCourse?.course_id, label: currentCourse?.course_name },
+                                        board: { value: currentBoard?.board_id, label: currentBoard?.board_name }
+                                    }
+                                }}
 
                                 title="新增貼文"
                             >
