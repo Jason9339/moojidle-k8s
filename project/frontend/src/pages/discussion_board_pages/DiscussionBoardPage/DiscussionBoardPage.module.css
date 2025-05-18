@@ -11,6 +11,10 @@
     font-size: 5vh;
 }
 
+.discussionPageLayout {
+    background-color: #eff2f5; 
+}
+
 .fab {
     position: fixed;
     right: 40px;
