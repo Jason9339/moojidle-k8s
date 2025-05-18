@@ -57,7 +57,7 @@ export default function PostEditCustomTag({
     }
 
     return (
-        <div className="w-[70vw] h-[20%] pt-[5vh] pb-[1vh]">
+        <div className="w-[60vw] h-[20%] pt-[5vh] pb-[1vh]">
             <Select
                 isMulti
                 options={tagOptions}
