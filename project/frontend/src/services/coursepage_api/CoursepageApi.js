@@ -7,7 +7,7 @@ export const getCourseDetails = async (courseId) => {
 };
 
 export const getCourseMaterials = async (courseId) => {
-    return (await axios.get(`/material/course/${courseId}/files`)).data;
+    return (await axios.get(`/material/course/${courseId}/materials`)).data;
 };
 
 export const getCourseAssignments = async (courseId) => {

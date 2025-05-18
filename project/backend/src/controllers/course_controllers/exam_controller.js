@@ -1,11 +1,11 @@
 import {
-    GetUpcomingExamsByUserId as GetUpcomingExamsByUserIdService
+    FindFromExamJoinStudyInJoinCourseByUserId
     // getComingExams as getComingExamsService
 } from '#src/services/course_services/exam_service.js';
 
 async function GetUpcomingExamsByUserId(req, res) {
     try {
-        const upcomingExams = await GetUpcomingExamsByUserIdService(req.query.user_id);
+        const upcomingExams = await FindFromExamJoinStudyInJoinCourseByUserId(req.query.user_id);
         res.status(200).json(upcomingExams); // Send the fetched data as a JSON response
     } catch (error) {
         console.error("Error in GetUpcomingExams:", error);

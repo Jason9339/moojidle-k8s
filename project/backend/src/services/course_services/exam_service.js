@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 // Fetch upcoming exams for a specific user
-async function GetUpcomingExamsByUserId(user_id) {
+async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
     try {
         const db = mongoose.connection.db;
         // user_id is of type string
@@ -90,6 +90,6 @@ async function GetUpcomingExamsByUserId(user_id) {
 // }
 
 export {
-    GetUpcomingExamsByUserId
+    FindFromExamJoinStudyInJoinCourseByUserId
     // getComingExams
 };

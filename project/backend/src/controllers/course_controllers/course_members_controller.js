@@ -50,6 +50,7 @@ async function SwitchCharacter(req, res) {
 
         // is assistant
         await DeleteAssistIn(userId, courseId);
+        // TODO: right now, inserting a constant student_id
         await InsertStudyIn(userId, 1, courseId);
         res.status(200).json({ message: "User removed from assistants" });
     } catch (error) {
