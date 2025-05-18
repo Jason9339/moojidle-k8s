@@ -1,6 +1,14 @@
 import express from 'express';
 const postRouter = express.Router();
-import { GetPostContent, LeaveComment, PostDeleter, CommendDeleter, GetOverviewPosts, AddPosts } from '#src/controllers/post_controllers.js'
+
+import { 
+    GetPostContent,
+    LeaveComment,
+    PostDeleter,
+    CommendDeleter,
+    GetOverviewPosts,
+    AddPosts
+} from '#src/controllers/post_controller.js'
 
 postRouter.get("/content/:id", GetPostContent);
 postRouter.post("/commend", LeaveComment);

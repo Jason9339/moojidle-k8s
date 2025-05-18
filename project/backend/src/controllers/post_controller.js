@@ -1,22 +1,22 @@
 import { FindBoardByID } from '#src/services/discussion_board_service.js';
 import { 
-    FindPostByID, 
-    DeletePostById, 
-    FindProjectedPostsByBId, 
-    InsertPosts 
+    FindPostByID,
+    DeletePostById,
+    FindProjectedPostsByBId,
+    InsertPosts
 } from '#src/services/post_services.js';
 
 import { 
-    UpdateComment, 
-    DeleteComment 
+    UpdateComment,
+    DeleteComment
 } from '#src/services/comment_service.js';
 
 import { 
-    FindOneUserById 
+    FindOneUserById
 } from "#src/services/user_service.js";
 
 import {
-    FindCourseById 
+    FindCourseById
 } from '#src/services/course_service.js';
 
 async function GetPostContent(req, res, next) {

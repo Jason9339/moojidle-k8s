@@ -9,7 +9,7 @@ import {
 } from '#src/services/course_member_service.js';
 
 import { 
-    FindOneUserById 
+    FindOneUserById
 } from '#src/services/user_service.js';
 
 async function GetCourseMembers(req, res) {

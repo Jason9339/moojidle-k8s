@@ -4,7 +4,7 @@ import {
 } from '#src/services/assignment_service.js';
 
 import { 
-    FindCourseById 
+    FindCourseById
 } from '#src/services/course_service.js';
 
 import CalculateWeek from '#src/utils/calculate_week.js';
