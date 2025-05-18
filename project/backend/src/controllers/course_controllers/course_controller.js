@@ -1,25 +1,30 @@
-import { 
-    GetAllCourses,
+import {
     GetCourseDetails,
-    AddCourse,
-    RemoveCourse,
     RemoveCourseRelationships,
-    ChangeCourseName,
     GetInviteCode,
-    GetCoursesByTeacherId,
-    ViewCourses
+
+    FindCourseByUserId,
+    FindAllCourses,
+    FindCourseInCourseId,
+    InsertCourse,
+    UpdateCourseName,
+    DeleteCourse
 } from '#src/services/course_services/course_service.js';
 
 import {
-    AddTeachIn,
-    FindInviteCodeId
+    FindInviteCodeId,
+
+    FindTeachInByUserId,
+    FindStudyInByUserId,
+    FindAssistInByUserId,
+    InsertTeachIn,
 } from '#src/services/course_services/course_member_service.js';
 
 
 // 取得所有課程列表
 async function GetAllCoursesController(req, res) {
     try {
-        const courses = await GetAllCourses();
+        const courses = await FindAllCourses();
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -31,13 +36,12 @@ async function CreateCourse(req, res) {
     try {
         const courseData = req.body;
 
-        // console.log("courseData", courseData);
         if (!courseData || Object.keys(courseData).length === 0) {
             return res.status(400).send({ message: "Lack of Course Data." });
         }
         // console.log("courseData", courseData);
-        const newCourse = await AddCourse(courseData);
-        const newTeachIn = await AddTeachIn(courseData.userId, newCourse.course_id);
+        const newCourse = await InsertCourse(courseData);
+        const newTeachIn = await InsertTeachIn(courseData.userId, newCourse.course_id);
         res.status(201).send(newCourse); // 返回新增的課程物件
     } catch (error) {
         console.error("Failed to create course", error);
@@ -46,7 +50,7 @@ async function CreateCourse(req, res) {
 }
 
 // 刪除課程
-async function DeleteCourse(req, res) {
+async function RemoveCourse(req, res) {
     try {
         // 從路由參數獲取課程 ID
         const { id } = req.params;
@@ -56,8 +60,7 @@ async function DeleteCourse(req, res) {
             return res.status(400).send({ message: "Lack of Course ID" });
         }
 
-        // 調用 Service 層的 RemoveCourse 函式處理刪除邏輯
-        const deletedRowCount = await RemoveCourse(id);
+        const deletedRowCount = await DeleteCourse(id);
 
         // 根據刪除結果返回響應
         if (deletedRowCount > 0) {
@@ -80,11 +83,34 @@ async function DeleteCourse(req, res) {
 async function ReadCourse(req, res) {
     try {
         const userId = req.query.user_id;
-        // 調用服務函數獲取格式化的課程
-        const courses = await ViewCourses(userId);
+        // retrieve all courses with user role information
+        let courses = await FindCourseByUserId(userId);
+
+        // get teaching courses
+        let teachingRecords = await FindTeachInByUserId(userId);
+        const teachingCourseIds = new Set(teachingRecords.map(record => record.course_id));
+
+        // get assisting courses
+        let assistingRecords = await FindAssistInByUserId(userId);
+        const assistingCourseIds = new Set(assistingRecords.map(record => record.course_id));
+
+        // get studying courses
+        let studyingRecords = await FindStudyInByUserId(userId);
+        const studyingCourseIds = new Set(studyingRecords.map(record => record.course_id));
+
+        const formattedCourses = courses
+            .map(course => ({
+                title: course.name,
+                courseId: course.course_id,
+                color: course.color,
+                isTeacher: teachingCourseIds.has(course.course_id) || false,
+                isStudent: studyingCourseIds.has(course.course_id) || false,
+                isAssistant: assistingCourseIds.has(course.course_id) || false
+            }))
+            .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
 
         // 返回課程給客戶端
-        res.status(200).json(courses);
+        res.status(200).json(formattedCourses);
     } catch (error) {
         console.error("[ReadCourse] Error fetching courses:", error);
         res.status(500).json({ message: "讀取課程列表失敗", error: error.message });
@@ -99,11 +125,11 @@ async function GetCourseDetailsController(req, res) {
         res.status(200).json(courseDetails);
     } catch (error) {
         console.error("獲取課程詳情錯誤:", error);
-        
+
         if (error.message === '找不到課程') {
             return res.status(404).json({ message: '找不到課程' });
         }
-        
+
         res.status(500).json({ message: "伺服器錯誤", error: error.message });
     }
 }
@@ -111,11 +137,24 @@ async function GetCourseDetailsController(req, res) {
 // 讀取教學關係
 async function ReadTeachIn(req, res) {
     try {
-        // 調用服務函數獲取教學關係
-        const teach_in = await GetCoursesByTeacherId(req.query.user_id);
+        let userId = req.query.user_id;
+        let teachingRecords = await FindTeachInByUserId(userId);
 
-        // 返回結果給客戶端
-        res.status(200).json(teach_in);
+        if (teachingRecords.length === 0) {
+            res.status(200).json([]);
+            return;
+        }
+
+        const courseIds = teachingRecords.map(record => record.course_id);
+
+        const courses = await FindCourseInCourseId(courseIds);
+
+        const formattedCourses = courses.map(course => ({
+            title: course.name,
+            courseId: course.course_id,
+        }));
+
+        res.status(200).json(formattedCourses);
     } catch (error) {
         console.error("[TeachInCourse] Error fetching courses:", error);
         res.status(500).json({ message: "讀取teach_in失敗", error: error.message });
@@ -127,12 +166,12 @@ async function EditCourse(req, res) {
     try {
         const updateData = req.body;
         const courseId = parseInt(req.params.id, 10);
-        
+
         if (!updateData || Object.keys(updateData).length === 0) {
             return res.status(400).send({ message: "Lack of update Data." });
         }
-        
-        const updatedData = await ChangeCourseName(courseId, updateData.name);
+
+        const updatedData = await UpdateCourseName(courseId, updateData.name);
         res.status(200).send(updatedData); // 返回更新的課程物件
     } catch (error) {
         console.error("Failed to Edit course", error);
@@ -152,17 +191,17 @@ async function ReadInviteCode(req, res) {
 }
 
 async function GetIdViaInviteCode(req, res) {
-   try {
+    try {
         const code = req.params.code;
         const courseId = await FindInviteCodeId(code);
         if (courseId) {
             res.status(200).json({ courseId: courseId.course_id });
-        }  
+        }
         else {
             res.status(404).json({ message: "Course not found" });
         }
-        
-    } 
+
+    }
     catch (error) {
         console.error("Error getting course ID via invite code:", error);
         res.status(500).json({ error: error.message });
@@ -173,7 +212,7 @@ async function GetIdViaInviteCode(req, res) {
 export {
     GetAllCoursesController as GetAllCourses,
     CreateCourse,
-    DeleteCourse,
+    RemoveCourse,
     ReadCourse,
     GetCourseDetailsController as GetCourseDetails,
     ReadTeachIn,

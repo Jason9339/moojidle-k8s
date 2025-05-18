@@ -188,20 +188,6 @@ async function FindInviteCodeId(code) {
     return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
 }
 
-async function AddTeachIn(userId, courseId) {
-    try {
-        const newTeachInDocument = {
-            user_id: userId,
-            course_id: courseId,
-        };
-        const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
-        return result.insertedId;
-    } catch (err) {
-        console.error("Error adding teach_in entry:", err);
-        throw new Error(`Failed to add teach_in entry: ${err.message}`);
-    }
-}
-
 async function CanUserEditAnnouncements(courseId, userId) {
     try {
         const parsedCourseId = parseInt(courseId);
@@ -218,6 +204,60 @@ async function CanUserEditAnnouncements(courseId, userId) {
     }
 }
 
+// ----------------------------------------------------------------------------------------------------------
+async function FindTeachInByUserId(userId) {
+    try {
+        const parsedUserId = parseInt(userId);
+
+        const teachers = await mongoose.connection.db.collection('teach_in').find({ user_id: parsedUserId }).toArray();
+
+        return teachers;
+    } catch (error) {
+        console.error("Error in GetTeachersByCourseId:", error);
+        throw error;
+    }
+}
+
+async function FindAssistInByUserId(userId) {
+    try {
+        const parsedUserId = parseInt(userId);
+
+        const assistants = await mongoose.connection.db.collection('assist_in').find({ user_id: parsedUserId }).toArray();
+
+        return assistants;
+    } catch (error) {
+        console.error("Error in GetTeachersByCourseId:", error);
+        throw error;
+    }
+}
+
+async function FindStudyInByUserId(userId) {
+    try {
+        const parsedUserId = parseInt(userId);
+
+        const students = await mongoose.connection.db.collection('study_in').find({ user_id: parsedUserId }).toArray();
+
+        return students;
+    } catch (error) {
+        console.error("Error in GetTeachersByCourseId:", error);
+        throw error;
+    }
+}
+
+async function InsertTeachIn(userId, courseId) {
+    try {
+        const newTeachInDocument = {
+            user_id: userId,
+            course_id: courseId,
+        };
+        const result = await mongoose.connection.db.collection('teach_in').insertOne(newTeachInDocument);
+        return result.insertedId;
+    } catch (err) {
+        console.error("Error adding teach_in entry:", err);
+        throw new Error(`Failed to add teach_in entry: ${err.message}`);
+    }
+}
+
 export {
     GetStudyIn,
     GetAssistIn,
@@ -225,7 +265,11 @@ export {
     SwitchStudyAssist,
     AddStudent,
     FindInviteCodeId,
-    AddTeachIn,
-    CanUserEditAnnouncements
+    CanUserEditAnnouncements,
+
+    FindTeachInByUserId,
+    FindAssistInByUserId,
+    FindStudyInByUserId,
+    InsertTeachIn,
 }
 
