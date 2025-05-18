@@ -5,7 +5,6 @@ import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
-import Blank from "@/pages/Blank";
 import CoursePage from "@/pages/CoursePage/CoursePage";
 import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";

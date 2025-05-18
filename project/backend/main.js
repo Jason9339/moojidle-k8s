@@ -22,8 +22,6 @@ app.use(cors({
 }));
 
 // Routes are here ----------------------------------------------------------------------
-import exampleRoute from "#src/routes/example_route.js"
-app.use("/example", exampleRoute);
 
 // course group
 import assignmentRoute from "#src/routes/course_routes/assignment_route.js"
@@ -36,7 +34,7 @@ import materialRoute from "#src/routes/course_routes/material_route.js";
 import announcementRoute from "#src/routes/course_routes/announcement_route.js";
 
 // discussion group
-import courseRoute from "#src/routes/discussion_routes/course_route.js"
+// import courseRoute from "#src/routes/discussion_routes/course_route.js"
 import discussionBoardRoute from "#src/routes/discussion_routes/discussion_board_route.js"
 import postRoute from "#src/routes/discussion_routes/post_routes.js"
 
@@ -44,7 +42,7 @@ import postRoute from "#src/routes/discussion_routes/post_routes.js"
 app.use("/user", userRoute);
 
 // course route
-app.use("/course", courseRoute);
+// app.use("/course", courseRoute);
 
 // discussion-board route
 app.use("/discussion-board", discussionBoardRoute);

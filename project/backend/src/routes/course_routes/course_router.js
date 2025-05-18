@@ -24,10 +24,16 @@ import {
 //         "color": "#4A90E2",
 //         "isTeacher": false,
 //         "isStudent": false,
-//         "isAssistant": true
+//         "isAssistant": true,
+//
+//         "course_name": "Course 1",
+//         "course_id": 1,
 //     },
 // ...
-router.get("/read", ReadCourse);
+// NOTICE! the reason behind passing additional course_name and course_id is because
+// 2 axios service use this route, but they have different varible naming....
+// TODO  when we have time, change this!!!
+router.get("/read/:user_id", ReadCourse);
 
 // frontend gives nothing
 // return:

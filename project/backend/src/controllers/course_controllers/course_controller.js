@@ -72,7 +72,7 @@ async function RemoveCourse(req, res) {
 // 讀取user有的課程
 async function ReadCourse(req, res) {
     try {
-        const userId = req.query.user_id;
+        const userId = parseInt(req.params.user_id);
         // retrieve all courses with user role information
         let courses = await FindCourseByUserId(userId);
 
@@ -95,7 +95,11 @@ async function ReadCourse(req, res) {
                 color: course.color,
                 isTeacher: teachingCourseIds.has(course.course_id) || false,
                 isStudent: studyingCourseIds.has(course.course_id) || false,
-                isAssistant: assistingCourseIds.has(course.course_id) || false
+                isAssistant: assistingCourseIds.has(course.course_id) || false,
+
+                // adding 2 additional repeated attributes for axios services
+                course_id: course.course_id,
+                course_name: course.name
             }))
             .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
 

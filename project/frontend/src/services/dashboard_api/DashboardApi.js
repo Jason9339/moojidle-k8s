@@ -9,7 +9,7 @@ import axios from "@/services/apiClient";
 // });
 
 export const getCourses = async (userId) => {
-    return (await axios.get(`/course/read?user_id=${userId}`)).data;
+    return (await axios.get(`/course/read/${userId}`)).data;
 };
 
 export const getTodoList = async (userId) => {

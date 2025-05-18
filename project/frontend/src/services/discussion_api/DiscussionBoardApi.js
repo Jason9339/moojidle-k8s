@@ -14,7 +14,7 @@ async function GetBoardsGroupByCourseByUserID(userID) {
 
 async function GetAllUserCourses(userId) {
     try {
-        const response = await apiClient.get(`/course/${userId}`);
+        const response = await apiClient.get(`/course/read/${userId}`);
         return response.data;
     } catch (err) {
         console.error("Failed to fetch user courses:", err);
