@@ -41,7 +41,6 @@ async function SwitchCharacter(req, res) {
         // check if is student
         for (let i = 0; i < students.length; i++) {
             if (userId == students[i].user_id) {
-                await SwitchStudyAssist(userId, courseId);
                 DeleteStudyIn(userId, courseId);
                 InsertAssistIn(userId, courseId);
                 res.status(200).json({ message: "User added as an assistant" });
