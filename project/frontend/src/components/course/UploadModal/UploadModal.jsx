@@ -45,21 +45,29 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             alert("請選擇檔案");
             return;
         }
-
+    
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
             alert("請先登入");
             return;
         }
-
+    
         const formData = new FormData();
-        formData.append("uploadFile", file);
+    
+        // 解決中文檔案名稱亂碼問題
+        const renamedFile = new File(
+            [file],
+            encodeURIComponent(file.name),
+            { type: file.type }
+        );
+        formData.append("uploadFile", renamedFile);
+    
         formData.append("type", type);
         formData.append("courseId", courseId);
         formData.append("createByUserId", userId);
         formData.append("description", description);
-
+    
         if (type === "assignment") {
             formData.append("assName", name);
             formData.append("startDate", new Date(startDate).toISOString());
@@ -68,7 +76,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
             formData.append("mName", name);
             formData.append("displayDate", displayDate);
         }
-
+    
         try {
             await UploadFile(formData);
             alert("上傳成功！");
