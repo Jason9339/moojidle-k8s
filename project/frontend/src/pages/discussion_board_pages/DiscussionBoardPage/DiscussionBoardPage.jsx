@@ -100,7 +100,9 @@ function DiscussionBoard() {
     return (
         <>
             <LeftBar />
-            <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} handleEditBoard={handleEditBoard} />
+            <div className={styles.discussionPageLayout}>
+                <BoardSideBar itemData={courseBoardData || []} handleAddBoard={handleAddBoard} handleEditBoard={handleEditBoard} />
+            </div>
 
 
             <div className={styles["main-container"]}>

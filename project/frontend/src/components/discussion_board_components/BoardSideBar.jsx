@@ -2,178 +2,212 @@ import { useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { FaEdit } from "react-icons/fa";
 
 const NO_SELECTED = -1;
-import { FaEdit } from "react-icons/fa";
 
 const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     const { state } = useLocation();
+    const [selectedID, setSelectedID] = useState(
+        state == null ? NO_SELECTED : state.initBoardID
+    );
+    const navigate = useNavigate();
+    const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
 
-    console.log("item:", itemData)
-    // Whether a MenuItem is currently selectewd
-    const [selectedID, setSelectedID] = useState((state == null) ? NO_SELECTED : state.initBoardID);
-
-    /*
-     *  Data from backend
-     *
-     * [
-     *  {course_id, course_name, boards : [{board_id, board_name}, ...]}
-     * ]
-     *
-     */
-    const navigate = useNavigate()
-
-    const userId = JSON.parse(localStorage.getItem("user")).user_id;
-
-    // check if user is teacher or assistant
     function canEdit(index) {
-        for (let i = 0; i < itemData[index].teachers.length; i++) {
-            if (userId == itemData[index].teachers[i].user_id) {  // is a teacher
-                return true;
-            }
-        }
+        if (!itemData || !itemData[index]) return false;
 
-        for (let i = 0; i < itemData[index].assistants.length; i++) {
-            if (userId == itemData[index].assistants[i].user_id) {  // is an assistant
-                return true;
-            }
+        const course = itemData[index];
+        if (course.teachers?.some(teacher => teacher.user_id === userId)) {
+            return true;
         }
-
+        if (course.assistants?.some(assistant => assistant.user_id === userId)) {
+            return true;
+        }
         return false;
     }
 
     return (
         <OuterWrapper>
-            <StyledSidebar width="250px">
-                <Menu renderExpandIcon={({ open }) => <span>{open ? '-' : '+'}</span>}
+            <StyledSidebar breakPoint="md">
+                <Menu
+                    renderExpandIcon={({ open }) => <span>{open ? "−" : "+"}</span>}
+                    menuItemStyles={{
+                        button: ({ level, active }) => {
+                            let styles = {
+                                // --- Overall Button Styling ---
+                                display: 'flex',        // Crucial for aligning label and suffix
+                                alignItems: 'flex-start', // Align items to the top if content wraps
+                                padding: "12px 20px", 
+                                color: "#111827",
+                                fontWeight: 500,
+                                borderRadius: "6px",
+                                margin: "2px 6px", 
+                                transition: "background-color 0.2s, color 0.2s",
+                                height: 'auto',         // Allow button height to grow with content
+                                minHeight: '40px',      // Optional: ensure a minimum touch target size
+
+                                "&:hover": {
+                                    backgroundColor: "#e5e7eb !important",
+                                    color: "#3b82f6 !important",
+                                },
+
+                                // --- Text Label Styling ---
+                                '.ps-menu-label': { 
+                                    flexGrow: 1,
+                                    // overflow: 'hidden', // Keep hidden if you prefer to clip truly excessive text
+                                    overflow: 'visible', // Set to visible to ensure parent grows
+                                    marginRight: '8px', 
+                                },
+                                '.ps-menu-label > span': { 
+                                    whiteSpace: 'normal', 
+                                    wordBreak: 'break-word', 
+                                    display: 'block', 
+                                    lineHeight: '1.45', // Adjusted for better multi-line readability
+                                },
+
+                                // --- Suffix (Edit Icon) Styling ---
+                                '.ps-menu-suffix': { 
+                                    flexShrink: 0,
+                                }
+                            };
+                            if (active) {
+                                styles.color = "#6366f1 !important";
+                                styles.fontWeight = "bold";
+                            }
+
+                            return styles;
+                        },
+                        subMenuContent: { 
+                            backgroundColor: 'transparent !important',
+                        },
+                    }}
                 >
-                    {
-                        itemData.map(({ course_id, course_name, boards }, index) => (
-
-                            <SubMenu key={course_id} label={course_name}>
-
-                                {
-                                    boards.map(({ board_id, board_name }) => (
-
-                                        <MenuItem
-                                            key={board_id}
-                                            className={
-                                                selectedID === board_id ? "selected-item" : "normal-item"
-                                            }
-                                            onClick={() => {
-                                                setSelectedID(board_id);
-                                                navigate(`/discussion/${board_id}`);
-                                            }}
-                                            suffix={
-                                                canEdit(index) ? (
-                                                    <button
-                                                        onClick={() => handleEditBoard({ course_id: course_id, course_name: course_name }, { board_id: board_id, board_name: board_name })}
-                                                        className="edit-icon"
-                                                    >
-                                                        <FaEdit className="w-4 h-4" />
-                                                    </button>
-                                                ) : null
-                                            }
-                                        >
-                                            <span >{board_name}</span>
-                                        </MenuItem>))
-
-                                }
-
-
-                                {
-                                    canEdit(index) ? (
-                                        <MenuItem
-                                            className="addBoard"
-                                            onClick={() => handleAddBoard({ course_id: course_id, course_name: course_name })}
-                                        >
-                                            新增討論版
-                                        </MenuItem>
-
-                                    ) : null
-                                }
-
-
-                            </SubMenu>
-
-                        ))}
-
-                </Menu >
-            </StyledSidebar >
+                    {itemData.map(({ course_id, course_name, boards }, index) => (
+                        <SubMenu key={course_id} label={course_name}>
+                            {boards.map(({ board_id, board_name }) => (
+                                <MenuItem
+                                    key={board_id}
+                                    active={selectedID === board_id}
+                                    onClick={() => {
+                                        setSelectedID(board_id);
+                                        navigate(`/discussion/${board_id}`);
+                                    }}
+                                    suffix={
+                                        canEdit(index) ? (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); 
+                                                    handleEditBoard(
+                                                        { course_id: course_id, course_name: course_name },
+                                                        { board_id: board_id, board_name: board_name }
+                                                    );
+                                                }}
+                                                className="edit-icon-button" 
+                                            >
+                                                <FaEdit className="w-4 h-4" />
+                                            </button>
+                                        ) : null
+                                    }
+                                >
+                                    <span>{board_name}</span>
+                                </MenuItem>
+                            ))}
+                            {canEdit(index) ? (
+                                <MenuItem
+                                    className="addBoard" 
+                                    onClick={() => handleAddBoard({ course_id: course_id, course_name: course_name })}
+                                >
+                                    新增討論版
+                                </MenuItem>
+                            ) : null}
+                        </SubMenu>
+                    ))}
+                </Menu>
+            </StyledSidebar>
         </OuterWrapper>
-
     );
 };
 export default BoardSideBar;
 
-
-// 外層包一層，控制偏移與背景
 const OuterWrapper = styled.div`
-  margin-left: 32px;
+  width: 250px; 
+  margin-left: 28px;
   margin-top: 40px;
-  background-color: #f9f9f9; /* 跟右側主區一致 */
-  border-radius: 16px;
-  padding: 12px;
-  height: fit-content;
+  margin-right: 16px;
+  background-color: #f9f9f9; 
+  border-radius: 16px;      
+  max-height: calc(100vh - 80px); 
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+  flex-shrink: 0; 
 `;
 
-// 內部 Sidebar 卡片樣式
 const StyledSidebar = styled(Sidebar)`
-  border-radius: 12px;
-  background-color: #f1f5f9 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  overflow-y: auto;
-  overflow-x: hidden;
+  width: 100% !important; 
+  height: 100%;           
+  background-color:rgba(223, 235, 255, 0.8) !important; 
+  border-radius: 12px; 
+  display: flex;
+  flex-direction: column;
+
   .ps-sidebar-container {
-    background-color: transparent !important;
+    background-color: transparent !important; 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
+  
+  .ps-menu-root {
+      flex-grow: 1; 
+      overflow-y: auto; 
+      overflow-x: hidden; 
 
-  .ps-menu-button {
-    padding: 12px 20px;
-    color: #111827;
-    font-weight: 500;
-    border-radius: 6px;
-    margin: 2px 6px;
-    transition: background-color 0.2s, color 0.2s;
-  }
-
-  .ps-menu-button:hover {
-    background-color: #e5e7eb !important;
-    color: #3b82f6 !important;
+      &::-webkit-scrollbar {
+        width: 8px; 
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent; 
+        border-radius: 10px; 
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: #a0aec0; 
+        border-radius: 10px; 
+        border: 2px solid #f1f5f9; 
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: #718096; 
+      }
+      scrollbar-width: thin; 
+      scrollbar-color: #a0aec0 #f1f5f9; 
   }
 
   .ps-submenu-content {
-    background-color: transparent !important;
+    overflow-x: hidden !important; 
   }
 
-  .ps-submenu-content > ul > li {
-    margin-top: 8px;
-    margin-left: 8px;
+  .addBoard > .ps-menu-button { 
+      color: #10b981 !important; 
+  }
+  .addBoard > .ps-menu-button:hover {
+      color: #059669 !important; 
+      background-color: #e5e7eb !important; 
   }
 
-  .addBoard {
-    color: #10b981;
-  }
-
-  .edit-icon {
-    padding: 4px;
+  .edit-icon-button {
+    background: none;
+    border: none;
+    padding: 4px; 
     cursor: pointer;
-    color: #6b7280;
+    color: #6b7280; 
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
   }
 
-  .edit-icon:hover {
-    color: #3b82f6;
-  }
-
-  .selected-item {
-    color: #6366f1 !important;
-    font-weight: bold;
-  }
-
-  .normal-item {
-    color: #111827;
+  .edit-icon-button:hover {
+    color: #3b82f6; 
   }
 `;
-
