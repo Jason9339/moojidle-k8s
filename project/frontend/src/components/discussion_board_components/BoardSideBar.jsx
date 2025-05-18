@@ -148,7 +148,7 @@ const OuterWrapper = styled.div`
 const StyledSidebar = styled(Sidebar)`
   width: 100% !important; 
   height: 100%;           
-  background-color:rgb(235, 235, 235) !important; 
+  background-color:rgba(223, 235, 255, 0.8) !important; 
   border-radius: 12px; 
   display: flex;
   flex-direction: column;
