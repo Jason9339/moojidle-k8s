@@ -68,8 +68,8 @@ function DiscussionBoard() {
                 course.boards.forEach(board => {
                     if (board.board_id === currentBoardId) {
 
-                        setCurrentCourse({ course_id: course.course_id, course_name: course.course_name });
-                        setCurrentBoard({ board_id: board.board_id, board_name: board.board_name });
+                        setCurrentCourse({ value: course.course_id, label: course.course_name });
+                        setCurrentBoard({ value: board.board_id, label: board.board_name });
                     }
                 });
 
@@ -127,7 +127,7 @@ function DiscussionBoard() {
                             <Link
                                 to="/post-edit/new"
                                 className={styles.fab}
-                                state={{ data: courseBoardData, currentCourseId: currentCourse?.course_id, currentBoardId: currentBoard?.board_id }}
+                                state={{ data: courseBoardData, current: { course: currentCourse, board: currentBoard } }}
 
                                 title="新增貼文"
                             >
