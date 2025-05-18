@@ -163,3 +163,13 @@
     background-color: #f44336;
     color: white;
 }
+
+.character-counter {
+    color: #555;
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.character-counter.limit {
+    color: red;
+}

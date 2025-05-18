@@ -144,6 +144,20 @@ function AnnouncementsTab({ courseId, currentUserId }) {
         }
     };
 
+    // Character limit for announcement context
+    const MAX_CONTEXT_LENGTH = 2500;
+    const charsLeft = MAX_CONTEXT_LENGTH - newAnnouncementContext.length;
+
+    // Handler for textarea input with character limit
+    const handleContextChange = (e) => {
+        const value = e.target.value;
+        if (value.length <= MAX_CONTEXT_LENGTH) {
+            setNewAnnouncementContext(value);
+        } else {
+            setNewAnnouncementContext(value.slice(0, MAX_CONTEXT_LENGTH));
+        }
+    };
+
     return (
         <div className={styles["announcements-tab"]}>
             <div className={styles["announcements-header"]}>
@@ -231,11 +245,24 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
-                                onChange={(e) =>
-                                    setNewAnnouncementContext(e.target.value)
-                                }
+                                maxLength={2500}
+                                onChange={(e) => {
+                                    if (e.target.value.length <= 2500) {
+                                        setNewAnnouncementContext(e.target.value);
+                                    }
+                                }}
                             />
                         </label>
+                        <div
+                            className={
+                                styles["character-counter"] +
+                                (2500 - newAnnouncementContext.length === 0
+                                    ? " " + styles["limit"]
+                                    : "")
+                            }
+                        >
+                            character left: {2500 - newAnnouncementContext.length}
+                        </div>
                         <div className={styles["modal-actions"]}>
                             <button onClick={handleCreateAnnouncement}>
                                 Create
@@ -270,11 +297,24 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
-                                onChange={(e) =>
-                                    setNewAnnouncementContext(e.target.value)
-                                }
+                                maxLength={2500}
+                                onChange={(e) => {
+                                    if (e.target.value.length <= 2500) {
+                                        setNewAnnouncementContext(e.target.value);
+                                    }
+                                }}
                             />
                         </label>
+                        <div
+                            className={
+                                styles["character-counter"] +
+                                (2500 - newAnnouncementContext.length === 0
+                                    ? " " + styles["limit"]
+                                    : "")
+                            }
+                        >
+                            character left: {2500 - newAnnouncementContext.length}
+                        </div>
                         <div className={styles["modal-actions"]}>
                             <button onClick={handleEditAnnouncement}>
                                 Save
