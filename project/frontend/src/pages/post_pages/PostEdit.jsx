@@ -140,7 +140,7 @@ const PostEdit = () => {
         <>
             <LeftBar />
 
-            <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] h-screen overflow-scroll-y bg-[#eff2f5]">
+            <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] h-screen overflow-y-scroll bg-[#eff2f5]">
                 <PostEditDestSelector courseData={state.data}
                     selectedCourse={selectedCourse}
                     selectedBoard={selectedBoard}
