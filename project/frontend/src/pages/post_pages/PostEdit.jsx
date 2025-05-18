@@ -29,14 +29,12 @@ const PostEdit = () => {
     const navigate = useNavigate();
 
     const handleCourseChange = useCallback(option => {
-        console.log("course option:", option)
         setSelectedCourse(option);
         setSelectedBoard(null);
     }, []);
 
     const handleBoardChange = useCallback(option => {
 
-        console.log("board option", option)
         setSelectedBoard(option);
     }, []);
     /*  Effects */
@@ -48,7 +46,6 @@ const PostEdit = () => {
                 // TODO use Context to save userID
                 const userId = JSON.parse(localStorage.getItem("user")).user_id;
                 const tags = await GetUserTagsById(userId);
-                console.log("fetchTag", tags);
                 allUserTags.current = tags.map(t => t.user_tag);
                 setSelectedCourse(state?.current.course || null);
                 setSelectedBoard(state?.current.board || null);
@@ -138,9 +135,6 @@ const PostEdit = () => {
         }
     }
 
-    console.log("selected tags:", userTags);
-
-    console.log("all tags:", allUserTags.current);
     return (
 
         <>
