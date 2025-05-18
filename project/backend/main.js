@@ -22,8 +22,6 @@ app.use(cors({
 }));
 
 // Routes are here ----------------------------------------------------------------------
-
-// course group
 import assignmentRoute from "#src/routes/assignment_route.js"
 import examRoute from "#src/routes/exam_route.js"
 import courseRoute from "#src/routes/course_router.js"
@@ -32,38 +30,22 @@ import userRoute from "#src/routes/user_route.js"
 import fileRoute from "#src/routes/file_routes/file_route.js";
 import materialRoute from "#src/routes/material_route.js";
 import announcementRoute from "#src/routes/announcement_route.js";
-
-// discussion group
-// import courseRoute from "#src/routes/discussion_routes/course_route.js"
 import discussionBoardRoute from "#src/routes/discussion_board_route.js"
 import postRoute from "#src/routes/post_routes.js"
 
-// user route
 app.use("/user", userRoute);
-
-// course route
-// app.use("/course", courseRoute);
-
-// discussion-board route
-app.use("/discussion-board", discussionBoardRoute);
-
-// post route
-app.use("/post", postRoute);
-
-// try hit http://localhost:3000/example
 app.use("/course", courseRoute);
+app.use("/course/member", courseMemberRoute);
+app.use("/discussion-board", discussionBoardRoute);
+app.use("/post", postRoute);
 app.use("/assignment", assignmentRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
-
 app.use("/exams", examRoute);
-app.use("/course/member", courseMemberRoute);
+
 app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------
-
-import {GetAllCourseDiscussionBoard} from "#src/controllers/discussion_board_controller.js"
-app.get("/test/:userId", GetAllCourseDiscussionBoard);
 
 // Global error handler
 app.use((err, req, res, next) => {

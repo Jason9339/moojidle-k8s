@@ -1,9 +1,23 @@
 import { FindBoardByID } from '#src/services/discussion_board_service.js';
-import { FindPostByID, DeletePostById, FindProjectedPostsByBId, CreatePostsByBId } from '#src/services/post_services.js'
-import { FindUserdataByID, FindUserNameByID } from '#src/services/discussion_services/user_servcie.js';
-import { FindCourseNameByID } from '#src/services/discussion_services/course_service.js';
-import { LeaveComment, DeleteComment } from '#src/services/comment_service.js';
-import { FindOneUserById } from "#src/services/user_service.js"
+import { 
+    FindPostByID, 
+    DeletePostById, 
+    FindProjectedPostsByBId, 
+    InsertPosts 
+} from '#src/services/post_services.js';
+
+import { 
+    UpdateComment, 
+    DeleteComment 
+} from '#src/services/comment_service.js';
+
+import { 
+    FindOneUserById 
+} from "#src/services/user_service.js";
+
+import {
+    FindCourseById 
+} from '#src/services/course_service.js';
 
 async function GetPostContent(req, res, next) {
     try {
@@ -17,7 +31,7 @@ async function GetPostContent(req, res, next) {
             return res.status(404).send({ error: "Post Not Found" });
         }
 
-        const authorData = await FindUserdataByID(postData.post_by_user_id);
+        const authorData = await FindOneUserById(postData.post_by_user_id);
         const authorName = authorData.name;
         const autherImage = authorData.path_to_profile_pic;
 
@@ -33,7 +47,8 @@ async function GetPostContent(req, res, next) {
         }
         postData.board_name = boardData.name;
 
-        const courseName = await FindCourseNameByID(boardData.course_id);
+        const course = await FindCourseById(boardData.course_id);
+        const courseName = course.name;
 
         if (!courseName) {
             return res.status(404).send({ error: "Couurse Not Found" });
@@ -46,10 +61,10 @@ async function GetPostContent(req, res, next) {
             postData.comments.map(async comment => (
                 {
                     ...comment,
-                    comment_by_user_name: await FindUserNameByID(comment.comment_by_user_id)
+                    comment_by_user_name: (await FindOneUserById(comment.comment_by_user_id)).name
                 }
             ))
-        )
+        );
 
         res.status(200).send(postData);
     } catch (err) {
@@ -57,7 +72,7 @@ async function GetPostContent(req, res, next) {
     }
 }
 
-async function Commender(req, res) {
+async function LeaveComment(req, res) {
     const { post_id, user_id, custom_tag, description } = req.body;
 
     if (!post_id || !user_id || !description) {
@@ -65,7 +80,7 @@ async function Commender(req, res) {
     }
 
     try {
-        const result = await LeaveComment({
+        const result = await UpdateComment({
             post_id: parseInt(post_id),
             user_id: parseInt(user_id),
             custom_tag: custom_tag || "",
@@ -193,7 +208,7 @@ async function AddPosts(req, res) {
             post_tags: postTagsArray
         };
 
-        await CreatePostsByBId(newPost);
+        await InsertPosts(newPost);
 
         res.status(201).json({ message: "Post created successfully.", post: newPost });
     } catch (err) {
@@ -204,7 +219,7 @@ async function AddPosts(req, res) {
 export {
     AddPosts,
     GetPostContent,
-    Commender,
+    LeaveComment,
     PostDeleter,
     CommendDeleter,
     GetOverviewPosts

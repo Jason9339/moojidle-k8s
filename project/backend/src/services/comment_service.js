@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-async function LeaveComment(CommendData) {
+async function UpdateComment(CommendData) {
     try {
         const result = await mongoose.connection.db.collection('post').updateOne(
             { post_id: CommendData.post_id },
@@ -46,6 +46,6 @@ async function DeleteComment(CommendData) {
 }
 
 export {
-    LeaveComment,
+    UpdateComment,
     DeleteComment
 }

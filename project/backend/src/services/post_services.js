@@ -35,7 +35,7 @@ async function FindProjectedPostsByBId(in_b_id) {
     return result;
 }
 
-async function CreatePostsByBId(post) {
+async function InsertPosts(post) {
     try {
         const counter = await mongoose.connection.db.collection('counter').findOne();
         const nextPostId = counter.post + 1;
@@ -66,7 +66,7 @@ async function CreatePostsByBId(post) {
 
 export {
     FindProjectedPostsByBId,
-    CreatePostsByBId,
+    InsertPosts,
     FindPostByID,
     DeletePostById,
 }

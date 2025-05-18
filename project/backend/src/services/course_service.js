@@ -213,6 +213,12 @@ async function FindCourseById(courseId) {
             start_date: course.start_date,
             inviteLink: course.invite_link || "",
             week_num: course.week_num,
+
+            // NOTICE! sent duplicate attribute because changing attribute name
+            // TODO  change it to make consistant
+            course_id: course.course_id,
+            name: course.name,
+            invite_link: course.invite_link || "",
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
