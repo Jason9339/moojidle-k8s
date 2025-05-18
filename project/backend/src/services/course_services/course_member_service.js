@@ -1,60 +1,100 @@
-// 1. `getStudyIn`: Retrieves all students enrolled in a specific course
-// 2. `getAssistIn`: Retrieves all teaching assistants for a specific course
-// 3. `getTeachIn`: Retrieves all teachers for a specific course
-// 4. `switchStudyAssist`: Toggles a student's role as a teaching assistant
-//    - If the student is already an assistant, removes them
-//    - If the student is not an assistant, adds them (after verifying they are enrolled)
-
 import mongoose from "mongoose";
 
-async function GetStudyIn(courseId) {
+async function FindStudyInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
         const db = client.db("moojidle");
         const studyInCollection = db.collection("study_in");
-        const userCollection = db.collection("user");
 
-        const students = await studyInCollection.find({ course_id: parsedCourseId }).toArray();
-        
-        // Fetch user details for each student
-        const studentsWithDetails = await Promise.all(students.map(async (student) => {
-            const user = await userCollection.findOne(
-                { user_id: student.user_id },
-                { projection: { _id: 0, pw: 0, create_date: 0, path_to_profile_pic: 0 } }
-            );
-            return {
-                ...user,
-                student_id: student.student_id
-            };
-        }));
-        
+        const studentsWithDetails = await studyInCollection.aggregate([
+            {
+                $match: { course_id: parsedCourseId }
+            },
+            {
+                $lookup: {
+                    from: "user",
+                    localField: "user_id",
+                    foreignField: "user_id",
+                    as: "user_info"
+                }
+            },
+            {
+                $unwind: "$user_info"
+            },
+            {
+                $project: {
+                    "user_info.pw": 0,
+                    "user_info.create_date": 0,
+                    "user_info.path_to_profile_pic": 0
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: ["$user_info", { student_id: "$student_id" }]
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                }
+            }
+        ]).toArray();
+
         return studentsWithDetails;
     } catch (error) {
-        console.error("Error in getStudyIn:", error);
+        console.error("Error in GetStudyIn (aggregate):", error);
         throw error;
     }
 }
 
-async function GetAssistIn(courseId) {
+async function FindAssistInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
         const db = client.db("moojidle");
         const assistInCollection = db.collection("assist_in");
-        const userCollection = db.collection("user");
 
-        const assistants = await assistInCollection.find({ course_id: parsedCourseId }).toArray();
-        
-        // Fetch user details for each assistant
-        const assistantsWithDetails = await Promise.all(assistants.map(async (assistant) => {
-            const user = await userCollection.findOne(
-                { user_id: assistant.user_id },
-                { projection: {  _id: 0, pw: 0, create_date: 0, path_to_profile_pic: 0 } }
-            );
-            return user;
-        }));
-        
+        const assistantsWithDetails = await assistInCollection.aggregate([
+            {
+                $match: {
+                    course_id: parsedCourseId
+                }
+            },
+            {
+                $lookup: {
+                    from: "user",
+                    localField: "user_id",
+                    foreignField: "user_id",
+                    as: "user_info"
+                }
+            },
+            {
+                $unwind: "$user_info"
+            },
+            {
+                $project: {
+                    "user_info.pw": 0,
+                    "user_info.create_date": 0,
+                    "user_info.path_to_profile_pic": 0
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: "$user_info"
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                }
+            }
+        ]).toArray();
+                
         return assistantsWithDetails;
     } catch (error) {
         console.error("Error in getAssistIn:", error);
@@ -62,27 +102,51 @@ async function GetAssistIn(courseId) {
     }
 }
 
-async function GetTeachersByCourseId(courseId) {
+async function FindTeachInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
         const client = mongoose.connection.client;
         const db = client.db("moojidle");
         const teachInCollection = db.collection("teach_in");
-        const userCollection = db.collection("user");
 
-        const teachers = await teachInCollection.find({ course_id: parsedCourseId }).toArray();
-
-        // 依序查找每位老師的用戶資料，過濾掉敏感欄位
-        const teachersWithDetails = await Promise.all(
-            teachers.map(async (teacher) => {
-                const user = await userCollection.findOne(
-                    { user_id: teacher.user_id },
-                    { projection: { _id: 0, pw: 0, create_date: 0, path_to_profile_pic: 0 } }
-                );
-                return user;
-            })
-        );
-
+        const teachersWithDetails = await teachInCollection.aggregate([
+            {
+                $match: {
+                    course_id: parsedCourseId
+                }
+            },
+            {
+                $lookup: {
+                    from: "user",
+                    localField: "user_id",
+                    foreignField: "user_id",
+                    as: "user_info"
+                }
+            },
+            {
+                $unwind: "$user_info"
+            },
+            {
+                $project: {
+                    "user_info.pw": 0,
+                    "user_info.create_date": 0,
+                    "user_info.path_to_profile_pic": 0
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: "$user_info"
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                }
+            }
+        ]).toArray();
+                
         return teachersWithDetails;
     } catch (error) {
         console.error("Error in GetTeachersByCourseId:", error);
@@ -113,19 +177,6 @@ async function SwitchStudyAssist(userId, courseId) {
             return { message: "User removed from assistants" };
         } else {
             // If the user is not an assistant yet, add them
-            // First check if they are a student in the course
-            console.log("Checking if user is a student... user", parsedUserId, "course", parsedCourseId);
-            const studyInCollection = db.collection("study_in");
-            const isStudent = await studyInCollection.findOne({
-                user_id: parsedUserId,
-                course_id: parsedCourseId
-            });
-
-            if (!isStudent) {
-                throw new Error("User is not enrolled as a student in this course");
-            }
-
-            // Add them as an assistant
             await assistInCollection.insertOne({
                 user_id: parsedUserId,
                 course_id: parsedCourseId
@@ -138,7 +189,7 @@ async function SwitchStudyAssist(userId, courseId) {
     }
 }
 
-async function AddStudent(userId, studentId, courseId) {
+async function InsertStudyIn(userId, studentId, courseId) {
     try {
         // Parse the parameters to ensure they are integers
         const parsedUserId = parseInt(userId);
@@ -150,13 +201,6 @@ async function AddStudent(userId, studentId, courseId) {
         const client = mongoose.connection.client;
         const db = client.db("moojidle");
         const studyInCollection = db.collection("study_in");
-        const userCollection = db.collection("user");
-        
-        // Check if the user exists
-        const userExists = await userCollection.findOne({ user_id: parsedUserId });
-        if (!userExists) {
-            throw new Error("User does not exist");
-        }
         
         // Check if the student is already enrolled in this course
         const existingEnrollment = await studyInCollection.findOne({
@@ -164,7 +208,7 @@ async function AddStudent(userId, studentId, courseId) {
             course_id: parsedCourseId
         });
         
-        if (existingEnrollment) {
+        if (existingEnrollment.user_id) {
             throw new Error("Student is already enrolled in this course");
         }
         
@@ -182,23 +226,6 @@ async function AddStudent(userId, studentId, courseId) {
     }
 }
 
-async function CanUserEditAnnouncements(courseId, userId) {
-    try {
-        const parsedCourseId = parseInt(courseId);
-        const parsedUserId = parseInt(userId);
-
-        // Check if the user is in teach_in or study_in collections
-        const isTeacher = await mongoose.connection.db.collection('teach_in').findOne({ user_id: parsedUserId, course_id: parsedCourseId });
-        const isAssistant = await mongoose.connection.db.collection('assist_in').findOne({ user_id: parsedUserId, course_id: parsedCourseId });
-
-        return !!(isTeacher || isAssistant); // 只有老師或助教才能發公告
-    } catch (error) {
-        console.error("Failed to check user enrollment:", error);
-        throw new Error("Failed to check user enrollment");
-    }
-}
-
-// ----------------------------------------------------------------------------------------------------------
 async function FindTeachInByUserId(userId) {
     try {
         const parsedUserId = parseInt(userId);
@@ -253,16 +280,14 @@ async function InsertTeachIn(userId, courseId) {
 }
 
 export {
-    GetStudyIn,
-    GetAssistIn,
-    GetTeachersByCourseId,
-    SwitchStudyAssist,
-    AddStudent,
-    CanUserEditAnnouncements,
-
+    FindStudyInJoinUserByCourseId,
+    FindAssistInJoinUserByCourseId,
+    FindTeachInJoinUserByCourseId,
     FindTeachInByUserId,
     FindAssistInByUserId,
     FindStudyInByUserId,
+    SwitchStudyAssist,
+    InsertStudyIn,
     InsertTeachIn,
 }
 

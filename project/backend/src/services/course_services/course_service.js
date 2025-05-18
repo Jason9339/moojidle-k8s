@@ -175,7 +175,7 @@ async function DeleteCourseRelationships(courseIdInt) {
         ];
 
         const deletionPromises = relatedCollections.map((collectionName) => {
-            mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
+            let promise = mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
             if(collectionName == "discussion_board"){
                 // delete post in that discussion board
                 // TODO
@@ -183,6 +183,8 @@ async function DeleteCourseRelationships(courseIdInt) {
                 // delete submitted assigns
                 // TODO
             }
+
+            return promise;
         });
 
         // Execute all deletion operations concurrently

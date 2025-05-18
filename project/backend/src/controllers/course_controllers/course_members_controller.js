@@ -1,22 +1,23 @@
 import {
-    GetStudyIn,
-    GetAssistIn,
-    GetTeachersByCourseId,
+    FindStudyInJoinUserByCourseId,
+    FindAssistInJoinUserByCourseId,
+    FindTeachInJoinUserByCourseId,
     SwitchStudyAssist,
-    AddStudent, 
-    CanUserEditAnnouncements as CanUserEditAnnouncementsService
+    InsertStudyIn,
 } from '#src/services/course_services/course_member_service.js';
 
-
+import { 
+    FindOneUserById 
+} from '#src/services/user_services/user_service.js';
 
 async function GetCourseMembers(req, res) {
     try {
         const courseId = req.params.courseId;
-        
-        const students = await GetStudyIn(courseId);
-        const assistants = await GetAssistIn(courseId);
-        const teachers = await GetTeachersByCourseId(courseId);
-        
+
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+        const assistants = await FindAssistInJoinUserByCourseId(courseId);
+        const teachers = await FindTeachInJoinUserByCourseId(courseId);
+
         res.status(200).json({
             students,
             assistants,
@@ -30,9 +31,9 @@ async function GetCourseMembers(req, res) {
 
 async function SwitchCharacter(req, res) {
     try {
-        const userId = req.params.userId;
-        const courseId = req.params.courseId;
-        
+        const userId = parseInt(req.params.userId);
+        const courseId = parseInt(req.params.courseId);
+
         const result = await SwitchStudyAssist(userId, courseId);
         res.status(200).json(result);
     } catch (error) {
@@ -46,13 +47,18 @@ async function InviteStudent(req, res) {
         const userId = req.body.userId;
         const studentId = req.body.studentId;
         const courseId = req.params.courseId;
-        
+
         if (!userId || !studentId || !courseId) {
             return res.status(400).json({ error: "Missing required parameters" });
         }
-        console.log("user:",userId, "student:",studentId,"course:", courseId);
-        
-        const result = await AddStudent(userId, studentId, courseId);
+
+        // Check if the user exists
+        const userExists = await FindOneUserById(userId);
+        if (!userExists.user_id) {
+            throw new Error("User does not exist");
+        }
+
+        const result = await InsertStudyIn(userId, studentId, courseId);
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);
@@ -60,11 +66,33 @@ async function InviteStudent(req, res) {
     }
 }
 
-const CanUserEditAnnouncements = async (req, res) => {
-    const { courseId, userId } = req.params;
+const IsAssistantOrTeacher = async (req, res) => {
+    let { courseId, userId } = req.params;
+    courseId = parseInt(courseId);
+    userId = parseInt(userId);
+
     try {
-        const enrolled = await CanUserEditAnnouncementsService(courseId, userId);
-        res.status(200).json(enrolled);
+        const assistants = await FindAssistInJoinUserByCourseId(courseId);
+        const teachers = await FindTeachInJoinUserByCourseId(courseId);
+
+        // check if is teacher
+        for (let i = 0; i < teachers.length; i++) {
+            if (userId == teachers[i].user_id) {
+                res.status(200).json(true);
+                return;
+            }
+        }
+
+        // check if is assistant
+        for (let i = 0; i < assistants.length; i++) {
+            if (userId == assistants[i].user_id) {
+                res.status(200).json(true);
+                return;
+            }
+        }
+
+        res.status(200).json(false);
+        return;
     } catch (error) {
         console.error("Failed to check user enrollment:", error);
         res.status(500).json({ message: "Failed to check user enrollment" });
@@ -75,5 +103,5 @@ export {
     GetCourseMembers,
     SwitchCharacter,
     InviteStudent,
-    CanUserEditAnnouncements
+    IsAssistantOrTeacher
 }

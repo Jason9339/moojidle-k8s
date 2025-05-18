@@ -64,6 +64,6 @@ router.delete("/delete/:id", RemoveCourse);
 // getters
 router.get("/:courseId", GetCourseDetail);
 
-router.get("/invite/:code", GetCourseIdByInviteCode)
+router.get("/invite/:code", GetCourseIdByInviteCode);
 
 export default router;

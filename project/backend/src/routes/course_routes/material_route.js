@@ -3,6 +3,8 @@ import { GetCourseFiles, UpdateCourseMaterials, DeleteCourseMaterial } from '#sr
 
 const router = express.Router();
 
+// entry point http://localhost:PORT/material
+
 // GET /material/course/:courseId/files
 router.get('/course/:courseId/files', GetCourseFiles);
 router.get('/course/:courseId/materials', GetCourseFiles); // alias

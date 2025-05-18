@@ -8,7 +8,12 @@
     - router.post("/edit/:id", EditCourse);
     - router.delete("/delete/:id", RemoveCourse);
     - router.get("/:courseId", GetCourseDetail);
-    - router.get("/invite/:code", GetCourseIdByInviteCode)
+    - router.get("/invite/:code", GetCourseIdByInviteCode);
+2. course_member
+    - router.get("/:courseId", GetCourseMembers);
+    - router.get("/can_edit/:userId/:courseId", IsAssistantOrTeacher);
+    - router.post("/switch/:userId/:courseId", SwitchCharacter);
+    - router.post("/add/:courseId", InviteStudent)
 
 # controllers
     
@@ -21,6 +26,11 @@
     - RemoveCourse
     - GetCourseDetail
     - GetCourseIdByInviteCode
+2. course_member
+    - GetCourseMembers
+    - IsAssistantOrTeacher
+    - SwitchCharacter
+    - InviteStudent
 
 # services
 
@@ -38,4 +48,8 @@
     - FindAssistInByUserId,
     - FindStudyInByUserId
     - InsertTeachIn
-    
+    - FindStudyInJoinUserByCourseId
+    - FindAssistInJoinUserByCourseId
+    - FindTeachInJoinUserByCourseId
+    - SwitchStudyAssist
+    - InsertStudyIn

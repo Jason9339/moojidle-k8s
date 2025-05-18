@@ -3,6 +3,8 @@ import { GetToDoAssignments, GetToDoAssignmentsByUserId, GetCourseAssignments } 
 
 const router = express.Router();
 
+// entry point http://localhost:PORT/assignment
+
 // GET /assignment/todo
 router.get('/todo', GetToDoAssignmentsByUserId);
 
