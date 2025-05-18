@@ -1,9 +1,10 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LeftBar from "@/components/LeftBar/LeftBar";
 import NotFoundPage from "@/pages/NotFoundPage";
-import DiscussionBoard from "@/pages/DiscussionBoard";
+import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
+import Blank from "@/pages/Blank";
+import PostEdit from "@/pages/post_pages/PostEdit";
+import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
-import DiscussionBoardList from "@/pages/DiscussionBoardList";
 import Blank from "@/pages/Blank";
 import CoursePage from "@/pages/CoursePage/CoursePage";
 import CourseDetail from "@/pages/CourseDetail/CourseDetail";
@@ -34,15 +35,23 @@ function App() {
 
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                        
+                        {/* course page related */}
                         <Route path="/course" element={<CoursePage />} />
                         <Route path="/course/:courseId" element={<CourseDetail />} />
-                        <Route path="/discussion/:id" element={<DiscussionBoard />} />
-                        <Route path="/discussion" element={<DiscussionBoardList />} />
-                        <Route path="*" element={<NotFoundPage />} />
 
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
                         <Route path="/user/profile" element={<UserProfile />} />
+
+                        {/* discussion board pages related */}
+                        <Route path="/discussion/" element={<DiscussionBoard />} />
+                        <Route path="/discussion/:param" element={<DiscussionBoard />} />
+
+                        {/* post pages relayed */}
+                        <Route path="/post-edit/:param" element={<PostEdit />} />
+                        <Route path="/post/:id" element={<PostPage />} />
                     </Route>
                 </Routes>
             </Router>

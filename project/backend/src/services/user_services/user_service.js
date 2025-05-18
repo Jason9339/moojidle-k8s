@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-   
+
 async function FindOneUserById(user_id) {
     let result;
-    
+
     try {
         result = await mongoose.connection.db.collection('user').findOne(
             // { _id: mongoose.Types.ObjectId.createFromHexString(user_id) }
@@ -47,7 +47,7 @@ async function RegisterUser(userData) {
 
         await mongoose.connection.db.collection('counter').updateOne(
             {},
-            {$inc: {user: 1}}
+            { $inc: { user: 1 } }
         );
     } catch (err) {
         console.log(err); // Log any errors that occur
@@ -69,8 +69,8 @@ async function LoginUser(email, password) {
     try {
         // Query the 'user' collection to find a user with the specified email and password
         result = await mongoose.connection.db.collection('user').findOne({
-            email: email, 
-            pw: password 
+            email: email,
+            pw: password
         });
     } catch (err) {
         console.log(err); // Log any errors that occur
@@ -95,7 +95,7 @@ async function DeleteUser(userId) {
 
 async function FindOnesTagById(user_id) {
     let result;
-    
+
     try {
         result = await mongoose.connection.db.collection('custom_tag').find(
             { user_id: parseInt(user_id) }
@@ -116,11 +116,12 @@ async function UpdateUserPassword(userId, newPassword) {
             { $set: { pw: newPassword } }
         );
     } catch (err) {
-        console.log(err); 
+        console.log(err);
     }
 
-    return result; 
+    return result;
 }
+
 
 export {
     RegisterUser,
@@ -128,5 +129,5 @@ export {
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword
+    UpdateUserPassword,
 }

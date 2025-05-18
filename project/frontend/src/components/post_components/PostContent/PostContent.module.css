@@ -1,0 +1,127 @@
+.card {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+  min-height: 700px;
+}
+
+.moreOptionsWrapper {
+  position: relative;
+  align-self: flex-end;
+}
+
+.moreButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.dropdownItem {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.dropdownItem:hover {
+    background-color: #f5f5f5;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  color: #666;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pfp {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.usernameDateWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.date {
+  font-size: 14px;
+  color: #999;
+}
+
+.customTag {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.postTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.description {
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  font-family: inherit;
+  outline: none;
+  min-height: 100px; /* 确保 description 至少有 100px 的高度 */
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

@@ -1,5 +1,4 @@
 import express from 'express';
-
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -26,6 +25,7 @@ app.use(cors({
 import exampleRoute from "#src/routes/example_route.js"
 app.use("/example", exampleRoute);
 
+// course group
 import assignmentRoute from "#src/routes/course_routes/assignment_route.js"
 import examRoute from "#src/routes/course_routes/exam_route.js"
 import courseRoute from "#src/routes/course_routes/course_router.js"
@@ -35,6 +35,23 @@ import fileRoute from "#src/routes/file_routes/file_route.js";
 import materialRoute from "#src/routes/course_routes/material_route.js";
 import announcementRoute from "#src/routes/course_routes/announcement_route.js";
 
+// discussion group
+import courseRoute from "#src/routes/discussion_routes/course_route.js"
+import discussionBoardRoute from "#src/routes/discussion_routes/discussion_board_route.js"
+import postRoute from "#src/routes/discussion_routes/post_routes.js"
+
+// user route
+app.use("/user", userRoute);
+
+// course route
+app.use("/course", courseRoute);
+
+// discussion-board route
+app.use("/discussion-board", discussionBoardRoute);
+
+// post route
+app.use("/post", postRoute);
+
 // try hit http://localhost:3000/example
 app.use("/course", courseRoute);
 app.use("/assignment", assignmentRoute);
@@ -43,7 +60,6 @@ app.use("/announcement", announcementRoute);
 
 app.use("/exams", examRoute);
 app.use("/course/member", courseMemberRoute);
-app.use("/user", userRoute);
 app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------
@@ -52,7 +68,7 @@ app.use("/file", fileRoute);
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(err.status || 500).send("something is wrong...\n detected in global error handler");
-  });
+});
 
 // Start server
 app.listen(PORT, () => {

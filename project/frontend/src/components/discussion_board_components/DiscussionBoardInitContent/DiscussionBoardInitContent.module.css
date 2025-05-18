@@ -1,0 +1,15 @@
+.content {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-20%, -50%);
+}
+
+.category {
+    font-size: 40px;
+    padding-bottom: 10vh;
+}
+
+.instruction {
+    font-size: 28px;
+}
