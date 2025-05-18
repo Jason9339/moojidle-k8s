@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-async function GetCourseBoardByCourseId(courseId) {
+async function FindCourseBoardByCourseId(courseId) {
     const db = mongoose.connection.db;
 
     const course = await db.collection('course').findOne({ course_id: courseId });
@@ -23,7 +23,7 @@ async function GetCourseBoardByCourseId(courseId) {
 }
 
 // add discussion board
-async function AddDiscussionBoardService(courseId, courseName) {
+async function InsertDiscussionBoardService(courseId, courseName) {
     const db = mongoose.connection.db;
     // Check if course exists
     const course = await db.collection('course').findOne({ course_id: courseId });
@@ -69,8 +69,8 @@ async function FindBoardByID(boardID) {
 }
 
 export {
-    GetCourseBoardByCourseId,
-    AddDiscussionBoardService,
+    FindCourseBoardByCourseId,
+    InsertDiscussionBoardService,
     DeleteDiscussionBoardService,
     FindBoardByID
 }

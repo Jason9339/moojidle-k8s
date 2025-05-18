@@ -10,7 +10,7 @@ async function FindPostByID(postID) {
 
 }
 
-const DeletePost = async (postID) => {
+const DeletePostById = async (postID) => {
     try {
         const result = await mongoose.connection.db.collection('post').deleteOne({ post_id: postID });
         return result;
@@ -68,5 +68,5 @@ export {
     FindProjectedPostsByBId,
     CreatePostsByBId,
     FindPostByID,
-    DeletePost,
+    DeletePostById,
 }

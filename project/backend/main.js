@@ -62,6 +62,9 @@ app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------
 
+import {GetAllCourseDiscussionBoard} from "#src/controllers/discussion_board_controller.js"
+app.get("/test/:userId", GetAllCourseDiscussionBoard);
+
 // Global error handler
 app.use((err, req, res, next) => {
     console.error(err);

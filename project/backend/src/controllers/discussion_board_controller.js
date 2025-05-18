@@ -1,29 +1,35 @@
-import { 
-    GetCourseBoardByCourseId,
-    AddDiscussionBoardService, 
+import {
+    FindCourseBoardByCourseId,
+    InsertDiscussionBoardService,
     DeleteDiscussionBoardService
 } from "#src/services/discussion_board_service.js";
 
 import { 
-    GetAllUserCourseByUserId
-} from "#src/services/discussion_services/course_service.js";
+    FindCourseInCourseId,
+} from "#src/services/course_service.js";
 
 import { 
-    FindTeacherByCourseID,
-    FindAssistantByCourseID
-} from "#src/services/discussion_services/course_member_services.js";
+    FindTeachInByCourseID,
+    FindAssistInByCourseID,
+} from "#src/services/course_member_service.js";
 
-import{
-    DeletePost,
+import {
+    FindTeachInByUserId,
+    FindAssistInByUserId,
+    FindStudyInByUserId,
+} from "#src/services/course_member_service.js";
+
+import {
+    DeletePostById,
     FindProjectedPostsByBId
-}from "#src/services/post_services.js"
+} from "#src/services/post_services.js"
 
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);
     if (isNaN(courseId)) {
         return res.status(400).send({ error: "Invalid courseId" });
     }
-    const result = await GetCourseBoardByCourseId(courseId);
+    const result = await FindCourseBoardByCourseId(courseId);
     if (!result) {
         return res.status(404).send({ error: "Course not found" });
     }
@@ -38,7 +44,33 @@ async function GetAllCourseDiscussionBoard(req, res) {
     }
 
     // Get all the courses of the user
-    const userCourses = await GetAllUserCourseByUserId(userId);
+    let userCourses;
+
+    let teach = await FindTeachInByUserId(userId);
+    let assist = await FindAssistInByUserId(userId);
+    let study = await FindStudyInByUserId(userId);
+
+    // remove duplicates
+    const courseIds = [
+        ...teach.map(x => x.course_id),
+        ...assist.map(x => x.course_id),
+        ...study.map(x => x.course_id),
+    ];
+    const uniqueCourseIds = [...new Set(courseIds)];
+
+    if (uniqueCourseIds.length === 0) {
+        userCourses = [];
+    }else{
+        // query course information, only return course_id and name
+        const courses = await FindCourseInCourseId(uniqueCourseIds);
+    
+        // change name to course_name
+        userCourses = courses.map(c => ({
+            course_id: c.course_id,
+            course_name: c.name
+        }));
+    }
+
     if (userCourses === null) {
         return res.status(404).send({ error: "no user" });
     }
@@ -49,15 +81,15 @@ async function GetAllCourseDiscussionBoard(req, res) {
     // Get all the discussion boards of the courses
     let boardsList = await Promise.all(
         userCourses.map(async (course) => {
-            const courseBoard = await GetCourseBoardByCourseId(course.course_id);
+            const courseBoard = await FindCourseBoardByCourseId(course.course_id);
             return courseBoard;
         })
     );
 
     // Get all teachers and assistant in the course
-    for(let i = 0; i < boardsList.length; i ++){
-        const teachers = await FindTeacherByCourseID(boardsList[i].course_id);
-        const assistants = await FindAssistantByCourseID(boardsList[i].course_id);
+    for (let i = 0; i < boardsList.length; i++) {
+        const teachers = await FindTeachInByCourseID(boardsList[i].course_id);
+        const assistants = await FindAssistInByCourseID(boardsList[i].course_id);
 
         boardsList[i].teachers = teachers;
         boardsList[i].assistants = assistants;
@@ -68,7 +100,7 @@ async function GetAllCourseDiscussionBoard(req, res) {
 
 async function AddDiscussionBoard(req, res) {
     const courseId = parseInt(req.body.course_id, 10);
-    
+
     const courseName = req.body.name;
 
     if (isNaN(courseId)) {
@@ -77,7 +109,7 @@ async function AddDiscussionBoard(req, res) {
     if (!courseId || !courseName) {
         return res.status(400).send({ error: "course_id and the name of discussion board are required" });
     }
-    const result = await AddDiscussionBoardService(courseId, courseName);
+    const result = await InsertDiscussionBoardService(courseId, courseName);
     if (!result) {
         return res.status(404).send({ error: "Course not found" });
     }
@@ -88,10 +120,10 @@ async function AddDiscussionBoard(req, res) {
 async function DeleteDiscussionBoard(req, res) {
     const board_id = parseInt(req.params.boardId, 10);
     const broadPosts = await FindProjectedPostsByBId(board_id);
-    
+
     if (broadPosts.length > 0) {
         for (let i = 0; i < broadPosts.length; i++) {
-            await DeletePost(broadPosts[i].post_id);
+            await DeletePostById(broadPosts[i].post_id);
         }
     }
 
@@ -100,7 +132,7 @@ async function DeleteDiscussionBoard(req, res) {
     }
 
     const success = await DeleteDiscussionBoardService(board_id);
-    
+
     if (!success) {
         return res.status(404).send({ error: "Board not found" });
     }

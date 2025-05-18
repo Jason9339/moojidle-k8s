@@ -154,6 +154,30 @@ async function FindTeachInJoinUserByCourseId(courseId) {
     }
 }
 
+async function FindTeachInByCourseID(course_id) {
+    try {
+        const teachers = await mongoose.connection.db.collection('teach_in').find(
+            { course_id: parseInt(course_id) }
+        ).toArray();
+
+        return teachers;
+    } catch (err) {
+
+    }
+}
+
+async function FindAssistInByCourseID(course_id) {
+    try {
+        const assistant = await mongoose.connection.db.collection('assist_in').find(
+            { course_id: parseInt(course_id) }
+        ).toArray();
+
+        return assistant;
+    } catch (err) {
+
+    }
+}
+
 async function FindTeachInByUserId(userId) {
     try {
         const parsedUserId = parseInt(userId);
@@ -298,6 +322,8 @@ export {
     FindTeachInByUserId,
     FindAssistInByUserId,
     FindStudyInByUserId,
+    FindTeachInByCourseID,
+    FindAssistInByCourseID,
     InsertStudyIn,
     InsertTeachIn,
     InsertAssistIn,
