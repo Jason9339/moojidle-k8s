@@ -64,7 +64,7 @@ const Register = () => {
                         required
                         placeholder="Enter your email"
                         className={styles.input}
-                        maxLength={50}
+                        maxLength={30}
                     />
                 </div>
                 <div className={styles["form-group"]}>
