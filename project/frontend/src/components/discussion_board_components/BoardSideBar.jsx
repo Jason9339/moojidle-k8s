@@ -10,6 +10,7 @@ import { FaEdit } from "react-icons/fa";
 const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     const { state } = useLocation();
 
+    console.log("item:", itemData)
     // Whether a MenuItem is currently selectewd
     const [selectedID, setSelectedID] = useState((state == null) ? NO_SELECTED : state.initBoardID);
 
