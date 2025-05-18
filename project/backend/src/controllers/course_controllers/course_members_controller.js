@@ -2,8 +2,10 @@ import {
     FindStudyInJoinUserByCourseId,
     FindAssistInJoinUserByCourseId,
     FindTeachInJoinUserByCourseId,
-    SwitchStudyAssist,
     InsertStudyIn,
+    InsertAssistIn,
+    DeleteStudyIn,
+    DeleteAssistIn,
 } from '#src/services/course_services/course_member_service.js';
 
 import { 
@@ -34,8 +36,23 @@ async function SwitchCharacter(req, res) {
         const userId = parseInt(req.params.userId);
         const courseId = parseInt(req.params.courseId);
 
-        const result = await SwitchStudyAssist(userId, courseId);
-        res.status(200).json(result);
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+
+        // check if is student
+        for (let i = 0; i < students.length; i++) {
+            if (userId == students[i].user_id) {
+                await SwitchStudyAssist(userId, courseId);
+                DeleteStudyIn(userId, courseId);
+                InsertAssistIn(userId, courseId);
+                res.status(200).json({ message: "User added as an assistant" });
+                return;
+            }
+        }
+
+        // is assistant
+        DeleteAssistIn(userId, courseId);
+        InsertStudyIn(userId, courseId);
+        res.status(200).json({ message: "User removed from assistants" });
     } catch (error) {
         console.error("Error switching character:", error);
         res.status(500).json({ error: error.message });

@@ -47,9 +47,9 @@
     - FindTeachInByUserId,
     - FindAssistInByUserId,
     - FindStudyInByUserId
-    - InsertTeachIn
     - FindStudyInJoinUserByCourseId
     - FindAssistInJoinUserByCourseId
     - FindTeachInJoinUserByCourseId
     - SwitchStudyAssist
     - InsertStudyIn
+    - InsertTeachIn
