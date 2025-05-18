@@ -1,7 +1,7 @@
 .main-container {
     width: calc(100vw - 380px);
     height: 100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     background: #eff2f5;
 }
 
@@ -9,6 +9,10 @@
     display: block;
     padding-left: 2vw;
     font-size: 5vh;
+}
+
+.discussionPageLayout {
+    background-color: #eff2f5; 
 }
 
 .fab {
