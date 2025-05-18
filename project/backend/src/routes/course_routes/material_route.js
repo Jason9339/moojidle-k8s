@@ -1,5 +1,9 @@
 import express from 'express';
-import { GetCourseFiles, UpdateCourseMaterials, DeleteCourseMaterial } from '#src/controllers/course_controllers/material_controller.js';
+import { 
+    GetCourseFiles, 
+    UpdateCourseMaterials, 
+    DeleteCourseMaterial 
+} from '#src/controllers/course_controllers/material_controller.js';
 
 const router = express.Router();
 
