@@ -99,10 +99,9 @@
     text-align: left;
     font-size: 14px;
 
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
 }
 
 .material-table th {
@@ -273,4 +272,25 @@
     margin-left: 6px;
     font-size: 12px;
     color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .edit-material-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .material-input,
+    .material-date-input,
+    .delete-material-btn {
+        width: 100%;
+    }
+
+    .material-table-section {
+        flex-direction: column;
+    }
+
+    .todo-panel {
+        width: 100%;
+    }
 }
