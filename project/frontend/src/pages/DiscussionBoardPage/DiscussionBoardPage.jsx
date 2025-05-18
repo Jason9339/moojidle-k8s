@@ -10,8 +10,8 @@ import EditDiscussionBoardModal from "@/components/discussion_board_components/E
 import styles from "./DiscussionBoardPage.module.css";
 import { LuPlus } from "react-icons/lu";
 
-import { GetBoardsGroupByCourseByUserID } from "@/services/discussion_api/DiscussionBoardApi";
-import { GetOverviewPostByBId } from "@/services/discussion_api/PostApi";
+import { GetBoardsGroupByCourseByUserID } from "@/services/DiscussionBoardApi";
+import { GetOverviewPostByBId } from "@/services/PostApi";
 import { useRef } from "react";
 
 function DiscussionBoard() {

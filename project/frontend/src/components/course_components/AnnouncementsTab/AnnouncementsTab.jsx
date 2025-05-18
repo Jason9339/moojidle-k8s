@@ -5,7 +5,7 @@ import {
     createAnnouncement,
     canUserEditAnnouncements,
     editAnnouncement,
-} from "@/services/AnnouncementTabApi.js";
+} from "@/services/AnnouncementApi.js";
 
 function AnnouncementsTab({ courseId, currentUserId }) {
     const [announcements, setAnnouncements] = useState([]);

@@ -4,7 +4,7 @@ import {
     manualAddStudent,
     switchCharacter,
     getInviteCode,
-} from "@/services/coursepage_api/CoursepageApi";
+} from "@/services/CourseApi";
 import styles from "./MembersTab.module.css";
 
 function MembersTab({ courseId, userId }) {

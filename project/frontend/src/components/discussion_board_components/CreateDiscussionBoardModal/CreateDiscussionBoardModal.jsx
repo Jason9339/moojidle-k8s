@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CreateDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi";
+import { CreateDiscussionBoard } from "@/services/DiscussionBoardApi";
 import styles from "./CreateDiscussionBoardModal.module.css";
 
 const CreateDiscussionBoardModal = ({ courseId, userId, onClose }) => {

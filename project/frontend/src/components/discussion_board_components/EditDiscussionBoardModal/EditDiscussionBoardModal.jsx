@@ -1,5 +1,5 @@
 import React from "react";
-import { DeleteDiscussionBoard } from "@/services/discussion_api/DiscussionBoardApi.js";
+import { DeleteDiscussionBoard } from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css"
 import { useNavigate } from "react-router-dom";
 export default function EditDiscussionBoardModal({ boardId, onClose }) {

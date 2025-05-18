@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GetUserDataById } from '@/services/user_api/UserApi.js';
+import { GetUserDataById } from '@/services/UserApi.js';
 import styles from "./UserProfile.module.css"
 
 // for components

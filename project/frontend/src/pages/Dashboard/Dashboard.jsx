@@ -13,7 +13,7 @@ import {
     getCourses,
     getTodoList,
     getComingUpList,
-} from "@/services/dashboard_api/DashboardApi";
+} from "@/services/DashboardApi";
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));

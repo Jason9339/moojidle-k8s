@@ -1,4 +1,4 @@
-import api from "@/services/apiClient.js"
+import api from "@/ApiClient.js"
 import { data } from "react-router-dom";
 
 async function GetPostContent(postID) {

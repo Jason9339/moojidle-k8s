@@ -1,4 +1,4 @@
-import axios from "@/services/apiClient";
+import axios from "@/ApiClient";
 
 // const tempApiClient = axios.create({
 //     baseURL: 'http://localhost:5173',

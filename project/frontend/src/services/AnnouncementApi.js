@@ -1,4 +1,4 @@
-import axios from "./apiClient";
+import axios from "../ApiClient";
 
 export const getAnnouncements = async (courseId) => {
   return (await axios.get(`/announcement/course/${courseId}`)).data;

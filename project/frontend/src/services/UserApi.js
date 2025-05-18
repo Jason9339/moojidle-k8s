@@ -1,4 +1,4 @@
-import api from "@/services/apiClient.js"
+import api from "@/ApiClient.js"
 
 async function GetUserDataById(userId) {
     try {
