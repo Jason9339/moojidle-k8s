@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import CalculateWeek from '#src/utils/calculateWeek.js';
+import CalculateWeek from '#src/utils/calculate_week.js';
 
 // Service function to retrieve all upcoming assignments
 async function GetToDoAssignments() {

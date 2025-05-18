@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
 async function GenerateInviteCode() {
     const db = mongoose.connection.db;
@@ -9,28 +10,6 @@ async function GenerateInviteCode() {
     } while (await db.collection('courses').findOne({ invite_link: code }));
     return code;
 };
-
-// Helper to get next a_id from counter collection
-async function GetNextSequenceValue(collectionName) {
-    // 直接找出第一筆 document 的 _id，作為固定的 counter 主體
-    const existingCounter = await mongoose.connection.db.collection("counter").findOne({}, { projection: { _id: 1 } });
-
-    if (!existingCounter) {
-        throw new Error("Counter document does not exist. Please initialize the counter collection manually.");
-    }
-
-    const result = await mongoose.connection.db.collection("counter").findOneAndUpdate(
-        { _id: existingCounter._id },
-        { $inc: { [collectionName]: 1 } },
-        {
-            returnDocument: 'after',
-            upsert: false  // 強制只更新，不建立新 document
-        }
-    );
-    console.log("Counter update result:", result);
-    console.log("Counter result:", result.value?.[collectionName]);
-    return result[collectionName] ?? 1;
-}
 
 // Service function to retrieve all courses with user role information
 async function FindCourseByUserId(userId) {
@@ -73,7 +52,7 @@ async function FindCourseInCourseId(courseIds) {
 async function InsertCourse(courseData) {
     try {
         // 1. Generate the next course_id
-        const nextCourseId = await GetNextSequenceValue("course");
+        const nextCourseId = await GetNextCounterId("course");
         const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
 
         // 2. Prepare the document to insert
@@ -247,8 +226,6 @@ async function FindCourseIdByInviteCode(code) {
 }
 
 export {
-    GetNextSequenceValue,
-
     FindCourseByUserId,
     FindCourseById,
     FindAllCourses,

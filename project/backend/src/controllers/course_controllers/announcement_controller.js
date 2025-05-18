@@ -1,14 +1,14 @@
 import {
-    GetAnnouncementsByCourseId,
-    CreateAnnouncement as CreateAnnouncementService,
-    EditAnnouncement as EditAnnouncementService,
+    FindAnnouncementByCourseId,
+    InsertAnnouncement,
+    UpdateAnnouncement
 } from '#src/services/course_services/announcement_service.js';
 
 // 取得特定課程的公告
 async function GetCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
-        const announcements = await GetAnnouncementsByCourseId(courseId);
+        const announcements = await FindAnnouncementByCourseId(courseId);
         res.json(announcements);
     } catch (error) {
         console.error("取得課程公告錯誤:", error);
@@ -16,11 +16,11 @@ async function GetCourseAnnouncements(req, res) {
     }
 }
 
-const CreateAnnouncementController = async (req, res) => {
+const CreateAnnouncement = async (req, res) => {
     try {
         const { courseId } = req.params;
         const { context, userId, announceDate } = req.body;
-        const announcement = await CreateAnnouncementService(courseId, context, userId, announceDate);
+        const announcement = await InsertAnnouncement(courseId, context, userId, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("新增課程公告錯誤:", error);
@@ -28,11 +28,11 @@ const CreateAnnouncementController = async (req, res) => {
     }
 };
 
-const EditAnnouncementController = async (req, res) => {
+const EditAnnouncement = async (req, res) => {
     try {
         const { announcementId } = req.params;
         const { context, announceDate } = req.body;
-        const announcement = await EditAnnouncementService(announcementId, context, announceDate);
+        const announcement = await UpdateAnnouncement(announcementId, context, announceDate);
         res.json(announcement);
     } catch (error) {
         console.error("更改課程公告錯誤:", error);
@@ -42,6 +42,6 @@ const EditAnnouncementController = async (req, res) => {
 
 export {
     GetCourseAnnouncements,
-    CreateAnnouncementController as CreateAnnouncement,
-    EditAnnouncementController as EditAnnouncement
+    CreateAnnouncement,
+    EditAnnouncement
 }; 

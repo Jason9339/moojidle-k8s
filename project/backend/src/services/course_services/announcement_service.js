@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { GetNextSequenceValue } from '#src/services/course_services/course_service.js';
+import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
 // 查詢課程公告
-async function GetAnnouncementsByCourseId(courseId) {
+async function FindAnnouncementByCourseId(courseId) {
     try {
         const now = new Date();
         return await mongoose.connection.db.collection('announcement')
@@ -19,9 +19,9 @@ async function GetAnnouncementsByCourseId(courseId) {
 }
 
 // 建立課程公告
-async function CreateAnnouncement(courseId, context, user_id, announce_date) {
+async function InsertAnnouncement(courseId, context, user_id, announce_date) {
     try {
-        const a_id = await GetNextSequenceValue('announcement');
+        const a_id = await GetNextCounterId('announcement');
         const now = new Date();
         const announcement = {
             a_id,
@@ -42,7 +42,7 @@ async function CreateAnnouncement(courseId, context, user_id, announce_date) {
 }
 
 // 編輯課程公告
-async function EditAnnouncement(announcementId, context, announce_date) {
+async function UpdateAnnouncement(announcementId, context, announce_date) {
     try {
         const result = await mongoose.connection.db.collection('announcement').updateOne(
             { a_id: parseInt(announcementId) },
@@ -63,7 +63,7 @@ async function EditAnnouncement(announcementId, context, announce_date) {
 }
 
 export {
-    GetAnnouncementsByCourseId,
-    CreateAnnouncement,
-    EditAnnouncement
+    FindAnnouncementByCourseId,
+    InsertAnnouncement,
+    UpdateAnnouncement
 }; 

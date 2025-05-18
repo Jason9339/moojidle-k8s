@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import CalculateWeek from '#src/utils/calculateWeek.js';
+import CalculateWeek from '#src/utils/calculate_week.js';
 import { DeleteFile } from '#src/services/file_services/file_storage_service.js';
 
 // 查詢課程教材
