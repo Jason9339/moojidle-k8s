@@ -14,15 +14,6 @@ const Register = () => {
         e.preventDefault();
         setError("");
 
-        if (name.length > 20) {
-            setError("Name must be 20 characters or less.");
-            return;
-        }
-        if (email.length > 50) {
-            setError("Email must be 50 characters or less.");
-            return;
-        }
-
         try {
             const response = await RegisterUser({ name, email, password });
             if (response && response.message === "User registered successfully") {
