@@ -5,7 +5,7 @@ import {
     GetCourseAnnouncements,
     CreateAnnouncement,
     EditAnnouncement
-} from '#src/controllers/course_controllers/announcement_controller.js';
+} from '#src/controllers/announcement_controller.js';
 
 // ----- Announcement Routes -----
 // entry point http://localhost:PORT/announcement

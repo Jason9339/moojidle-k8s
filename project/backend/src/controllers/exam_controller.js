@@ -1,7 +1,7 @@
 import {
     FindFromExamJoinStudyInJoinCourseByUserId
     // getComingExams as getComingExamsService
-} from '#src/services/course_services/exam_service.js';
+} from '#src/services/exam_service.js';
 
 async function GetUpcomingExamsByUserId(req, res) {
     try {

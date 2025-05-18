@@ -6,7 +6,7 @@ import {
     GetAllCourseDiscussionBoard,
     AddDiscussionBoard, 
     DeleteDiscussionBoard 
-} from '#src/controllers/discussion_controllers/discussion_board_controller.js';
+} from '#src/controllers/discussion_board_controller.js';
 
 router.get("/course-boards/:courseId", GetCourseDiscussionBoard);
 router.get("/user-course-boards/:userId", GetAllCourseDiscussionBoard);

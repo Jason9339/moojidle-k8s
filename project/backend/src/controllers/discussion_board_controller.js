@@ -2,7 +2,7 @@ import {
     GetCourseBoardByCourseId,
     AddDiscussionBoardService, 
     DeleteDiscussionBoardService
-} from "#src/services/discussion_services/discussion_board_service.js";
+} from "#src/services/discussion_board_service.js";
 
 import { 
     GetAllUserCourseByUserId
@@ -16,7 +16,7 @@ import {
 import{
     DeletePost,
     FindProjectedPostsByBId
-}from "#src/services/discussion_services/post_services.js"
+}from "#src/services/post_services.js"
 
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);

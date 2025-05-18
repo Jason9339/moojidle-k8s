@@ -6,7 +6,7 @@ import {
     SwitchCharacter,
     InviteStudent,
     IsAssistantOrTeacher,
-} from '#src/controllers/course_controllers/course_members_controller.js';
+} from '#src/controllers/course_members_controller.js';
 
 // entry point http://localhost:PORT/course/member
 

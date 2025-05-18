@@ -2,7 +2,7 @@ import express from 'express';
 import { 
     GetToDoAssignmentsByUserId,
     GetCourseAssignments 
-} from '#src/controllers/course_controllers/assignment_controller.js';
+} from '#src/controllers/assignment_controller.js';
 
 const router = express.Router();
 

@@ -8,7 +8,7 @@ import {
     Delete,
     UpdatePassword,
     GetUserTags,
-} from '#src/controllers/user_controllers/user_controller.js';
+} from '#src/controllers/user_controller.js';
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
 

@@ -6,11 +6,11 @@ import {
     InsertAssistIn,
     DeleteStudyIn,
     DeleteAssistIn,
-} from '#src/services/course_services/course_member_service.js';
+} from '#src/services/course_member_service.js';
 
 import { 
     FindOneUserById 
-} from '#src/services/user_services/user_service.js';
+} from '#src/services/user_service.js';
 
 async function GetCourseMembers(req, res) {
     try {

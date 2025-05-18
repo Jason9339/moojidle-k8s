@@ -3,11 +3,11 @@ import {
     FindMaterialsByCourseId,
     FindMaterialById,
     UpdateMaterialById
-} from '#src/services/course_services/material_service.js';
+} from '#src/services/material_service.js';
 
 import {
     FindCourseById
-} from '#src/services/course_services/course_service.js';
+} from '#src/services/course_service.js';
 
 import CalculateWeek from '#src/utils/calculate_week.js';
 

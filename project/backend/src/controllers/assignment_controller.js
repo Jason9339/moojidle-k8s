@@ -1,11 +1,11 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
     FindAssignmentsByCourseId
-} from '#src/services/course_services/assignment_service.js';
+} from '#src/services/assignment_service.js';
 
 import { 
     FindCourseById 
-} from '#src/services/course_services/course_service.js';
+} from '#src/services/course_service.js';
 
 import CalculateWeek from '#src/utils/calculate_week.js';
 

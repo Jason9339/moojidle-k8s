@@ -5,7 +5,7 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword
-} from "#src/services/user_services/user_service.js";
+} from "#src/services/user_service.js";
 
 // Register a new user in the database
 // In Postman send this json format in the body

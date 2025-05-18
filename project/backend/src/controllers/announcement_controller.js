@@ -2,7 +2,7 @@ import {
     FindAnnouncementByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement
-} from '#src/services/course_services/announcement_service.js';
+} from '#src/services/announcement_service.js';
 
 // 取得特定課程的公告
 async function GetCourseAnnouncements(req, res) {

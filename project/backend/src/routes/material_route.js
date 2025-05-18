@@ -3,7 +3,7 @@ import {
     GetCourseFiles, 
     UpdateCourseMaterials, 
     DeleteCourseMaterial 
-} from '#src/controllers/course_controllers/material_controller.js';
+} from '#src/controllers/material_controller.js';
 
 const router = express.Router();
 

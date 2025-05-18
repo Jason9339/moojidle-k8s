@@ -7,14 +7,14 @@ import {
     DeleteCourse,
     FindCourseById,
     FindCourseIdByInviteCode
-} from '#src/services/course_services/course_service.js';
+} from '#src/services/course_service.js';
 
 import {
     FindTeachInByUserId,
     FindStudyInByUserId,
     FindAssistInByUserId,
     InsertTeachIn,
-} from '#src/services/course_services/course_member_service.js';
+} from '#src/services/course_member_service.js';
 
 
 // 取得所有課程列表
