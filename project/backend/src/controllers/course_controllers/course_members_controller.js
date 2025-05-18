@@ -41,16 +41,16 @@ async function SwitchCharacter(req, res) {
         // check if is student
         for (let i = 0; i < students.length; i++) {
             if (userId == students[i].user_id) {
-                DeleteStudyIn(userId, courseId);
-                InsertAssistIn(userId, courseId);
+                await DeleteStudyIn(userId, courseId);
+                await InsertAssistIn(userId, courseId);
                 res.status(200).json({ message: "User added as an assistant" });
                 return;
             }
         }
 
         // is assistant
-        DeleteAssistIn(userId, courseId);
-        InsertStudyIn(userId, courseId);
+        await DeleteAssistIn(userId, courseId);
+        await InsertStudyIn(userId, 1, courseId);
         res.status(200).json({ message: "User removed from assistants" });
     } catch (error) {
         console.error("Error switching character:", error);

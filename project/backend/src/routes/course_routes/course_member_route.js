@@ -39,7 +39,7 @@ router.get("/can_edit/:userId/:courseId", IsAssistantOrTeacher);
 
 // posters
 router.post("/switch/:userId/:courseId", SwitchCharacter);
-router.post("/add/:courseId", InviteStudent); // 手動加入學生
+router.post("/add/:courseId", InviteStudent);
 
 // putters
 

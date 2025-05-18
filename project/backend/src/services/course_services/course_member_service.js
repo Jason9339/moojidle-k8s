@@ -238,7 +238,8 @@ async function InsertStudyIn(userId, studentId, courseId) {
             course_id: parsedCourseId
         });
 
-        if (existingEnrollment.user_id) {
+        // is not null and is not []
+        if (existingEnrollment && existingEnrollment.user_id) {
             throw new Error("Student is already enrolled in this course");
         }
 

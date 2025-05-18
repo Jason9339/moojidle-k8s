@@ -8,10 +8,10 @@ const router = express.Router();
 
 // entry point http://localhost:PORT/assignment
 
-// GET /assignment/todo
+// TODO
+// this route is not working at ALL, not in the scope of refacting the code
 router.get('/todo', GetToDoAssignmentsByUserId);
 
-// GET /assignment/course/:courseId
 router.get('/course/:courseId', GetCourseAssignments);
 
 
