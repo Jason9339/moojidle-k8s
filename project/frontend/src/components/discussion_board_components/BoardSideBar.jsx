@@ -110,8 +110,8 @@ export default BoardSideBar;
 
 // 外層包一層，控制偏移與背景
 const OuterWrapper = styled.div`
-  padding-left: 32px;
-  padding-top: 40px;
+  margin-left: 32px;
+  margin-top: 40px;
   background-color: #f9f9f9; /* 跟右側主區一致 */
   border-radius: 16px;
   padding: 12px;
