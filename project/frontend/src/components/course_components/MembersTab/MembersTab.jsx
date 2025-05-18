@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
-    getCourseMembers,
-    manualAddStudent,
-    switchCharacter,
-    getInviteCode,
+    GetCourseMembers,
+    ManualAddStudent,
+    SwitchCharacter,
+    GetInviteCode,
 } from "@/services/CourseApi";
 import styles from "./MembersTab.module.css";
 
@@ -27,7 +27,7 @@ function MembersTab({ courseId, userId }) {
     const fetchMembers = async () => {
         try {
             setLoading(true);
-            const data = await getCourseMembers(courseId);
+            const data = await GetCourseMembers(courseId);
             setMembers(data);
             setError(null);
         } catch (err) {
@@ -40,7 +40,7 @@ function MembersTab({ courseId, userId }) {
 
     const fetchCode = async () => {
         try {
-            const data = await getInviteCode(courseId);
+            const data = await GetInviteCode(courseId);
             setCode(data);
         } catch (err) {
             console.error("Error fetching invite code:", err);
@@ -59,7 +59,7 @@ function MembersTab({ courseId, userId }) {
             return;
         }
         try {
-            await manualAddStudent(
+            await ManualAddStudent(
                 courseId,
                 newStudent.userId,
                 newStudent.studentId
@@ -76,7 +76,7 @@ function MembersTab({ courseId, userId }) {
 
     const handleMakeAssistant = async (userId) => {
         try {
-            await switchCharacter(userId, courseId);
+            await SwitchCharacter(userId, courseId);
             fetchMembers();
         } catch (err) {
             console.error("Error switching user role:", err);

@@ -8,23 +8,23 @@ import axios from "@/ApiClient";
 //     },
 // });
 
-export const getCourses = async (userId) => {
+export const GetCourses = async (userId) => {
     return (await axios.get(`/course/read/${userId}`)).data;
 };
 
-export const getTodoList = async (userId) => {
+export const GetTodoList = async (userId) => {
     return (await axios.get(`/assignment/todo?user_id=${userId}`)).data;
 };
 
-export const getComingUpList = async (userId) => {
+export const GetComingUpList = async (userId) => {
     return (await axios.get(`/exams/coming?user_id=${userId}`)).data;
 };
 
-export const getTeachIn = async (userId) => {
+export const GetTeachIn = async (userId) => {
     return (await axios.get(`/course/read/teach_in?user_id=${userId}`)).data;
 };
 
-export const addCourse = async (coursePayload) => {
+export const AddCourse = async (coursePayload) => {
     try {
         const response = await axios.post("/course/create", coursePayload);
         console.log("Added course:", response.data);
@@ -38,7 +38,7 @@ export const addCourse = async (coursePayload) => {
     }
 };
 
-export const deleteCourse = async (courseId) => {
+export const DeleteCourse = async (courseId) => {
     try {
         const response = await axios.delete(`/course/delete/${courseId}`);
         console.log("Deleted course:", response.data);
@@ -53,7 +53,7 @@ export const deleteCourse = async (courseId) => {
 };
 
 // 邀請碼
-export const fetchCourseIdByCode = async (code) => {
+export const FetchCourseIdByCode = async (code) => {
     try {
         const response = await axios.get(`/course/invite/${code}`);
         return response.data;
@@ -66,7 +66,7 @@ export const fetchCourseIdByCode = async (code) => {
     }
 };
 
-export const inviteStudent = async (courseId, userId, studentId) => {
+export const InviteStudent = async (courseId, userId, studentId) => {
     return (
         await axios.post(`/course/member/add/${courseId}`, {
             userId,

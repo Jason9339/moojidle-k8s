@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCourses } from "@/services/DashboardApi";
+import { GetCourses } from "@/services/DashboardApi";
 import styles from "./CoursePage.module.css";
 
 import CourseListItem from "@/components/course_components/CourseListItem/CourseListItem";
@@ -13,7 +13,7 @@ function CoursePage() {
             try {
                 const user = JSON.parse(localStorage.getItem("user"));
                 const userId = user?.user_id;
-                const data = await getCourses(userId);
+                const data = await GetCourses(userId);
                 setCourses(data);
             } catch (err) {
                 console.error("Failed to fetch courses:", err);

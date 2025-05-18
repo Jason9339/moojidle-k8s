@@ -2,23 +2,23 @@ import axios from "@/ApiClient";
 
 // 從 DashboardApi.js 移動過來的課程專頁相關 API
 
-export const getCourseDetails = async (courseId) => {
+export const GetCourseDetails = async (courseId) => {
     return (await axios.get(`/course/${courseId}`)).data;
 };
 
-export const getCourseMaterials = async (courseId) => {
+export const GetCourseMaterials = async (courseId) => {
     return (await axios.get(`/material/course/${courseId}/materials`)).data;
 };
 
-export const getCourseAssignments = async (courseId) => {
+export const GetCourseAssignments = async (courseId) => {
     return (await axios.get(`/assignment/course/${courseId}`)).data;
 };
 
-export const getCourseAnnouncements = async (courseId) => {
+export const GetCourseAnnouncements = async (courseId) => {
     return (await axios.get(`/announcement/course/${courseId}`)).data;
 };
 
-export const updateCourseMaterials = async (courseId, materials) => {
+export const UpdateCourseMaterials = async (courseId, materials) => {
     try {
         const response = await axios.post(
             `/material/course/${courseId}/materials`,
@@ -31,7 +31,7 @@ export const updateCourseMaterials = async (courseId, materials) => {
     }
 };
 
-export const deleteCourseMaterial = async (courseId, materialId) => {
+export const DeleteCourseMaterial = async (courseId, materialId) => {
     try {
         const response = await axios.delete(
             `/material/course/${courseId}/materials/${materialId}`
@@ -44,11 +44,11 @@ export const deleteCourseMaterial = async (courseId, materialId) => {
 };
 
 // 成員相關（維持不變）
-export const getCourseMembers = async (courseId) => {
+export const GetCourseMembers = async (courseId) => {
     return (await axios.get(`/course/member/${courseId}`)).data;
 };
 
-export const manualAddStudent = async (courseId, userId, studentId) => {
+export const ManualAddStudent = async (courseId, userId, studentId) => {
     console.log(courseId, studentId, userId);
     return (
         await axios.post(`/course/member/add/${courseId}`, {
@@ -58,12 +58,12 @@ export const manualAddStudent = async (courseId, userId, studentId) => {
     ).data;
 };
 
-export const switchCharacter = async (userId, courseId) => {
+export const SwitchCharacter = async (userId, courseId) => {
     return (await axios.post(`/course/member/switch/${userId}/${courseId}`))
         .data;
 };
 
-export const getInviteCode = async (courseId) => {
+export const GetInviteCode = async (courseId) => {
     // return (await axios.get(`/course/${courseId}/inviteCode`)).data;
     return (await axios.get(`/course/${courseId}`)).data.inviteLink;
 };

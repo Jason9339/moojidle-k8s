@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
-    fetchCourseIdByCode,
-    inviteStudent,
+    FetchCourseIdByCode,
+    InviteStudent,
 } from "@/services/DashboardApi";
 import styles from "./JoinCourseModal.module.css";
 
@@ -18,8 +18,8 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
         try {
             setIsSubmitting(true);
 
-            const courseId = await fetchCourseIdByCode(inviteCode);
-            const msg = await inviteStudent(
+            const courseId = await FetchCourseIdByCode(inviteCode);
+            const msg = await InviteStudent(
                 courseId.courseId,
                 currentUserId,
                 currentUserId

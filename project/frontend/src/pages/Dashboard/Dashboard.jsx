@@ -10,9 +10,9 @@ import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
 import {
-    getCourses,
-    getTodoList,
-    getComingUpList,
+    GetCourses,
+    GetTodoList,
+    GetComingUpList,
 } from "@/services/DashboardApi";
 
 function Dashboard() {
@@ -26,9 +26,9 @@ function Dashboard() {
     const fetchAll = async () => {
         try {
             const [courses, todoList, comingUpList] = await Promise.all([
-                getCourses(currentUserId),
-                getTodoList(currentUserId),
-                getComingUpList(currentUserId),
+                GetCourses(currentUserId),
+                GetTodoList(currentUserId),
+                GetComingUpList(currentUserId),
             ]);
 
             setDashboardData({

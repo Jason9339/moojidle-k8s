@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addCourse } from "@/services/DashboardApi";
+import { AddCourse } from "@/services/DashboardApi";
 import styles from "./AddCourseModal.module.css";
 
 function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
@@ -35,7 +35,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
 
         try {
             setIsSubmitting(true); // 顯示 loading 狀態
-            await addCourse(coursePayload);
+            await AddCourse(coursePayload);
             await onAddCourse(); // 重新 fetch 所有資料
             onClose(); // 關閉 modal
         } catch (error) {

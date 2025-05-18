@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AnnouncementsTab.module.css";
 import {
-    getAnnouncements,
-    createAnnouncement,
-    canUserEditAnnouncements,
-    editAnnouncement,
+    GetAnnouncements,
+    CreateAnnouncement,
+    CanUserEditAnnouncements,
+    EditAnnouncement,
 } from "@/services/AnnouncementApi.js";
 
 function AnnouncementsTab({ courseId, currentUserId }) {
@@ -25,7 +25,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
         const fetchAnnouncements = async () => {
             try {
                 setLoading(true);
-                const data = await getAnnouncements(courseId);
+                const data = await GetAnnouncements(courseId);
                 setAnnouncements(data);
             } catch (err) {
                 setError("Failed to load announcements.");
@@ -37,7 +37,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
 
         const checkEditPermissions = async () => {
             try {
-                const editPermission = await canUserEditAnnouncements(
+                const editPermission = await CanUserEditAnnouncements(
                     currentUserId,
                     courseId
                 );
@@ -102,14 +102,14 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             alert("公告時間在未來，公告將於該時間才會顯示");
         }
         try {
-            await createAnnouncement(
+            await CreateAnnouncement(
                 courseId,
                 newAnnouncementContext,
                 currentUserId,
                 newAnnounceDate
             );
             // Refresh announcements after creating
-            const data = await getAnnouncements(courseId);
+            const data = await GetAnnouncements(courseId);
             setAnnouncements(data);
             closeCreateModal();
         } catch (err) {
@@ -129,13 +129,13 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             alert("公告時間在未來，公告將於該時間才會顯示");
         }
         try {
-            await editAnnouncement(
+            await EditAnnouncement(
                 selectedAnnouncement.a_id,
                 newAnnouncementContext,
                 newAnnounceDate
             );
             // Refresh announcements after editing
-            const data = await getAnnouncements(courseId);
+            const data = await GetAnnouncements(courseId);
             setAnnouncements(data);
             closeEditModal();
         } catch (err) {

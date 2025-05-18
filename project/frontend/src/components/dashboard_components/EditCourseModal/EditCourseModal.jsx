@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { deleteCourse } from "@/services/DashboardApi";
+import { DeleteCourse } from "@/services/DashboardApi";
 import styles from "./EditCourseModal.module.css";
 
 function EditCourseModal({ course, onClose, onDeleteCourse }) {
@@ -15,7 +15,7 @@ function EditCourseModal({ course, onClose, onDeleteCourse }) {
         try {
             setIsDeleting(true);
             console.log("刪除課程:", course.courseId);
-            await deleteCourse(course.courseId);
+            await DeleteCourse(course.courseId);
             await onDeleteCourse(course.courseId); // 通知外層重新 fetch
             onClose();
         } catch (error) {

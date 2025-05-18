@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 
 import styles from "./CourseDetail.module.css";
 import { 
-  getCourseDetails, 
-  getCourseAssignments, 
-  getCourseMaterials, 
-  updateCourseMaterials,
-  deleteCourseMaterial
+  GetCourseDetails, 
+  GetCourseAssignments, 
+  GetCourseMaterials, 
+  UpdateCourseMaterials,
+  DeleteCourseMaterial
 } from "@/services/CourseApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
@@ -55,9 +55,9 @@ function CourseDetail() {
             try {
                 setLoading(true);
                 const [courseData, materialsData, assignmentsData] = await Promise.all([
-                    getCourseDetails(courseId),
-                    getCourseMaterials(courseId),
-                    getCourseAssignments(courseId)
+                    GetCourseDetails(courseId),
+                    GetCourseMaterials(courseId),
+                    GetCourseAssignments(courseId)
                 ]);
                 
                 // console.log("materialsData", materialsData);
@@ -133,7 +133,7 @@ function CourseDetail() {
                 
                 // 執行更新操作（如果有要更新的教材）
                 if (materialsToUpdate.length > 0) {
-                    await updateCourseMaterials(courseId, materialsToUpdate);
+                    await UpdateCourseMaterials(courseId, materialsToUpdate);
                 }
                 /*
                 // 防呆：若全部刪除，需二次確認
@@ -148,11 +148,11 @@ function CourseDetail() {
                 // 執行刪除操作（如果有要刪除的教材）
                 for (const materialId of deletedMaterialIds) {
                     console.log(`正在刪除教材 ID: ${materialId}`);
-                    await deleteCourseMaterial(courseId, materialId);
+                    await DeleteCourseMaterial(courseId, materialId);
                 }
                 
                 // 更新成功後刷新教材數據
-                const updatedMaterials = await getCourseMaterials(courseId);
+                const updatedMaterials = await GetCourseMaterials(courseId);
                 setMaterials(updatedMaterials);
                 
                 // 清空編輯狀態
