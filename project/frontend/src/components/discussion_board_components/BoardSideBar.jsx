@@ -124,7 +124,8 @@ const StyledSidebar = styled(Sidebar)`
   background-color: #f1f5f9 !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-
+  overflow-y: auto;
+  overflow-x: hidden;
   .ps-sidebar-container {
     background-color: transparent !important;
   }
