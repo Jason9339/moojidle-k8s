@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import CourseCard from "@/components/dashboard/CourseCard/CourseCard";
-import ToDoItem from "@/components/dashboard/ToDoItem/ToDoItem";
-import ComingUpItem from "@/components/dashboard/ComingUpItem/ComingUpItem";
-import AddCourseButton from "@/components/dashboard/AddCourseButton/AddCourseButton";
-import AddCourseModal from "@/components/dashboard/AddCourseModal/AddCourseModal";
-import JoinCourseButton from "@/components/dashboard/JoinCourseButton/JoinCourseButton";
-import JoinCourseModal from "@/components/dashboard/JoinCourseModal/JoinCourseModal";
+import CourseCard from "@/components/dashboard_components/CourseCard/CourseCard";
+import ToDoItem from "@/components/dashboard_components/ToDoItem/ToDoItem";
+import ComingUpItem from "@/components/dashboard_components/ComingUpItem/ComingUpItem";
+import AddCourseButton from "@/components/dashboard_components/AddCourseButton/AddCourseButton";
+import AddCourseModal from "@/components/dashboard_components/AddCourseModal/AddCourseModal";
+import JoinCourseButton from "@/components/dashboard_components/JoinCourseButton/JoinCourseButton";
+import JoinCourseModal from "@/components/dashboard_components/JoinCourseModal/JoinCourseModal";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 

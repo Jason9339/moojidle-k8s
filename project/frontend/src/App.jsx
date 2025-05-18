@@ -1,6 +1,6 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NotFoundPage from "@/pages/NotFoundPage";
-import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
+import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
@@ -12,8 +12,8 @@ import ProtectedRoutes from "@/utils/ProtectedRoutes";
 // pages for user related
 import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
-import Register from "@/pages/login_register_pages/Register.jsx";
-import Login from "@/pages/login_register_pages/Login.jsx";
+import Register from "@/pages/login_register_pages/Register/Register.jsx";
+import Login from "@/pages/login_register_pages/Login/Login.jsx";
 
 function App() {
     let login;

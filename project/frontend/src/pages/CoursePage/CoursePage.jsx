@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCourses } from "@/services/dashboard_api/DashboardApi";
 import styles from "./CoursePage.module.css";
 
-import CourseListItem from "@/components/course/CourseListItem/CourseListItem";
+import CourseListItem from "@/components/course_components/CourseListItem/CourseListItem";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 function CoursePage() {
