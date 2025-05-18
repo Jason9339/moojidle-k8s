@@ -1,0 +1,78 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+    padding: 24px;
+    width: calc(100% - 180px);
+    gap: 24px;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.dashboard-left {
+    flex: 2;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.dashboard-right {
+    flex: 1;
+    padding-left: 16px;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    overflow-y: auto;
+}
+
+.section-title {
+    background-color: #f0f2f7;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 20px 0 12px;
+    color: #333;
+}
+
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.dashboard-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.dashboard-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.dashboard-heading-divider {
+    border-top: 2px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.dashboard-button-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}

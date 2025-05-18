@@ -1,11 +1,13 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LeftBar from "@/components/LeftBar/LeftBar";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/discussion_board_pages/DiscussionBoardPage/DiscussionBoardPage";
-import Dashboard from "@/pages/Dashboard";
 import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import Blank from "@/pages/Blank";
+import CoursePage from "@/pages/CoursePage/CoursePage";
+import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
@@ -34,6 +36,10 @@ function App() {
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="*" element={<NotFoundPage />} />
+                        
+                        {/* course page related */}
+                        <Route path="/course" element={<CoursePage />} />
+                        <Route path="/course/:courseId" element={<CourseDetail />} />
 
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
