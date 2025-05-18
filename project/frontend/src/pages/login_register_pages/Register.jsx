@@ -12,11 +12,12 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Clear previous errors
+        setError("");
+
         try {
             const response = await RegisterUser({ name, email, password });
             if (response && response.message === "User registered successfully") {
-                navigate("/login"); // Redirect to login page after successful registration
+                navigate("/login"); 
             } else {
                 setError(response?.message || "Registration failed");
             }
@@ -41,6 +42,7 @@ const Register = () => {
                         required
                         placeholder="Enter your name"
                         className={styles.input}
+                        maxLength={20}
                     />
                 </div>
                 <div className={styles["form-group"]}>
@@ -53,6 +55,7 @@ const Register = () => {
                         required
                         placeholder="Enter your email"
                         className={styles.input}
+                        maxLength={30}
                     />
                 </div>
                 <div className={styles["form-group"]}>
