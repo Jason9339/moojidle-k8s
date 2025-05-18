@@ -95,3 +95,12 @@
 .modal-btn-group button:last-of-type:hover {
     background-color: #c5c5c5;
 }
+
+.danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.danger:hover {
+    background-color: #c0392b;
+}
