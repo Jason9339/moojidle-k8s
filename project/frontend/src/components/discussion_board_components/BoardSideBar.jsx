@@ -29,44 +29,56 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
 
     return (
         <OuterWrapper>
-            {/* StyledSidebar will take 100% width of OuterWrapper. Width prop removed from here. */}
             <StyledSidebar breakPoint="md">
                 <Menu
                     renderExpandIcon={({ open }) => <span>{open ? "−" : "+"}</span>}
                     menuItemStyles={{
                         button: ({ level, active }) => {
                             let styles = {
-                                padding: "12px 20px", // Padding inside each menu button
+                                // --- Overall Button Styling ---
+                                display: 'flex',        // Crucial for aligning label and suffix
+                                alignItems: 'flex-start', // Align items to the top if content wraps
+                                padding: "12px 20px", 
                                 color: "#111827",
                                 fontWeight: 500,
                                 borderRadius: "6px",
-                                margin: "2px 6px", // Margin around each menu button
+                                margin: "2px 6px", 
                                 transition: "background-color 0.2s, color 0.2s",
+                                height: 'auto',         // Allow button height to grow with content
+                                minHeight: '40px',      // Optional: ensure a minimum touch target size
+
                                 "&:hover": {
                                     backgroundColor: "#e5e7eb !important",
                                     color: "#3b82f6 !important",
                                 },
-                                '.ps-menu-label': { // Container for the text label
+
+                                // --- Text Label Styling ---
+                                '.ps-menu-label': { 
                                     flexGrow: 1,
-                                    overflow: 'hidden', // For text ellipsis or wrapping
-                                    marginRight: '8px', // Space before suffix
+                                    // overflow: 'hidden', // Keep hidden if you prefer to clip truly excessive text
+                                    overflow: 'visible', // Set to visible to ensure parent grows
+                                    marginRight: '8px', 
                                 },
-                                '.ps-menu-label > span': { // The actual text span
-                                    whiteSpace: 'normal', // Allow text to wrap
-                                    wordBreak: 'break-word', // Break words to prevent overflow
-                                    display: 'block', // Ensures it takes block space for wrapping
+                                '.ps-menu-label > span': { 
+                                    whiteSpace: 'normal', 
+                                    wordBreak: 'break-word', 
+                                    display: 'block', 
+                                    lineHeight: '1.45', // Adjusted for better multi-line readability
                                 },
-                                '.ps-menu-suffix': { // Container for the suffix (edit icon)
-                                    flexShrink: 0, // Prevent suffix from shrinking
+
+                                // --- Suffix (Edit Icon) Styling ---
+                                '.ps-menu-suffix': { 
+                                    flexShrink: 0,
                                 }
                             };
                             if (active) {
                                 styles.color = "#6366f1 !important";
                                 styles.fontWeight = "bold";
                             }
+
                             return styles;
                         },
-                        subMenuContent: { // Styles for the content of SubMenu
+                        subMenuContent: { 
                             backgroundColor: 'transparent !important',
                         },
                     }}
@@ -85,7 +97,7 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                                         canEdit(index) ? (
                                             <button
                                                 onClick={(e) => {
-                                                    e.stopPropagation(); // Prevent MenuItem click
+                                                    e.stopPropagation(); 
                                                     handleEditBoard(
                                                         { course_id: course_id, course_name: course_name },
                                                         { board_id: board_id, board_name: board_name }
@@ -98,13 +110,12 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                                         ) : null
                                     }
                                 >
-                                    {/* The span for board_name is styled via menuItemStyles '.ps-menu-label > span' */}
                                     <span>{board_name}</span>
                                 </MenuItem>
                             ))}
                             {canEdit(index) ? (
                                 <MenuItem
-                                    className="addBoard" // Custom class for "Add Board"
+                                    className="addBoard" 
                                     onClick={() => handleAddBoard({ course_id: course_id, course_name: course_name })}
                                 >
                                     新增討論版
@@ -119,100 +130,84 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
 };
 export default BoardSideBar;
 
-// Styled Components Definitions:
-
 const OuterWrapper = styled.div`
-  /* --- ADJUST THE WIDTH OF THE SIDEBAR HERE --- */
-  width: 250px; /* Example: Set to 200px, 180px, etc., to make it narrower */
-  /* ------------------------------------------- */
-
+  width: 250px; 
   margin-left: 28px;
   margin-top: 40px;
   margin-right: 16px;
-  background-color: #f9f9f9; /* Outer card background */
-  border-radius: 16px;      /* Outer card radius */
-  max-height: calc(100vh - 80px); /* Adjust 80px based on your layout's top space */
+  background-color: #f9f9f9; 
+  border-radius: 16px;      
+  max-height: calc(100vh - 80px); 
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Crucial: OuterWrapper itself should not scroll, clips StyledSidebar's corners */
+  overflow: hidden; 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-  flex-shrink: 0; /* Prevent shrinking in the main page's flex layout */
+  flex-shrink: 0; 
 `;
 
 const StyledSidebar = styled(Sidebar)`
-  width: 100% !important; /* Fill the width defined by OuterWrapper */
-  height: 100%;           /* Fill the height defined by OuterWrapper's max-height */
-  
-  background-color: #f1f5f9 !important; /* Sidebar's own content background */
-  border-radius: 12px; /* Inner card radius, should be <= OuterWrapper's radius for nice effect */
-
+  width: 100% !important; 
+  height: 100%;           
+  background-color:rgb(235, 235, 235) !important; 
+  border-radius: 12px; 
   display: flex;
   flex-direction: column;
 
   .ps-sidebar-container {
-    background-color: transparent !important; /* Container inside react-pro-sidebar, keep transparent */
+    background-color: transparent !important; 
     height: 100%;
     display: flex;
     flex-direction: column;
   }
   
   .ps-menu-root {
-      flex-grow: 1; /* Allows menu to take available space and scroll */
-      overflow-y: auto; /* Vertical scroll for menu items */
-      overflow-x: hidden; /* No horizontal scroll for menu items */
+      flex-grow: 1; 
+      overflow-y: auto; 
+      overflow-x: hidden; 
 
-      /* Custom Scrollbar Styles */
       &::-webkit-scrollbar {
-        width: 8px; /* Width of the scrollbar */
+        width: 8px; 
       }
-
       &::-webkit-scrollbar-track {
-        background: transparent; /* Track transparent or match StyledSidebar background */
+        background: transparent; 
         border-radius: 10px; 
       }
-
       &::-webkit-scrollbar-thumb {
-        background-color: #a0aec0; /* Thumb color */
+        background-color: #a0aec0; 
         border-radius: 10px; 
-        /* Border helps thumb appear inset or thinner if track is same color as sidebar */
-        border: 2px solid #f1f5f9; /* Border color same as StyledSidebar background */
+        border: 2px solid #f1f5f9; 
       }
-
       &::-webkit-scrollbar-thumb:hover {
-        background-color: #718096; /* Thumb color on hover */
+        background-color: #718096; 
       }
-
-      /* For Firefox */
-      scrollbar-width: thin; /* 'auto', 'thin', or 'none' */
-      scrollbar-color: #a0aec0 #f1f5f9; /* thumb_color track_color (track matches StyledSidebar bg) */
+      scrollbar-width: thin; 
+      scrollbar-color: #a0aec0 #f1f5f9; 
   }
 
   .ps-submenu-content {
-    overflow-x: hidden !important; /* Prevent horizontal scroll in submenu content */
+    overflow-x: hidden !important; 
   }
 
-  /* Styling for the "Add Board" MenuItem button */
-  .addBoard > .ps-menu-button { /* Targets the button inside the MenuItem with class "addBoard" */
+  .addBoard > .ps-menu-button { 
       color: #10b981 !important; 
   }
   .addBoard > .ps-menu-button:hover {
-      color: #059669 !important; /* Darker green on hover */
-      background-color: #e5e7eb !important; /* Keep hover background consistent */
+      color: #059669 !important; 
+      background-color: #e5e7eb !important; 
   }
 
-  /* Styling for the edit icon button itself */
   .edit-icon-button {
     background: none;
     border: none;
-    padding: 4px; /* Clickable area */
+    padding: 4px; 
     cursor: pointer;
-    color: #6b7280; /* Icon color */
+    color: #6b7280; 
     display: inline-flex; 
     align-items: center;
     justify-content: center;
   }
 
   .edit-icon-button:hover {
-    color: #3b82f6; /* Icon color on hover */
+    color: #3b82f6; 
   }
 `;
