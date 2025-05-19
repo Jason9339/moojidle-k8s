@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginUser } from "@/services/login_register_api/LoginLogoutApi.js";
 import styles from "./Login.module.css";
-import { FcGoogle } from "react-icons/fc";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 
 const Login = () => {
@@ -10,7 +9,6 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -30,10 +28,6 @@ const Login = () => {
         }
     };
 
-    const handleGoogleLogin = () => {
-        // Handle Google login logic here
-        console.log("Google login clicked");
-    };
     const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
     return (
@@ -93,26 +87,7 @@ const Login = () => {
                     </div>
                     {error && <p className={styles["error-message"]}>{error}</p>}
                 </div>
-                <div className={styles["options-row"]}>
-                    <label className={styles["remember-label"]}>
-                        <input
-                            type="checkbox"
-                            checked={rememberMe}
-                            onChange={() => setRememberMe((v) => !v)}
-                            className={styles["remember-checkbox"]}
-                        />
-                        Remember me
-                    </label>
-                    <a href="/forgot-password" className={styles["forgot-password-link"]}>
-                        Forgot your password?
-                    </a>
-                </div>
                 <button type="submit" className={styles["login-button"]}>Log In</button>
-                <div className={styles["divider"]}><span>Or, Login with</span></div>
-                <button type="button" className={styles["google-login"]}>
-                    <FcGoogle size={22} />
-                    Sign in with google
-                </button>
                 <div className={styles["register-row"]}>
                     Don’t have an account?{" "}
                     <a href="/register" className={styles["sign-up-link"]}>Register here</a>

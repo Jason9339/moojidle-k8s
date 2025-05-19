@@ -101,43 +101,6 @@
     pointer-events: none;
 }
 
-.options-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.2rem;
-    font-size: 0.97rem;
-}
-
-.remember-label {
-    display: flex;
-    align-items: center;
-    gap: 0.4em;
-    color: #18181b;
-    font-size: 0.97rem;
-    user-select: none;
-    line-height: 1.2; 
-}
-
-.remember-checkbox {
-    accent-color: #6366f1;
-    width: 1.1em;
-    height: 1.1em;
-    margin: 0;
-    vertical-align: middle;
-    display: inline-block;  
-}
-
-.forgot-password-link {
-    color: #6366f1;
-    text-decoration: none;
-    font-size: 0.97rem;
-}
-
-.forgot-password-link:hover {
-    text-decoration: underline;
-}
-
 .login-button {
     width: 100%;
     padding: 0.85rem;
@@ -155,51 +118,6 @@
 
 .login-button:hover {
     background-color: #4338ca;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #a1a1aa;
-    font-size: 0.95rem;
-    margin: 1.2rem 0 1.2rem 0;
-}
-
-.divider:before,
-.divider:after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid #e5e7eb;
-    margin: 0 0.7em;
-}
-
-.google-login {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7em;
-    padding: 0.7rem 0;
-    background: #fff;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 1.05rem;
-    color: #18181b;
-    font-weight: 500;
-    cursor: pointer;
-    margin-bottom: 1.2rem;
-    transition: border 0.2s, box-shadow 0.2s;
-}
-
-.google-login img {
-    width: 22px;
-    height: 22px;
-}
-
-.google-login:hover {
-    border: 1.5px solid #6366f1;
-    box-shadow: 0 2px 8px 0 rgba(99,102,241,0.08);
 }
 
 .register-row {
