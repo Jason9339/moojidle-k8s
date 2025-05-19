@@ -6,7 +6,7 @@ const Button = React.forwardRef(({ variant = "default", size = "default", classN
         secondary: "bg-zinc-200 hover:bg-zinc-300 text-zinc-900 focus:ring-zinc-500",
         ghost: "hover:bg-zinc-100 text-zinc-900",
     }[variant]
-    const sizeClass = size === "icon" ? "h-9 w-9 p-0" : "h-9 px-4 py-2 min-w-[72px]"
+    const sizeClass = size === "icon" ? "h-11 w-11 p-0" : "h-11 px-4 py-2 min-w-[72px]"
     return (
         <button
             type="button"
