@@ -40,6 +40,7 @@ const Login = () => {
                 <p className={styles["login-subtitle"]}>
                     Enter to get unlimited access to data &amp; information.
                 </p>
+                    {error && <p className={styles["error-message"]}>{error}</p>}
                 <div className={styles["form-group"]}>
                     <label htmlFor="email" className={styles["input-label"]}>
                         Email
@@ -85,7 +86,6 @@ const Login = () => {
                             )}
                         </button>
                     </div>
-                    {error && <p className={styles["error-message"]}>{error}</p>}
                 </div>
                 <button type="submit" className={styles["login-button"]}>Log In</button>
                 <div className={styles["register-row"]}>
