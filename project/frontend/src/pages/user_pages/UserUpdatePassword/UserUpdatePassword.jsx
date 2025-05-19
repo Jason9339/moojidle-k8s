@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UpdateUserPassword } from "@/services/UserApi.js";
+import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import styles from "./UserUpdatePassword.module.css";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
@@ -10,6 +11,8 @@ const UserUpdatePassword = () => {
     const [newPassword, setNewPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -55,25 +58,57 @@ const UserUpdatePassword = () => {
                     {success && <p className={styles["success-message"]}>{success}</p>}
                     <div className={styles["form-group"]}>
                         <label htmlFor="current-password" className={styles.label}>Current password</label>
-                        <input
-                            type="password"
-                            id="current-password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            required
-                            className={styles.input}
-                        />
+                        <div style={{ position: "relative" }}>
+                            <input
+                                type={showCurrentPassword ? "text" : "password"}
+                                id="current-password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                required
+                                className={styles.input}
+                                autoComplete="current-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowCurrentPassword((v) => !v)}
+                                className={styles["toggle-eye-btn"]}
+                                tabIndex={-1}
+                                aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                            >
+                                {showCurrentPassword ? (
+                                    <IoIosEye size={22} color="#6366f1" />
+                                ) : (
+                                    <IoIosEyeOff size={22} color="#6366f1" />
+                                )}
+                            </button>
+                        </div>
                     </div>
                     <div className={styles["form-group"]}>
                         <label htmlFor="new-password" className={styles.label}>New password</label>
-                        <input
-                            type="password"
-                            id="new-password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                            className={styles.input}
-                        />
+                        <div style={{ position: "relative" }}>
+                            <input
+                                type={showNewPassword ? "text" : "password"}
+                                id="new-password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                                className={styles.input}
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowNewPassword((v) => !v)}
+                                className={styles["toggle-eye-btn"]}
+                                tabIndex={-1}
+                                aria-label={showNewPassword ? "Hide password" : "Show password"}
+                            >
+                                {showNewPassword ? (
+                                    <IoIosEye size={22} color="#6366f1" />
+                                ) : (
+                                    <IoIosEyeOff size={22} color="#6366f1" />
+                                )}
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" className={styles["save-password-button"]}>Save password</button>
                 </form>
