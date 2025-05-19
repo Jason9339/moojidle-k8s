@@ -132,11 +132,6 @@
 .danger:hover:not(:disabled) {
     background-color: #c0392b !important;
 }
-/* Apply .danger to the specific delete button */
-.btn-delete.danger { /* This is already handled by applying .danger class in JSX */
-    /* Styles are inherited from .danger */
-}
-
 
 .btn-cancel { /* Was :last-of-type */
     background-color: #e0e0e0;
