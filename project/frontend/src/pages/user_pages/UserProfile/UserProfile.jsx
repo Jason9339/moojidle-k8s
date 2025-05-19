@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { GetUserDataById } from '@/services/user_api/UserApi.js';
+import { GetUserDataById } from '@/services/UserApi.js';
 import styles from "./UserProfile.module.css"
 
 // for components
 import LeftBar from '@/components/LeftBar/LeftBar';
-import MainLayout from '@/components/user_components/user_profile/MainLayout/MainLayout.jsx';
-import SecondaryLayout from '@/components/user_components/user_profile/SecondaryLayout/SecondaryLayout.jsx';
+import MainLayout from '@/components/user_components/MainLayout/MainLayout.jsx';
+import SecondaryLayout from '@/components/user_components/SecondaryLayout/SecondaryLayout.jsx';
 
 function UserProfile() {
     const [data, setData] = useState(null);

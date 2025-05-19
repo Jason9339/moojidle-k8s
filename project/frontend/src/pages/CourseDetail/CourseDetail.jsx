@@ -2,23 +2,30 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import styles from "./CourseDetail.module.css";
+
 import { 
-  getCourseDetails, 
-  getCourseAssignments, 
-  getCourseMaterials, 
-  updateCourseMaterials,
-  deleteCourseMaterial
-} from "@/services/coursepage_api/CoursepageApi";
+    GetCourseDetails, 
+} from "@/services/CourseApi";
+
+import {
+    GetCourseAssignments
+} from "@/services/AssignmentApi";
+
+import {
+    GetCourseMaterials,
+    UpdateCourseMaterials,
+    DeleteCourseMaterial,
+} from "@/services/MaterialApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 
-import CourseTab from "@/components/course/CourseTab/CourseTab";
-import GradesTab from "@/components/course/GradesTab/GradesTab";
-import DiscussionTab from "@/components/course/DiscussionTab/DiscussionTab";
-import AssignmentsTab from "@/components/course/AssignmentsTab/AssignmentsTab";
-import AnnouncementsTab from "@/components/course/AnnouncementsTab/AnnouncementsTab";
-import UploadModal from "@/components/course/UploadModal/UploadModal";
-import MembersTab from "@/components/course/MembersTab/MembersTab";
+import CourseTab from "@/components/course_components/CourseTab/CourseTab";
+import GradesTab from "@/components/course_components/GradesTab/GradesTab";
+import DiscussionTab from "@/components/course_components/DiscussionTab/DiscussionTab";
+import AssignmentsTab from "@/components/course_components/AssignmentsTab/AssignmentsTab";
+import AnnouncementsTab from "@/components/course_components/AnnouncementsTab/AnnouncementsTab";
+import UploadModal from "@/components/course_components/UploadModal/UploadModal";
+import MembersTab from "@/components/course_components/MembersTab/MembersTab";
 
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -55,9 +62,9 @@ function CourseDetail() {
             try {
                 setLoading(true);
                 const [courseData, materialsData, assignmentsData] = await Promise.all([
-                    getCourseDetails(courseId),
-                    getCourseMaterials(courseId),
-                    getCourseAssignments(courseId)
+                    GetCourseDetails(courseId),
+                    GetCourseMaterials(courseId),
+                    GetCourseAssignments(courseId)
                 ]);
                 
                 // console.log("materialsData", materialsData);
@@ -78,7 +85,7 @@ function CourseDetail() {
 
     useEffect(() => {
         const storedCourseId = localStorage.getItem("courseId");
-        console.log("storedCourseId", storedCourseId);
+        // console.log("storedCourseId", storedCourseId);
         if (!storedCourseId || storedCourseId !== courseId) {
             alert("請從 Dashboard 或課程頁進入課程。");
             navigate("/dashboard"); // 或導回首頁
@@ -133,7 +140,7 @@ function CourseDetail() {
                 
                 // 執行更新操作（如果有要更新的教材）
                 if (materialsToUpdate.length > 0) {
-                    await updateCourseMaterials(courseId, materialsToUpdate);
+                    await UpdateCourseMaterials(courseId, materialsToUpdate);
                 }
                 /*
                 // 防呆：若全部刪除，需二次確認
@@ -148,11 +155,11 @@ function CourseDetail() {
                 // 執行刪除操作（如果有要刪除的教材）
                 for (const materialId of deletedMaterialIds) {
                     console.log(`正在刪除教材 ID: ${materialId}`);
-                    await deleteCourseMaterial(courseId, materialId);
+                    await DeleteCourseMaterial(courseId, materialId);
                 }
                 
                 // 更新成功後刷新教材數據
-                const updatedMaterials = await getCourseMaterials(courseId);
+                const updatedMaterials = await GetCourseMaterials(courseId);
                 setMaterials(updatedMaterials);
                 
                 // 清空編輯狀態

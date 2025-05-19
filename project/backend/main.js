@@ -22,44 +22,27 @@ app.use(cors({
 }));
 
 // Routes are here ----------------------------------------------------------------------
-import exampleRoute from "#src/routes/example_route.js"
-app.use("/example", exampleRoute);
-
-// course group
-import assignmentRoute from "#src/routes/course_routes/assignment_route.js"
-import examRoute from "#src/routes/course_routes/exam_route.js"
-import courseRoute from "#src/routes/course_routes/course_router.js"
-import courseMemberRoute from "#src/routes/course_routes/course_member_route.js"
-import userRoute from "#src/routes/user_routes/user_route.js"
+import assignmentRoute from "#src/routes/assignment_route.js"
+import examRoute from "#src/routes/exam_route.js"
+import courseRoute from "#src/routes/course_router.js"
+import courseMemberRoute from "#src/routes/course_member_route.js"
+import userRoute from "#src/routes/user_route.js"
 import fileRoute from "#src/routes/file_routes/file_route.js";
-import materialRoute from "#src/routes/course_routes/material_route.js";
-import announcementRoute from "#src/routes/course_routes/announcement_route.js";
+import materialRoute from "#src/routes/material_route.js";
+import announcementRoute from "#src/routes/announcement_route.js";
+import discussionBoardRoute from "#src/routes/discussion_board_route.js"
+import postRoute from "#src/routes/post_routes.js"
 
-// discussion group
-import courseRoute from "#src/routes/discussion_routes/course_route.js"
-import discussionBoardRoute from "#src/routes/discussion_routes/discussion_board_route.js"
-import postRoute from "#src/routes/discussion_routes/post_routes.js"
-
-// user route
 app.use("/user", userRoute);
-
-// course route
 app.use("/course", courseRoute);
-
-// discussion-board route
+app.use("/course/member", courseMemberRoute);
 app.use("/discussion-board", discussionBoardRoute);
-
-// post route
 app.use("/post", postRoute);
-
-// try hit http://localhost:3000/example
-app.use("/course", courseRoute);
 app.use("/assignment", assignmentRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
-
 app.use("/exams", examRoute);
-app.use("/course/member", courseMemberRoute);
+
 app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------

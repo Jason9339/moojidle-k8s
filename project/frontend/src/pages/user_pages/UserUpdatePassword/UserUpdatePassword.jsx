@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UpdateUserPassword } from "@/services/user_api/UserApi.js";
+import { UpdateUserPassword } from "@/services/UserApi.js";
 import styles from "./UserUpdatePassword.module.css";
 
 import LeftBar from "@/components/LeftBar/LeftBar";

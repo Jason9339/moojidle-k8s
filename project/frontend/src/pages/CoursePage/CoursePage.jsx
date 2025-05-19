@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getCourses } from "@/services/dashboard_api/DashboardApi";
+import { GetCourses } from "@/services/CourseApi";
 import styles from "./CoursePage.module.css";
 
-import CourseListItem from "@/components/course/CourseListItem/CourseListItem";
+import CourseListItem from "@/components/course_components/CourseListItem/CourseListItem";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 function CoursePage() {
@@ -13,7 +13,7 @@ function CoursePage() {
             try {
                 const user = JSON.parse(localStorage.getItem("user"));
                 const userId = user?.user_id;
-                const data = await getCourses(userId);
+                const data = await GetCourses(userId);
                 setCourses(data);
             } catch (err) {
                 console.error("Failed to fetch courses:", err);

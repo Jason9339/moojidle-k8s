@@ -11,7 +11,7 @@ import {
     LeaveCommend,
     DeletePost,
     DeleteCommend,
-} from "@/services/discussion_api/PostApi";
+} from "@/services/PostApi";
 
 function PostPage() {
     const { id } = useParams();
