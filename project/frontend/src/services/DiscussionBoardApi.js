@@ -1,10 +1,10 @@
-import apiClient from "@/ApiClient";
+import api from "@/ApiClient";
 
 async function GetBoardsGroupByCourseByUserID(userID) {
 
     try {
 
-        const response = await apiClient.get(`/discussion-board/user-course-boards/${userID}`);
+        const response = await api.get(`/discussion-board/user-course-boards/${userID}`);
         return response.data;
     } catch (err) {
         console.error("Fail to get board(group by course) data");
@@ -12,20 +12,9 @@ async function GetBoardsGroupByCourseByUserID(userID) {
 
 }
 
-async function GetAllUserCourses(userId) {
-    try {
-        const response = await apiClient.get(`/course/read/${userId}`);
-        return response.data;
-    } catch (err) {
-        console.error("Failed to fetch user courses:", err);
-        return [];
-    }
-}
-
-
 async function CreateDiscussionBoard(course_id, name) {
     try {
-        const response = await apiClient.post("/discussion-board/course-boards", {
+        const response = await api.post("/discussion-board/course-boards", {
             course_id: course_id,
             name: name
         });
@@ -38,14 +27,13 @@ async function CreateDiscussionBoard(course_id, name) {
 
 
 async function DeleteDiscussionBoard(boardID) {
-    const response = await apiClient.delete(`discussion-board/course-boards/${boardID}`);
+    const response = await api.delete(`discussion-board/course-boards/${boardID}`);
 
     return response.data;
 }
 
 export {
     GetBoardsGroupByCourseByUserID,
-    GetAllUserCourses,
     CreateDiscussionBoard,
     DeleteDiscussionBoard
 }

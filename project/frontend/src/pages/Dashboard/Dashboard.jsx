@@ -10,10 +10,16 @@ import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
 import {
-    GetCourses,
-    GetTodoList,
     GetComingUpList,
-} from "@/services/DashboardApi";
+} from "@/services/ExamApi";
+
+import {
+    GetCourses
+} from "@/services/CourseApi";
+
+import {
+    GetTodoList
+} from "@/services/AssignmentApi";
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));

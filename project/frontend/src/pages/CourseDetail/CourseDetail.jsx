@@ -2,13 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import styles from "./CourseDetail.module.css";
+
 import { 
-  GetCourseDetails, 
-  GetCourseAssignments, 
-  GetCourseMaterials, 
-  UpdateCourseMaterials,
-  DeleteCourseMaterial
+    GetCourseDetails, 
 } from "@/services/CourseApi";
+
+import {
+    GetCourseAssignments
+} from "@/services/AssignmentApi";
+
+import {
+    GetCourseMaterials,
+    UpdateCourseMaterials,
+    DeleteCourseMaterial,
+} from "@/services/MaterialApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 
@@ -78,7 +85,7 @@ function CourseDetail() {
 
     useEffect(() => {
         const storedCourseId = localStorage.getItem("courseId");
-        console.log("storedCourseId", storedCourseId);
+        // console.log("storedCourseId", storedCourseId);
         if (!storedCourseId || storedCourseId !== courseId) {
             alert("請從 Dashboard 或課程頁進入課程。");
             navigate("/dashboard"); // 或導回首頁

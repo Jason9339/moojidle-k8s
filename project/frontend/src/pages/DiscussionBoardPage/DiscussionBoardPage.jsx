@@ -25,8 +25,6 @@ function DiscussionBoard() {
     const [currentCourse, setCurrentCourse] = useState(null);
     const [currentBoard, setCurrentBoard] = useState(null);
 
-    console.log("currentBoard", currentBoard);
-    console.log("currentCourse", currentCourse);
     const fetchCourseBoards = async () => {
         try {
             // TODO use Context to save userID

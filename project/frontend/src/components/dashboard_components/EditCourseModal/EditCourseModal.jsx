@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeleteCourse } from "@/services/DashboardApi";
+import { DeleteCourse } from "@/services/CourseApi";
 import styles from "./EditCourseModal.module.css";
 
 function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {

@@ -3,9 +3,12 @@ import styles from "./AnnouncementsTab.module.css";
 import {
     GetAnnouncements,
     CreateAnnouncement,
-    CanUserEditAnnouncements,
     EditAnnouncement,
 } from "@/services/AnnouncementApi.js";
+
+import {
+    CanUserEditAnnouncements
+} from "@/services/CourseApi";
 
 function AnnouncementsTab({ courseId, currentUserId }) {
     const [announcements, setAnnouncements] = useState([]);

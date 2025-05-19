@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
     FetchCourseIdByCode,
     InviteStudent,
-} from "@/services/DashboardApi";
+} from "@/services/CourseApi";
 import styles from "./JoinCourseModal.module.css";
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
