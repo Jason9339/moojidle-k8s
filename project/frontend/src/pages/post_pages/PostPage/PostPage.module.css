@@ -5,8 +5,7 @@
     justify-content: center;
     align-items: flex-start;
     background: #f9f9fb;
-
-    overflow-y: scroll;
+    overflow: hidden; /* 關閉整頁滾動 */
 }
 
 .postContainer {
@@ -15,45 +14,31 @@
     border-radius: 10px;
     margin: 40px 0;
     width: 80%;
+    height: calc(100vh - 80px); /* 限制可用高度（根據 margin） */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.backButton {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 16px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2e3e6e;
-}
-
-.backButton:hover {
-    color: #1f2a50;
+    flex-direction: column;
+    overflow: hidden; /* 保持內部滾動控制 */
 }
 
 .contentWrapper {
     display: flex;
     gap: 24px;
     align-items: flex-start;
+    flex: 1;
+    overflow: hidden; /* 防止整個 wrapper 滾動 */
 }
 
 .postContentSection {
     flex: 2;
+    overflow-y: auto;
+    max-height: 100%;
+    padding-right: 8px;
 }
 
 .commentSection {
     flex: 1;
     min-width: 300px;
-}
-
-@media (max-width: 768px) {
-    .contentWrapper {
-        flex-direction: column;
-    }
-
-    .commentSection {
-        width: 100%;
-    }
+    overflow-y: auto;
+    max-height: 100%;
 }
