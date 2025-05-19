@@ -78,7 +78,7 @@ function CourseDetail() {
 
     useEffect(() => {
         const storedCourseId = localStorage.getItem("courseId");
-        console.log("storedCourseId", storedCourseId);
+        // console.log("storedCourseId", storedCourseId);
         if (!storedCourseId || storedCourseId !== courseId) {
             alert("請從 Dashboard 或課程頁進入課程。");
             navigate("/dashboard"); // 或導回首頁
