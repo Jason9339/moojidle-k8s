@@ -12,7 +12,9 @@
 }
 
 .discussionPageLayout {
-    background-color: #eff2f5; 
+    background-color: #eff2f5;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .fab {

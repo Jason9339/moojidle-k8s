@@ -147,7 +147,8 @@ const OuterWrapper = styled.div`
 
 const StyledSidebar = styled(Sidebar)`
   width: 100% !important; 
-  height: 100%;           
+  height: 100%;         
+  max-height: inherit;  
   background-color:rgba(223, 235, 255, 0.8) !important; 
   border-radius: 12px; 
   display: flex;
