@@ -40,7 +40,7 @@ const UserUpdatePassword = () => {
                 localStorage.removeItem("user"); 
                 setTimeout(() => navigate("/login"), 2000); 
             } else {
-                setError(response?.message || "Failed to update password.");
+                setError("Current password is incorrect!");
             }
         } catch (err) {
             setError("An error occurred. Please try again.");
