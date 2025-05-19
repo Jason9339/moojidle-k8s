@@ -172,6 +172,9 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    height: 32px;
+    width: 180px;
+    margin: 0px;
 }
 
 .material-input:focus {
@@ -188,6 +191,8 @@
     padding: 4px 8px;
     font-size: 12px;
     cursor: pointer;
+    width: 50px;
+    height: 32px;
 }
 
 .delete-material-btn:hover {
@@ -256,6 +261,22 @@
     flex-shrink: 0;
 }
 
+.material-date-input {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 32px;
+    width: 140px; /* 調整成適當寬度 */
+    margin: 0px;
+}
+
+.material-date-input:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
 .clickable-material:hover {
     text-decoration: underline;
 }
@@ -266,12 +287,6 @@
     padding-left: 10px;
     margin-top: 4px;
     margin-bottom: 6px;
-}
-
-.material-date {
-    margin-left: 6px;
-    font-size: 12px;
-    color: #6c757d;
 }
 
 @media (max-width: 768px) {

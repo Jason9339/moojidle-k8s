@@ -20,17 +20,32 @@
     max-width: 90%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px; /* Increased gap slightly to accommodate label better */
 }
 
 .modal h3 {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0; /* Let parent gap handle spacing */
     font-size: 20px;
     font-weight: 600;
     color: #333;
 }
 
+/* NEW: Form field styling for label and input group */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between label and input */
+}
+
+/* NEW: Label styling */
+.field-label {
+    font-size: 14px;
+    font-weight: 500; /* Slightly less bold than h3 */
+    color: #555; /* A bit lighter than main text */
+}
+
+/* Styles for input and textarea from your original, applied to all inputs in modal */
 .modal input,
 .modal textarea {
     padding: 10px;
@@ -41,8 +56,10 @@
     width: 100%;
     box-sizing: border-box;
     transition: border-color 0.2s;
+    color: #333; /* Ensure text is visible */
 }
 
+/* Specific input types from your original */
 .modal input[type="color"] {
     padding: 4px;
     height: 40px;
@@ -54,53 +71,72 @@
 .modal input:focus,
 .modal textarea:focus {
     outline: none;
-    border-color: #4a90e2;
+    border-color: #4a90e2; /* Your primary color for focus */
 }
 
 .modal textarea {
     height: 80px;
-    resize: none; /* 禁止拉動 */
+    resize: none;
 }
+
+/* NEW: Error message styling */
+.error-message {
+    color: #c0392b; /* Using your .danger hover color for text */
+    background-color: #fbecec; /* Lighter red background */
+    border: 1px solid #e74c3c; /* Your .danger color for border */
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    /* margin-bottom: 8px; Let parent gap handle */
+}
+
 
 .modal-btn-group {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 8px; /* Reduced slightly as modal gap increased */
 }
 
+/* Base button styling for all buttons in the group */
 .modal-btn-group button {
     padding: 8px 16px;
     border-radius: 6px;
     border: none;
     font-size: 14px;
+    font-weight: 500; /* Added for consistency */
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-.modal-btn-group button:first-of-type {
+.modal-btn-group button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Specific button styles based on your original intent */
+.btn-save { /* Was :first-of-type */
     background-color: #4a90e2;
     color: white;
 }
-
-.modal-btn-group button:first-of-type:hover {
+.btn-save:hover:not(:disabled) {
     background-color: #357ab8;
 }
 
-.modal-btn-group button:last-of-type {
+/* .danger class remains from your original for the delete button */
+.danger {
+    background-color: #e74c3c !important; /* Important to override if other button styles might conflict */
+    color: white !important;
+}
+.danger:hover:not(:disabled) {
+    background-color: #c0392b !important;
+}
+
+.btn-cancel { /* Was :last-of-type */
     background-color: #e0e0e0;
     color: #333;
 }
-
-.modal-btn-group button:last-of-type:hover {
+.btn-cancel:hover:not(:disabled) {
     background-color: #c5c5c5;
-}
-
-.danger {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.danger:hover {
-    background-color: #c0392b;
 }

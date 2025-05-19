@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./PostPage.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiCornerUpLeft } from "react-icons/fi";
+import { FiChevronLeft } from "react-icons/fi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 import CommentSection from "@/components/post_components/CommentSection/CommentSection.jsx";
@@ -128,7 +128,8 @@ function PostPage() {
             <div className={styles.pageWrapper}>
                 <div className={styles.postContainer} ref={menuRef}>
                     <button className={styles.backButton} onClick={() => navigate(-1)}>
-                        <FiCornerUpLeft size={24} />
+                        <FiChevronLeft size={24} />
+                        返回
                     </button>
 
                     <div className={styles.contentWrapper}>

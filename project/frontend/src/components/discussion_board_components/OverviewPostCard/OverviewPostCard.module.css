@@ -5,57 +5,56 @@
     justify-content: start;
     align-items: start;
 
-    min-height: 50vh;
     width: 90%;
-    /* background-color: rgba(221, 221, 221, 0.452); */
     background-color: rgb(255, 252, 252);
-    border-radius: 20px;
+    border-radius: 12px;
     margin-top: 1.5vh;
     margin-bottom: 1.5vh;
+    padding-bottom: 1.5vh;
 }
 
 .card:hover {
-    box-shadow: 0 0.5vw 1vw rgba(220, 53, 70, 0.151);
+    box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
 .padder-each-block {
-    padding-left: 2vw;
-    padding-top: 1.5vh;
-    padding-bottom: 1.5vh;
-
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding-left: 1.5vw;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
     width: 100%;
+    overflow: hidden;
 }
 
-.course-name {
-    display: inline;
-    font-size: 25px;
-    color: gray;
-}
-
+.course-name,
 .board-name {
-    display: inline;
-    font-size: 25px;
+    display: inline-block;
+    font-size: 18px;
     color: gray;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 65%;
+    vertical-align: bottom; 
 }
 
 .name-tag-pfp-flex-box {
     display: flex;
     justify-content: start;
     align-items: center;
-
-    padding-left: 2vw;
-    padding-top: 1.5vh;
-    padding-bottom: 1.5vh;
-
+    padding-left: 1.5vw;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
     width: 100%;
 }
 
 .user-pfp {
-    width: 80px;
-    height: 80px;
-
-    border-radius: 40px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
     border-style: solid;
     border-width: 1px;
 }
@@ -69,43 +68,52 @@
 
 .user-name {
     display: inline;
-    font-size: 25px;
-
-    padding-left: 15px;
+    font-size: 18px;
+    padding-left: 12px;
 }
 
 .user-tag {
-    display: inline;
-    font-size: 15px;
-    color: green;
+    display: inline-block;
+    font-size: 13px;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+    margin-top: 4px;
+}
 
-    padding-left: 15px;
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-left: 12px;
+    margin-top: 4px;
 }
 
 .seperate-line {
     align-self: center;
     height: 1px;
     width: 95%;
-
     color: gray;
 }
 
 .title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 600;
 }
 
-.padder-content-block {   
+.padder-content-block {
     align-self: center;
-    padding-top: 2vh;
-    padding-bottom: 1.5vh;
-    padding-left: 2vw;
-
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    padding-left: 1.5vw;
     width: 100%;
 }
 
 .content {
-    font-size: 20px;
+    font-size: 15px;
+    line-height: 1.5;
     text-align: start;
     overflow-wrap: break-word;
     word-break: break-word; 
@@ -117,4 +125,6 @@
     position: absolute;
     top: 1vh;
     right: 1vw;
+    font-size: 13px;
+    color: gray;
 }

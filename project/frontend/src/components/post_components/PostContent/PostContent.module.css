@@ -54,6 +54,9 @@
 .breadcrumb {
   font-size: 14px;
   color: #666;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .userSection {

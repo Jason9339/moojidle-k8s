@@ -1,99 +1,93 @@
-.info-flexbox {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+.card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    width: 40%;
-    padding-left: 50px;
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.username {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    color: #222;
+}
+
+.editButton {
+    background-color: #f0f2f7;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.editButton:hover {
+    background-color: #e0e3ea;
+}
+
+.editIcon {
+    width: 16px;
+    height: 16px;
+}
+
+.infoSection {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 .pfp {
-    width: 150px;
-    height: 150px;
-
-    border-radius: 75px;
-    border-style: solid;
-    border-width: 2px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid #bbb;
+    object-fit: cover;
 }
 
-.primary-info-flexbox {
+.textSection {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: start;
-
-    min-height: 300px;
+    gap: 16px;
+    flex: 1;
 }
 
-.h2 {
-    margin: 0;
-    margin-bottom: 10px;
+.infoBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.h3 {
-    margin: 0;
+.label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #555;
+}
+
+.value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+}
+
+.contactList {
+    list-style-type: disc;
     padding-left: 20px;
-}
-
-.user-name {
-    margin-top: 3vh;
-    margin-bottom: 10px;
-    font-size: 25px;
-    font-weight: bold;
-}
-
-.register-email {
-    margin-bottom: 10px;
-    padding-left: 20px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.li {
-    margin: 0;
-    padding-left: 20px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.edit-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-
-    background-color: rgb(196, 196, 196);
-    color: #fff;
-    font-size: large;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px; 
-    padding: 0 20px 0 20px;
-    
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    text-transform: uppercase;
-}
-
-.edit-button:hover {
-    background-color: #c82333;
-    box-shadow: 0 0.5vw 1vw rgba(220, 53, 69, 0.4);
-}
-
-.edit-icon {
-    width: 20px;
-    height: 20px;
-
-    display: inline;
-}
-
-.hr {
-    display: block;
-    height: 1px;
-    width: 100%;
-    border: 0;
-    border-top: 1px solid #666666;
-    margin: 1em 0;
-    padding: 0;
-
-    z-index: 100;
+    font-size: 15px;
+    color: #333;
 }

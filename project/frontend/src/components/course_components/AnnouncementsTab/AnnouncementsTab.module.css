@@ -64,6 +64,7 @@
     /* Adds a subtle shadow */
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-bottom: 0px;
 }
 
 .create-announcement-button {
