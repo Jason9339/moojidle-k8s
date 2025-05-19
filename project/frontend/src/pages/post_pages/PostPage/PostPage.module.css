@@ -13,7 +13,7 @@
     padding: 24px;
     border-radius: 10px;
     margin: 40px 0;
-    width: 80%;
+    width: 85%;
     height: calc(100vh - 80px); /* 限制可用高度（根據 margin） */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
