@@ -14,7 +14,6 @@
 .discussionPageLayout {
     background-color: #eff2f5;
     height: 100vh;
-    overflow-y: auto;
 }
 
 .fab {
@@ -39,4 +38,42 @@
 
 .fab:hover {
     background: #1769aa;
+}
+
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 180px);
+    height: 100vh;
+    overflow: hidden;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.heading-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.heading-divider {
+    border-top: 2px solid #ccc;
+    margin-bottom: 20px;
 }
