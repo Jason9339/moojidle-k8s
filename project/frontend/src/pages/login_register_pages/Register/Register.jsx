@@ -47,7 +47,7 @@ return (
                         required
                         placeholder="Enter your name"
                         className={styles.input}
-                        maxlength={20}
+                        maxLength={20}
                     />
                 </div>
                 <div className={styles["form-group"]}>
@@ -63,7 +63,7 @@ return (
                         required
                         placeholder="Enter your email"
                         className={styles.input}
-                        maxlength={30}
+                        maxLength={30}
                     />
                 </div>
                 <div className={styles["form-group"]}>
