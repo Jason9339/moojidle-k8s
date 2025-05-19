@@ -19,17 +19,26 @@
 }
 
 .padder-each-block {
+    display: flex;
+    gap: 4px;
+    align-items: center;
     padding-left: 1.5vw;
     padding-top: 1vh;
     padding-bottom: 1vh;
     width: 100%;
+    overflow: hidden;
 }
 
 .course-name,
 .board-name {
-    display: inline;
+    display: inline-block;
     font-size: 18px;
     color: gray;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 65%;
+    vertical-align: bottom; 
 }
 
 .name-tag-pfp-flex-box {
