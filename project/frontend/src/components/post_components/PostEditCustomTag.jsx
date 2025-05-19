@@ -18,7 +18,7 @@ export default function PostEditCustomTag({
         control: base => ({
             ...base,
             minHeight: 36,
-            borderRadius: 24,
+            borderRadius: 8,
             borderColor: 'rgba(14,165,233,0.5)',
             '&:hover': { borderColor: 'rgba(14,165,233,0.7)' },
             boxShadow: 'none',
@@ -26,7 +26,7 @@ export default function PostEditCustomTag({
         multiValue: base => ({
             ...base,
             backgroundColor: 'rgba(14,165,233,0.5)',
-            borderRadius: 24,
+            borderRadius: 8,
             padding: '2px 6px',
         }),
         multiValueLabel: base => ({
@@ -57,7 +57,7 @@ export default function PostEditCustomTag({
     }
 
     return (
-        <div className="w-[60vw] h-[20%] pt-[5vh] pb-[1vh]">
+        <div className="w-[60vw] h-[8vh] pt-[1vh] pb-[1vh] mt-[4vh]">
             <Select
                 isMulti
                 options={tagOptions}

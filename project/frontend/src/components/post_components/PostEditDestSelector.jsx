@@ -17,7 +17,7 @@ const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userT
 
     return (
 
-        <div className="flex w-[60vw] h-[20%] pt-[5vh] ">
+        <div className="flex w-[60vw] h-[8vh] pt-[4vh] pb-[4vh] ">
             <Select
                 className="w-[40%]"
                 options={courseOptions}
