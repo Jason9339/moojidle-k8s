@@ -1,44 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import { DeleteDiscussionBoard } from "@/services/DiscussionBoardApi.js";
-import styles from "./EditDiscussionBoardModal.module.css"
+import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
-export default function EditDiscussionBoardModal({ boardId, onClose }) {
 
+export default function EditDiscussionBoardModal({ boardId, onClose }) {
+    const [boardName, setBoardName] = useState(""); // 預留未來可編輯
+    const [error, setError] = useState("");
     const navigate = useNavigate();
-    const handleSubmit = async () => {
+
+    const handleDelete = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
             alert("討論版已成功刪除");
+            onClose();
+            navigate("/discussion/home");
         } catch (err) {
-            alert("刪除失敗，請稍後再試");
             console.error(err);
+            setError("刪除失敗，請稍後再試");
         }
-
-        onClose();
-        navigate("/discussion/home");
     };
+
+    const handleSave = () => {
+        // 未來用來送出更新討論版名稱
+        alert(`功能尚未實作：將名稱更新為「${boardName}」`);
+    };
+
     return (
-        // Backdrop
         <div
             className={styles.backdrop}
-            onClick={onClose}
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
         >
-            {/* Modal box */}
-            <div
-                className={styles.modal}
-                onClick={e => e.stopPropagation()}>
-                <h2 className={styles.title}>確定要刪除嗎?</h2>
-                <div className={styles.buttons}>
-                    <button
-                        onClick={onClose}
-                        className={styles.cancelButton}>
-                        取消
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        className={styles.confirmButton}>
-                        確認
-                    </button>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                <h2 className={styles.title}>編輯討論版</h2>
+
+                <div className={styles.body}>
+                    <label htmlFor="boardName">討論版名稱</label>
+                    <input
+                        id="boardName"
+                        type="text"
+                        autoFocus
+                        placeholder="TODO: 未來可修改名稱"
+                        value={boardName}
+                        onChange={(e) => setBoardName(e.target.value)}
+                    />
+
+                    {error && <p className={styles.errorMessage}>{error}</p>}
+                </div>
+
+                <div className={styles.buttonGroup}>
+                    <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", width: "100%" }}>
+                        <button className={styles.cancelBtn} onClick={onClose}>
+                            取消
+                        </button>
+                        <button
+                            className={styles.confirmBtn}
+                            onClick={handleSave}
+                        >
+                            儲存修改
+                        </button>
+                        <button
+                            className={styles.deleteBtn}
+                            onClick={handleDelete}
+                        >
+                            刪除討論版
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
