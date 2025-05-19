@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GetCourses } from "@/services/DashboardApi";
+import { GetCourses } from "@/services/CourseApi";
 import styles from "./CoursePage.module.css";
 
 import CourseListItem from "@/components/course_components/CourseListItem/CourseListItem";

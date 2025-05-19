@@ -2,13 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import styles from "./CourseDetail.module.css";
+
 import { 
-  GetCourseDetails, 
-  GetCourseAssignments, 
-  GetCourseMaterials, 
-  UpdateCourseMaterials,
-  DeleteCourseMaterial
+    GetCourseDetails, 
 } from "@/services/CourseApi";
+
+import {
+    GetCourseAssignments
+} from "@/services/AssignmentApi";
+
+import {
+    GetCourseMaterials,
+    UpdateCourseMaterials,
+    DeleteCourseMaterial,
+} from "@/services/MaterialApi";
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 

@@ -12,17 +12,6 @@ async function GetBoardsGroupByCourseByUserID(userID) {
 
 }
 
-async function GetAllUserCourses(userId) {
-    try {
-        const response = await apiClient.get(`/course/read/${userId}`);
-        return response.data;
-    } catch (err) {
-        console.error("Failed to fetch user courses:", err);
-        return [];
-    }
-}
-
-
 async function CreateDiscussionBoard(course_id, name) {
     try {
         const response = await apiClient.post("/discussion-board/course-boards", {
@@ -45,7 +34,6 @@ async function DeleteDiscussionBoard(boardID) {
 
 export {
     GetBoardsGroupByCourseByUserID,
-    GetAllUserCourses,
     CreateDiscussionBoard,
     DeleteDiscussionBoard
 }
