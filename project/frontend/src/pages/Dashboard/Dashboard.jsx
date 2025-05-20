@@ -9,17 +9,9 @@ import JoinCourseModal from "@/components/dashboard_components/JoinCourseModal/J
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
-import {
-    GetComingUpList,
-} from "@/services/ExamApi";
-
-import {
-    GetCourses
-} from "@/services/CourseApi";
-
-import {
-    GetTodoList
-} from "@/services/AssignmentApi";
+import { GetComingUpList } from "@/services/ExamApi";
+import { GetCourses } from "@/services/CourseApi";
+import { GetTodoList } from "@/services/AssignmentApi";
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -67,48 +59,45 @@ function Dashboard() {
         }
     };
 
-    if (!dashboardData) return <p>Loading...</p>;
-
-    const { courses, todoList, comingUpList } = dashboardData;
-
     return (
         <div className={styles["app-layout"]}>
             <LeftBar />
-            <div className={styles["dashboard-container"]}>
-                <div className={styles["dashboard-left"]}>
-                    <div className={styles["dashboard-heading-row"]}>
-                        <h2 className={styles["dashboard-heading"]}>
-                            Dashboard
-                        </h2>
-                        <div className={styles["dashboard-button-group"]}>
-                            <AddCourseButton
-                                onClick={() => setShowAddModal(true)}
-                            />
-                            <JoinCourseButton
-                                onClick={() => setShowJoinModal(true)}
-                            />
+            {!dashboardData ? (
+                <div
+                    className={styles["dashboard-container"]}
+                    style={{ backgroundColor: "#eff2f5", flex: 1 }}
+                />
+            ) : (
+                <div className={styles["dashboard-container"]}>
+                    <div className={styles["dashboard-left"]}>
+                        <div className={styles["dashboard-heading-row"]}>
+                            <h2 className={styles["dashboard-heading"]}>Dashboard</h2>
+                            <div className={styles["dashboard-button-group"]}>
+                                <AddCourseButton onClick={() => setShowAddModal(true)} />
+                                <JoinCourseButton onClick={() => setShowJoinModal(true)} />
+                            </div>
+                        </div>
+                        <hr className={styles["dashboard-heading-divider"]} />
+                        <div className={styles["course-grid"]}>
+                            {dashboardData.courses.map((course, index) => (
+                                <CourseCard
+                                    key={index}
+                                    {...course}
+                                    onDeleteCourse={handleDeleteCourse}
+                                />
+                            ))}
                         </div>
                     </div>
-                    <hr className={styles["dashboard-heading-divider"]} />
-                    <div className={styles["course-grid"]}>
-                        {courses.map((course, index) => (
-                            <CourseCard
-                                key={index}
-                                {...course}
-                                onDeleteCourse={handleDeleteCourse}
-                            />
-                        ))}
+
+                    <div className={styles["dashboard-right"]}>
+                        <h3 className={styles["section-title"]}>To Do</h3>
+                        <ToDoItem todoList={dashboardData.todoList} />
+                        <hr />
+                        <h3 className={styles["section-title"]}>Coming Up</h3>
+                        <ComingUpItem comingUpList={dashboardData.comingUpList} />
                     </div>
                 </div>
-
-                <div className={styles["dashboard-right"]}>
-                    <h3 className={styles["section-title"]}>To Do</h3>
-                    <ToDoItem todoList={todoList} />
-                    <hr />
-                    <h3 className={styles["section-title"]}>Coming Up</h3>
-                    <ComingUpItem comingUpList={comingUpList} />
-                </div>
-            </div>
+            )}
 
             {showAddModal && (
                 <AddCourseModal
