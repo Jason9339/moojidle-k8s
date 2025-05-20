@@ -119,47 +119,59 @@ function PostPage() {
         };
     }, []);
 
-    if (error) return <p>{error}</p>;
-    if (!post) return <p>找不到貼文</p>;
-
     return (
         <>
             <LeftBar />
-            <div className={styles.pageWrapper}>
-                <div className={styles.postContainer} ref={menuRef}>
-                    <button className={styles.backButton} onClick={() => navigate(-1)}>
-                        <FiChevronLeft size={24} />
-                        返回
-                    </button>
+            {loading ? (
+                <div
+                    className={styles.pageWrapper}
+                    style={{ backgroundColor: "#eff2f5" }}
+                />
+            ) : error ? (
+                <div className={styles.pageWrapper}>
+                    <p>{error}</p>
+                </div>
+            ) : !post ? (
+                <div className={styles.pageWrapper}>
+                    <p>找不到貼文</p>
+                </div>
+            ) : (
+                <div className={styles.pageWrapper}>
+                    <div className={styles.postContainer} ref={menuRef}>
+                        <button className={styles.backButton} onClick={() => navigate(-1)}>
+                            <FiChevronLeft size={24} />
+                            返回
+                        </button>
 
-                    <div className={styles.contentWrapper}>
-                        <div className={styles.postContentSection}>
-                            <PostContent
-                                post={post}
-                                currentUserId={currentUserId}
-                                showMenu={showMenu}
-                                setShowMenu={setShowMenu}
-                                handleDeletePost={handleDeletePost}
-                                description={description}
-                                textareaRef={textareaRef}
-                            />
-                        </div>
+                        <div className={styles.contentWrapper}>
+                            <div className={styles.postContentSection}>
+                                <PostContent
+                                    post={post}
+                                    currentUserId={currentUserId}
+                                    showMenu={showMenu}
+                                    setShowMenu={setShowMenu}
+                                    handleDeletePost={handleDeletePost}
+                                    description={description}
+                                    textareaRef={textareaRef}
+                                />
+                            </div>
 
-                        <div className={styles.commentSection}>
-                            <CommentSection
-                                post={post}
-                                newComment={newComment}
-                                setNewComment={setNewComment}
-                                handleCommentSubmit={handleCommentSubmit}
-                                currentUserId={currentUserId}
-                                handleCommentDelete={handleCommentDelete}
-                                activeCommentId={activeCommentId}
-                                setActiveCommentId={setActiveCommentId}
-                            />
+                            <div className={styles.commentSection}>
+                                <CommentSection
+                                    post={post}
+                                    newComment={newComment}
+                                    setNewComment={setNewComment}
+                                    handleCommentSubmit={handleCommentSubmit}
+                                    currentUserId={currentUserId}
+                                    handleCommentDelete={handleCommentDelete}
+                                    activeCommentId={activeCommentId}
+                                    setActiveCommentId={setActiveCommentId}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </>
     );
 }

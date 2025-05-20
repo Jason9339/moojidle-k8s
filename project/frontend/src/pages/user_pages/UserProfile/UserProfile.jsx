@@ -23,32 +23,31 @@ function UserProfile() {
         fetchData();
     }, []);
 
-    if (!data) {
-        return (
-            <div className={styles["loading-screen"]}>
-                <p className={styles.loading}>Loading...</p>
-            </div>
-        );
-    }
-
     return (
         <div className={styles["app-layout"]}>
             <LeftBar />
-            <div className={styles["profile-container"]}>
-                <div className={styles["profile-heading-row"]}>
-                    <h2 className={styles["profile-heading"]}>User Profile</h2>
+            {!data ? (
+                <div
+                    className={styles["profile-container"]}
+                    style={{ backgroundColor: "#eff2f5", flex: 1 }}
+                />
+            ) : (
+                <div className={styles["profile-container"]}>
+                    <div className={styles["profile-heading-row"]}>
+                        <h2 className={styles["profile-heading"]}>User Profile</h2>
+                    </div>
+                    <hr className={styles["profile-divider"]} />
+                    <div className={styles["profile-layout"]}>
+                        <MainLayout
+                            pfp_path={data.path_to_profile_pic}
+                            name={data.name}
+                            email={data.email}
+                            contact_ways={data.contact_ways}
+                        />
+                        <SecondaryLayout user_tags={data.user_tags} />
+                    </div>
                 </div>
-                <hr className={styles["profile-divider"]} />
-                <div className={styles["profile-layout"]}>
-                    <MainLayout
-                        pfp_path={data.path_to_profile_pic}
-                        name={data.name}
-                        email={data.email}
-                        contact_ways={data.contact_ways}
-                    />
-                    <SecondaryLayout user_tags={data.user_tags} />
-                </div>
-            </div>
+            )}
         </div>
     );
 }
