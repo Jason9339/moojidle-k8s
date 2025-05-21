@@ -90,9 +90,9 @@ async function FindAssignmentsByCourseId(courseId) {
     try {
         courseId = parseInt(courseId);
         const assignments = await mongoose.connection.db.collection('assignments')
-        .find({ in_course_id: parseInt(courseId) })
-        .sort({ end_date: 1 }) // 依截止日期升序排列
-        .toArray();
+            .find({ in_course_id: parseInt(courseId) })
+            .sort({ end_date: 1 }) // 依截止日期升序排列
+            .toArray();
 
         return assignments;
     } catch (error) {

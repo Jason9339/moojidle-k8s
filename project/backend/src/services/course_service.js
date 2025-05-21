@@ -20,6 +20,68 @@ async function FindAllCourses() {
     }
 }
 
+async function FindStudyInCourseIdsByUserId(userId) {
+    try {
+        return await mongoose.connection.db.collection('study_in')
+            .find(
+                { user_id: userId },
+                {
+                    projection: {
+                        course_id: 1,
+                        _id: 0
+                    }
+                }
+
+            )
+            .toArray();
+    }
+    catch (e) {
+        console.error(e);
+        throw new Error(`Failed to retrieve all courses: ${error.message}`);
+    }
+}
+
+async function FindTeachInCourseIdsByUserId(userId) {
+    try {
+        return await mongoose.connection.db.collection('teach_in')
+            .find(
+                { user_id: userId },
+                {
+                    projection: {
+                        course_id: 1,
+                        _id: 0
+                    }
+                }
+
+            ).toArray();
+    }
+    catch (e) {
+        console.error(e);
+        throw new Error(`Failed to retrieve all courses: ${error.message}`);
+    }
+}
+
+async function FindAssistInCourseIdsByUserId(userId) {
+    try {
+        return await mongoose.connection.db.collection('assist_in')
+            .find(
+                { user_id: userId },
+                {
+                    projection: {
+                        course_id: 1,
+                        _id: 0
+                    }
+                }
+
+            )
+            .toArray();
+    }
+    catch (e) {
+        console.error(e);
+        throw new Error(`Failed to retrieve all courses: ${error.message}`);
+    }
+}
+
 async function FindCourseInCourseId(courseIds) {
     try {
         return await mongoose.connection.db.collection('course').find(
@@ -138,10 +200,10 @@ async function DeleteCourseRelationships(courseIdInt) {
 
         const deletionPromises = relatedCollections.map((collectionName) => {
             let promise = mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
-            if(collectionName == "discussion_board"){
+            if (collectionName == "discussion_board") {
                 // delete post in that discussion board
                 // TODO
-            }else if (collectionName == "assignments"){
+            } else if (collectionName == "assignments") {
                 // delete submitted assigns
                 // TODO
             }
@@ -202,6 +264,7 @@ async function FindCourseById(courseId) {
             course_id: course.course_id,
             name: course.name,
             invite_link: course.invite_link || "",
+            color: course.color
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
@@ -211,7 +274,7 @@ async function FindCourseById(courseId) {
 
 async function FindCourseIdByInviteCode(code) {
     // console.log(code);
-    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
+    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection: { course_id: 1 } });
 }
 
 export {
@@ -219,6 +282,9 @@ export {
     FindAllCourses,
     FindCourseInCourseId,
     FindCourseIdByInviteCode,
+    FindStudyInCourseIdsByUserId,
+    FindTeachInCourseIdsByUserId,
+    FindAssistInCourseIdsByUserId,
     InsertCourse,
     UpdateCourseName,
     DeleteCourse
