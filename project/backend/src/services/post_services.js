@@ -63,10 +63,26 @@ async function InsertPosts(post) {
         throw new Error("Failed to create post: " + err.message);
     }
 }
+async function UpdatePostById(postID, post) {
+    try {
+        const result = await mongoose.connection.db.collection('post').updateOne(
+            { post_id: postID },
+            { $set: post }
+        );
+        return {
+            success: result.matchedCount > 0,
+            modifiedCount: result.modifiedCount,
+            message: result.matchedCount > 0 ? '貼文更新成功' : `找不到 post_id 為 ${postID} 的貼文`
+        };
+    } catch (err) {
+        throw new Error("Failed to update post: " + err.message);
+    }
+}
 
 export {
     FindProjectedPostsByBId,
     InsertPosts,
     FindPostByID,
     DeletePostById,
+    UpdatePostById
 }

@@ -1,7 +1,8 @@
 import {
     FindCourseBoardByCourseId,
     InsertDiscussionBoardService,
-    DeleteDiscussionBoardService
+    DeleteDiscussionBoardService,
+    EditDiscussionBoardService,
 } from "#src/services/discussion_board_service.js";
 
 import { 
@@ -117,6 +118,26 @@ async function AddDiscussionBoard(req, res) {
 }
 
 
+async function EditDiscussionBoard(req, res) {
+    const board_id = parseInt(req.params.boardId, 10);
+    const { board_name } = req.body;
+
+    if (isNaN(board_id)) {
+        return res.status(400).json({ success: false, message: "無效的 board_id" });
+    }
+
+    if (!board_name || board_name.trim() === "") {
+        return res.status(400).json({ success: false, message: "請提供新的討論版名稱" });
+    }
+
+    try {
+        const result = await EditDiscussionBoardService(board_id, board_name);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+}
+
 async function DeleteDiscussionBoard(req, res) {
     const board_id = parseInt(req.params.boardId, 10);
     const broadPosts = await FindProjectedPostsByBId(board_id);
@@ -139,9 +160,11 @@ async function DeleteDiscussionBoard(req, res) {
     res.status(200).send({ message: "Board deleted" });
 }
 
+
 export {
     GetCourseDiscussionBoard,
     GetAllCourseDiscussionBoard,
     AddDiscussionBoard,
+    EditDiscussionBoard,
     DeleteDiscussionBoard
 }
