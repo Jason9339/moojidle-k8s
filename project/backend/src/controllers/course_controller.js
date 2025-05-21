@@ -1,5 +1,4 @@
 import {
-    FindCourseByUserId,
     FindAllCourses,
     FindCourseInCourseId,
     InsertCourse,
@@ -74,7 +73,7 @@ async function ReadCourse(req, res) {
     try {
         const userId = parseInt(req.params.user_id);
         // retrieve all courses with user role information
-        let courses = await FindCourseByUserId(userId);
+        let courses = await FindAllCourses();
 
         // get teaching courses
         let teachingRecords = await FindTeachInByUserId(userId);
