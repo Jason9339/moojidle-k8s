@@ -388,7 +388,7 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
             ASSIGNMENT_NUM += 1
     return assignments
 
-def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, max_submissions_per_assignment=5):
+def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, max_submissions_per_assignment=5, max_attachments_per_assignment=3):
     """Generate fake data for submitted assignments"""
     submitted_assignments = []
     submission_id = 1  # Start submission IDs from 1
@@ -445,6 +445,16 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
 
             # Generate points (score)
             points = random.randint(0, 100) if graded_by_user_id else None
+            
+            # Generate attachments for the assignment
+            num_attachments = random.randint(0, max_attachments_per_assignment)  # 0 to max_attachments_per_assignment
+            attachments = [
+                {
+                    "filename": f"submitted_assignment_{submission_id}_file_{i + 1}.pdf",
+                    "url": f"http://example.com/assignments/course_{course_id}/assignment_{submission_id}_file_{i + 1}.pdf"
+                }
+                for i in range(num_attachments)
+            ]
 
             # Add the submission to the list
             submitted_assignments.append({
@@ -455,6 +465,7 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
                 "submit_date": assignment["end_date"],
                 "score": points,
                 "graded_by_user_id": graded_by_user_id,
+                "attachments": attachments,
                 "description": f"This is the submission for Assignment {ass_id} by User {submit_by_user_id}."
             })
             submission_id += 1
