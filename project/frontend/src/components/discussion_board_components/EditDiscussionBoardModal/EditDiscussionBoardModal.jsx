@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeleteDiscussionBoard } from "@/services/DiscussionBoardApi.js";
+import { DeleteDiscussionBoard, EditDiscussionBoard} from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
 
@@ -20,9 +20,16 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
         }
     };
 
-    const handleSave = () => {
-        // 未來用來送出更新討論版名稱
-        alert(`功能尚未實作：將名稱更新為「${boardName}」`);
+    const handleSave = async () => {
+        try{
+            await EditDiscussionBoard(boardId, boardName);
+            alert("討論版名稱已成功更新");
+            onClose();
+            navigate("/discussion/" + boardId);
+        } catch (err) {
+            console.error(err);
+            setError("更新失敗，請稍後再試");
+        }
     };
 
     return (

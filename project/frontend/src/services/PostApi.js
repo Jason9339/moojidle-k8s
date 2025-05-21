@@ -32,6 +32,7 @@ async function DeleteCommend(commendData) {
 
 };
 
+
 async function DeletePost(postID) {
     try {
         const response = await api.delete(`post/delete/${postID}`);
@@ -61,5 +62,16 @@ async function CreatePost(postData) {
         console.error(err);
     }
 }
-export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost, GetOverviewPostByBId, CreatePost };
+
+async function EditPost(postID, postData) {
+    try {
+        const response = await api.put(`post/${postID}`, postData);
+        return response.data;
+    } catch (error) {
+        console.error("EditPost API error:", error);
+        // 丟出錯誤給呼叫者處理
+        throw new Error(error.response?.data?.error || error.response?.data?.message || "伺服器錯誤");
+    }
+}
+export { GetPostContent, LeaveCommend, DeleteCommend, DeletePost, GetOverviewPostByBId, CreatePost, EditPost };
 

@@ -32,8 +32,17 @@ async function DeleteDiscussionBoard(boardID) {
     return response.data;
 }
 
+async function EditDiscussionBoard(boardID, boardName) {
+    const response = await api.patch(`discussion-board/course-boards/${boardID}`, {
+        board_name: boardName
+    });
+    return response.data;
+}
+
+
 export {
     GetBoardsGroupByCourseByUserID,
     CreateDiscussionBoard,
-    DeleteDiscussionBoard
+    DeleteDiscussionBoard,
+    EditDiscussionBoard
 }
