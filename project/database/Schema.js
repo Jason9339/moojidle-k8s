@@ -97,7 +97,7 @@ db.createCollection("announcement", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["a_id", "create_date", "announce_date", "context", "user_id", "course_id"],
+            required: ["a_id", "create_date", "announce_date", "context", "user_id", "course_id", "is_system_announcement"],
             properties: {
                 a_id: { bsonType: "int" },
                 create_date: { bsonType: "date" },
@@ -105,6 +105,15 @@ db.createCollection("announcement", {
                 context: { bsonType: "string" },
                 user_id: { bsonType: "int" },
                 course_id: { bsonType: "int"},
+                is_system_announcement: { bsonType: "bool" },
+                source: {
+                    bsonType: "object",
+                    properties: {
+                        category: { bsonType: "string" },
+                        id: { bsonType: "int" }
+                    },
+                    required: ["category", "id"]
+                }
             }
         }
     }
@@ -175,14 +184,17 @@ db.createCollection("exams", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["exam_id", "in_course_id", "create_by_user_id", "exam_name", "exam_date", "create_date", "description"],
+            required: ["exam_id", "in_course_id", "create_by_user_id", "exam_name", "start_date", "end_date", "create_date", "max_score", "percentage", "description"],
             properties: {
                 exam_id: { bsonType: "int", description: "Primary key: Unique identifier for the exam" },
                 in_course_id: { bsonType: "int", description: "Foreign key: ID of the course the exam belongs to" },
                 create_by_user_id: { bsonType: "int", description: "Foreign key: User ID of the creator" },
                 exam_name: { bsonType: "string", description: "Name of the exam" },
-                exam_date: { bsonType: "date", description: "Date when the exam will be held" },
+                start_date: { bsonType: "date", description: "Date when the exam will be held" },
+                end_date: { bsonType: "date", description: "Date when the exam will end" },
                 create_date: { bsonType: "date", description: "Date when the exam was created" },
+                max_score: { bsonType: "number" },
+                percentage: { bsonType: "number" },
                 description: { bsonType: "string", description: "Description of the exam" },
                 attachments: {
                     bsonType: "array",
@@ -225,7 +237,7 @@ db.createCollection("assignments", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "start_date", "end_date"],
+            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "start_date", "end_date", "max_score", "percentage"],
             properties: {
                 ass_id: { bsonType: "int", },
                 in_course_id: { bsonType: "int", },
@@ -234,6 +246,8 @@ db.createCollection("assignments", {
                 create_date: { bsonType: "date", },
                 start_date: { bsonType: "date", },
                 end_date: { bsonType: "date", },
+                max_score: { bsonType: "number" },
+                percentage: { bsonType: "number" },
                 description: { bsonType: "string", },
                 attachments: {
                     bsonType: "array",
@@ -277,7 +291,7 @@ db.createCollection("submitted_ass", {
                     bsonType: "date",
                     description: "Date of submission"
                 },
-                points: {
+                score: {
                     bsonType: "number",
                     description: "Score (added later)"
                 },

@@ -20,9 +20,14 @@ SUBMITTED_ASSIGNMENT_NUM = 0
 POST_NUM = 0
 MAIL_NUM = 0
 
-def seq_date(index=0):
+def seq_date(index=0, index_time=0):
     date = DATE
-    return (date + timedelta(weeks = index)).isoformat()
+    # Add weeks using index parameter
+    date = date + timedelta(weeks=index)
+    # Add hours using index_time parameter
+    date = date + timedelta(hours=index_time)
+    
+    return date.isoformat()
 
 def add_ISO_to_string(str):
     return 'ISODate(' + str + ')'
@@ -138,7 +143,8 @@ def generate_announcements(user_count=15, course_count=5, n=15):
             "announce_date": add_ISO_to_string(seq_date(i + 1)),
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
-            "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
+            "course_id": random.randint(1, course_count),  # Random course the announcement belongs to
+            "is_system_announcement": False
         })
         global ANNOUNCEMENT_NUM
         ANNOUNCEMENT_NUM += 1
@@ -247,9 +253,11 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
                 "in_course_id": course_id,
                 "create_by_user_id": create_by_user_id,
                 "exam_name": f"Exam {exam_id} for Course {course_id}",
-                "exam_date": add_ISO_to_string(seq_date(exam_index + 2)),
+                "start_date": add_ISO_to_string(seq_date(exam_index + 2)),
+                "end_date": add_ISO_to_string(seq_date(exam_index + 2, 3)),
                 "create_date": add_ISO_to_string(seq_date(exam_index)),
-                "start_date": add_ISO_to_string(seq_date(exam_index)),
+                "max_score": 100,
+                "percentage": 0.1,
                 "description": f"This is the description for Exam {exam_id}.",
                 "attachments": attachments
             })
@@ -370,6 +378,8 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "create_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "start_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "end_date": add_ISO_to_string(seq_date(ass_index + 2)),
+                "max_score": 100,
+                "percentage": 0.1,
                 "description": f"This is the description for Assignment {assignment_id}.",
                 "attachments": attachments
             })
@@ -443,7 +453,7 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
                 "submit_by_user_id": submit_by_user_id,
                 "submit_user_course_tag": f"StudentTag_{submit_by_user_id}",
                 "submit_date": assignment["end_date"],
-                "points": points,
+                "score": points,
                 "graded_by_user_id": graded_by_user_id,
                 "description": f"This is the submission for Assignment {ass_id} by User {submit_by_user_id}."
             })
