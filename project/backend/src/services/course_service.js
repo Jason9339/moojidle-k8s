@@ -11,23 +11,6 @@ async function GenerateInviteCode() {
     return code;
 };
 
-// Service function to retrieve all courses with user role information
-async function FindCourseByUserId(userId) {
-    try {
-        // Convert userId to integer if provided
-        const userIdInt = userId ? parseInt(userId, 10) : null;
-
-        // Get all courses
-        const coursesCollection = mongoose.connection.db.collection('course');
-        const courses = await coursesCollection.find().toArray();
-
-        return courses;
-    } catch (error) {
-        console.error("[ViewCourses] Error fetching courses:", error);
-        throw new Error(`Failed to retrieve courses: ${error.message}`);
-    }
-}
-
 async function FindAllCourses() {
     try {
         return await mongoose.connection.db.collection('course').find().toArray();
@@ -232,7 +215,6 @@ async function FindCourseIdByInviteCode(code) {
 }
 
 export {
-    FindCourseByUserId,
     FindCourseById,
     FindAllCourses,
     FindCourseInCourseId,
