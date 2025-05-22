@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 
-import styles from "../CourseDetail/CourseDetail.module.css";
+import styles from "./CourseInfoPage.module.css";
 
 import {
     GetCourseMaterials,
@@ -11,7 +11,7 @@ import {
 
 import { GetCourseAssignments } from "@/services/AssignmentApi";
 
-import CourseTab from "@/pages/CourseTab/CourseTab";
+import CourseTable from "@/components/course_components/CourseTable/CourseTable";
 import UploadModal from "@/components/course_components/UploadModal/UploadModal";
 
 export default function CourseInfoPage() {
@@ -132,7 +132,7 @@ export default function CourseInfoPage() {
                 </div>
             )}
 
-            <CourseTab
+            <CourseTable
                 courseId={courseId}
                 course={course}
                 materials={materials}

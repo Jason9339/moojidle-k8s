@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { DownloadFile } from "@/services/file_api/FileApi";
-import styles from "./CourseTab.module.css";
+import styles from "./CourseTable.module.css";
 
-function CourseTab({
+function CourseTable({
     courseId,
     course,
     materials,
@@ -328,4 +328,4 @@ function CourseTab({
     );
 }
 
-export default CourseTab;
+export default CourseTable;

@@ -1,5 +1,4 @@
-// CourseLayout.jsx
-import { useParams, Outlet, Link, useNavigate } from "react-router-dom";
+import { useParams, Outlet, useNavigate, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import { GetCourses } from "@/services/CourseApi";
@@ -57,12 +56,13 @@ export default function CourseLayout() {
         </div>
 
         <div className={styles["tab-menu"]}>
-          <Link to="">課程</Link>
-          <Link to="grade">成績</Link>
-          <Link to="discussion">討論</Link>
-          <Link to="assignment">作業</Link>
-          <Link to="announcement">公告</Link>
-          <Link to="members">成員</Link>
+            <NavLink to="" end className={({ isActive }) => isActive ? styles.active : ""}>課程</NavLink>
+            <NavLink to="grade" className={({ isActive }) => isActive ? styles.active : ""}>成績</NavLink>
+            <NavLink to="assignment" className={({ isActive }) => isActive ? styles.active : ""}>作業</NavLink>
+            <NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
+            <NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink>
+            <NavLink to="announcement" className={({ isActive }) => isActive ? styles.active : ""}>公告</NavLink>
+            <NavLink to="members" className={({ isActive }) => isActive ? styles.active : ""}>成員</NavLink>
         </div>
 
         {/* 將角色與課程資訊傳給子頁，課程資訊如果不需要之後可以刪掉(TODO) */}

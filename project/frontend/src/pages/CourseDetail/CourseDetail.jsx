@@ -19,7 +19,7 @@ import {
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 
-import CourseTab from "@/pages/CourseTab/CourseTab";
+import CourseTable from "@/components/course_components/CourseTable/CourseTable";
 import GradesTab from "@/pages/GradesTab/GradesTab";
 import DiscussionTab from "@/pages/DiscussionTab/DiscussionTab";
 import AssignmentsTab from "@/pages/AssignmentsTab/AssignmentsTab";
@@ -240,7 +240,7 @@ function CourseDetail() {
                                 )}
                             </div>
                         )}
-                        <CourseTab
+                        <CourseTable
                             courseId={courseId}
                             course={course}
                             materials={materials}

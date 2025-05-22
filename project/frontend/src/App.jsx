@@ -1,6 +1,12 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CourseLayout from "@/pages/CourseLayout/CourseLayout";
-import CourseInfoPage from "@/pages/course_subpages/CourseInfoPage";
+import CourseInfoPage from "@/pages/CourseInfoPage/CourseInfoPage";
+import AssignmentsTab from "@/pages/AssignmentsTab/AssignmentsTab";
+import GradesTab from "@/pages/GradesTab/GradesTab";
+import AnnouncementsTab from "@/pages/AnnouncementsTab/AnnouncementsTab";
+import MembersTab from "@/pages/MembersTab/MembersTab";
+import DiscussionTab from "@/pages/DiscussionTab/DiscussionTab";
+import ExamsTab from "@/pages/ExamsTab/ExamsTab";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
@@ -48,6 +54,7 @@ function App() {
                             <Route path="announcement" element={<AnnouncementsTab />} />
                             <Route path="members" element={<MembersTab />} />
                             <Route path="discussion" element={<DiscussionTab />} />
+                            <Route path="exams" element={<ExamsTab />} />
                         </Route>
 
                         {/* user pages related */}
