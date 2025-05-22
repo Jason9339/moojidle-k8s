@@ -1,6 +1,6 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CourseLayout from "@/pages/CourseLayout/CourseLayout";
-import CourseInfoPage from "@/pages/CourseInfoPage/CourseInfoPage";
+import CourseTab from "@/pages/CourseTab/CourseTab";
 import AssignmentsTab from "@/pages/AssignmentsTab/AssignmentsTab";
 import GradesTab from "@/pages/GradesTab/GradesTab";
 import AnnouncementsTab from "@/pages/AnnouncementsTab/AnnouncementsTab";
@@ -48,7 +48,7 @@ function App() {
 
                         <Route path="/course/:courseId" element={<CourseLayout />}>
                             {/* index route（預設子頁面）*/}
-                            <Route index element={<CourseInfoPage />} />
+                            <Route index element={<CourseTab />} />
                             <Route path="assignment" element={<AssignmentsTab />} />
                             <Route path="grade" element={<GradesTab />} />
                             <Route path="announcement" element={<AnnouncementsTab />} />
