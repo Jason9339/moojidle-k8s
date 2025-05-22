@@ -19,13 +19,13 @@ import {
 
 import LeftBar from "@/components/LeftBar/LeftBar";
 
-import CourseTab from "@/components/course_components/CourseTab/CourseTab";
-import GradesTab from "@/components/course_components/GradesTab/GradesTab";
-import DiscussionTab from "@/components/course_components/DiscussionTab/DiscussionTab";
-import AssignmentsTab from "@/components/course_components/AssignmentsTab/AssignmentsTab";
-import AnnouncementsTab from "@/components/course_components/AnnouncementsTab/AnnouncementsTab";
+import CourseTab from "@/pages/CourseTab/CourseTab";
+import GradesTab from "@/pages/GradesTab/GradesTab";
+import DiscussionTab from "@/pages/DiscussionTab/DiscussionTab";
+import AssignmentsTab from "@/pages/AssignmentsTab/AssignmentsTab";
+import AnnouncementsTab from "@/pages/AnnouncementsTab/AnnouncementsTab";
 import UploadModal from "@/components/course_components/UploadModal/UploadModal";
-import MembersTab from "@/components/course_components/MembersTab/MembersTab";
+import MembersTab from "@/pages/MembersTab/MembersTab";
 
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

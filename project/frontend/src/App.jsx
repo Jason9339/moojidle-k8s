@@ -1,4 +1,6 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import CourseLayout from "@/pages/CourseLayout/CourseLayout";
+import CourseInfoPage from "@/pages/course_subpages/CourseInfoPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
@@ -6,7 +8,6 @@ import PostEdit from "@/pages/post_pages/PostEdit";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/CoursePage/CoursePage";
-import CourseDetail from "@/pages/CourseDetail/CourseDetail";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
 
 // pages for user related
@@ -38,7 +39,16 @@ function App() {
                         
                         {/* course page related */}
                         <Route path="/course" element={<CoursePage />} />
-                        <Route path="/course/:courseId" element={<CourseDetail />} />
+
+                        <Route path="/course/:courseId" element={<CourseLayout />}>
+                            {/* index route（預設子頁面）*/}
+                            <Route index element={<CourseInfoPage />} />
+                            <Route path="assignment" element={<AssignmentsTab />} />
+                            <Route path="grade" element={<GradesTab />} />
+                            <Route path="announcement" element={<AnnouncementsTab />} />
+                            <Route path="members" element={<MembersTab />} />
+                            <Route path="discussion" element={<DiscussionTab />} />
+                        </Route>
 
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
