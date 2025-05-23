@@ -89,16 +89,16 @@ function CourseCard({
                 <FaBullhorn
                     title="Announcement"
                     onClick={() =>
-                        navigate(`/courses/${courseId}/announcement`)
+                        navigate(`/course/${courseId}/announcement`)
                     }
                 />
                 <FaTasks
                     title="Assignments"
-                    onClick={() => navigate(`/courses/${courseId}/assignment`)}
+                    onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
                 <FaComments
                     title="Discussion"
-                    onClick={() => navigate(`/courses/${courseId}/discussion`)}
+                    onClick={() => navigate(`/course/${courseId}/discussion`)}
                 />
             </div>
             {showEditModal && (
