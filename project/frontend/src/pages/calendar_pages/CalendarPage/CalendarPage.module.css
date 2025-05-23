@@ -1,1 +1,21 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  background: #eff2f5;
+  width: 100%;
+  height: 100vh;
+  gap: 24px;
+  padding: 24px;
+}
 
+.mainCalendar {
+  background: #fafafa;
+  height: 100%;
+  border: 1px solid #ddd;
+}
+
+.sidebar {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 16px;
+}
