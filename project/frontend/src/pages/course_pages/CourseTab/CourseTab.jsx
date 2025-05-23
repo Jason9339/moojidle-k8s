@@ -18,7 +18,7 @@ import UploadModal from "@/components/course_components/UploadModal/UploadModal"
 export default function CourseInfoPage() {
     const { courseId } = useParams();
     const navigate = useNavigate();
-    const { role } = useOutletContext(); // ✅ 從 Outlet 拿 role
+    const { role } = useOutletContext();
 
     const isEditor = role?.isTeacher || role?.isAssistant;
 
