@@ -3,6 +3,7 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 
 import styles from "./CourseTab.module.css";
 
+import { GetCourseDetails } from "@/services/CourseApi";
 import {
     GetCourseMaterials,
     UpdateCourseMaterials,
@@ -17,9 +18,11 @@ import UploadModal from "@/components/course_components/UploadModal/UploadModal"
 export default function CourseInfoPage() {
     const { courseId } = useParams();
     const navigate = useNavigate();
-    const { role, course } = useOutletContext();
+    const { role } = useOutletContext(); // ✅ 從 Outlet 拿 role
+
     const isEditor = role?.isTeacher || role?.isAssistant;
 
+    const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,22 +32,27 @@ export default function CourseInfoPage() {
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchCourseData = async () => {
             try {
                 setLoading(true);
-                const [materialsData, assignmentsData] = await Promise.all([
-                    GetCourseMaterials(courseId),
-                    GetCourseAssignments(courseId),
-                ]);
+                const [courseData, materialsData, assignmentsData] =
+                    await Promise.all([
+                        GetCourseDetails(courseId),
+                        GetCourseMaterials(courseId),
+                        GetCourseAssignments(courseId),
+                    ]);
+                setCourse(courseData);
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
-            } catch (err) {
-                console.error("取得教材或作業失敗", err);
+            } catch (error) {
+                console.error("獲取課程數據失敗:", error);
+                navigate("/dashboard");
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
+
+        fetchCourseData();
     }, [courseId]);
 
     const handleMaterialsChange = (updated) => {
@@ -62,19 +70,20 @@ export default function CourseInfoPage() {
 
             try {
                 setIsSaving(true);
-                if (editedMaterials.some(m => !m.name?.trim())) {
+
+                if (editedMaterials.some((m) => !m.name?.trim())) {
                     alert("教材名稱不能為空");
                     setIsSaving(false);
                     return;
                 }
 
-                const toUpdate = editedMaterials.filter(m =>
-                    materials.some(orig => orig.id === m.id)
+                const toUpdate = editedMaterials.filter((m) =>
+                    materials.some((orig) => orig.id === m.id)
                 );
 
                 const toDelete = materials
-                    .filter(orig => !editedMaterials.some(m => m.id === orig.id))
-                    .map(m => m.id);
+                    .filter((orig) => !editedMaterials.some((m) => m.id === orig.id))
+                    .map((m) => m.id);
 
                 if (toUpdate.length > 0) {
                     await UpdateCourseMaterials(courseId, toUpdate);
@@ -95,10 +104,11 @@ export default function CourseInfoPage() {
                 setIsSaving(false);
             }
         }
+
         setIsEditMode(!isEditMode);
     };
 
-    if (loading) {
+    if (loading || !course) {
         return <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />;
     }
 
@@ -117,7 +127,7 @@ export default function CourseInfoPage() {
                         onClick={toggleEditMode}
                         disabled={isSaving}
                     >
-                        {isSaving ? '保存中...' : isEditMode ? '完成編輯' : '編輯教材'}
+                        {isSaving ? "保存中..." : isEditMode ? "完成編輯" : "編輯教材"}
                     </button>
                     {isEditMode && (
                         <button
