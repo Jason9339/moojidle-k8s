@@ -20,7 +20,7 @@ function WeekTimeView({
 }) {
 
     const [showTooltip, setShowTooltip] = useState(false);
-    const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+    const [tooltip, setTooltip] = useState({});
     const weekStart = WeekTimeView.range(date).start
     const weekEndNext = addDays(weekStart, 7)
     const totalMs = weekEndNext.getTime() - weekStart.getTime()
@@ -45,10 +45,9 @@ function WeekTimeView({
 
             // fill in evt missing data
             if (!evt.color) evt.color = EVENT_DEFAULT_COLOR;
-            return { evt, start: evtStart, leftPct, widthPct }
+            return { evt: evt, start: evtStart, leftPct, widthPct }
         });
 
-    console.log('segments', segments)
     // Stack vertically
     const rows = []
     segments.forEach(seg => {
@@ -70,6 +69,7 @@ function WeekTimeView({
         }
     })
 
+    console.log("segments", segments);
     return (
         <div className={styles.container}>
 
@@ -106,7 +106,7 @@ function WeekTimeView({
                             }}
                             onMouseEnter={(e) => {
                                 setShowTooltip(true);
-                                setTooltipPos({ top: e.clientY, left: e.clientX, });
+                                setTooltip({ top: e.clientY, left: e.clientX, title: seg.evt.title });
                             }
                             }
                             onMouseLeave={() => setShowTooltip(false)}
@@ -115,18 +115,24 @@ function WeekTimeView({
                             <span className={styles.eventTime}>
                                 {format(seg.start, 'HH:mm')}
                             </span>
-                            <span className={styles.eventTitle}>{seg.evt.title}</span>
+
+                            <span className={styles.eventTitle}>
+                                {seg.evt.title}
+                            </span>
+
+                            {/* tooltip */}
                             {
                                 showTooltip &&
                                 <div
                                     className={styles.tooltip}
                                     style={{
-                                        top: tooltipPos.top,
-                                        left: tooltipPos.left - TOOLTIP_OFFSET_LEFT,
+                                        top: tooltip.top,
+                                        left: tooltip.left - TOOLTIP_OFFSET_LEFT,
                                         width: TOOLTIP_WIDTH,
                                         height: TOOLTIP_HEIGHT
                                     }}>
-                                    <span>{seg.evt.title}</span>
+
+                                    <span> {tooltip.title}</span>
 
                                 </div>
                             }

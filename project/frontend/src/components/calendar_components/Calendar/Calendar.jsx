@@ -14,7 +14,7 @@ const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales
 const Calendar = ({ events }) => {
 
     const [date, setDate] = useState(new Date())
-    const [view, setView] = useState('week');
+    const [view, setView] = useState('month');
     const handleNavigate = useCallback(newDate => setDate(newDate), [setDate]);
     const handleView = useCallback(newView => setView(newView), [setView]);
     return (
@@ -39,6 +39,7 @@ const Calendar = ({ events }) => {
             onView={handleView}
             components={{ toolbar: Toolbar }}
 
+            dayLayoutAlgorithm="no-overlap"
         />
     );
 };

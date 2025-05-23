@@ -1,97 +1,98 @@
 /* WeekTimeView.module.css */
 
 .container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
 }
 
 .header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background-color: #fff;
-  z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #fff;
+    z-index: 2;
 }
 
 .headerCell {
-  padding: 8px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 0.9em;
-  border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9em;
+    border-bottom: 1px solid #ddd;
 }
 
 /* mimic .rbc-header + .rbc-header */
 .headerCell + .headerCell {
-  border-left: 1px solid #ddd;
+    border-left: 1px solid #ddd;
 }
 
 .body {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  flex: 1;
-  position: relative;
-  overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
 }
 
 /* gridOverlay: vertical & horizontal lines mimicking time-slot and day-bg */
 .gridOverlay {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
     linear-gradient(to right, #ddd 1px, transparent 1px),    /* vertical lines */
     linear-gradient(to bottom, #f7f7f7 1px, transparent 1px); /* horizontal lines */
-  background-size:
+    background-size:
     calc(100% / 7) 100%,  /* 7 equal columns */
     100% calc(100% / 24); /* 24 equal rows */
-  z-index: 0;
+    z-index: 0;
 }
 
 .dayColumn {
-  position: relative;
-  z-index: 1;
-  padding: 4px;
+    position: relative;
+    z-index: 1;
+    padding: 4px;
 }
 
 .weekEvent {
-  z-index: 2;
-  border: none;
-  box-shadow: none;
-  margin: 0;
-  padding: 2px 5px;
-  border-radius: 5px;
-  color: #fff;
-  cursor: pointer;
-  text-align: left;
-  display: flex;
-  align-items: center;
+    position: absolute;
+    z-index: 2;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 2px 5px;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
 }
 
 .weekEvent:hover {
-box-shadow: 1px 1px 1px black;
+    box-shadow: 1px 1px 1px black;
 }
 .weekEvent.rbc-selected {
-  background-color: #265985;
+    background-color: #265985;
 }
 
 .eventTime {
-  font-weight: bold;
-  margin-right: 6px;
-  font-size: 0.8em;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-weight: bold;
+    margin-right: 6px;
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .eventTitle {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tooltip {
