@@ -6,7 +6,7 @@ import CourseListItem from "@/components/course_components/CourseListItem/Course
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 function CoursePage() {
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState(null);
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -23,41 +23,48 @@ function CoursePage() {
     }, []);
 
     return (
-        <div className={`${styles["app-layout"]}`}>
+        <div className={styles["app-layout"]}>
             <LeftBar />
-            <div className={`${styles["course-page"]}`}>
-                <h2 className={`${styles["course-heading"]}`}>All Course</h2>
-                <hr className={`${styles["course-heading-divider"]}`} />
+            {!courses ? (
+                <div
+                    className={styles["course-page"]}
+                    style={{ backgroundColor: "#eff2f5", flex: 1 }}
+                />
+            ) : (
+                <div className={styles["course-page"]}>
+                    <h2 className={styles["course-heading"]}>All Course</h2>
+                    <hr className={styles["course-heading-divider"]} />
 
-                <div className={`${styles["course-list-header"]}`}>
-                    <span>課程名稱</span>
-                    <span>課程代碼</span>
+                    <div className={styles["course-list-header"]}>
+                        <span>課程名稱</span>
+                        <span>課程代碼</span>
+                    </div>
+
+                    <div className={styles["course-list"]}>
+                        {courses
+                            .filter(
+                                (course) =>
+                                    course.isTeacher ||
+                                    course.isStudent ||
+                                    course.isAssistant
+                            )
+                            .map((course, index) => (
+                                <CourseListItem
+                                    key={index}
+                                    title={course.title}
+                                    courseId={course.courseId}
+                                    color={course.color}
+                                    isTeacher={course.isTeacher}
+                                    isStudent={course.isStudent}
+                                    isAssistant={course.isAssistant}
+                                />
+                            ))}
+                    </div>
+
+                    <h3 className={styles["past-title"]}>Past Enrollments</h3>
+                    <hr className={styles["course-heading-divider"]} />
                 </div>
-
-                <div className={`${styles["course-list"]}`}>
-                    {courses
-                        .filter(
-                            (course) =>
-                                course.isTeacher ||
-                                course.isStudent ||
-                                course.isAssistant
-                        )
-                        .map((course, index) => (
-                            <CourseListItem
-                                key={index}
-                                title={course.title}
-                                courseId={course.courseId}
-                                color={course.color}
-                                isTeacher={course.isTeacher}
-                                isStudent={course.isStudent}
-                                isAssistant={course.isAssistant}
-                            />
-                        ))}
-                </div>
-
-                <h3 className={`${styles["past-title"]}`}>Past Enrollments</h3>
-                <hr className={`${styles["course-heading-divider"]}`} />
-            </div>
+            )}
         </div>
     );
 }

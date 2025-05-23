@@ -6,9 +6,7 @@ import PostEditCustomTag from "@/components/post_components/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
 import { CreatePost } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
-import { useRef } from "react";
-import { useCallback, useEffect } from "react";
-import { useState } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 const PostEdit = () => {
@@ -21,7 +19,6 @@ const PostEdit = () => {
     const { param } = useParams();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-
     const [userTags, setUserTags] = useState([]);
     const allUserTags = useRef([]);
     const [error, setError] = useState(null);
@@ -36,16 +33,15 @@ const PostEdit = () => {
     const handleBoardChange = useCallback((option) => {
         setSelectedBoard(option);
     }, []);
-    /*  Effects */
+
     useEffect(() => {
         const fetchTag = async () => {
             try {
-                // TODO use Context to save userID
                 const userId = JSON.parse(localStorage.getItem("user")).user_id;
                 const tags = await GetUserTagsById(userId);
                 allUserTags.current = tags.map((t) => t.user_tag);
-                setSelectedCourse(state?.current.course || null);
-                setSelectedBoard(state?.current.board || null);
+                setSelectedCourse(state?.current?.course || null);
+                setSelectedBoard(state?.current?.board || null);
             } catch (e) {
                 setError("找不到User Id: ", e);
             }
@@ -53,58 +49,61 @@ const PostEdit = () => {
 
         fetchTag();
 
-        if (!state.current?.course) {
+        if (!state?.current?.course) {
             setIsDisabled(false);
         }
     }, [state]);
 
     if (!state?.data) {
-        return <Redirect />;
+        return (
+            <>
+                <LeftBar />
+                <div style={{ backgroundColor: "#eff2f5", flex: 1, width: "100%" }} />
+                <Redirect />
+            </>
+        );
     }
 
-    // eslint-disable-next-line
     const handleTitleChange = useCallback((txt) => {
         txt = txt.replace(/[\r\n]+/g, "");
         setTitle(txt);
     }, []);
 
-    // eslint-disable-next-line
     const handleDescriptionChange = useCallback((txt) => {
         setDescription(txt);
     }, []);
-    // eslint-disable-next-line
+
     const handleCancel = useCallback(() => {
         navigate(-1);
     }, [navigate]);
 
-    // eslint-disable-next-line
     const handleSubmit = useCallback(async () => {
-        // TODO use Context to save userID
         const userId = JSON.parse(localStorage.getItem("user")).user_id;
-        if (selectedBoard == null || selectedBoard == undefined) {
+
+        if (!selectedBoard) {
             alert("請選擇討論版");
             return;
         }
 
-        if (title.length == 0) {
+        if (title.length === 0) {
             alert("請輸入貼文標題");
             return;
         }
 
-        if (description.length == 0) {
+        if (description.length === 0) {
             alert("請輸入貼文內容");
             return;
         }
+
         const data = {
             post_by_user_id: userId,
             post_user_custom_tags: userTags,
-            description: description,
-            title: title,
+            description,
+            title,
             in_b_id: selectedBoard.value,
         };
 
         const resData = await CreatePost(data);
-
         const post = resData.post;
 
         navigate(`/discussion/${selectedBoard.value}`, {
@@ -114,17 +113,16 @@ const PostEdit = () => {
         });
     }, [navigate, description, title, userTags, selectedBoard]);
 
-    // check a course has a discusiion board
+    // 移除沒有討論版的課程
     for (let i = 0; i < state.data.length; i++) {
-        if (state.data[i].boards == [] || state.data[i].boards == undefined) {
+        if (!state.data[i].boards || state.data[i].boards.length === 0) {
             state.data.splice(i, 1);
         }
     }
 
     return (
-        <>
+        <div className="flex">
             <LeftBar />
-
             <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] h-screen bg-[#eff2f5]">
                 <PostEditDestSelector
                     courseData={state.data}
@@ -172,7 +170,7 @@ const PostEdit = () => {
                             className="mt-2"
                             height="50vh"
                             rows={19}
-                            onChange={(txt) => handleDescriptionChange(txt)}
+                            onChange={handleDescriptionChange}
                         />
                     </div>
 
@@ -192,7 +190,7 @@ const PostEdit = () => {
                     </div>
                 </form>
             </div>
-        </>
+        </div>
     );
 };
 

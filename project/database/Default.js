@@ -1,0 +1,17 @@
+db.counter.insertOne({
+  "announcement": 0,
+  "assignments": 0,
+  "assist_in": 0,
+  "course": 0,
+  "course_tag": 0,
+  "custom_tag": 0,
+  "discussion_board": 0,
+  "exams": 0,
+  "mailbox": 0,
+  "materials": 0,
+  "post": 0,
+  "study_in": 0,
+  "submitted_ass": 0,
+  "teach_in": 0,
+  "user": 0
+});

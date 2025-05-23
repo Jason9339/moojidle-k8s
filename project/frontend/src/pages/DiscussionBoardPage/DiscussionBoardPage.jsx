@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useParams, Link } from "react-router-dom";
 import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
 import CreateDiscussionBoardModal from "@/components/discussion_board_components/CreateDiscussionBoardModal/CreateDiscussionBoardModal";
-
 import EditDiscussionBoardModal from "@/components/discussion_board_components/EditDiscussionBoardModal/EditDiscussionBoardModal";
 import styles from "./DiscussionBoardPage.module.css";
 import { LuPlus } from "react-icons/lu";
 
 import { GetBoardsGroupByCourseByUserID } from "@/services/DiscussionBoardApi";
 import { GetOverviewPostByBId } from "@/services/PostApi";
-import { useRef } from "react";
 
 function DiscussionBoard() {
     const { param } = useParams();
@@ -27,40 +25,40 @@ function DiscussionBoard() {
 
     const fetchCourseBoards = async () => {
         try {
-            // TODO use Context to save userID
             const uid = JSON.parse(localStorage.getItem("user")).user_id;
             userIdRef.current = uid;
 
-            const data = await GetBoardsGroupByCourseByUserID(
-                userIdRef.current
-            );
+            const data = await GetBoardsGroupByCourseByUserID(uid);
             setCourseBoardData(data);
             setError(null);
         } catch (err) {
             setError("無法載入討論資料");
         }
     };
+
+    const fetchOverviewPosts = async () => {
+        try {
+            const result = await GetOverviewPostByBId(parseInt(param));
+            setOverviewPostData(result);
+        } catch (err) {
+            console.error("無法載入貼文摘要", err);
+        }
+    };
+
     useEffect(() => {
         fetchCourseBoards();
     }, []);
 
     useEffect(() => {
-        async function FetchOverviewPost() {
-            const result = await GetOverviewPostByBId(parseInt(param));
-            setOverviewPostData(result);
-        }
-        if (param != null && param != "home") {
-            FetchOverviewPost();
+        if (param && param !== "home") {
+            fetchOverviewPosts();
         }
     }, [param]);
 
     useEffect(() => {
-        // want to get over view posts
-        if (param != null && param !== "home") {
-            // find course name and board name
+        if (param && param !== "home" && courseBoardData) {
             const currentBoardId = parseInt(param);
-
-            courseBoardData?.forEach((course) => {
+            courseBoardData.forEach((course) => {
                 course.boards.forEach((board) => {
                     if (board.board_id === currentBoardId) {
                         setCurrentCourse({
@@ -94,103 +92,123 @@ function DiscussionBoard() {
         setShowEditPopup(true);
     }, []);
 
-    if (error) return <p className="text-red-500">{error}</p>;
-    if (!courseBoardData) return <p>Loading...</p>;
+    if (error) {
+        return (
+            <div className={styles["app-layout"]}>
+                <LeftBar />
+                <div
+                    className={styles["page-container"]}
+                    style={{ backgroundColor: "#eff2f5" }}
+                >
+                    <p className="text-red-500">{error}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const isLoading = !courseBoardData;
 
     return (
         <div className={styles["app-layout"]}>
             <LeftBar />
-            <div className={styles["page-container"]}>
-                {/* 頁面標題列 */}
-                <div className={styles["heading-row"]}>
-                    <h2 className={styles["heading-title"]}>
-                        Discussion Board
-                    </h2>
-                </div>
-                <hr className={styles["heading-divider"]} />
-
-                {/* 主內容區：左側 sidebar + 右側討論內容 */}
-                <div style={{ display: "flex", gap: "12px" }}>
-                    <div className={styles.discussionPageLayout}>
-                        <BoardSideBar
-                            itemData={courseBoardData || []}
-                            handleAddBoard={handleAddBoard}
-                            handleEditBoard={handleEditBoard}
-                        />
+            {isLoading ? (
+                <div
+                    className={styles["page-container"]}
+                    style={{ backgroundColor: "#eff2f5", flex: 1 }}
+                />
+            ) : (
+                <div className={styles["page-container"]}>
+                    {/* 頁面標題列 */}
+                    <div className={styles["heading-row"]}>
+                        <h2 className={styles["heading-title"]}>Discussion Board</h2>
                     </div>
+                    <hr className={styles["heading-divider"]} />
 
-                    <div className={styles["main-container"]}>
-                        {param === "home" || param == null ? (
-                            <div style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "flex-start", 
-                                height: "100%",
-                                paddingTop: "150px",
-                            }}>
-                                <DiscussionBoardInitContent />
-                                <Link
-                                    to="/post-edit/new"
-                                    className={styles.fab}
-                                    state={{ data: courseBoardData }}
-                                    title="新增貼文"
-                                >
-                                    <LuPlus />
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="flex">
-                                <DiscussionBoardContent
-                                    overviewPosts={overviewPostData}
-                                    courseName={currentCourse?.course_name}
-                                    boardName={currentBoard?.board_name}
-                                />
-                                <Link
-                                    to="/post-edit/new"
-                                    className={styles.fab}
-                                    state={{
-                                        data: courseBoardData,
-                                        current: {
-                                            course: {
-                                                value: currentCourse?.course_id,
-                                                label: currentCourse?.course_name,
-                                            },
-                                            board: {
-                                                value: currentBoard?.board_id,
-                                                label: currentBoard?.board_name,
-                                            },
-                                        },
+                    {/* 主內容區 */}
+                    <div style={{ display: "flex", gap: "12px" }}>
+                        <div className={styles.discussionPageLayout}>
+                            <BoardSideBar
+                                itemData={courseBoardData}
+                                handleAddBoard={handleAddBoard}
+                                handleEditBoard={handleEditBoard}
+                            />
+                        </div>
+
+                        <div className={styles["main-container"]}>
+                            {param === "home" || param == null ? (
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "flex-start",
+                                        height: "100%",
+                                        paddingTop: "150px",
                                     }}
-                                    title="新增貼文"
                                 >
-                                    <LuPlus />
-                                </Link>
-                            </div>
-                        )}
+                                    <DiscussionBoardInitContent />
+                                    <Link
+                                        to="/post-edit/new"
+                                        className={styles.fab}
+                                        state={{ data: courseBoardData }}
+                                        title="新增貼文"
+                                    >
+                                        <LuPlus />
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="flex">
+                                    <DiscussionBoardContent
+                                        overviewPosts={overviewPostData}
+                                        courseName={currentCourse?.course_name}
+                                        boardName={currentBoard?.board_name}
+                                    />
+                                    <Link
+                                        to="/post-edit/new"
+                                        className={styles.fab}
+                                        state={{
+                                            data: courseBoardData,
+                                            current: {
+                                                course: {
+                                                    value: currentCourse?.course_id,
+                                                    label: currentCourse?.course_name,
+                                                },
+                                                board: {
+                                                    value: currentBoard?.board_id,
+                                                    label: currentBoard?.board_name,
+                                                },
+                                            },
+                                        }}
+                                        title="新增貼文"
+                                    >
+                                        <LuPlus />
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                {/* Modal 區 */}
-                {showCreatePopup && (
-                    <CreateDiscussionBoardModal
-                        courseId={currentCourse?.course_id}
-                        userId={userIdRef.current}
-                        onClose={() => {
-                            setShowCreatePopup(false);
-                            fetchCourseBoards();
-                        }}
-                    />
-                )}
-                {showEditPopup && (
-                    <EditDiscussionBoardModal
-                        boardId={currentBoard?.board_id}
-                        onClose={() => {
-                            setShowEditPopup(false);
-                            fetchCourseBoards();
-                        }}
-                    />
-                )}
-            </div>
+                    {/* Modal 區 */}
+                    {showCreatePopup && (
+                        <CreateDiscussionBoardModal
+                            courseId={currentCourse?.course_id}
+                            userId={userIdRef.current}
+                            onClose={() => {
+                                setShowCreatePopup(false);
+                                fetchCourseBoards();
+                            }}
+                        />
+                    )}
+                    {showEditPopup && (
+                        <EditDiscussionBoardModal
+                            boardId={currentBoard?.board_id}
+                            onClose={() => {
+                                setShowEditPopup(false);
+                                fetchCourseBoards();
+                            }}
+                        />
+                    )}
+                </div>
+            )}
         </div>
     );
 }
