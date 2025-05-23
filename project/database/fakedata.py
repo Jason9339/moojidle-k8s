@@ -18,6 +18,8 @@ MAT_NUM = 0
 ASSIGNMENT_NUM = 0
 SUBMITTED_ASSIGNMENT_NUM = 0
 POST_NUM = 0
+NOTIFICATION_NUM = 0
+NOTIFIED_NUM = 0
 MAIL_NUM = 0
 
 def seq_date(index=0, index_time=0):
@@ -144,7 +146,6 @@ def generate_announcements(user_count=15, course_count=5, n=15):
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
             "course_id": random.randint(1, course_count),  # Random course the announcement belongs to
-            "is_system_announcement": False
         })
         global ANNOUNCEMENT_NUM
         ANNOUNCEMENT_NUM += 1
@@ -530,6 +531,42 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
             POST_NUM += 1
     return posts
 
+# # # Generate notification
+def generate_notification():
+    notification = []
+    n_id = 1
+
+    notification.append({
+        "n_id": n_id,
+        "event_id": 1,
+        "event_category": "course",
+        "context": "Successfully enrolled in a course",
+        "notified_date": add_ISO_to_string(seq_date(1))
+    })
+
+    n_id += 1
+    global NOTIFICATION_NUM
+    NOTIFICATION_NUM += 1
+
+    return notification
+
+# # # Generate notification
+def generate_notified(user_count=15):
+    notified = []
+    n_id = 1
+
+    for user_id in range(1, user_count + 1):
+        notified.append({
+            "n_id": n_id,
+            "user_id": user_id,
+            "is_read": False
+        })
+
+        global NOTIFIED_NUM
+        NOTIFIED_NUM += 1
+
+    return notified
+
 # # # Generate mailbox data
 def generate_mailbox(users, max_messages_per_user=10):
     """Generate fake data for the mailbox collection."""
@@ -576,6 +613,8 @@ def write_seed_file():
     posts = generate_posts(discussion_boards, users)
     custom_tags = generate_custom_tags(len(users))  # Generate custom tags
     course_tags = generate_course_tags(role_tracker=role_tracker)  # Generate course tags
+    notification = generate_notification()
+    notified = generate_notified()
     mailboxes = generate_mailbox(users)  # Generate mailbox data
 
     seed_data = {
@@ -593,6 +632,8 @@ def write_seed_file():
         "post": posts,
         "custom_tag": custom_tags,
         "course_tag": course_tags,
+        "notification": notification,
+        "notified": notified,
         "mailbox": mailboxes  # Add mailbox data
     }
 
@@ -630,6 +671,8 @@ def write_seed_file():
             "exams": EXAM_NUM,
             "mailbox": MAIL_NUM,
             "materials": MAT_NUM,
+            "notification": NOTIFICATION_NUM,
+            "notified": NOTIFIED_NUM,
             "post": POST_NUM,
             "study_in": STUDYING_IN,
             "submitted_ass": SUBMITTED_ASSIGNMENT_NUM,

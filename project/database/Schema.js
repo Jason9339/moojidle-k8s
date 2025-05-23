@@ -97,23 +97,14 @@ db.createCollection("announcement", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["a_id", "create_date", "announce_date", "context", "user_id", "course_id", "is_system_announcement"],
+            required: ["a_id", "create_date", "announce_date", "context", "user_id", "course_id"],
             properties: {
                 a_id: { bsonType: "int" },
                 create_date: { bsonType: "date" },
                 announce_date: { bsonType: "date" },
                 context: { bsonType: "string" },
                 user_id: { bsonType: "int" },
-                course_id: { bsonType: "int"},
-                is_system_announcement: { bsonType: "bool" },
-                source: {
-                    bsonType: "object",
-                    properties: {
-                        category: { bsonType: "string" },
-                        id: { bsonType: "int" }
-                    },
-                    required: ["category", "id"]
-                }
+                course_id: { bsonType: "int"}
             }
         }
     }
@@ -388,6 +379,36 @@ db.createCollection("post", {
                     },
                     description: "Tags associated with the post (optional)"
                 }
+            }
+        }
+    }
+});
+
+db.createCollection("notification", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["n_id", "event_id", "event_category", "context", "notified_date"],
+            properties: {
+                n_id: { bsonType: "int" },
+                event_id: { bsonType: "int" },
+                event_category: { bsonType: "string" },
+                context: { bsonType: "string" },
+                notified_date: { bsonType: "date" }
+            }
+        }
+    }
+});
+
+db.createCollection("notified", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["user_id", "n_id", "is_read"],
+            properties: {
+                user_id: { bsonType: "int" },
+                n_id: { bsonType: "int" },
+                is_read: { bsonType: "bool" }
             }
         }
     }
