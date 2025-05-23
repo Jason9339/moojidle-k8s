@@ -9,7 +9,6 @@ export default function CourseLayout() {
 	const navigate = useNavigate();
 	const [role, setRole] = useState(null);
 	const [course, setCourse] = useState(null);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -34,40 +33,43 @@ export default function CourseLayout() {
 			} catch (err) {
 				console.error("載入課程/角色失敗", err);
 				navigate("/dashboard");
-			} finally {
-				setLoading(false);
 			}
 		};
 
 		fetchData();
 	}, [courseId]);
 
-	if (loading) return <div>載入中...</div>;
-
 	return (
 		<div className={styles["app-layout"]}>
 			<LeftBar />
-			<div className={styles["course-detail-container"]}>
-				<div className={styles["course-header"]}>
-					<span className={styles["course-title"]} title={course.course_name}>
-						{course.course_name}
-					</span>
-					<span>{courseId}</span>
-				</div>
+			{!course || !role ? (
+				<div
+					className={styles["course-detail-container"]}
+					style={{ backgroundColor: "#eff2f5", flex: 1 }}
+				/>
+			) : (
+				<div className={styles["course-detail-container"]}>
+					<div className={styles["course-header"]}>
+						<span className={styles["course-title"]} title={course.course_name}>
+							{course.course_name}
+						</span>
+						<span>{courseId}</span>
+					</div>
 
-				<div className={styles["tab-menu"]}>
-					<NavLink to="" end className={({ isActive }) => isActive ? styles.active : ""}>課程</NavLink>
-					<NavLink to="grade" className={({ isActive }) => isActive ? styles.active : ""}>成績</NavLink>
-					<NavLink to="assignment" className={({ isActive }) => isActive ? styles.active : ""}>作業</NavLink>
-					<NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
-					<NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink>
-					<NavLink to="announcement" className={({ isActive }) => isActive ? styles.active : ""}>公告</NavLink>
-					<NavLink to="members" className={({ isActive }) => isActive ? styles.active : ""}>成員</NavLink>
-				</div>
+					<div className={styles["tab-menu"]}>
+						<NavLink to="" end className={({ isActive }) => isActive ? styles.active : ""}>課程</NavLink>
+						<NavLink to="grade" className={({ isActive }) => isActive ? styles.active : ""}>成績</NavLink>
+						<NavLink to="assignment" className={({ isActive }) => isActive ? styles.active : ""}>作業</NavLink>
+						<NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
+						<NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink>
+						<NavLink to="announcement" className={({ isActive }) => isActive ? styles.active : ""}>公告</NavLink>
+						<NavLink to="members" className={({ isActive }) => isActive ? styles.active : ""}>成員</NavLink>
+					</div>
 
-				{/* 將角色與課程資訊傳給子頁，課程資訊如果不需要之後可以刪掉(TODO) */}
-				<Outlet context={{ role, course }} />
-			</div>
+					{/* 將角色與課程資訊傳給子頁，課程資訊如果不需要之後可以刪掉(TODO) */}
+					<Outlet context={{ role, course }} />
+				</div>
+			)}
 		</div>
 	);
 }
