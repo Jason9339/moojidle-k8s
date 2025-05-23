@@ -18,11 +18,6 @@
 .announcement-item {
     border-bottom: 1px solid #ddd;
     padding: 16px 0;
-    display: flex;
-    /* flex-direction: column; Stack content and posted date */
-    justify-content: space-between;
-    align-items: flex-start;
-    /* Align items to the center vertically */
 }
 
 .announcement-title {
@@ -84,7 +79,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    /* align-self: flex-end; Aligns the button to the right */
+    align-self: flex-end;
     margin-top: 0px;
     /* change the margin to 0 */
     white-space: nowrap; /* Prevent text from wrapping */
@@ -173,4 +168,15 @@
 
 .character-counter.limit {
     color: red;
+}
+
+.announcement-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.announcement-left {
+    flex-grow: 1;
 }
