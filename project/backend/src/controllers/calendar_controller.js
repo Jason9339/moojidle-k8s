@@ -2,6 +2,7 @@ import {
     FindStudyInCourseIdsByUserId,
     FindTeachInCourseIdsByUserId,
     FindAssistInCourseIdsByUserId,
+    FindCourseById,
 } from "#src/services/course_service.js";
 
 import { FindExamsByCourseId } from "#src/services/exam_service.js";
@@ -11,39 +12,42 @@ async function GetCalendarEvents(req, res) {
 
     try {
         const user_id = parseInt(req.params.userId);
-        const study_in = await FindStudyInCourseIdsByUserId(user_id);
-        const teach_in = await FindTeachInCourseIdsByUserId(user_id);
-        const assist_in = await FindAssistInCourseIdsByUserId(user_id);
+        const [study_in, teach_in, assist_in] = await Promise.all([
+            FindStudyInCourseIdsByUserId(user_id),
+            FindTeachInCourseIdsByUserId(user_id),
+            FindAssistInCourseIdsByUserId(user_id),
+        ]);
 
         const courseIds = [study_in, teach_in, assist_in]
             .flat()
             .map(obj => obj.course_id);
 
-
-        let assignments = await Promise.all(courseIds.map(async (id) => {
-            const data = await FindAssignmentsByCourseId(id);
-            return data.map((ass) => (
-                { title: ass.ass_name, start: ass.start_date, end: ass.end_date }
-            ))
-
-        }));
-
-        let exams = await Promise.all(courseIds.map(async (id) => {
-            const data = await FindExamsByCourseId(id);
-            return data.map((exam) => (
-
-                // FIX exam_date should be end_date.
-                { title: exam.exam_name, start: exam.start_date, end: exam.exam_date }
-            ))
-
-        }));
-
-        exams = exams.flat();
-        assignments = assignments.flat();
-
-        const result = [...exams, ...assignments];
+        const result = [];
+        for (const id of courseIds) {
+            const { name, course_id, color } = await FindCourseById(id);
+            const assData = await FindAssignmentsByCourseId(id);
+            const assEvents = assData.map(ass => ({
+                title: ass.ass_name,
+                start: ass.start_date,
+                end: ass.end_date,
+            }));
+            const examData = await FindExamsByCourseId(id);
+            const examEvents = examData.map(exam => ({
+                title: exam.exam_name,
+                start: exam.start_date,
+                end: exam.exam_date,   // FIX: will be end_date after DB fix 
+            }));
+            result.push({
+                name,
+                course_id,
+                color,
+                events: [...assEvents, ...examEvents],
+            });
+        }
+        console.log("result:", result);
 
         res.status(200).send(result);
+
 
     }
     catch (e) {
