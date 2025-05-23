@@ -91,7 +91,7 @@ function AnnouncementsPage() {
         }
     };
 
-    const handleEdit = async () => {
+    const handleEditAnnouncement = async () => {
         if (!newAnnouncementContext.trim()) return alert("內容不能為空");
         if (new Date(newAnnounceDate) > new Date()) {
             alert("公告時間在未來，將延後顯示");
