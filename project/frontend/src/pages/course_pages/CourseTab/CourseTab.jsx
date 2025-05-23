@@ -98,7 +98,9 @@ export default function CourseInfoPage() {
         setIsEditMode(!isEditMode);
     };
 
-    if (loading) return <div className={styles["loading"]}>載入中...</div>;
+    if (loading) {
+        return <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />;
+    }
 
     return (
         <div>

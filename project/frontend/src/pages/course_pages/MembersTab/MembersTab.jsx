@@ -123,7 +123,7 @@ export default function MembersPage() {
             <div className={styles.inviteCodeBox}>
                 <strong>課程邀請碼：</strong> <code>{code}</code>
             </div>
-
+    
             {isTeacher && (
                 <div className={styles.addStudentSection}>
                     <button className={styles.addButton} onClick={() => setShowAddForm(prev => !prev)}>
@@ -133,28 +133,55 @@ export default function MembersPage() {
                         <form className={styles.addStudentForm} onSubmit={handleAddStudent}>
                             <div className={styles.formGroup}>
                                 <label htmlFor="userId">User ID:</label>
-                                <input type="text" name="userId" value={newStudent.userId} onChange={e => setNewStudent(prev => ({ ...prev, userId: e.target.value }))} />
+                                <input
+                                    type="text"
+                                    name="userId"
+                                    value={newStudent.userId}
+                                    onChange={e =>
+                                        setNewStudent(prev => ({
+                                            ...prev,
+                                            userId: e.target.value,
+                                        }))
+                                    }
+                                />
                             </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="studentId">學號:</label>
-                                <input type="text" name="studentId" value={newStudent.studentId} onChange={e => setNewStudent(prev => ({ ...prev, studentId: e.target.value }))} />
+                                <input
+                                    type="text"
+                                    name="studentId"
+                                    value={newStudent.studentId}
+                                    onChange={e =>
+                                        setNewStudent(prev => ({
+                                            ...prev,
+                                            studentId: e.target.value,
+                                        }))
+                                    }
+                                />
                             </div>
-                            <button type="submit" className={styles.submitButton}>加入學生</button>
+                            <button type="submit" className={styles.submitButton}>
+                                加入學生
+                            </button>
                         </form>
                     )}
                 </div>
             )}
-
-            {loading && <p className={styles.loading}>載入中...</p>}
-            {error && <p className={styles.error}>{error}</p>}
-
-            {!loading && !error && (
+    
+            {(loading || !role) ? (
+                <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />
+            ) : (
                 <>
-                    {renderTable("老師", members.teachers)}
-                    {renderTable("助教", members.assistants, false, isTeacher)}
-                    {renderTable("學生", members.students?.filter(s => !members.assistants?.some(a => a.user_id === s.user_id)), true, isTeacher)}
+                    {error && <p className={styles.error}>{error}</p>}
+                    {!error && (
+                        <>
+                            {renderTable("老師", members.teachers)}
+                            {renderTable("助教", members.assistants, false, isTeacher)}
+                            {renderTable("學生", members.students?.filter(s => !members.assistants?.some(a => a.user_id === s.user_id)), true, isTeacher)}
+                        </>
+                    )}
                 </>
             )}
         </div>
     );
+    
 }

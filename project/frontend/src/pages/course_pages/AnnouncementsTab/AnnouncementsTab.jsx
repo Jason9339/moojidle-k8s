@@ -117,7 +117,9 @@ function AnnouncementsPage() {
         );
     };
 
-    if (loading) return <div>Loading announcements...</div>;
+    if (loading || !role) {
+        return <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />;
+    }
     if (error) return <div>{error}</div>;
 
     return (
