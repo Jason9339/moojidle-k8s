@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useOutletContext } from "react-router-dom";
 import styles from "./AnnouncementsTab.module.css";
+
 import {
     GetAnnouncements,
     CreateAnnouncement,
     EditAnnouncement,
 } from "@/services/AnnouncementApi.js";
 
-import {
-    CanUserEditAnnouncements
-} from "@/services/CourseApi";
+function AnnouncementsPage() {
+    const { courseId } = useParams();
+    const { role } = useOutletContext();
+    const currentUserId = JSON.parse(localStorage.getItem("user"))?.user_id;
+    const canEdit = role?.isTeacher || role?.isAssistant;
 
-function AnnouncementsTab({ courseId, currentUserId }) {
     const [announcements, setAnnouncements] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
@@ -21,7 +24,6 @@ function AnnouncementsTab({ courseId, currentUserId }) {
     const [newAnnounceDate, setNewAnnounceDate] = useState(
         new Date().toISOString()
     );
-    const [canEdit, setCanEdit] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
     useEffect(() => {
@@ -37,56 +39,31 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                 setLoading(false);
             }
         };
-
-        const checkEditPermissions = async () => {
-            try {
-                const editPermission = await CanUserEditAnnouncements(
-                    currentUserId,
-                    courseId
-                );
-                setCanEdit(editPermission);
-            } catch (err) {
-                console.error("Failed to check edit permissions:", err);
-                setCanEdit(false);
-            }
-        };
-
         fetchAnnouncements();
-        checkEditPermissions();
-    }, [courseId, currentUserId]);
+    }, [courseId]);
 
-    const filteredAnnouncements = announcements.filter((announcement) =>
-        announcement.context.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredAnnouncements = announcements.filter((a) =>
+        a.context.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    if (loading) {
-        return <div>Loading announcements...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
         setNewAnnounceDate(new Date().toISOString());
     };
-
     const closeCreateModal = () => {
         setIsCreateModalOpen(false);
         setNewAnnouncementContext("");
         setNewAnnounceDate(new Date().toISOString());
     };
 
-    const openEditModal = (announcement) => {
-        setSelectedAnnouncement(announcement);
-        setNewAnnouncementContext(announcement.context);
-        // Ensure the date is correctly formatted for the datetime-local input
-        const announceDate = new Date(announcement.announce_date);
-        setNewAnnounceDate(announceDate.toISOString().slice(0, 16));
+    const openEditModal = (a) => {
+        setSelectedAnnouncement(a);
+        setNewAnnouncementContext(a.context);
+        setNewAnnounceDate(
+            new Date(a.announce_date).toISOString().slice(0, 16)
+        );
         setIsEditModalOpen(true);
     };
-
     const closeEditModal = () => {
         setIsEditModalOpen(false);
         setSelectedAnnouncement(null);
@@ -94,15 +71,10 @@ function AnnouncementsTab({ courseId, currentUserId }) {
         setNewAnnounceDate(new Date().toISOString());
     };
 
-    const handleCreateAnnouncement = async () => {
-        if (!newAnnouncementContext.trim()) {
-            alert("Announcement context cannot be blank.");
-            return;
-        }
-        const now = new Date();
-        const announceDate = new Date(newAnnounceDate);
-        if (announceDate > now) {
-            alert("公告時間在未來，公告將於該時間才會顯示");
+    const handleCreate = async () => {
+        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (new Date(newAnnounceDate) > new Date()) {
+            alert("公告時間在未來，將延後顯示");
         }
         try {
             await CreateAnnouncement(
@@ -111,25 +83,18 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                 currentUserId,
                 newAnnounceDate
             );
-            // Refresh announcements after creating
-            const data = await GetAnnouncements(courseId);
-            setAnnouncements(data);
+            setAnnouncements(await GetAnnouncements(courseId));
             closeCreateModal();
         } catch (err) {
-            setError("Failed to create announcement.");
+            setError("新增失敗");
             console.error(err);
         }
     };
 
     const handleEditAnnouncement = async () => {
-        if (!newAnnouncementContext.trim()) {
-            alert("Announcement context cannot be blank.");
-            return;
-        }
-        const now = new Date();
-        const announceDate = new Date(newAnnounceDate);
-        if (announceDate > now) {
-            alert("公告時間在未來，公告將於該時間才會顯示");
+        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (new Date(newAnnounceDate) > new Date()) {
+            alert("公告時間在未來，將延後顯示");
         }
         try {
             await EditAnnouncement(
@@ -137,9 +102,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                 newAnnouncementContext,
                 newAnnounceDate
             );
-            // Refresh announcements after editing
-            const data = await GetAnnouncements(courseId);
-            setAnnouncements(data);
+            setAnnouncements(await GetAnnouncements(courseId));
             closeEditModal();
         } catch (err) {
             setError("Failed to edit announcement.");
@@ -147,19 +110,17 @@ function AnnouncementsTab({ courseId, currentUserId }) {
         }
     };
 
-    // Character limit for announcement context
-    const MAX_CONTEXT_LENGTH = 2500;
-    const charsLeft = MAX_CONTEXT_LENGTH - newAnnouncementContext.length;
-
-    // Handler for textarea input with character limit
     const handleContextChange = (e) => {
         const value = e.target.value;
-        if (value.length <= MAX_CONTEXT_LENGTH) {
-            setNewAnnouncementContext(value);
-        } else {
-            setNewAnnouncementContext(value.slice(0, MAX_CONTEXT_LENGTH));
-        }
+        setNewAnnouncementContext(
+            value.length <= 2500 ? value : value.slice(0, 2500)
+        );
     };
+
+    if (loading || !role) {
+        return <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />;
+    }
+    if (error) return <div>{error}</div>;
 
     return (
         <div className={styles["announcements-tab"]}>
@@ -185,36 +146,19 @@ function AnnouncementsTab({ courseId, currentUserId }) {
             </div>
 
             <div className={styles["announcements-list"]}>
-                {filteredAnnouncements.map((announcement) => (
-                    <div
-                        key={announcement.a_id}
-                        className={styles["announcement-item"]}
-                    >
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                width: "100%",
-                            }}
-                        >
-                            <div>
-                                <p className={styles["announcement-content"]}>
-                                    {announcement.context}
-                                </p>
+                {filteredAnnouncements.map((a) => (
+                    <div key={a.a_id} className={styles["announcement-item"]}>
+                        <div className={styles["announcement-inner"]}>
+                            <div className={styles["announcement-left"]}>
+                                <p className={styles["announcement-content"]}>{a.context}</p>
                                 <p className={styles["announcement-posted"]}>
-                                    Posted on:{" "}
-                                    {new Date(
-                                        announcement.create_date
-                                    ).toLocaleString()}
+                                    Posted on: {new Date(a.create_date).toLocaleString()}
                                 </p>
                             </div>
                             {canEdit && (
                                 <button
-                                    className={
-                                        styles["edit-announcement-button"]
-                                    }
-                                    onClick={() => openEditModal(announcement)}
+                                    className={styles["edit-announcement-button"]}
+                                    onClick={() => openEditModal(a)}
                                 >
                                     編輯公告
                                 </button>
@@ -224,6 +168,7 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                 ))}
             </div>
 
+            {/* Create Modal */}
             {isCreateModalOpen && (
                 <div className={styles["modal"]}>
                     <div className={styles["modal-content"]}>
@@ -248,34 +193,30 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
+                                onChange={handleContextChange}
                                 maxLength={2500}
-                                onChange={(e) => {
-                                    if (e.target.value.length <= 2500) {
-                                        setNewAnnouncementContext(e.target.value);
-                                    }
-                                }}
                             />
                         </label>
                         <div
                             className={
                                 styles["character-counter"] +
                                 (2500 - newAnnouncementContext.length === 0
-                                    ? " " + styles["limit"]
+                                    ? ` ${styles["limit"]}`
                                     : "")
                             }
                         >
-                            character left: {2500 - newAnnouncementContext.length}
+                            character left:{" "}
+                            {2500 - newAnnouncementContext.length}
                         </div>
                         <div className={styles["modal-actions"]}>
-                            <button onClick={handleCreateAnnouncement}>
-                                Create
-                            </button>
+                            <button onClick={handleCreate}>Create</button>
                             <button onClick={closeCreateModal}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Edit Modal */}
             {isEditModalOpen && (
                 <div className={styles["modal"]}>
                     <div className={styles["modal-content"]}>
@@ -300,23 +241,20 @@ function AnnouncementsTab({ courseId, currentUserId }) {
                             Context:
                             <textarea
                                 value={newAnnouncementContext}
+                                onChange={handleContextChange}
                                 maxLength={2500}
-                                onChange={(e) => {
-                                    if (e.target.value.length <= 2500) {
-                                        setNewAnnouncementContext(e.target.value);
-                                    }
-                                }}
                             />
                         </label>
                         <div
                             className={
                                 styles["character-counter"] +
                                 (2500 - newAnnouncementContext.length === 0
-                                    ? " " + styles["limit"]
+                                    ? ` ${styles["limit"]}`
                                     : "")
                             }
                         >
-                            character left: {2500 - newAnnouncementContext.length}
+                            character left:{" "}
+                            {2500 - newAnnouncementContext.length}
                         </div>
                         <div className={styles["modal-actions"]}>
                             <button onClick={handleEditAnnouncement}>
@@ -331,4 +269,4 @@ function AnnouncementsTab({ courseId, currentUserId }) {
     );
 }
 
-export default AnnouncementsTab;
+export default AnnouncementsPage;
