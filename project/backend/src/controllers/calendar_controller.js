@@ -44,7 +44,6 @@ async function GetCalendarEvents(req, res) {
                 events: [...assEvents, ...examEvents],
             });
         }
-        console.log("result:", result);
 
         res.status(200).send(result);
 
