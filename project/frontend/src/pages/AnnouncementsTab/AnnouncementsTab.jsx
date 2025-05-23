@@ -146,26 +146,16 @@ function AnnouncementsPage() {
             <div className={styles["announcements-list"]}>
                 {filteredAnnouncements.map((a) => (
                     <div key={a.a_id} className={styles["announcement-item"]}>
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <div>
-                                <p className={styles["announcement-content"]}>
-                                    {a.context}
-                                </p>
+                        <div className={styles["announcement-inner"]}>
+                            <div className={styles["announcement-left"]}>
+                                <p className={styles["announcement-content"]}>{a.context}</p>
                                 <p className={styles["announcement-posted"]}>
-                                    Posted on:{" "}
-                                    {new Date(a.create_date).toLocaleString()}
+                                    Posted on: {new Date(a.create_date).toLocaleString()}
                                 </p>
                             </div>
                             {canEdit && (
                                 <button
-                                    className={
-                                        styles["edit-announcement-button"]
-                                    }
+                                    className={styles["edit-announcement-button"]}
                                     onClick={() => openEditModal(a)}
                                 >
                                     編輯公告
