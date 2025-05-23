@@ -18,7 +18,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/1.jpg",
     "email": "user1@example.com",
-    "pw": "hashed_password_1",
+    "pw": "pw_1",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -36,7 +36,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/2.jpg",
     "email": "user2@example.com",
-    "pw": "hashed_password_2",
+    "pw": "pw_2",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -58,7 +58,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/3.jpg",
     "email": "user3@example.com",
-    "pw": "hashed_password_3",
+    "pw": "pw_3",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -76,7 +76,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/4.jpg",
     "email": "user4@example.com",
-    "pw": "hashed_password_4",
+    "pw": "pw_4",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -94,7 +94,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/5.jpg",
     "email": "user5@example.com",
-    "pw": "hashed_password_5",
+    "pw": "pw_5",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -112,7 +112,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/6.jpg",
     "email": "user6@example.com",
-    "pw": "hashed_password_6",
+    "pw": "pw_6",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -130,7 +130,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/7.jpg",
     "email": "user7@example.com",
-    "pw": "hashed_password_7",
+    "pw": "pw_7",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -148,7 +148,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/8.jpg",
     "email": "user8@example.com",
-    "pw": "hashed_password_8",
+    "pw": "pw_8",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -162,7 +162,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/9.jpg",
     "email": "user9@example.com",
-    "pw": "hashed_password_9",
+    "pw": "pw_9",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -176,7 +176,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/10.jpg",
     "email": "user10@example.com",
-    "pw": "hashed_password_10",
+    "pw": "pw_10",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -198,7 +198,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/11.jpg",
     "email": "user11@example.com",
-    "pw": "hashed_password_11",
+    "pw": "pw_11",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -212,7 +212,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/12.jpg",
     "email": "user12@example.com",
-    "pw": "hashed_password_12",
+    "pw": "pw_12",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -234,7 +234,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/13.jpg",
     "email": "user13@example.com",
-    "pw": "hashed_password_13",
+    "pw": "pw_13",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -248,7 +248,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/14.jpg",
     "email": "user14@example.com",
-    "pw": "hashed_password_14",
+    "pw": "pw_14",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   },
   {
@@ -270,7 +270,7 @@ db.user.insertMany([
     ],
     "path_to_profile_pic": "/profiles/15.jpg",
     "email": "user15@example.com",
-    "pw": "hashed_password_15",
+    "pw": "pw_15",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
   }
 ]);

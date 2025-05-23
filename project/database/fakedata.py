@@ -55,7 +55,7 @@ def generate_users(n=15):
             "contact_ways": generate_contact_ways(),
             "path_to_profile_pic": f"/profiles/{i}.jpg",
             "email": f"user{i}@example.com",
-            "pw": f"hashed_password_{i}",
+            "pw": f"pw_{i}",
             "create_date": add_ISO_to_string(DATE.isoformat())
         })
     return users
