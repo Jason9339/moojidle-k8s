@@ -56,7 +56,7 @@ frontend-test:
     - npm ci
     - cd ../backend
     - npm ci
-    - npm run test:server &
+    - npm run dev:test &
     - cd ../frontend
     - echo "VITE_API_BASE_URL=http://localhost:3000" > .env
   script:
