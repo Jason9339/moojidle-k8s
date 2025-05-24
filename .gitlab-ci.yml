@@ -45,13 +45,13 @@ backend-test:
       echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
       apt-get update && apt-get install -y mongodb-mongosh
 
-      - echo "Waiting for MongoDB..."
-      - sleep 7
+    - echo "Waiting for MongoDB..."
+    - sleep 7
       
       # Load schema and seed data using mongosh
-      cd ../database
-      mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
-      cd ../backend
+    - cd ../database
+    - mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
+    - cd ../backend
   script:
     - npm run test
   artifacts:
@@ -74,13 +74,13 @@ frontend-test:
       echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
       apt-get update && apt-get install -y mongodb-mongosh
         
-      - echo "Waiting for MongoDB..."
-      - sleep 7
+    - echo "Waiting for MongoDB..."
+    - sleep 7
       
       # Load schema and seed data using mongosh
-      cd ../database
-      mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
-      cd ../backend
+    - cd ../database
+    - mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
+    - cd ../backend
     - npm run dev
     - echo "Waiting for backend to start..."
     - sleep 7
