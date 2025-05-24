@@ -44,6 +44,9 @@ backend-test:
       wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | apt-key add -
       echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
       apt-get update && apt-get install -y mongodb-mongosh
+
+      - echo "Waiting for MongoDB..."
+      - sleep 7
       
       # Load schema and seed data using mongosh
       cd ../database
@@ -70,6 +73,9 @@ frontend-test:
       wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | apt-key add -
       echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
       apt-get update && apt-get install -y mongodb-mongosh
+        
+      - echo "Waiting for MongoDB..."
+      - sleep 7
       
       # Load schema and seed data using mongosh
       cd ../database
