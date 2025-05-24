@@ -7,10 +7,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/integration/setup.js'],
+    setupFiles: ['./src/test/setup.js'],
     testTimeout: 30000, // 整合測試需要更長時間
     css: true,
-    include: ['src/test/integration/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    include: ['src/test/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',

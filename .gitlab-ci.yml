@@ -14,32 +14,10 @@ backend-unit-test:
         - npm ci
     script:
         - npm run test
-        - npm run test:coverage
-    artifacts:
-        reports:
-            cobertura: project/backend/coverage/cobertura-coverage.xml
-        paths:
-            - project/backend/coverage/
-        when: always
-        expire_in: 30 days
     cache:
         key: backend-$CI_COMMIT_REF_SLUG
         paths:
             - project/backend/node_modules/
-
-# 前端單元測試
-frontend-test:
-    stage: test
-    image: node:$NODE_VERSION
-    before_script:
-        - cd project/frontend
-        - npm ci
-    script:
-        - npm run test
-    cache:
-        key: frontend-$CI_COMMIT_REF_SLUG
-        paths:
-            - project/frontend/node_modules/
 
 # 前端整合測試
 frontend-integration-test:
@@ -47,7 +25,6 @@ frontend-integration-test:
     image: node:$NODE_VERSION
     needs:
         - backend-unit-test
-        - frontend-test
     variables:
         VITE_API_BASE_URL: "http://localhost:3000"
     before_script:
@@ -88,3 +65,4 @@ frontend-integration-test:
         when:
             - runner_system_failure
             - stuck_or_timeout_failure
+
