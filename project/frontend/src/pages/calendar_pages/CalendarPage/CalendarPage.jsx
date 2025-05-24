@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Calendar from "@/components/calendar_components/Calendar/Calendar";
 
@@ -10,6 +10,7 @@ import styles from "./CalendarPage.module.css";
 
 const CalendarPage = () => {
     const [events, setEvents] = useState([]);
+    const [legendItems, setLegendItems] = useState([]);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -17,33 +18,29 @@ const CalendarPage = () => {
             const data = await GetCalendarEventsByUserId(userId);
 
             const e = [];
+
+            // (Legend) For course variants record. 
+            const map = new Map();
             data.forEach(item => {
 
-                const eventsWithColor = item.events.map((event) => (
-                    { ...event, color: item.color }
-                ))
+                if (item?.name && item?.color && !map.has(item.name)) {
 
-                e.push(eventsWithColor);
+                    map.set(item.name, item.color)
+                }
+                item.events.forEach((event) => {
+                    e.push({ ...event, child: { name: event.title, color: item.color } });
+                })
+
             })
 
+            setLegendItems(Array.from(map, ([name, color]) => ({ name, color })))
             setEvents(e.flat());
         };
         fetchEvents();
     }, []);
 
-    // console.log("events:", events);
+    console.log("events:", events);
     // Extract unique legend items from event.child
-    const legendItems = useMemo(() => {
-        const map = new Map();
-        events.forEach(evt => {
-            // assume evt.child has fields: name and color
-            const { child } = evt;
-            if (child?.name && child?.color && !map.has(child.name)) {
-                map.set(child.name, child.color);
-            }
-        });
-        return Array.from(map, ([name, color]) => ({ name, color }));
-    }, [events]);
 
     return (
         <>
@@ -61,7 +58,7 @@ const CalendarPage = () => {
                         <ul className={styles.legendList}>
                             {legendItems.map(item => (
                                 <li key={item.name} className={styles.legendItem}>
-                                    <span
+                                    <div
                                         className={styles.legendColor}
                                         style={{ backgroundColor: item.color }}
                                     />

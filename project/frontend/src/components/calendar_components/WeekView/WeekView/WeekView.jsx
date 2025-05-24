@@ -44,7 +44,7 @@ function WeekTimeView({
             const widthPct = ((endClamped - startClamped) / totalMs) * 100
 
             // fill in evt missing data
-            if (!evt.color) evt.color = EVENT_DEFAULT_COLOR;
+            if (!evt.child.color) evt.child.color = EVENT_DEFAULT_COLOR;
             return { evt: evt, start: evtStart, leftPct, widthPct }
         });
 
@@ -102,7 +102,7 @@ function WeekTimeView({
                                 width: `${seg.widthPct}%`,
                                 top: top,
                                 height: EVENT_HEIGHT,
-                                backgroundColor: seg.evt.color
+                                backgroundColor: seg.evt.child.color
                             }}
                             onMouseEnter={(e) => {
                                 setShowTooltip(true);

@@ -19,3 +19,44 @@
   border: 1px solid #ddd;
   padding: 16px;
 }
+
+
+
+
+.legend {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.legendTitle {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.legendList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 0.875rem;
+  color: #333;
+}
+

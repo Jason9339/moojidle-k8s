@@ -11,7 +11,7 @@ import zhTW from 'date-fns/locale/zh-TW'
 const locales = { 'zh-TW': zhTW }
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales })
 
-const Calendar = ({ events }) => {
+const Calendar = ({ events, ...props }) => {
 
     const [date, setDate] = useState(new Date())
     const [view, setView] = useState('month');
@@ -40,6 +40,17 @@ const Calendar = ({ events }) => {
             components={{ toolbar: Toolbar }}
 
             dayLayoutAlgorithm="no-overlap"
+            eventPropGetter={event => {
+                const backgroundColor = event.child?.color || '#3174ad'
+                return {
+                    style: {
+                        backgroundColor,
+                        borderColor: backgroundColor,
+                        color: '#fff',
+                    }
+                }
+            }}
+            {...props}
         />
     );
 };
