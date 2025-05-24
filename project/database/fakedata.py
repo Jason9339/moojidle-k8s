@@ -18,11 +18,18 @@ MAT_NUM = 0
 ASSIGNMENT_NUM = 0
 SUBMITTED_ASSIGNMENT_NUM = 0
 POST_NUM = 0
+NOTIFICATION_NUM = 0
+NOTIFIED_NUM = 0
 MAIL_NUM = 0
 
-def seq_date(index=0):
+def seq_date(index=0, index_time=0):
     date = DATE
-    return (date + timedelta(weeks = index)).isoformat()
+    # Add weeks using index parameter
+    date = date + timedelta(weeks=index)
+    # Add hours using index_time parameter
+    date = date + timedelta(hours=index_time)
+    
+    return date.isoformat()
 
 def add_ISO_to_string(str):
     return 'ISODate(' + str + ')'
@@ -48,7 +55,7 @@ def generate_users(n=15):
             "contact_ways": generate_contact_ways(),
             "path_to_profile_pic": f"/profiles/{i}.jpg",
             "email": f"user{i}@example.com",
-            "pw": f"hashed_password_{i}",
+            "pw": f"pw_{i}",
             "create_date": add_ISO_to_string(DATE.isoformat())
         })
     return users
@@ -138,7 +145,7 @@ def generate_announcements(user_count=15, course_count=5, n=15):
             "announce_date": add_ISO_to_string(seq_date(i + 1)),
             "context": f"Announcement {i} content.",
             "user_id": random.randint(1, user_count),  # Random user who created the announcement
-            "course_id": random.randint(1, course_count)  # Random course the announcement belongs to
+            "course_id": random.randint(1, course_count),  # Random course the announcement belongs to
         })
         global ANNOUNCEMENT_NUM
         ANNOUNCEMENT_NUM += 1
@@ -247,9 +254,11 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
                 "in_course_id": course_id,
                 "create_by_user_id": create_by_user_id,
                 "exam_name": f"Exam {exam_id} for Course {course_id}",
-                "exam_date": add_ISO_to_string(seq_date(exam_index + 2)),
+                "start_date": add_ISO_to_string(seq_date(exam_index + 2)),
+                "end_date": add_ISO_to_string(seq_date(exam_index + 2, 3)),
                 "create_date": add_ISO_to_string(seq_date(exam_index)),
-                "start_date": add_ISO_to_string(seq_date(exam_index)),
+                "max_score": 100,
+                "percentage": 0.1,
                 "description": f"This is the description for Exam {exam_id}.",
                 "attachments": attachments
             })
@@ -370,6 +379,8 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
                 "create_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "start_date": add_ISO_to_string(seq_date(ass_index + 1)),
                 "end_date": add_ISO_to_string(seq_date(ass_index + 2)),
+                "max_score": 100,
+                "percentage": 0.1,
                 "description": f"This is the description for Assignment {assignment_id}.",
                 "attachments": attachments
             })
@@ -378,7 +389,7 @@ def generate_assignments(courses, teach_in, assist_in, max_assignments_per_cours
             ASSIGNMENT_NUM += 1
     return assignments
 
-def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, max_submissions_per_assignment=5):
+def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, max_submissions_per_assignment=5, max_attachments_per_assignment=3):
     """Generate fake data for submitted assignments"""
     submitted_assignments = []
     submission_id = 1  # Start submission IDs from 1
@@ -435,6 +446,16 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
 
             # Generate points (score)
             points = random.randint(0, 100) if graded_by_user_id else None
+            
+            # Generate attachments for the assignment
+            num_attachments = random.randint(0, max_attachments_per_assignment)  # 0 to max_attachments_per_assignment
+            attachments = [
+                {
+                    "filename": f"submitted_assignment_{submission_id}_file_{i + 1}.pdf",
+                    "url": f"http://example.com/assignments/course_{course_id}/assignment_{submission_id}_file_{i + 1}.pdf"
+                }
+                for i in range(num_attachments)
+            ]
 
             # Add the submission to the list
             submitted_assignments.append({
@@ -443,8 +464,9 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
                 "submit_by_user_id": submit_by_user_id,
                 "submit_user_course_tag": f"StudentTag_{submit_by_user_id}",
                 "submit_date": assignment["end_date"],
-                "points": points,
+                "score": points,
                 "graded_by_user_id": graded_by_user_id,
+                "attachments": attachments,
                 "description": f"This is the submission for Assignment {ass_id} by User {submit_by_user_id}."
             })
             submission_id += 1
@@ -509,6 +531,42 @@ def generate_posts(discussion_boards, users, max_posts_per_board=10):
             POST_NUM += 1
     return posts
 
+# # # Generate notification
+def generate_notification():
+    notification = []
+    n_id = 1
+
+    notification.append({
+        "n_id": n_id,
+        "event_id": 1,
+        "event_category": "course",
+        "context": "Successfully enrolled in a course",
+        "notified_date": add_ISO_to_string(seq_date(1))
+    })
+
+    n_id += 1
+    global NOTIFICATION_NUM
+    NOTIFICATION_NUM += 1
+
+    return notification
+
+# # # Generate notification
+def generate_notified(user_count=15):
+    notified = []
+    n_id = 1
+
+    for user_id in range(1, user_count + 1):
+        notified.append({
+            "n_id": n_id,
+            "user_id": user_id,
+            "is_read": False
+        })
+
+        global NOTIFIED_NUM
+        NOTIFIED_NUM += 1
+
+    return notified
+
 # # # Generate mailbox data
 def generate_mailbox(users, max_messages_per_user=10):
     """Generate fake data for the mailbox collection."""
@@ -555,6 +613,8 @@ def write_seed_file():
     posts = generate_posts(discussion_boards, users)
     custom_tags = generate_custom_tags(len(users))  # Generate custom tags
     course_tags = generate_course_tags(role_tracker=role_tracker)  # Generate course tags
+    notification = generate_notification()
+    notified = generate_notified()
     mailboxes = generate_mailbox(users)  # Generate mailbox data
 
     seed_data = {
@@ -572,6 +632,8 @@ def write_seed_file():
         "post": posts,
         "custom_tag": custom_tags,
         "course_tag": course_tags,
+        "notification": notification,
+        "notified": notified,
         "mailbox": mailboxes  # Add mailbox data
     }
 
@@ -609,6 +671,8 @@ def write_seed_file():
             "exams": EXAM_NUM,
             "mailbox": MAIL_NUM,
             "materials": MAT_NUM,
+            "notification": NOTIFICATION_NUM,
+            "notified": NOTIFIED_NUM,
             "post": POST_NUM,
             "study_in": STUDYING_IN,
             "submitted_ass": SUBMITTED_ASSIGNMENT_NUM,
