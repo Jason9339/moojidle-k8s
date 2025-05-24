@@ -4,7 +4,9 @@ import {
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword
+    UpdateUserPassword,
+    UpdateUserTags,
+    UpdateUserContactWay
 } from "#src/services/user_service.js";
 
 // Register a new user in the database
@@ -143,6 +145,58 @@ async function UpdatePassword(req, res) {
     }
 }
 
+
+async function UpdateData(req, res) {
+    const userId = req.params.id;
+    const { contactWays } = req.body;
+    if (!contactWays) {
+        return res.status(400).send({ message: "Contact ways are required" });
+    }
+
+    try {
+        // check if user exists
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        // update contact ways
+        const result = await UpdateUserContactWay(userId, contactWays);
+        if (result.modifiedCount > 0) {
+            res.status(200).send({ message: "Contact ways updated successfully" });
+        } else {
+            res.status(500).send({ message: "Failed to update contact ways" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
+async function UpdateTags(req, res) {
+    const userId = req.params.id;
+    const { tags } = req.body;
+
+    if (!tags) {
+        return res.status(400).send({ message: "Tags are required" });
+    }
+
+    try {
+        // check if user exists
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        // update tags
+        const result = await UpdateUserTags(userId, tags);
+        if (result.modifiedCount > 0) {
+            res.status(200).send({ message: "Tags updated successfully" });
+        } else {
+            res.status(500).send({ message: "Failed to update tags" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
 export {
     Register,
     Login,
@@ -150,6 +204,8 @@ export {
     GetUserData,
     GetUserTags,
     UpdatePassword,
+    UpdateTags,
+    UpdateData
 }
 
 

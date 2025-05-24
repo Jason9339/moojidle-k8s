@@ -122,6 +122,34 @@ async function UpdateUserPassword(userId, newPassword) {
     return result;
 }
 
+async function UpdateUserTags(userId, newTags) {
+    let result;
+    try {
+        result = await mongoose.connection.db.collection('custom_tag').updateOne(
+            { user_id: parseInt(userId) },
+            { $set: { user_tag: newTags } }
+        );
+    } catch (err) {
+        console.log(err);
+    }
+
+    return result;
+}
+
+async function UpdateUserContactWay(userId, newContactWay) {
+    let result;
+
+    try {
+        result = await mongoose.connection.db.collection('user').updateOne(
+            { user_id: parseInt(userId) },
+            { $set: { contact_ways: newContactWay } }
+        );
+    } catch (err) {
+        console.log(err);
+    }
+
+    return result;
+}
 
 export {
     RegisterUser,
@@ -130,4 +158,6 @@ export {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
+    UpdateUserTags,
+    UpdateUserContactWay
 }
