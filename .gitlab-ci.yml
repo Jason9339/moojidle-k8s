@@ -1,0 +1,97 @@
+stages:
+  - test
+
+variables:
+  # MongoDB configuration
+  MONGODB_URI: "mongodb://mongo/moojidle"
+  NODE_ENV: test
+
+# Define conditions for automated and manual pipelines
+.ci_conditions: &ci_conditions
+  rules:
+    - if: $CI_COMMIT_BRANCH == "ci-config"
+      when: always
+    
+    # # Automatically run on commits to main branch
+    # - if: $CI_COMMIT_BRANCH == "main"
+    #   when: always
+    #
+    # # Manual execution for merge requests (except certain branches)
+    # - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^fix-db/ && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^style-/
+    #   when: manual
+    #   allow_failure: false  # Pipeline succeeds even if this job is not run
+    #
+    # # Always allow manual triggering from web interface
+    # - if: $CI_PIPELINE_SOURCE == "web"
+    #   when: always
+    
+
+# Backend tests with MongoDB
+backend-test:
+  <<: *ci_conditions
+  stage: test
+  image: node:20.17.0
+  services:
+    - name: mongo:8.0.8
+      alias: mongo
+  
+  before_script:
+    - cd project
+    - cd backend
+    - npm ci
+    - |
+      # Install mongosh to load schema and seed data
+      wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | apt-key add -
+      echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+      apt-get update && apt-get install -y mongodb-mongosh
+      
+      # Load schema and seed data using mongosh
+      cd ../database
+      mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
+      cd ../backend
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - backend/test-reports/
+    expire_in: 1 week
+
+# Frontend tests
+frontend-test:
+  <<: *ci_conditions
+  stage: test
+  image: node:20.17.0
+  before_script:
+    - cd project
+    - cd frontend
+    - npm ci
+    - |
+      # Install mongosh to load schema and seed data
+      wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | apt-key add -
+      echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+      apt-get update && apt-get install -y mongodb-mongosh
+      
+      # Load schema and seed data using mongosh
+      cd ../database
+      mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
+      cd ../backend
+    - npm run dev
+    - echo "Waiting for backend to start..."
+    - sleep 7
+    - cd ../frontend
+    - echo "VITE_API_BASE_URL=http://localhost:3000" > .env
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - frontend/coverage/
+    expire_in: 1 week
+
+# Cache node_modules to speed up builds
+cache:
+  paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+    - database/node_modules/
+    - ~/.npm/
+
