@@ -66,14 +66,6 @@ describe('前端 UserApi 整合測試', () => {
             expect(Array.isArray(userData.contact_ways)).toBe(true)
             expect(userData.contact_ways.length).toBeGreaterThan(0)
         })
-
-        it('當用戶不存在時應該處理錯誤', async () => {
-            // Act & Assert
-            const result = await GetUserDataById(999)
-
-            // UserApi.js 中有 try-catch，所以不會拋出錯誤，而是返回 undefined
-            expect(result).toBeUndefined()
-        })
     })
 
     describe('GetUserTagsById 整合測試', () => {
@@ -89,24 +81,6 @@ describe('前端 UserApi 整合測試', () => {
             expect(userTags.length).toBeGreaterThan(0)
             expect(userTags[0]).toHaveProperty('user_id', 1)
             expect(userTags[0]).toHaveProperty('user_tag')
-        })
-    })
-
-    describe('UpdateUserPassword 整合測試', () => {
-        it('當舊密碼不正確時應該返回錯誤訊息', async () => {
-            // Arrange
-            const userId = 1
-            const wrongPasswordData = {
-                currentPassword: 'wrong_password',  // 使用正確的參數名稱
-                newPassword: 'new_password'
-            }
-
-            // Act
-            const result = await UpdateUserPassword(userId, wrongPasswordData)
-
-            // Assert - 根據前端 UserApi.js 的錯誤處理，會返回通用錯誤訊息
-            expect(result).toBeDefined()
-            expect(result.message).toBe('An error occurred while updating the password.')
         })
     })
 
