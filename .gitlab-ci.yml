@@ -17,8 +17,7 @@ backend-unit-test:
         - npm run test:coverage
     artifacts:
         reports:
-            coverage_format: cobertura
-            coverage: project/backend/coverage/cobertura-coverage.xml
+            cobertura: project/backend/coverage/cobertura-coverage.xml
         paths:
             - project/backend/coverage/
         when: always
