@@ -1,52 +1,22 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest'
 import {
-    waitForBackendReady,
-    resetBackendDatabase,
-    BACKEND_URL
+    WaitForBackendReady,
+    ResetBackendDatabase,
 } from './setup.js'
-import axios from 'axios'
 
-// 模擬 ApiClient 指向測試後端
-const testApiClient = axios.create({
-    baseURL: BACKEND_URL,
-    timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-})
-
-// 模擬 ApiClient
-vi.doMock('@/ApiClient.js', () => ({
-    default: testApiClient
-}))
-
-// 動態導入 UserApi（在模擬之後）
-const { GetUserDataById, GetUserTagsById, UpdateUserPassword } = await import('@/services/UserApi.js')
-
-// 額外的測試輔助 API 客戶端
-const helperApiClient = axios.create({
-    baseURL: BACKEND_URL,
-    timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-})
+import { GetUserDataById, GetUserTagsById } from '@/services/UserApi.js'
 
 describe('前端 UserApi 整合測試', () => {
     beforeAll(async () => {
         // 確認後端服務器連接
-        await waitForBackendReady()
+        await WaitForBackendReady()
 
         console.log('🎯 前端整合測試環境準備完成')
     })
 
     beforeEach(async () => {
         // 每個測試前重置後端資料庫
-        await resetBackendDatabase()
-
-        // 設置前端 API 客戶端指向測試後端
-        // 這裡模擬前端在測試環境中的 API 配置
-        global.process.env.VITE_API_BASE_URL = BACKEND_URL
+        await ResetBackendDatabase()
     })
 
     describe('GetUserDataById 整合測試', () => {
@@ -54,7 +24,7 @@ describe('前端 UserApi 整合測試', () => {
             // 這個測試使用後端預設的測試用戶
             const userId = 1
 
-            // Act - 使用前端 UserApi 調用
+            // Act
             const userData = await GetUserDataById(userId)
 
             // Assert
@@ -81,18 +51,6 @@ describe('前端 UserApi 整合測試', () => {
             expect(userTags.length).toBeGreaterThan(0)
             expect(userTags[0]).toHaveProperty('user_id', 1)
             expect(userTags[0]).toHaveProperty('user_tag')
-        })
-    })
-
-    describe('API 基礎設置測試', () => {
-        it('前端 API 客戶端應該正確配置', async () => {
-            // 檢查環境變數是否正確設置
-            expect(process.env.VITE_API_BASE_URL).toBe(BACKEND_URL)
-
-            // 測試直接 API 調用
-            const response = await helperApiClient.get('/health')
-            expect(response.status).toBe(200)
-            expect(response.data).toHaveProperty('status', 'ok')
         })
     })
 }) 
