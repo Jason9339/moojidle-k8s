@@ -43,8 +43,8 @@ describe('User Service', () => {
       expect(result).toBeDefined();
       expect(result.insertedId).toBeDefined();
       
-      // 驗證用戶是否真的被創建 - 在真實數據庫中，counter 從 15 開始
-      const createdUser = await FindOneUserById(16); // 應該是第16個用戶
+      // 使用登入來驗證用戶是否真的被創建
+      const createdUser = await LoginUser('newuser@example.com', 'newpassword123');
       expect(createdUser).toBeDefined();
       expect(createdUser.name).toBe('New User');
       expect(createdUser.email).toBe('newuser@example.com');

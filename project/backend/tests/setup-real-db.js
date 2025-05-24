@@ -24,12 +24,18 @@ global.beforeAll = async () => {
   // 清空測試數據庫（確保乾淨的測試環境）
   await mongoose.connection.dropDatabase();
   
-  console.log('開始載入 Schema 和 Seed 數據...');
+  console.log('開始載入 Schema...');
   
-  // 載入正式的 Schema 和 Seed 數據
-  await loadSchemaAndSeed();
+  // 只載入 Schema（不載入 Seed 數據）
+  await loadSchema();
   
-  console.log('Schema 和 Seed 數據載入完成');
+  console.log('Schema 載入完成');
+  console.log('準備測試環境...');
+  
+  // 初始化基本測試數據
+  await initializeTestData();
+  
+  console.log('測試環境準備完成');
 };
 
 global.afterAll = async () => {
@@ -40,17 +46,49 @@ global.afterAll = async () => {
 };
 
 global.beforeEach = async () => {
-  // 在真實數據庫測試中，每個測試前恢復關鍵測試數據
-  // 確保測試數據的一致性
-  await restoreTestData();
+  // 在真實數據庫測試中，確保基本測試數據存在
+  await ensureTestData();
 };
 
-// 恢復測試數據的關鍵部分
-async function restoreTestData() {
+// 初始化基本測試數據（只在 beforeAll 中調用一次）
+async function initializeTestData() {
   const db = mongoose.connection.db;
   
   try {
-    // 確保前兩個測試用戶存在（防止被刪除測試影響）
+    // 初始化 counter collection（按照原始 Schema 設計，單一文檔包含所有計數器）
+    const counterData = {
+      "announcement": 0,      // 沒有公告數據
+      "assignments": 0,       // 沒有作業數據
+      "assist_in": 0,         // 沒有助教關係數據
+      "course": 0,            // 沒有課程數據
+      "course_tag": 0,        // 沒有課程標籤數據
+      "custom_tag": 3,        // 我們會創建 3 個自定義標籤
+      "discussion_board": 0,  // 沒有討論板數據
+      "exams": 0,             // 沒有考試數據
+      "mailbox": 0,           // 沒有郵箱數據
+      "materials": 0,         // 沒有教材數據
+      "post": 0,              // 沒有貼文數據
+      "study_in": 0,          // 沒有學習關係數據
+      "submitted_ass": 0,     // 沒有提交作業數據
+      "teach_in": 0,          // 沒有教學關係數據
+      "user": 2               // 我們會創建 2 個用戶
+    };
+
+    await db.collection('counter').insertOne(counterData);
+
+    console.log('✓ 初始化 counter collection - 所有計數器已設置');
+    
+  } catch (error) {
+    console.error('初始化測試數據失敗:', error);
+  }
+}
+
+// 確保測試數據存在（在每個測試前調用）
+async function ensureTestData() {
+  const db = mongoose.connection.db;
+  
+  try {
+    // 確保基本測試用戶存在（用於測試依賴）
     const testUsers = [
       {
         user_id: 1,
@@ -103,7 +141,7 @@ async function restoreTestData() {
       );
     }
 
-    // 確保測試標籤存在
+    // 確保基本測試標籤存在
     const testTags = [
       { user_id: 1, user_tag: "User1's CustomTag_1" },
       { user_id: 2, user_tag: "User2's CustomTag_1" },
@@ -119,22 +157,7 @@ async function restoreTestData() {
     }
 
   } catch (error) {
-    console.error('恢復測試數據失敗:', error);
-  }
-}
-
-// 載入 Schema 和 Seed 數據
-async function loadSchemaAndSeed() {
-  try {
-    // 讀取並執行 Schema.js
-    await loadSchema();
-    
-    // 讀取並執行 Seed.js  
-    await loadSeed();
-    
-  } catch (error) {
-    console.error('載入 Schema/Seed 失敗:', error);
-    throw error;
+    console.error('確保測試數據失敗:', error);
   }
 }
 
@@ -149,116 +172,97 @@ async function loadSchema() {
   // 讀取 Schema.js 內容
   const schemaContent = fs.readFileSync(schemaPath, 'utf8');
   
-  // 將 MongoDB shell 腳本轉換為 Node.js 可執行的代碼
-  await executeMongoScript(schemaContent, 'Schema');
+  // 執行 Schema 腳本
+  await executeSchemaScript(schemaContent);
 }
 
-// 載入 Seed 數據
-async function loadSeed() {
-  const seedPath = path.resolve(process.cwd(), '../database/Seed.js');
-  
-  if (!fs.existsSync(seedPath)) {
-    throw new Error(`Seed 文件不存在: ${seedPath}`);
-  }
-  
-  // 讀取 Seed.js 內容
-  const seedContent = fs.readFileSync(seedPath, 'utf8');
-  
-  // 將 MongoDB shell 腳本轉換為 Node.js 可執行的代碼
-  await executeMongoScript(seedContent, 'Seed');
-}
-
-// 執行 MongoDB 腳本
-async function executeMongoScript(scriptContent, type) {
+// 執行 Schema 腳本
+async function executeSchemaScript(schemaContent) {
   const db = mongoose.connection.db;
   
   try {
-    if (type === 'Schema') {
-      await executeSchemaScript(scriptContent, db);
-    } else if (type === 'Seed') {
-      await executeSeedScript(scriptContent, db);
+    // 解析 createCollection 指令
+    const createCollectionRegex = /db\.createCollection\("([^"]+)",\s*({[^}]+})\s*\);/g;
+    let match;
+    
+    while ((match = createCollectionRegex.exec(schemaContent)) !== null) {
+      const collectionName = match[1];
+      const optionsStr = match[2];
+      
+      try {
+        // 解析選項對象
+        const options = eval(`(${optionsStr})`);
+        
+        // 創建 collection
+        await db.createCollection(collectionName, options);
+        console.log(`✓ 創建 collection: ${collectionName}`);
+        
+      } catch (error) {
+        console.warn(`⚠ 創建 collection ${collectionName} 失敗:`, error.message);
+        // 繼續執行其他 collections
+      }
     }
   } catch (error) {
-    console.error(`執行 ${type} 腳本失敗:`, error);
+    console.error('執行 Schema 腳本失敗:', error);
     throw error;
   }
 }
 
-// 執行 Schema 腳本
-async function executeSchemaScript(schemaContent, db) {
-  // 解析 createCollection 指令
-  const createCollectionRegex = /db\.createCollection\("([^"]+)",\s*({[^}]+})\s*\);/g;
-  let match;
+// 提供測試輔助函數：動態插入測試數據
+global.insertTestData = async (collectionName, data) => {
+  const db = mongoose.connection.db;
   
-  while ((match = createCollectionRegex.exec(schemaContent)) !== null) {
-    const collectionName = match[1];
-    const optionsStr = match[2];
-    
-    try {
-      // 解析選項對象
-      const options = eval(`(${optionsStr})`);
-      
-      // 創建 collection
-      await db.createCollection(collectionName, options);
-      console.log(`✓ 創建 collection: ${collectionName}`);
-      
-    } catch (error) {
-      console.warn(`⚠ 創建 collection ${collectionName} 失敗:`, error.message);
-      // 繼續執行其他 collections
-    }
-  }
-}
-
-// 執行 Seed 腳本
-async function executeSeedScript(seedContent, db) {
-  // 使用更強大的正則表達式來匹配多行的 insertMany
-  const insertManyRegex = /db\.([a-zA-Z_]+)\.insertMany\(\s*(\[[\s\S]*?\])\s*\);/g;
-  // 解析 insertOne 指令
-  const insertOneRegex = /db\.([a-zA-Z_]+)\.insertOne\(\s*({\s*[\s\S]*?\s*})\s*\);/g;
-  
-  let match;
-  
-  // 處理 insertMany 指令
-  while ((match = insertManyRegex.exec(seedContent)) !== null) {
-    const collectionName = match[1];
-    const dataStr = match[2];
-    
-    try {
-      // 處理 ISODate 函數
-      const processedDataStr = dataStr.replace(/ISODate\("([^"]+)"\)/g, 'new Date("$1")');
-      
-      // 解析數據數組
-      const data = eval(processedDataStr);
-      
-      // 插入數據
+  try {
+    if (Array.isArray(data)) {
       const result = await db.collection(collectionName).insertMany(data);
-      console.log(`✓ 插入 ${result.insertedCount} 筆數據到 ${collectionName}`);
-      
-    } catch (error) {
-      console.warn(`⚠ 插入數據到 ${collectionName} 失敗:`, error.message);
-      // 繼續執行其他 collections
-    }
-  }
-  
-  // 處理 insertOne 指令（主要是 counter）
-  while ((match = insertOneRegex.exec(seedContent)) !== null) {
-    const collectionName = match[1];
-    const dataStr = match[2];
-    
-    try {
-      // 解析數據對象
-      const data = eval(`(${dataStr})`);
-      
-      // 插入數據
+      return result.insertedIds;
+    } else {
       const result = await db.collection(collectionName).insertOne(data);
-      console.log(`✓ 插入 1 筆數據到 ${collectionName}`);
-      
-    } catch (error) {
-      console.warn(`⚠ 插入數據到 ${collectionName} 失敗:`, error.message);
-      // 繼續執行其他 collections
+      return result.insertedId;
     }
+  } catch (error) {
+    console.error(`插入測試數據到 ${collectionName} 失敗:`, error);
+    throw error;
   }
-}
+};
+
+// 提供測試輔助函數：清理特定 collection 的測試數據
+global.cleanTestData = async (collectionName, filter = {}) => {
+  const db = mongoose.connection.db;
+  
+  try {
+    const result = await db.collection(collectionName).deleteMany(filter);
+    return result.deletedCount;
+  } catch (error) {
+    console.error(`清理 ${collectionName} 測試數據失敗:`, error);
+    throw error;
+  }
+};
+
+// 提供測試輔助函數：獲取下一個自動遞增 ID
+global.getNextId = async (collectionName) => {
+  const db = mongoose.connection.db;
+  
+  try {
+    // 根據新的 counter 結構，直接更新對應的欄位
+    const updateField = {};
+    updateField[collectionName] = 1;
+    
+    const counter = await db.collection('counter').findOneAndUpdate(
+      {}, // 查找第一個（也是唯一的）counter 文檔
+      { $inc: updateField },
+      { 
+        returnDocument: 'after',
+        projection: { [collectionName]: 1 }
+      }
+    );
+    
+    return counter[collectionName];
+  } catch (error) {
+    console.error(`獲取 ${collectionName} 的下一個 ID 失敗:`, error);
+    throw error;
+  }
+};
 
 // Mock console methods to reduce noise in tests
 global.console = {
