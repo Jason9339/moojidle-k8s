@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./test/setup.js'],
     css: true,
     include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     exclude: [
@@ -15,7 +15,7 @@ export default defineConfig({
       '**/dist/**',
       '**/build/**',
       '**/coverage/**',
-      'src/test/integration/**'
+      'test/**'
     ]
   },
   resolve: {

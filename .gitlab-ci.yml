@@ -1,68 +1,62 @@
 stages:
-    - test
-    - integration-test
+  - test
+  - integration-test
 
 variables:
-    NODE_VERSION: "18"
+  NODE_VERSION: "18"
 
-# 後端單元測試
 backend-unit-test:
-    stage: test
-    image: node:$NODE_VERSION
-    before_script:
-        - cd project/backend
-        - npm ci
-    script:
-        - npm run test
-    cache:
-        key: backend-$CI_COMMIT_REF_SLUG
-        paths:
-            - project/backend/node_modules/
+  stage: test
+  image: node:$NODE_VERSION
+  before_script:
+    - cd project/backend
+    - npm ci
+  script:
+    - npm run test
+  cache:
+    key: backend-$CI_COMMIT_REF_SLUG
+    paths:
+      - project/backend/node_modules/
 
-# 前端整合測試
 frontend-integration-test:
-    stage: integration-test
-    image: node:$NODE_VERSION
-    needs:
-        - backend-unit-test
-    variables:
-        VITE_API_BASE_URL: "http://localhost:3000"
-    before_script:
-        - cd project/backend
-        - npm ci
-        - cd ../frontend
-        - npm ci
-        # 在背景啟動後端測試服務器
-        - cd ../backend
-        - echo "🚀 啟動後端測試服務器..."
-        - npm run test:server &
-        - BACKEND_PID=$!
-        - echo "後端服務器 PID: $BACKEND_PID"
-        - cd ../frontend
-        # 等待後端服務器啟動
-        - echo "⏳ 等待後端服務器準備就緒..."
-        - timeout 60 bash -c 'until curl -f http://localhost:3000/health; do echo "等待中..."; sleep 2; done'
-        - echo "✅ 後端服務器已就緒"
-    script:
-        - echo "🚀 開始前端整合測試"
-        - npm run test:integration
-        - echo "✅ 前端整合測試完成"
-    after_script:
-        # 清理後端服務器
-        - echo "🧹 關閉後端服務器..."
-        - kill $BACKEND_PID 2>/dev/null || true
-        - echo "✅ 後端服務器已關閉"
-    cache:
-        key:
-            - backend-$CI_COMMIT_REF_SLUG
-            - frontend-$CI_COMMIT_REF_SLUG
-        paths:
-            - project/backend/node_modules/
-            - project/frontend/node_modules/
-        policy: pull
-    retry:
-        max: 2
-        when:
-            - runner_system_failure
-            - stuck_or_timeout_failure
-
+  stage: integration-test
+  image: node:$NODE_VERSION
+  needs:
+    - backend-unit-test
+  variables:
+    VITE_API_BASE_URL: "http://localhost:3000"
+  before_script:
+    - cd project/backend
+    - npm ci
+    - cd ../frontend
+    - npm ci
+    - cd ../backend
+    - echo "Starting backend test server..."
+    - npm run test:server &
+    - BACKEND_PID=$!
+    - echo "Backend server PID: $BACKEND_PID"
+    - cd ../frontend
+    - echo "Waiting for backend server to be ready..."
+    - timeout 60 bash -c 'until curl -f http://localhost:3000/health; do echo "Waiting..."; sleep 2; done'
+    - echo "Backend server is ready"
+  script:
+    - echo "Running frontend integration tests"
+    - npm run test:integration
+    - echo "Frontend integration tests completed"
+  after_script:
+    - echo "Shutting down backend server..."
+    - kill $BACKEND_PID 2>/dev/null || true
+    - echo "Backend server shut down"
+  cache:
+    key: 
+      - backend-$CI_COMMIT_REF_SLUG
+      - frontend-$CI_COMMIT_REF_SLUG
+    paths:
+      - project/backend/node_modules/
+      - project/frontend/node_modules/
+    policy: pull
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure 
