@@ -8,9 +8,7 @@ export default defineConfig({
     testTimeout: 15000,
     setupFiles: ['./tests/setup.js'],
     include: [
-      'tests/services/*.test.js',
-      'tests/controllers/*.test.js', 
-      'tests/routes/*.test.js'
+      'tests/**/*.{test,spec}.{js,jsx,ts,tsx}'
     ],
     exclude: [
       '**/node_modules/**',

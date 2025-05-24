@@ -4,10 +4,17 @@ import { vi } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
+// for custom CONTANT SEED
+import {
+    CounterSeed,
+    UserSeed,
+    UserTagSeed,
+} from './seed.js';
+
 let mongoServer;
 
 // 全局測試設置
-global.beforeAll = async () => {
+global.beforeAll = async (test) => {
     console.log('🚀 啟動測試環境 (Memory + Schema 驗證)');
 
     // 創建內存中的 MongoDB 實例
@@ -19,12 +26,12 @@ global.beforeAll = async () => {
 
     // 載入 Schema 驗證
     console.log('📋 正在載入 Schema 驗證...');
-    await loadSchema();
+    await LoadSchema();
 
     // 初始化測試數據
-    await setupTestData();
+    await SetupTestData();
 
-    console.log('✅ 測試環境準備完成');
+    console.log('✅ 測試環境準備完成', test);
 };
 
 global.afterAll = async () => {
@@ -46,14 +53,14 @@ global.beforeEach = async () => {
     await new Promise(resolve => setTimeout(resolve, 5));
 
     // 重新初始化測試數據
-    await setupTestData();
+    await SetupTestData();
 
     // 再次添加小延遲確保數據插入完成
     await new Promise(resolve => setTimeout(resolve, 5));
 };
 
 // 載入 Schema（從 setup-real-db.js 移植）
-async function loadSchema() {
+async function LoadSchema() {
     const schemaPath = path.resolve(process.cwd(), '../database/Schema.js');
 
     if (!fs.existsSync(schemaPath)) {
@@ -67,7 +74,7 @@ async function loadSchema() {
         const schemaContent = fs.readFileSync(schemaPath, 'utf8');
 
         // 執行 Schema 腳本
-        await executeSchemaScript(schemaContent);
+        await ExecuteSchemaScript(schemaContent);
         console.log('✅ Schema 載入完成');
     } catch (error) {
         console.warn(`⚠️ Schema 載入失敗，將使用簡化模式:`, error.message);
@@ -75,7 +82,7 @@ async function loadSchema() {
 }
 
 // 執行 Schema 腳本
-async function executeSchemaScript(schemaContent) {
+async function ExecuteSchemaScript(schemaContent) {
     const db = mongoose.connection.db;
 
     try {
@@ -119,85 +126,10 @@ async function executeSchemaScript(schemaContent) {
 }
 
 // 初始化測試數據，與真實數據庫的 Seed.js 保持一致
-async function setupTestData() {
-    // 創建 counter collection，與 Seed.js 保持一致
-    await mongoose.connection.db.collection('counter').insertOne({
-        announcement: 15,
-        assignments: 13,
-        assist_in: 18,
-        course: 5,
-        course_tag: 47,
-        custom_tag: 29,
-        discussion_board: 10,
-        exams: 10,
-        mailbox: 60,
-        materials: 19,
-        post: 46,
-        study_in: 13,
-        submitted_ass: 31,
-        teach_in: 16,
-        user: 15
-    });
-
-    // 創建測試用戶數據，與 Seed.js 中的前兩個用戶保持一致
-    await mongoose.connection.db.collection('user').insertMany([
-        {
-            user_id: 1,
-            name: "User 1",
-            contact_ways: [
-                {
-                    approach: "phone",
-                    details: "555-5491"
-                },
-                {
-                    approach: "social_media",
-                    details: "@user49"
-                }
-            ],
-            path_to_profile_pic: "/profiles/1.jpg",
-            email: "user1@example.com",
-            pw: "hashed_password_1",
-            create_date: new Date("2025-01-01T00:00:00.000Z")
-        },
-        {
-            user_id: 2,
-            name: "User 2",
-            contact_ways: [
-                {
-                    approach: "social_media",
-                    details: "@user7"
-                },
-                {
-                    approach: "phone",
-                    details: "555-5864"
-                },
-                {
-                    approach: "email",
-                    details: "user76@example.com"
-                }
-            ],
-            path_to_profile_pic: "/profiles/2.jpg",
-            email: "user2@example.com",
-            pw: "hashed_password_2",
-            create_date: new Date("2025-01-01T00:00:00.000Z")
-        }
-    ]);
-
-    // 創建測試標籤數據，與 Seed.js 中的數據保持一致
-    await mongoose.connection.db.collection('custom_tag').insertMany([
-        {
-            user_id: 1,
-            user_tag: "User1's CustomTag_1"
-        },
-        {
-            user_id: 2,
-            user_tag: "User2's CustomTag_1"
-        },
-        {
-            user_id: 2,
-            user_tag: "User2's CustomTag_2"
-        }
-    ]);
+async function SetupTestData() {
+    await CounterSeed();
+    await UserSeed();
+    await UserTagSeed();    
 }
 
 // Mock console methods to reduce noise in tests
