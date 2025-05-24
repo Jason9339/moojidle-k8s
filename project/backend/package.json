@@ -7,7 +7,14 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:real-db": "vitest run --config vitest.config.real-db.js",
+    "test:real-db:watch": "vitest --config vitest.config.real-db.js",
+    "test:real-db:coverage": "vitest run --coverage --config vitest.config.real-db.js",
     "dev": "npx nodemon main.js"
   },
   "imports": {
@@ -22,6 +29,10 @@
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@vitest/ui": "^3.1.4",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1",
+    "vitest": "^3.1.4"
   }
 }

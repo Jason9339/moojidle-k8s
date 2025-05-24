@@ -31,15 +31,43 @@ async function CreateCourse(req, res) {
     try {
         const courseData = req.body;
 
+        // TDD 改進點 1: 更詳細的輸入驗證
         if (!courseData || Object.keys(courseData).length === 0) {
             return res.status(400).send({ message: "Lack of Course Data." });
         }
+        
+        /* TDD 改進建議：
+        // 驗證必填字段
+        if (!courseData.name) {
+            return res.status(400).send({ message: "Course name is required" });
+        }
+        
+        if (!courseData.userId) {
+            return res.status(400).send({ message: "User ID is required" });
+        }
+        
+        // 驗證用戶 ID 格式
+        const userId = parseInt(courseData.userId, 10);
+        if (isNaN(userId)) {
+            return res.status(400).send({ message: "Invalid user ID format" });
+        }
+        */
+        
         // console.log("courseData", courseData);
         const newCourse = await InsertCourse(courseData);
         const newTeachIn = await InsertTeachIn(courseData.userId, newCourse.course_id);
         res.status(201).send(newCourse); // 返回新增的課程物件
     } catch (error) {
         console.error("Failed to create course", error);
+        
+        // TDD 改進點 2: 更智能的錯誤處理
+        /* 建議改進：
+        // 區分不同類型的錯誤
+        if (error.message.includes('required') || error.message.includes('cannot be empty') || error.message.includes('too long')) {
+            return res.status(400).send({ message: error.message });
+        }
+        */
+        
         res.status(500).send({ message: "Failed to create course", error: error.message });
     }
 }
