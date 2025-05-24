@@ -18,112 +18,112 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vites
 // } from '#src/services/templatename_service.js';
 
 describe('TemplateName Service', () => {
-  beforeAll(global.beforeAll);
-  afterAll(global.afterAll);
-  beforeEach(global.beforeEach);
+    beforeAll(global.beforeAll);
+    afterAll(global.afterAll);
+    beforeEach(global.beforeEach);
 
-  describe('CreateTemplateName', () => {
-    it('應該成功創建新記錄', async () => {
-      // Arrange
-      const testData = {
-        // 填入測試數據
-        name: 'Test Name',
-        email: `test${Date.now()}@example.com`
-      };
+    describe('CreateTemplateName', () => {
+        it('應該成功創建新記錄', async () => {
+            // Arrange
+            const testData = {
+                // 填入測試數據
+                name: 'Test Name',
+                email: `test${Date.now()}@example.com`
+            };
 
-      // Act
-      const result = await CreateTemplateName(testData);
+            // Act
+            const result = await CreateTemplateName(testData);
 
-      // Assert
-      expect(result).toBeDefined();
-      expect(result.insertedId).toBeDefined();
+            // Assert
+            expect(result).toBeDefined();
+            expect(result.insertedId).toBeDefined();
+        });
+
+        it('應該處理無效輸入', async () => {
+            // Arrange
+            const invalidData = {
+                // 無效數據
+            };
+
+            // Act & Assert
+            await expect(CreateTemplateName(invalidData)).rejects.toThrow();
+        });
     });
 
-    it('應該處理無效輸入', async () => {
-      // Arrange
-      const invalidData = {
-        // 無效數據
-      };
+    describe('FindTemplateNameById', () => {
+        it('應該找到存在的記錄', async () => {
+            // Arrange
+            const testData = {
+                name: 'Find Test',
+                email: `find${Date.now()}@example.com`
+            };
+            const createResult = await CreateTemplateName(testData);
+            const id = createResult.insertedId;
 
-      // Act & Assert
-      await expect(CreateTemplateName(invalidData)).rejects.toThrow();
-    });
-  });
+            // Act
+            const found = await FindTemplateNameById(id);
 
-  describe('FindTemplateNameById', () => {
-    it('應該找到存在的記錄', async () => {
-      // Arrange
-      const testData = {
-        name: 'Find Test',
-        email: `find${Date.now()}@example.com`
-      };
-      const createResult = await CreateTemplateName(testData);
-      const id = createResult.insertedId;
+            // Assert
+            expect(found).toBeDefined();
+            expect(found.name).toBe('Find Test');
+        });
 
-      // Act
-      const found = await FindTemplateNameById(id);
+        it('應該返回 null 當記錄不存在', async () => {
+            // Act
+            const result = await FindTemplateNameById('nonexistent-id');
 
-      // Assert
-      expect(found).toBeDefined();
-      expect(found.name).toBe('Find Test');
+            // Assert
+            expect(result).toBeNull();
+        });
     });
 
-    it('應該返回 null 當記錄不存在', async () => {
-      // Act
-      const result = await FindTemplateNameById('nonexistent-id');
+    describe('UpdateTemplateName', () => {
+        it('應該成功更新記錄', async () => {
+            // Arrange
+            const original = {
+                name: 'Original Name',
+                email: `original${Date.now()}@example.com`
+            };
+            const createResult = await CreateTemplateName(original);
+            const id = createResult.insertedId;
 
-      // Assert
-      expect(result).toBeNull();
+            const updateData = {
+                name: 'Updated Name'
+            };
+
+            // Act
+            const result = await UpdateTemplateName(id, updateData);
+
+            // Assert
+            expect(result.modifiedCount).toBe(1);
+
+            // 驗證更新效果
+            const updated = await FindTemplateNameById(id);
+            expect(updated.name).toBe('Updated Name');
+        });
     });
-  });
 
-  describe('UpdateTemplateName', () => {
-    it('應該成功更新記錄', async () => {
-      // Arrange
-      const original = {
-        name: 'Original Name',
-        email: `original${Date.now()}@example.com`
-      };
-      const createResult = await CreateTemplateName(original);
-      const id = createResult.insertedId;
+    describe('DeleteTemplateName', () => {
+        it('應該成功刪除記錄', async () => {
+            // Arrange
+            const testData = {
+                name: 'Delete Test',
+                email: `delete${Date.now()}@example.com`
+            };
+            const createResult = await CreateTemplateName(testData);
+            const id = createResult.insertedId;
 
-      const updateData = {
-        name: 'Updated Name'
-      };
+            // Act
+            const result = await DeleteTemplateName(id);
 
-      // Act
-      const result = await UpdateTemplateName(id, updateData);
+            // Assert
+            expect(result.deletedCount).toBe(1);
 
-      // Assert
-      expect(result.modifiedCount).toBe(1);
-      
-      // 驗證更新效果
-      const updated = await FindTemplateNameById(id);
-      expect(updated.name).toBe('Updated Name');
+            // 驗證刪除效果
+            const deleted = await FindTemplateNameById(id);
+            expect(deleted).toBeNull();
+        });
     });
-  });
-
-  describe('DeleteTemplateName', () => {
-    it('應該成功刪除記錄', async () => {
-      // Arrange
-      const testData = {
-        name: 'Delete Test',
-        email: `delete${Date.now()}@example.com`
-      };
-      const createResult = await CreateTemplateName(testData);
-      const id = createResult.insertedId;
-
-      // Act
-      const result = await DeleteTemplateName(id);
-
-      // Assert
-      expect(result.deletedCount).toBe(1);
-      
-      // 驗證刪除效果
-      const deleted = await FindTemplateNameById(id);
-      expect(deleted).toBeNull();
-    });
-  });
 });
 
 // ========================================
@@ -138,91 +138,91 @@ describe('TemplateName Service', () => {
 // } from '#src/controllers/templatename_controller.js';
 
 describe('TemplateName Controller', () => {
-  beforeAll(global.beforeAll);
-  afterAll(global.afterAll);
-  beforeEach(global.beforeEach);
+    beforeAll(global.beforeAll);
+    afterAll(global.afterAll);
+    beforeEach(global.beforeEach);
 
-  // Mock 輔助函數
-  const createMockReq = (body = {}, params = {}, query = {}) => ({
-    body,
-    params,
-    query
-  });
-
-  const createMockRes = () => {
-    const res = {};
-    res.status = vi.fn().mockReturnValue(res);
-    res.send = vi.fn().mockReturnValue(res);
-    res.json = vi.fn().mockReturnValue(res);
-    return res;
-  };
-
-  describe('CreateTemplateNameController', () => {
-    it('應該成功處理創建請求', async () => {
-      // Arrange
-      const req = createMockReq({
-        // 請求數據
-        name: 'Controller Test',
-        email: 'controller@test.com'
-      });
-      const res = createMockRes();
-
-      // Act
-      await CreateTemplateNameController(req, res);
-
-      // Assert
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.send).toHaveBeenCalledWith({
-        message: 'Created successfully'
-      });
+    // Mock 輔助函數
+    const createMockReq = (body = {}, params = {}, query = {}) => ({
+        body,
+        params,
+        query
     });
 
-    it('應該拒絕無效請求', async () => {
-      // Arrange
-      const req = createMockReq({
-        // 缺少必填字段
-      });
-      const res = createMockRes();
+    const createMockRes = () => {
+        const res = {};
+        res.status = vi.fn().mockReturnValue(res);
+        res.send = vi.fn().mockReturnValue(res);
+        res.json = vi.fn().mockReturnValue(res);
+        return res;
+    };
 
-      // Act
-      await CreateTemplateNameController(req, res);
+    describe('CreateTemplateNameController', () => {
+        it('應該成功處理創建請求', async () => {
+            // Arrange
+            const req = createMockReq({
+                // 請求數據
+                name: 'Controller Test',
+                email: 'controller@test.com'
+            });
+            const res = createMockRes();
 
-      // Assert
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith({
-        message: 'Missing required fields'
-      });
+            // Act
+            await CreateTemplateNameController(req, res);
+
+            // Assert
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.send).toHaveBeenCalledWith({
+                message: 'Created successfully'
+            });
+        });
+
+        it('應該拒絕無效請求', async () => {
+            // Arrange
+            const req = createMockReq({
+                // 缺少必填字段
+            });
+            const res = createMockRes();
+
+            // Act
+            await CreateTemplateNameController(req, res);
+
+            // Assert
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: 'Missing required fields'
+            });
+        });
     });
-  });
 
-  describe('GetTemplateNameController', () => {
-    it('應該成功獲取記錄', async () => {
-      // Arrange
-      const req = createMockReq({}, { id: 'test-id' });
-      const res = createMockRes();
+    describe('GetTemplateNameController', () => {
+        it('應該成功獲取記錄', async () => {
+            // Arrange
+            const req = createMockReq({}, { id: 'test-id' });
+            const res = createMockRes();
 
-      // Act
-      await GetTemplateNameController(req, res);
+            // Act
+            await GetTemplateNameController(req, res);
 
-      // Assert
-      expect(res.status).toHaveBeenCalledWith(200);
+            // Assert
+            expect(res.status).toHaveBeenCalledWith(200);
+        });
+
+        it('應該返回 404 當記錄不存在', async () => {
+            // Arrange
+            const req = createMockReq({}, { id: 'nonexistent' });
+            const res = createMockRes();
+
+            // Act
+            await GetTemplateNameController(req, res);
+
+            // Assert
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.send).toHaveBeenCalledWith({
+                message: 'Not found'
+            });
+        });
     });
-
-    it('應該返回 404 當記錄不存在', async () => {
-      // Arrange
-      const req = createMockReq({}, { id: 'nonexistent' });
-      const res = createMockRes();
-
-      // Act
-      await GetTemplateNameController(req, res);
-
-      // Assert
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.send).toHaveBeenCalledWith({
-        message: 'Not found'
-      });
-    });
-  });
 });
 
 // ========================================
@@ -235,94 +235,94 @@ describe('TemplateName Controller', () => {
 // import templateNameRoute from '#src/routes/templatename_route.js';
 
 describe('TemplateName Routes Integration Tests', () => {
-  let app;
+    let app;
 
-  beforeAll(async () => {
-    await global.beforeAll();
-    
-    // 設置測試用的 Express 應用
-    app = express();
-    app.use(bodyParser.json());
-    app.use('/templatename', templateNameRoute);
-  });
+    beforeAll(async () => {
+        await global.beforeAll();
 
-  afterAll(global.afterAll);
-  beforeEach(global.beforeEach);
-
-  describe('POST /templatename', () => {
-    it('應該成功創建記錄', async () => {
-      const newRecord = {
-        // 測試數據
-        name: 'Route Test',
-        email: 'route@test.com'
-      };
-
-      const response = await request(app)
-        .post('/templatename')
-        .send(newRecord)
-        .expect(201);
-
-      expect(response.body).toHaveProperty('message', 'Created successfully');
+        // 設置測試用的 Express 應用
+        app = express();
+        app.use(bodyParser.json());
+        app.use('/templatename', templateNameRoute);
     });
 
-    it('應該拒絕無效數據', async () => {
-      const invalidRecord = {
-        // 無效數據
-      };
+    afterAll(global.afterAll);
+    beforeEach(global.beforeEach);
 
-      const response = await request(app)
-        .post('/templatename')
-        .send(invalidRecord)
-        .expect(400);
+    describe('POST /templatename', () => {
+        it('應該成功創建記錄', async () => {
+            const newRecord = {
+                // 測試數據
+                name: 'Route Test',
+                email: 'route@test.com'
+            };
 
-      expect(response.body).toHaveProperty('message');
+            const response = await request(app)
+                .post('/templatename')
+                .send(newRecord)
+                .expect(201);
+
+            expect(response.body).toHaveProperty('message', 'Created successfully');
+        });
+
+        it('應該拒絕無效數據', async () => {
+            const invalidRecord = {
+                // 無效數據
+            };
+
+            const response = await request(app)
+                .post('/templatename')
+                .send(invalidRecord)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('message');
+        });
     });
-  });
 
-  describe('GET /templatename/:id', () => {
-    it('應該成功獲取記錄', async () => {
-      // 先創建記錄...
-      
-      const response = await request(app)
-        .get('/templatename/test-id')
-        .expect(200);
+    describe('GET /templatename/:id', () => {
+        it('應該成功獲取記錄', async () => {
+            // 先創建記錄...
 
-      expect(response.body).toHaveProperty('name');
+            const response = await request(app)
+                .get('/templatename/test-id')
+                .expect(200);
+
+            expect(response.body).toHaveProperty('name');
+        });
+
+        it('應該返回 404 當記錄不存在', async () => {
+            const response = await request(app)
+                .get('/templatename/nonexistent')
+                .expect(404);
+
+            expect(response.body).toHaveProperty('message', 'Not found');
+        });
     });
 
-    it('應該返回 404 當記錄不存在', async () => {
-      const response = await request(app)
-        .get('/templatename/nonexistent')
-        .expect(404);
+    describe('PUT /templatename/:id', () => {
+        it('應該成功更新記錄', async () => {
+            const updateData = {
+                name: 'Updated Name'
+            };
 
-      expect(response.body).toHaveProperty('message', 'Not found');
+            const response = await request(app)
+                .put('/templatename/test-id')
+                .send(updateData)
+                .expect(200);
+
+            expect(response.body).toHaveProperty('message', 'Updated successfully');
+        });
     });
-  });
 
-  describe('PUT /templatename/:id', () => {
-    it('應該成功更新記錄', async () => {
-      const updateData = {
-        name: 'Updated Name'
-      };
+    describe('DELETE /templatename/:id', () => {
+        it('應該成功刪除記錄', async () => {
+            const response = await request(app)
+                .delete('/templatename/test-id')
+                .expect(200);
 
-      const response = await request(app)
-        .put('/templatename/test-id')
-        .send(updateData)
-        .expect(200);
-
-      expect(response.body).toHaveProperty('message', 'Updated successfully');
+            expect(response.body).toHaveProperty('message', 'Deleted successfully');
+        });
     });
-  });
-
-  describe('DELETE /templatename/:id', () => {
-    it('應該成功刪除記錄', async () => {
-      const response = await request(app)
-        .delete('/templatename/test-id')
-        .expect(200);
-
-      expect(response.body).toHaveProperty('message', 'Deleted successfully');
-    });
-  });
 });
 
 // ========================================
@@ -330,12 +330,12 @@ describe('TemplateName Routes Integration Tests', () => {
 // ========================================
 
 function createTestTemplateNameData(overrides = {}) {
-  return {
-    name: 'Default Test Name',
-    email: `test${Date.now()}@example.com`,
-    // 其他默認值...
-    ...overrides
-  };
+    return {
+        name: 'Default Test Name',
+        email: `test${Date.now()}@example.com`,
+        // 其他默認值...
+        ...overrides
+    };
 }
 
 // ========================================

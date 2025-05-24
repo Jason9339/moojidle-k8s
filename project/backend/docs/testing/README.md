@@ -98,7 +98,6 @@ tests/
 |------|------|
 | 第一次寫測試 | 先看 [📋 環境設置](./README_TESTING.md)，再看 [⚡ 快速開始](./TESTING_QUICKSTART.md) |
 | 有測試經驗，想快速上手 | 直接看 [⚡ 快速開始指南](./TESTING_QUICKSTART.md) |
-| 想了解完整流程 | 看 [🔬 工作流程指南](./TESTING_WORKFLOW.md) |
 | 需要具體代碼參考 | 看 [📚 Course 功能示例](./TESTING_EXAMPLE.md) |
 | 測試環境有問題 | 參考 [📋 環境設置指南](./README_TESTING.md) 的常見問題 |
 
