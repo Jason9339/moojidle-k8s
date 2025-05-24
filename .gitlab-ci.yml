@@ -39,7 +39,7 @@ backend-test:
     - npm run test
   artifacts:
     paths:
-      - project/backend/test-reports/
+      - project/backend/test-output.json
     expire_in: 1 week
 
 # Frontend tests (integration test)
@@ -60,10 +60,10 @@ frontend-test:
     - cd ../frontend
     - echo "VITE_API_BASE_URL=http://localhost:3000" > .env
   script:
-    - npm run test:integration
+    - npm run test
   artifacts:
     paths:
-      - project/frontend/coverage/
+      - project/frontend/test-output.json
     expire_in: 1 week
 
 # Cache node_modules to speed up builds

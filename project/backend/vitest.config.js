@@ -23,7 +23,9 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'tests/setup.js', 'tests/template.test.js']
-    }
+    },
+    reporters: ['json', 'default'],
+    outputFile: './test-output.json'
   },
   resolve: {
     alias: {
