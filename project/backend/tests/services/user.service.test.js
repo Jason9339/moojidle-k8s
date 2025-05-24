@@ -19,8 +19,8 @@ describe('User Service', () => {
       
       expect(user).toBeDefined();
       expect(user.user_id).toBe(1);
-      expect(user.name).toBe('Test User 1');
-      expect(user.email).toBe('test1@example.com');
+      expect(user.name).toBe('User 1');
+      expect(user.email).toBe('user1@example.com');
     });
 
     it('當用戶不存在時應該返回 null', async () => {
@@ -43,8 +43,8 @@ describe('User Service', () => {
       expect(result).toBeDefined();
       expect(result.insertedId).toBeDefined();
       
-      // 驗證用戶是否真的被創建
-      const createdUser = await FindOneUserById(3); // 應該是第3個用戶
+      // 驗證用戶是否真的被創建 - 在真實數據庫中，counter 從 15 開始
+      const createdUser = await FindOneUserById(16); // 應該是第16個用戶
       expect(createdUser).toBeDefined();
       expect(createdUser.name).toBe('New User');
       expect(createdUser.email).toBe('newuser@example.com');
@@ -53,7 +53,7 @@ describe('User Service', () => {
     it('當 email 已存在時應該返回 null', async () => {
       const userData = {
         name: 'Duplicate User',
-        email: 'test1@example.com', // 使用已存在的 email
+        email: 'user1@example.com', // 使用已存在的 email
         password: 'password123'
       };
 
@@ -65,15 +65,15 @@ describe('User Service', () => {
 
   describe('LoginUser', () => {
     it('應該成功登入有效用戶', async () => {
-      const user = await LoginUser('test1@example.com', 'password123');
+      const user = await LoginUser('user1@example.com', 'hashed_password_1');
       
       expect(user).toBeDefined();
       expect(user.user_id).toBe(1);
-      expect(user.email).toBe('test1@example.com');
+      expect(user.email).toBe('user1@example.com');
     });
 
     it('當密碼錯誤時應該返回 null', async () => {
-      const user = await LoginUser('test1@example.com', 'wrongpassword');
+      const user = await LoginUser('user1@example.com', 'wrongpassword');
       
       expect(user).toBeNull();
     });
@@ -129,7 +129,7 @@ describe('User Service', () => {
       expect(Array.isArray(tags)).toBe(true);
       expect(tags.length).toBeGreaterThan(0);
       expect(tags[0].user_id).toBe(1);
-      expect(tags[0].user_tag).toBe('TestTag_1');
+      expect(tags[0].user_tag).toBe("User1's CustomTag_1");
     });
 
     it('當用戶沒有標籤時應該返回空數組', async () => {
@@ -148,7 +148,7 @@ describe('User Service', () => {
       expect(result.modifiedCount).toBe(1);
       
       // 驗證密碼是否真的被更新
-      const user = await LoginUser('test1@example.com', 'newpassword123');
+      const user = await LoginUser('user1@example.com', 'newpassword123');
       expect(user).toBeDefined();
       expect(user.user_id).toBe(1);
     });

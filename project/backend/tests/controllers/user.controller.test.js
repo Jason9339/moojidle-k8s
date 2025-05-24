@@ -61,7 +61,7 @@ describe('User Controller', () => {
     it('當 email 已存在時應該返回 500 錯誤', async () => {
       const req = createMockReq({
         name: 'Duplicate User',
-        email: 'test1@example.com', // 已存在的 email
+        email: 'user1@example.com', // 已存在的 email
         password: 'password123'
       });
       const res = createMockRes();
@@ -78,8 +78,8 @@ describe('User Controller', () => {
   describe('Login', () => {
     it('應該成功登入有效用戶', async () => {
       const req = createMockReq({
-        email: 'test1@example.com',
-        pw: 'password123'
+        email: 'user1@example.com',
+        pw: 'hashed_password_1'
       });
       const res = createMockRes();
 
@@ -88,14 +88,14 @@ describe('User Controller', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
         user_id: 1,
-        name: 'Test User 1',
-        email: 'test1@example.com'
+        name: 'User 1',
+        email: 'user1@example.com'
       });
     });
 
     it('當缺少 email 或密碼時應該返回 400 錯誤', async () => {
       const req = createMockReq({
-        email: 'test1@example.com'
+        email: 'user1@example.com'
         // 缺少 pw
       });
       const res = createMockRes();
@@ -110,7 +110,7 @@ describe('User Controller', () => {
 
     it('當 email 或密碼錯誤時應該返回 401 錯誤', async () => {
       const req = createMockReq({
-        email: 'test1@example.com',
+        email: 'user1@example.com',
         pw: 'wrongpassword'
       });
       const res = createMockRes();
@@ -162,8 +162,8 @@ describe('User Controller', () => {
       // 檢查返回的數據結構
       const sentData = res.send.mock.calls[0][0];
       expect(sentData.user_id).toBe(1);
-      expect(sentData.name).toBe('Test User 1');
-      expect(sentData.email).toBe('test1@example.com');
+      expect(sentData.name).toBe('User 1');
+      expect(sentData.email).toBe('user1@example.com');
       expect(sentData.user_tags).toBeDefined();
       expect(Array.isArray(sentData.user_tags)).toBe(true);
     });
@@ -200,7 +200,7 @@ describe('User Controller', () => {
   describe('UpdatePassword', () => {
     it('應該成功更新密碼', async () => {
       const req = createMockReq({
-        currentPassword: 'password123',
+        currentPassword: 'hashed_password_1',
         newPassword: 'newpassword123'
       }, { id: '1' });
       const res = createMockRes();
@@ -215,7 +215,7 @@ describe('User Controller', () => {
 
     it('當缺少必填欄位時應該返回 400 錯誤', async () => {
       const req = createMockReq({
-        currentPassword: 'password123'
+        currentPassword: 'hashed_password_1'
         // 缺少 newPassword
       }, { id: '1' });
       const res = createMockRes();
@@ -230,7 +230,7 @@ describe('User Controller', () => {
 
     it('當用戶不存在時應該返回 404 錯誤', async () => {
       const req = createMockReq({
-        currentPassword: 'password123',
+        currentPassword: 'hashed_password_1',
         newPassword: 'newpassword123'
       }, { id: '999' });
       const res = createMockRes();

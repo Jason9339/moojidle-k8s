@@ -26,8 +26,8 @@ describe('User Routes Integration Tests', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('user_id', 1);
-      expect(response.body).toHaveProperty('name', 'Test User 1');
-      expect(response.body).toHaveProperty('email', 'test1@example.com');
+      expect(response.body).toHaveProperty('name', 'User 1');
+      expect(response.body).toHaveProperty('email', 'user1@example.com');
       expect(response.body).toHaveProperty('user_tags');
       expect(Array.isArray(response.body.user_tags)).toBe(true);
     });
@@ -96,7 +96,7 @@ describe('User Routes Integration Tests', () => {
     it('當 email 已存在時應該返回 500', async () => {
       const duplicateUser = {
         name: 'Duplicate User',
-        email: 'test1@example.com', // 已存在的 email
+        email: 'user1@example.com', // 已存在的 email
         password: 'password123'
       };
 
@@ -112,8 +112,8 @@ describe('User Routes Integration Tests', () => {
   describe('POST /user/login', () => {
     it('應該成功登入有效用戶', async () => {
       const loginData = {
-        email: 'test1@example.com',
-        pw: 'password123'
+        email: 'user1@example.com',
+        pw: 'hashed_password_1'
       };
 
       const response = await request(app)
@@ -122,13 +122,13 @@ describe('User Routes Integration Tests', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('user_id', 1);
-      expect(response.body).toHaveProperty('name', 'Test User 1');
-      expect(response.body).toHaveProperty('email', 'test1@example.com');
+      expect(response.body).toHaveProperty('name', 'User 1');
+      expect(response.body).toHaveProperty('email', 'user1@example.com');
     });
 
     it('當缺少 email 或密碼時應該返回 400', async () => {
       const incompleteLogin = {
-        email: 'test1@example.com'
+        email: 'user1@example.com'
         // 缺少 pw
       };
 
@@ -142,7 +142,7 @@ describe('User Routes Integration Tests', () => {
 
     it('當 email 或密碼錯誤時應該返回 401', async () => {
       const wrongLogin = {
-        email: 'test1@example.com',
+        email: 'user1@example.com',
         pw: 'wrongpassword'
       };
 
@@ -176,7 +176,7 @@ describe('User Routes Integration Tests', () => {
   describe('PUT /user/update-password/:id', () => {
     it('應該成功更新密碼', async () => {
       const passwordUpdate = {
-        currentPassword: 'password123',
+        currentPassword: 'hashed_password_1',
         newPassword: 'newpassword123'
       };
 
@@ -190,7 +190,7 @@ describe('User Routes Integration Tests', () => {
 
     it('當缺少必填欄位時應該返回 400', async () => {
       const incompleteUpdate = {
-        currentPassword: 'password123'
+        currentPassword: 'hashed_password_1'
         // 缺少 newPassword
       };
 
@@ -204,7 +204,7 @@ describe('User Routes Integration Tests', () => {
 
     it('當用戶不存在時應該返回 404', async () => {
       const passwordUpdate = {
-        currentPassword: 'password123',
+        currentPassword: 'hashed_password_1',
         newPassword: 'newpassword123'
       };
 

@@ -16,10 +16,6 @@
 ### 📝 任務描述
 驗證你的開發環境能正常運行現有測試
 
-### 💡 **重要提醒：資料庫自動處理**
-> **✅ 好消息**：你**不需要**手動啟動 MongoDB 或任何資料庫服務！  
-> 測試環境使用 **MongoDB Memory Server**，會自動在測試時創建臨時資料庫，測試結束後自動清理。
-
 ### 🗄️ **Schema 和 Seed 數據說明**
 
 #### **📋 兩種測試模式選擇**
@@ -44,12 +40,12 @@
 | **Seed 數據** | `tests/setup.js` | `project/database/Seed.js` |
 | **數據量** | 2 個用戶，最小數據 | 50+ 用戶，完整假數據 |
 | **資料庫** | 臨時內存資料庫 | 獨立測試資料庫 |
-| **執行速度** | 快（10-30秒） | 慢（1-3分鐘） |
+| **執行速度** | 快 | 慢一點 |
 | **適用場景** | 快速開發測試 | 完整功能驗證 |
 
 ### 🎯 執行步驟
 
-#### **🚀 標準測試（推薦）**
+#### **🚀 標準測試**
 
 1. **進入後端目錄**
    ```bash
@@ -71,7 +67,7 @@
    npm test user
    ```
 
-#### **🔧 完整測試（進階選項）**
+#### **🔧 完整測試（實際DB）**
 
 如果你想使用正式的 Schema 和 Seed 數據：
 
@@ -120,55 +116,13 @@
 
 **標準測試輸出**：
 ```bash
-✓ tests/services/user.service.test.js (13 tests) 1352ms
-✓ tests/controllers/user.controller.test.js (15 tests) 1359ms
-✓ tests/routes/user.routes.test.js (16 tests) 1281ms
 
-Test Files  3 passed (3)
-     Tests  44 passed (44)
-Duration  4.5s
 ```
 
 **完整測試輸出**：
 ```bash
-連接到測試資料庫: mongodb://localhost:27017/moojidle_test
-開始載入 Schema 和 Seed 數據...
-✓ 創建 collection: user
-✓ 創建 collection: course
-✓ 創建 collection: announcement
-... (更多 collections)
-✓ 插入 50 筆數據到 user
-✓ 插入 5 筆數據到 course
-... (更多數據)
-Schema 和 Seed 數據載入完成
 
-✓ tests/services/user.service.test.js (13 tests) 2845ms
-✓ tests/controllers/user.controller.test.js (15 tests) 3021ms
-✓ tests/routes/user.routes.test.js (16 tests) 2756ms
-
-Test Files  3 passed (3)
-     Tests  44 passed (44)
-Duration  45.2s
 ```
-
-### 🔧 常見問題排解
-
-**標準測試問題**：
-
-**問題：測試失敗或報錯**
-```bash
-# 重新安裝依賴
-rm -rf node_modules package-lock.json
-npm install
-
-# 重新執行測試
-npm run test
-```
-
-**問題：首次運行很慢**
-- ✅ **正常現象**：MongoDB Memory Server 首次下載需要時間
-- ✅ **等待即可**：後續運行會快很多
-- ✅ **耐心等待**：通常首次需要 1-2 分鐘
 
 **完整測試問題**：
 
@@ -193,11 +147,6 @@ sudo systemctl start mongod  # Ubuntu/WSL
 brew services start mongodb-community@8.0  # macOS
 ```
 
-**問題：Schema 載入失敗**
-- ✅ **檢查語法**：確認 Schema.js 語法正確
-- ✅ **權限問題**：確認有讀取 database 目錄的權限
-- ✅ **路徑問題**：確認在 project/backend 目錄下執行
-
 **問題：測試資料庫污染**
 ```bash
 # 手動清理測試資料庫
@@ -206,18 +155,7 @@ use moojidle_test
 db.dropDatabase()
 ```
 
-### 🎯 **選擇建議**
-
-| 使用場景 | 建議模式 |
-|----------|----------|
-| **初學者** | 標準測試 - 簡單快速 |
-| **日常開發** | 標準測試 - 快速反饋 |
-| **功能完整性驗證** | 完整測試 - 完整驗證 |
-| **Schema 相關開發** | 完整測試 - 驗證器測試 |
-| **CI/CD 流水線** | 標準測試 - 快速且穩定 |
-| **發布前驗證** | 完整測試 - 生產環境模擬 |
-
-## 🧪 任務二：範例測試創建 (30 分鐘)
+## 🧪 任務二：範例測試創建
 
 ### 📝 任務描述
 根據 `TESTING_EXAMPLE.md` 的範例代碼，自己動手創建 Course 功能的完整測試
@@ -271,12 +209,7 @@ npm test course
 
 ### 📊 預期輸出示例
 ```bash
-✓ tests/services/course.service.test.js (6 tests) 1987ms
-✓ tests/controllers/course.controller.test.js (8 tests) 2456ms
-✓ tests/routes/course.routes.test.js (12 tests) 4123ms
 
-Test Files  3 passed (3)
-Tests       26 passed (26)
 ```
 
 ### 🧠 學習重點
@@ -332,19 +265,12 @@ Tests       26 passed (26)
      .expect(201);
    ```
 
-### 💡 實作技巧
-
-1. **逐步創建**：一次創建一個文件，確保每個都能運行
-2. **理解代碼**：不要只是複製貼上，理解每行代碼的作用
-3. **調試技能**：如果測試失敗，學會閱讀錯誤信息
-4. **代碼對比**：對比三層測試的不同寫法和目的
-
 ---
 
-## ✍️ 任務三：獨立編寫測試 (45 分鐘)
+## ✍️ 任務三：獨立編寫測試 
 
 ### 📝 任務描述
-選擇一個現有功能模組，獨立編寫完整的三層測試
+選擇一個現有功能模組，獨立編寫完整的三層測試，各一個 function
 
 ### 🎯 可選功能模組
 
@@ -365,101 +291,127 @@ Tests       26 passed (26)
 
 ### 🎯 執行步驟
 
-#### 第一步：分析功能模組 (10 分鐘)
-1. **閱讀源代碼**：了解功能和 API
+#### 第一步：選擇一個模組和功能函數
+1. **選擇模組**：從上述三個模組中選擇一個
+2. **選擇函數**：為每一層選擇一個函數進行測試
    ```bash
-   # 查看模組文件
-   cat src/controllers/[your-module]_controller.js
-   cat src/routes/[your-module]_route.js
-   cat src/services/[your-module]_service.js
+   # 查看模組文件，選擇要測試的函數
+   cat src/services/announcement_service.js  # 例如選擇 CreateAnnouncement
+   cat src/controllers/announcement_controller.js  # 例如選擇 createAnnouncement
+   cat src/routes/announcement_route.js  # 例如選擇 POST /announcement/create
    ```
 
-2. **確認路由設計**：記錄所有端點
-3. **理解數據流**：Service → Controller → Routes
+#### 第二步：創建三個測試文件
 
-#### 第二步：編寫測試計劃 (10 分鐘)
-創建 `tests/[your-module].test-plan.md`：
-```markdown
-# [模組名稱] 測試計劃
-
-## Service 層測試
-- [ ] 功能1：建立操作 (如 CreateAnnouncement)
-- [ ] 功能2：查詢操作 (如 FindAnnouncement)
-- [ ] 功能3：更新操作 (如 UpdateAnnouncement)
-- [ ] 功能4：刪除操作 (如 DeleteAnnouncement)
-- [ ] 錯誤處理：無效輸入、不存在的資源
-
-## Controller 層測試  
-- [ ] 成功情況：正確的請求處理
-- [ ] 錯誤情況：400, 404, 500 狀態碼
-- [ ] 邊界情況：參數驗證、權限檢查
-
-## Routes 層測試
-- [ ] GET 路由測試：獲取資源
-- [ ] POST 路由測試：創建資源
-- [ ] PUT/PATCH 路由測試：更新資源
-- [ ] DELETE 路由測試：刪除資源
-- [ ] 完整 CRUD 流程測試
-```
-
-#### 第三步：編寫測試代碼 (20 分鐘)
-參考現有的 course 測試和 `tests/template.test.js`：
-
-1. **創建** `tests/services/[module].service.test.js`
-2. **創建** `tests/controllers/[module].controller.test.js`  
-3. **創建** `tests/routes/[module].routes.test.js`
-
-**使用模板結構**：
+**Service 層測試**：創建 `tests/services/[module].service.test.js`
 ```javascript
-// Service 測試模板
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { YourServiceFunction } from '#src/services/your_service.js';
+import { YourChosenFunction } from '#src/services/your_service.js';
 
 describe('Your Service', () => {
   beforeAll(global.beforeAll);
   afterAll(global.afterAll);
   beforeEach(global.beforeEach);
 
-  describe('YourFunction', () => {
-    it('應該成功執行主要功能', async () => {
-      // Arrange
-      const testData = { /* 測試數據 */ };
+  describe('YourChosenFunction', () => {
+    it('應該成功執行基本功能', async () => {
+      // Arrange - 準備測試數據
+      const testData = { /* 根據函數需求準備數據 */ };
       
-      // Act
-      const result = await YourServiceFunction(testData);
+      // Act - 執行函數
+      const result = await YourChosenFunction(testData);
       
-      // Assert
+      // Assert - 驗證結果
       expect(result).toBeDefined();
-      // 更多斷言...
+      // 根據函數預期結果添加更多斷言
     });
   });
 });
 ```
 
-#### 第四步：執行和調試 (5 分鐘)
+**Controller 層測試**：創建 `tests/controllers/[module].controller.test.js`
+```javascript
+import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { yourChosenController } from '#src/controllers/your_controller.js';
+
+describe('Your Controller', () => {
+  beforeAll(global.beforeAll);
+  afterAll(global.afterAll);
+  beforeEach(global.beforeEach);
+
+  const createMockRes = () => {
+    const res = {};
+    res.status = vi.fn().mockReturnValue(res);
+    res.send = vi.fn().mockReturnValue(res);
+    res.json = vi.fn().mockReturnValue(res);
+    return res;
+  };
+
+  describe('yourChosenController', () => {
+    it('應該正確處理 HTTP 請求', async () => {
+      // Arrange
+      const req = { body: { /* 請求數據 */ } };
+      const res = createMockRes();
+
+      // Act
+      await yourChosenController(req, res);
+
+      // Assert
+      expect(res.status).toHaveBeenCalledWith(/* 預期狀態碼 */);
+      expect(res.send || res.json).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+**Routes 層測試**：創建 `tests/routes/[module].routes.test.js`
+```javascript
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import request from 'supertest';
+import { app } from '#src/app.js';
+
+describe('Your Routes', () => {
+  beforeAll(global.beforeAll);
+  afterAll(global.afterAll);
+  beforeEach(global.beforeEach);
+
+  describe('POST /your-endpoint', () => {
+    it('應該成功處理端到端請求', async () => {
+      // Arrange
+      const testData = { /* API 請求數據 */ };
+
+      // Act & Assert
+      const response = await request(app)
+        .post('/your-endpoint')  // 替換為實際端點
+        .send(testData)
+        .expect(/* 預期狀態碼 */);
+
+      // 驗證響應內容
+      expect(response.body).toHaveProperty(/* 預期屬性 */);
+    });
+  });
+});
+```
+
+#### 第三步：執行測試 (5 分鐘)
 ```bash
 npm test [your-module]
 ```
 
 ### ✅ 成功標準
 
-- [ ] 至少編寫 15 個測試案例
-- [ ] 覆蓋主要的 CRUD 操作
-- [ ] 包含錯誤處理測試
-- [ ] 測試通過率 > 90%
-- [ ] 代碼遵循 AAA 模式
+- [ ] 創建 3 個測試文件（service, controller, routes 各一個）
+- [ ] 每個文件包含 1 個測試函數
+- [ ] 所有 3 個測試都能通過
+- [ ] 測試代碼遵循 AAA 模式（Arrange, Act, Assert）
 - [ ] 測試描述清晰易懂
 
-### 🎯 評分標準
+### 💡 實作技巧
 
-| 項目 | 優秀 (90-100) | 良好 (80-89) | 及格 (70-79) | 需改進 (<70) |
-|------|---------------|--------------|--------------|---------------|
-| **測試覆蓋** | 覆蓋所有主要功能 | 覆蓋大部分功能 | 覆蓋基本功能 | 覆蓋不足 |
-| **測試品質** | AAA模式，清晰斷言 | 結構良好 | 基本正確 | 結構混亂 |  
-| **錯誤處理** | 全面的邊界測試 | 基本錯誤測試 | 少量錯誤測試 | 缺少錯誤測試 |
-| **代碼風格** | 一致性和可讀性 | 大致一致 | 基本可讀 | 風格混亂 |
-
----
+1. **參考現有測試**：查看 `user` 和 `course` 的測試範例
+2. **簡化測試**：專注於一個核心功能，不需要複雜的邊界測試
+3. **理解架構**：重點在於理解三層測試的不同目的
+4. **漸進實作**：一次創建一個文件，確保每個都能運行
 
 ## 📚 完成驗證
 
@@ -468,7 +420,7 @@ npm test [your-module]
 完成所有三個任務並滿足：
 - ✅ **任務一**：環境測試通過（user 測試全部成功）
 - ✅ **任務二**：範例測試創建成功（course 測試理解並通過）
-- ✅ **任務三**：獨立測試編寫合格（至少 15 個測試，90% 通過率）
+- ✅ **任務三**：獨立測試編寫合格（3 個測試文件，各包含 1 個測試函數，全部通過）
 
 ### 🏆 認證流程
 
@@ -478,12 +430,10 @@ npm test [your-module]
    📧 發送郵件給技術 Lead，包含：
    - 任務一：截圖顯示 user 測試通過
    - 任務二：截圖顯示 course 測試通過  
-   - 任務三：你編寫的測試文件連結
-   - 簡短說明：你對三層測試架構的理解
+   - 任務三：截圖顯示你編寫的 3 個測試文件連結
    ```
 
 3. **代碼審查**：技術 Lead 會審查你的測試代碼
-4. **獲得認證**：通過後獲得 **Testing Certified** 標記
 
 ### 🔄 持續學習
 
@@ -491,16 +441,3 @@ npm test [your-module]
 - [⚡ 快速開始指南](./TESTING_QUICKSTART.md) - 快速參考
 - [📝 測試模板](../tests/template.test.js) - 完整的測試模板
 - [🔍 測試示例](./TESTING_EXAMPLE.md) - Course 功能完整示例
-
-**團隊支援**：
-- 遇到問題時在群組中提問
-- 與已認證成員進行配對學習
-- 參加每週的測試經驗分享會
-
----
-
-## 🆘 獲得幫助
-
-### �� 提問技巧
-
-**優質問題範例**：
