@@ -64,6 +64,10 @@ frontend-test:
   <<: *ci_conditions
   stage: test
   image: node:20.17.0
+  services:
+    - name: mongo:8.0.8
+      alias: mongo
+
   before_script:
     - cd project
     - cd frontend
