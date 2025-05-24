@@ -1,0 +1,73 @@
+stages:
+  - test
+  - integration-test
+
+variables:
+  NODE_VERSION: "18"
+
+# 後端單元測試
+backend-unit-test:
+  stage: test
+  image: node:$NODE_VERSION
+  before_script:
+    - cd project/backend
+    - npm ci
+  script:
+    - npm run test
+    - npm run test:coverage
+  artifacts:
+    reports:
+      coverage_format: cobertura
+      coverage: project/backend/coverage/cobertura-coverage.xml
+    paths:
+      - project/backend/coverage/
+    when: always
+    expire_in: 30 days
+  cache:
+    key: backend-$CI_COMMIT_REF_SLUG
+    paths:
+      - project/backend/node_modules/
+
+# 前端單元測試
+frontend-test:
+  stage: test
+  image: node:$NODE_VERSION
+  before_script:
+    - cd project/frontend
+    - npm ci
+  script:
+    - npm run test
+  cache:
+    key: frontend-$CI_COMMIT_REF_SLUG
+    paths:
+      - project/frontend/node_modules/
+
+# 前端整合測試
+frontend-integration-test:
+  stage: integration-test
+  image: node:$NODE_VERSION
+  needs:
+    - backend-unit-test
+    - frontend-test
+  before_script:
+    - cd project/backend
+    - npm ci
+    - cd ../frontend
+    - npm ci
+  script:
+    - echo "🚀 開始前端整合測試"
+    - npm run test:integration
+    - echo "✅ 前端整合測試完成"
+  cache:
+    key: 
+      - backend-$CI_COMMIT_REF_SLUG
+      - frontend-$CI_COMMIT_REF_SLUG
+    paths:
+      - project/backend/node_modules/
+      - project/frontend/node_modules/
+    policy: pull
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure

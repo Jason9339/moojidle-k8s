@@ -15,6 +15,7 @@
     "test:real-db": "vitest run --config vitest.config.real-db.js",
     "test:real-db:watch": "vitest --config vitest.config.real-db.js",
     "test:real-db:coverage": "vitest run --coverage --config vitest.config.real-db.js",
+    "test:server": "node test-server.js",
     "dev": "npx nodemon main.js"
   },
   "imports": {
