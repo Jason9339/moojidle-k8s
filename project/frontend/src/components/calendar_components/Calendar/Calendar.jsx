@@ -46,7 +46,7 @@ const Calendar = ({ events, ...props }) => {
                     style: {
                         backgroundColor,
                         borderColor: backgroundColor,
-                        color: '#fff',
+                        color: '#000000',
                     }
                 }
             }}
