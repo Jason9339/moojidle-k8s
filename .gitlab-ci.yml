@@ -9,7 +9,7 @@ variables:
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
   rules:
-    - if: $CI_COMMIT_BRANCH == "ci-config"
+    - if: $CI_COMMIT_BRANCH == "ci-integration-testing"
       when: always
     
     # # Automatically run on commits to main branch
