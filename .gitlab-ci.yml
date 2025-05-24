@@ -56,7 +56,7 @@ backend-test:
       - backend/test-reports/
     expire_in: 1 week
 
-# Frontend tests
+# Frontend tests (integration test)
 frontend-test:
   <<: *ci_conditions
   stage: test
