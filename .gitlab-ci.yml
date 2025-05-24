@@ -85,6 +85,7 @@ frontend-test:
     - cd ../database
     - mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
     - cd ../backend
+    - npm ci
     - npm run dev
     - echo "Waiting for backend to start..."
     - sleep 7
