@@ -177,6 +177,13 @@ db.dropDatabase()
    npm test course.service.test.js
    ```
 
+##### 📊 預期輸出示例
+```bash
+Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+```
+
+
 #### 第三步：創建 Controller 層測試  
 1. **創建文件** `tests/controllers/course.controller.test.js`
 2. **複製代碼**：從 [`TESTING_EXAMPLE.md` Controller 層部分](./TESTING_EXAMPLE.md#🎮-controller-層測試) 完整複製代碼
@@ -184,6 +191,12 @@ db.dropDatabase()
    ```bash
    npm test course.controller.test.js
    ```
+
+##### 📊 預期輸出示例
+```bash
+Test Files  1 failed (1)
+     Tests  2 failed | 6 passed (8)
+```
 
 #### 第四步：創建 Routes 層測試
 1. **創建文件** `tests/routes/course.routes.test.js`  
@@ -193,24 +206,29 @@ db.dropDatabase()
    npm test course.routes.test.js
    ```
 
+##### 📊 預期輸出示例
+```bash
+Test Files  1 failed (1)
+      Tests  3 failed | 8 passed (11)
+```
+
 #### 第五步：執行完整測試
 ```bash
 npm test course
 ```
 
+##### 📊 預期輸出示例
+```bash
+Test Files  3 failed (3)
+     Tests  7 failed | 19 passed (26)
+```
+
 ### ✅ 成功標準
 
 - [ ] 成功創建三個測試文件
-- [ ] Service 層測試通過（約 6-8 個測試）
-- [ ] Controller 層測試通過（約 8-10 個測試）  
-- [ ] Routes 層測試通過（約 12-15 個測試）
-- [ ] 所有 course 測試合計通過率 > 95%
+- [ ] 與預期輸出相同 (注意 : 有 fail 是正常的)
 - [ ] 理解三層測試架構的區別
 
-### 📊 預期輸出示例
-```bash
-
-```
 
 ### 🧠 學習重點
 
