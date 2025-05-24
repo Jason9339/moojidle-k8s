@@ -5,6 +5,8 @@ variables:
   # MongoDB configuration
   MONGODB_URI: "mongodb://mongo/moojidle"
   NODE_ENV: test
+  PORT: 3000 # Backend port
+  DATA_BASE_URL: "mongodb://mongo/moojidle"
 
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
@@ -86,7 +88,7 @@ frontend-test:
     - mongosh $MONGODB_URI --eval "load('Schema.js'); load('Seed.js');"
     - cd ../backend
     - npm ci
-    - npm run dev
+    - npm run dev &
     - echo "Waiting for backend to start..."
     - sleep 7
     - cd ../frontend
