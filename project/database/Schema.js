@@ -203,6 +203,38 @@ db.createCollection("exams", {
     }
 });
 
+db.createCollection("taken_exams", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["t_exam_id", "exam_id", "taken_by_user_id", "taken_user_course_tag"],
+            properties: {
+                t_exam_id: { bsonType: "int" },
+                exam_id: { bsonType: "int"},
+                taken_by_user_id: { bsonType: "int"},
+                taken_user_course_tag: { bsonType: "string"},
+                score: { bsonType: "number"},
+                graded_by_user_id: { bsonType: "int"},
+                attachments: {
+                    bsonType: "array",
+                    items: { 
+                        bsonType: "object",
+                        properties: {
+                            filename: { bsonType: "string", description: "Name of the attached file" },
+                            url: { bsonType: "string", description: "URL of the attached file" },
+                            path_to_file: { bsonType: "string" }
+                        }
+                    }
+                },
+                description: {
+                    bsonType: "string",
+                    description: "Additional notes (optional)"
+                }
+            }
+        }
+    }
+});
+
 db.createCollection("materials", {
     validator: {
         $jsonSchema: {

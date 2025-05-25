@@ -14,6 +14,7 @@ BOARD_NUM = 0
 CUSTOM_TAG_NUM = 0
 COURSE_TAG_NUM = 0
 EXAM_NUM = 0
+TAKEN_EXAM_NUM = 0
 MAT_NUM = 0
 ASSIGNMENT_NUM = 0
 SUBMITTED_ASSIGNMENT_NUM = 0
@@ -266,6 +267,89 @@ def generate_exams(courses, teach_in, assist_in, user_count=15, max_exams_per_co
             global EXAM_NUM
             EXAM_NUM += 1
     return exams
+
+def generate_taken_exams(exams, study_in, teach_in, assist_in):
+    """Generate fake data for taken exams"""
+    taken_exams = []
+    t_exam_id = 1  # Start submission IDs from 1
+
+    # Create a mapping of course_id to eligible graders (teachers and assistants)
+    eligible_graders = {}
+    for entry in teach_in:
+        course_id = entry["course_id"]
+        user_id = entry["user_id"]
+        if course_id not in eligible_graders:
+            eligible_graders[course_id] = set()
+        eligible_graders[course_id].add(user_id)
+
+    for entry in assist_in:
+        course_id = entry["course_id"]
+        user_id = entry["user_id"]
+        if course_id not in eligible_graders:
+            eligible_graders[course_id] = set()
+        eligible_graders[course_id].add(user_id)
+
+    # Create a mapping of course_id to students
+    eligible_students = {}
+    for entry in study_in:
+        course_id = entry["course_id"]
+        user_id = entry["user_id"]
+        if course_id not in eligible_students:
+            eligible_students[course_id] = set()
+        eligible_students[course_id].add(user_id)
+
+    # Generate submissions for each exam
+    for exam in exams:
+        exam_id = exam["exam_id"]
+        course_id = exam["in_course_id"]
+        # create_date = datetime.strptime(assignment["create_date"].replace('ISODate("', '').replace('")', ''), "%Y-%m-%dT%H:%M:%S")
+        # end_date = datetime.strptime(assignment["end_date"].replace('ISODate("', '').replace('")', ''), "%Y-%m-%dT%H:%M:%S")
+
+        for t_exam_index in range(1):
+            # Select a random student for this course
+            if course_id in eligible_students and eligible_students[course_id]:
+                taken_by_user_id = random.choice(list(eligible_students[course_id]))
+            else:
+                # If no eligible students, skip this submission
+                continue
+
+            # Generate submission date (must be between create_date and end_date)
+
+            # Select a random grader for this course
+            if course_id in eligible_graders and eligible_graders[course_id]:
+                graded_by_user_id = random.choice(list(eligible_graders[course_id]))
+            else:
+                graded_by_user_id = None  # No grader assigned
+
+            # Generate points (score)
+            points = exam["max_score"] if graded_by_user_id else None
+            
+            # Generate attachments for the assignment
+            num_attachments = 1
+            attachments = [
+                {
+                    "filename": f"submitted_assignment_{t_exam_id}_file_{i + 1}.pdf",
+                    "url": f"http://example.com/assignments/course_{course_id}/assignment_{t_exam_id}_file_{i + 1}.pdf"
+                }
+                for i in range(num_attachments)
+            ]
+
+            # Add the submission to the list
+            taken_exams.append({
+                "t_exam_id": t_exam_id,
+                "exam_id": exam_id,
+                "taken_by_user_id": taken_by_user_id,
+                "taken_user_course_tag": f"StudentTag_{taken_by_user_id}",
+                "score": points,
+                "graded_by_user_id": graded_by_user_id,
+                "attachments": attachments,
+                "description": f"This is the grade for Exam {exam_id} by User {taken_by_user_id}."
+            })
+            t_exam_id += 1
+            global TAKEN_EXAM_NUM
+            TAKEN_EXAM_NUM += 1
+
+    return taken_exams
 
 # # Generate materials data
 def generate_materials(courses, teach_in, assist_in, max_materials_per_course=5):
@@ -607,6 +691,7 @@ def write_seed_file():
     announcements = generate_announcements()
     discussion_boards = generate_discussion_boards()
     exams = generate_exams(courses, teach_in, assist_in)
+    taken_exams = generate_taken_exams(exams, study_in, teach_in, assist_in)
     materials = generate_materials(courses, teach_in, assist_in)
     assignments = generate_assignments(courses, teach_in, assist_in)
     submitted_assignments = generate_submitted_assignments(assignments, study_in, teach_in, assist_in)
@@ -626,6 +711,7 @@ def write_seed_file():
         "announcement": announcements,
         "discussion_board": discussion_boards,
         "exams": exams,
+        "taken_exams": taken_exams,
         "materials": materials,
         "assignments": assignments,
         "submitted_ass": submitted_assignments,
@@ -669,6 +755,7 @@ def write_seed_file():
             "custom_tag": CUSTOM_TAG_NUM,
             "discussion_board": BOARD_NUM,
             "exams": EXAM_NUM,
+            "taken_exams": TAKEN_EXAM_NUM,
             "mailbox": MAIL_NUM,
             "materials": MAT_NUM,
             "notification": NOTIFICATION_NUM,
