@@ -328,8 +328,8 @@ def generate_taken_exams(exams, study_in, teach_in, assist_in):
             num_attachments = 1
             attachments = [
                 {
-                    "filename": f"submitted_assignment_{t_exam_id}_file_{i + 1}.pdf",
-                    "url": f"http://example.com/assignments/course_{course_id}/assignment_{t_exam_id}_file_{i + 1}.pdf"
+                    "filename": f"taken_exam_{t_exam_id}_file_{i + 1}.pdf",
+                    "url": f"http://example.com/assignments/course_{course_id}/taken_exam_{t_exam_id}_file_{i + 1}.pdf"
                 }
                 for i in range(num_attachments)
             ]
