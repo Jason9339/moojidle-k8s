@@ -28,7 +28,7 @@ async function CreateDiscussionBoard(course_id, name) {
 
 async function DeleteDiscussionBoard(boardID) {
     const response = await api.delete(`/discussion-board/course-boards/${boardID}`);
-    console.log("DeleteDiscussionBoard response", response.data);
+    //console.log("DeleteDiscussionBoard response", response.data);
     return response.data;
 }
 

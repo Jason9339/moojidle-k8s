@@ -17,29 +17,8 @@ function CourseCard({
     const navigate = useNavigate();
     const [showEditModal, setShowEditModal] = useState(false);
 
-    const handleCardClick = () => {
-        console.log("📦 儲存角色資訊:", {
-            isTeacher,
-            isStudent,
-            isAssistant,
-        });
-
-        // 儲存角色資訊到 localStorage，防止 F5 後丟失
-        localStorage.removeItem("courseRole");
-        localStorage.setItem(
-            "courseRole",
-            JSON.stringify({
-                isTeacher: isTeacher || false,
-                isStudent: isStudent || false,
-                isAssistant: isAssistant || false,
-            })
-        );
-
-        localStorage.setItem("courseId", courseId);
-
-        navigate(`/course/${courseId}`, {
-            state: { isTeacher, isStudent, isAssistant },
-        });
+    const handleCardClick = () => {  
+        navigate(`/course/${courseId}`);
     };
 
     return (
@@ -89,16 +68,16 @@ function CourseCard({
                 <FaBullhorn
                     title="Announcement"
                     onClick={() =>
-                        navigate(`/courses/${courseId}/announcements`)
+                        navigate(`/course/${courseId}/announcement`)
                     }
                 />
                 <FaTasks
                     title="Assignments"
-                    onClick={() => navigate(`/courses/${courseId}/assignments`)}
+                    onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
                 <FaComments
                     title="Discussion"
-                    onClick={() => navigate(`/courses/${courseId}/discussions`)}
+                    onClick={() => navigate(`/course/${courseId}/discussion`)}
                 />
             </div>
             {showEditModal && (
