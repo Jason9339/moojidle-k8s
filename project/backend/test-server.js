@@ -93,8 +93,16 @@ async function startTestServer() {
         // 4. 啟動服務器
         const PORT = process.env.PORT || 3000;
         server = app.listen(PORT, () => {
-            console.log(`✅ 整合測試後端服務器運行在 http://localhost:${PORT}`);
+            console.log(`✅ 整合測試後端服務器應該要運行在 http://localhost:${PORT}`);
             console.log('🎯 整合測試環境準備完成');
+        });
+
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port ${PORT} is already in use.`);
+            } else {
+                console.error('Server error:', err);
+            }
         });
 
         // 優雅關閉處理
