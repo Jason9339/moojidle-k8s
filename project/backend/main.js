@@ -18,7 +18,7 @@ const PORT = process.env.PORT;
 // Middle Ware
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173"]
 }));
 
 // Routes are here ----------------------------------------------------------------------
