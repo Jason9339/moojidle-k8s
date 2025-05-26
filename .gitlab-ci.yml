@@ -1,10 +1,11 @@
-stages:
-  - test
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"  # for push to main
+      when: always
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      when: always
+    - when: never
 
-variables:
-  # MongoDB configuration
-  NODE_ENV: test
-  PORT: 3000 # Backend port
 
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
@@ -22,27 +23,35 @@ variables:
     # Always allow manual triggering from web interface
     - if: $CI_PIPELINE_SOURCE == "web"
       when: always
-    
 
-# Backend tests with MongoDB
+stages:
+  - test
+
+# 空 job，保證 pipeline 被建立，且快速通過
+noop:
+  stage: test
+  script: echo "Skipping test for fix-db/* or style-*"
+  rules:
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/
+      when: always
+
+# 真正的 backend test
 backend-test:
   <<: *ci_conditions
   stage: test
   image: node:20.17.0
   
   before_script:
-    - apt-get update && apt-get install -y jq
     - cd project/backend
-    - npm ci 
+    - npm ci
   script:
     - npm run test
-    - jq . test-output.json > tmp && mv tmp test-output.json
   artifacts:
     paths:
       - project/backend/test-output.json
     expire_in: 1 week
 
-# Frontend tests (integration test)
+# frontend 測試也一樣
 frontend-test:
   <<: *ci_conditions
   stage: test
@@ -50,9 +59,8 @@ frontend-test:
   services:
     - name: mongo:8.0.8
       alias: mongo
-
+  
   before_script:
-    - apt-get update && apt-get install -y jq
     - cd project/frontend
     - npm ci
     - cd ../backend
@@ -62,7 +70,6 @@ frontend-test:
     - echo "VITE_API_BASE_URL=http://localhost:3000" > .env
   script:
     - npm run test
-    - jq . test-output.json > tmp && mv tmp test-output.json
   artifacts:
     paths:
       - project/frontend/test-output.json
@@ -74,4 +81,3 @@ cache:
     - project/backend/node_modules/
     - project/frontend/node_modules/
     - ~/.npm/
-
