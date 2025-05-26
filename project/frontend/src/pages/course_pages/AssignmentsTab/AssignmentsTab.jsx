@@ -1,11 +1,11 @@
 import { useOutletContext } from "react-router-dom";
+import TeacherAssignment from "@/components/course_components/TeacherAssignment/TeacherAssignment";
 
 function AssignmentsTab() {
     const { role } = useOutletContext();
     return (
         <div>
-            <h3>作業列表</h3>
-            <p>身分: {role.isTeacher ? "老師" : role.isAssistant ? "助教" : "學生"}</p>
+            {role.isTeacher ?  <TeacherAssignment />: role.isAssistant ? <TeacherAssignment />: "學生"}
         </div>
     );
 }
