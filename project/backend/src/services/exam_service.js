@@ -59,7 +59,7 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
     }
 }
 
-async function FindExamsByCourseId(courseId) {
+async function FindProjectedExamsByCourseId(courseId) {
     try {
         courseId = parseInt(courseId);
 
@@ -81,5 +81,5 @@ async function FindExamsByCourseId(courseId) {
 
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    FindExamsByCourseId
+    FindProjectedExamsByCourseId
 };

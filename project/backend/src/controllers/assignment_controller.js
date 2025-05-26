@@ -1,6 +1,10 @@
 import {
+    // not usint
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId
+
+    // using
+    FindAssignmentsByCourseId,
+    FindProjectedAssignmentsByCourseId,
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -52,7 +56,32 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
+async function GetProjectedAssignmentsInCourse(req, res){
+    try {
+        const courseId = parseInt(req.params.courseId);
+
+        // check if course exist
+        if((await FindCourseById(courseId)) == null){
+            res.status(404).send("course not found");
+            return;
+        }
+
+        // get the exmas in the course
+        let assigns = await FindProjectedAssignmentsByCourseId(courseId);
+
+        // can only be [] or [.....]
+        if(assigns === undefined){
+            res.status(500).send("error on finding assigns in the course");
+        }
+
+        res.status(200).send(assigns);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    GetCourseAssignments
+    GetCourseAssignments,
+    GetProjectedAssignmentsInCourse
 };

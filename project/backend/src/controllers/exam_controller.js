@@ -1,6 +1,6 @@
 import {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    FindExamsByCourseId
+    FindProjectedExamsByCourseId
 } from '#src/services/exam_service.js';
 
 import {
@@ -17,7 +17,7 @@ async function GetUpcomingExamsByUserId(req, res) {
     }
 }
 
-async function GetExamsByCourseId(req, res) {
+async function GetProjectedExamsByCourseId(req, res) {
     try {
         const courseId = parseInt(req.params.courseId);
 
@@ -28,7 +28,7 @@ async function GetExamsByCourseId(req, res) {
         }
 
         // get the exmas in the course
-        let exams = await FindExamsByCourseId(courseId);
+        let exams = await FindProjectedExamsByCourseId(courseId);
 
         // can only be [] or [.....]
         if(exams === undefined){
@@ -44,5 +44,5 @@ async function GetExamsByCourseId(req, res) {
 
 export {
     GetUpcomingExamsByUserId,
-    GetExamsByCourseId
+    GetProjectedExamsByCourseId
 }

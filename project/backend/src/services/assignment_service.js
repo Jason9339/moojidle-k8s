@@ -101,7 +101,28 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
+async function FindProjectedAssignmentsByCourseId(courseId) {
+    try {
+        courseId = parseInt(courseId);
+
+        const result = await mongoose.connection.db.collection('assignments').find(
+            { in_course_id: courseId }
+        ).project(
+            { attachments: 0, description: 0 }
+        ).toArray();
+
+        if (result == [] || result == null) {
+            return [];
+        } else {
+            return result;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    FindProjectedAssignmentsByCourseId
 };
