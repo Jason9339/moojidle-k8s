@@ -108,7 +108,7 @@ async function FindProjectedAssignmentsByCourseId(courseId) {
         const result = await mongoose.connection.db.collection('assignments').find(
             { in_course_id: courseId }
         ).project(
-            { attachments: 0, description: 0 }
+            { attachments: 0, description: 0, _id: 0 }
         ).toArray();
 
         if (result == [] || result == null) {

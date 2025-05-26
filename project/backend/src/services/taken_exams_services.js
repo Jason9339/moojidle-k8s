@@ -8,7 +8,7 @@ async function FindProjectTakenExamByUserIdAssId(userId, examId) {
         const result = await mongoose.connection.db.collection('submitted_ass').find(
             {taken_by_user_id: userId, exam_id: examId}
         ).project(
-            { attachments: 0, description: 0 }
+            { attachments: 0, description: 0, _id: 0 }
         ).toArray();
 
         return result;
