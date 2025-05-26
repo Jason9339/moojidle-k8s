@@ -30,3 +30,4 @@
 1. `py fakedata.py`
 2. change **ALL** `"ISODate(` to `ISODate("`
 3. change **ALL** `00)"` to `00.000Z")`
+4. update `Default.js` if needed
