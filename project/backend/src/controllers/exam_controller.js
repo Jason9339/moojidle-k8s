@@ -1,7 +1,11 @@
 import {
-    FindFromExamJoinStudyInJoinCourseByUserId
-    // getComingExams as getComingExamsService
+    FindFromExamJoinStudyInJoinCourseByUserId,
+    FindExamsByCourseId
 } from '#src/services/exam_service.js';
+
+import {
+    FindCourseById
+} from '#src/services/course_service.js';
 
 async function GetUpcomingExamsByUserId(req, res) {
     try {
@@ -13,20 +17,32 @@ async function GetUpcomingExamsByUserId(req, res) {
     }
 }
 
-// 取得即將到來的考試/活動
-// async function getComingExams (req, res) {
-//     try {
-//         // 調用服務層獲取資料
-//         const comingExams = await getComingExamsService();
-        
-//         // 返回資料給客戶端
-//         res.json(comingExams);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+async function GetExamsByCourseId(req, res) {
+    try {
+        const courseId = parseInt(req.params.courseId);
+
+        // check if course exist
+        if((await FindCourseById(courseId)) == null){
+            res.status(404).send("course not found");
+            return;
+        }
+
+        // get the exmas in the course
+        let exams = await FindExamsByCourseId(courseId);
+
+        // can only be [] or [.....]
+        if(exams === undefined){
+            res.status(500).send("error on finding exams in the course");
+        }
+
+        res.status(200).send(exams);
+
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
 
 export {
-    GetUpcomingExamsByUserId
-    // getComingExams
+    GetUpcomingExamsByUserId,
+    GetExamsByCourseId
 }
