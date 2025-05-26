@@ -21,3 +21,6 @@ project/backend/uploads/**
 # for custom
 test.js
 test.py
+
+# for CI/CD
+test-output.json

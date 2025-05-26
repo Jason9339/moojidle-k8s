@@ -27,7 +27,7 @@ async function Register(req, res) {
     try {
         const result = await RegisterUser({ name, email, password });
 
-        if (result.insertedId) {
+        if (result && result.insertedId) {
             res.status(201).send({ message: "User registered successfully" });
         } else {
             res.status(500).send({ message: "Failed to register user" });
@@ -84,15 +84,19 @@ async function Delete(req, res) {
 async function GetUserData(req, res) {
     const userId = req.params.userId;
 
-    let resultMain = await FindOneUserById(userId);
-    const resultTags = await FindOnesTagById(userId);
+    try {
+        let resultMain = await FindOneUserById(userId);
+        
+        if (!resultMain) {
+            return res.status(404).send({ message: "User not found" });
+        }
 
-    resultMain.user_tags = resultTags;
+        const resultTags = await FindOnesTagById(userId);
+        resultMain.user_tags = resultTags;
 
-    if (resultMain) {
         res.status(200).send(resultMain);
-    } else {
-        res.status(404).send({ message: "User not found" });
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
 
