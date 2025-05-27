@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Calendar from "@/components/calendar_components/Calendar/Calendar";
@@ -8,6 +7,7 @@ import { GetCalendarEventsByUserId } from "@/services/CalendarApi";
 
 import styles from "./CalendarPage.module.css";
 
+const DEFAULT_COLORS = ['#D3A4FF', '#7D7DFF', '#C4E1E1', '#7AFEC6', '#D9B300', '#82D900', '#C48888', '#9999CC'];
 const CalendarPage = () => {
     const [events, setEvents] = useState([]);
     const [legendItems, setLegendItems] = useState([]);
@@ -17,44 +17,58 @@ const CalendarPage = () => {
             const userId = JSON.parse(localStorage.getItem("user")).user_id;
             const data = await GetCalendarEventsByUserId(userId);
 
-            const e = [];
-
+            let evts = [];
+            let colorSet = new Set();
             // (Legend) For course variants record. 
             const map = new Map();
             data.forEach(item => {
 
-                if (item?.name && item?.color && !map.has(item.name)) {
+                let icolor = item?.color;
+                if (item?.name && icolor && !map.has(item.name)) {
 
-                    map.set(item.name, item.color)
+                    if (colorSet.has(item.color)) {
+
+                        for (const color of DEFAULT_COLORS) {
+
+                            if (!colorSet.has(color)) {
+                                icolor = color;
+                                colorSet.add(color);
+                                break;
+                            }
+                        }
+                    }
+
+                    colorSet.add(icolor);
+                    map.set(item.name, icolor)
                 }
                 item.events.forEach((event) => {
-                    e.push({ ...event, child: { name: event.title, color: item.color } });
+                    evts.push({ ...event, child: { name: event.title, color: icolor } });
                 })
 
             })
 
+            evts = evts.flat();
             setLegendItems(Array.from(map, ([name, color]) => ({ name, color })))
-            setEvents(e.flat());
+            setEvents(evts);
         };
         fetchEvents();
     }, []);
 
-    console.log("events:", events);
     // Extract unique legend items from event.child
 
     return (
         <>
             <LeftBar />
             <div className={styles.container}>
-                {/* 左側：主日曆 */}
+                {/* 主日曆 */}
                 <div id="main-calendar" className={styles.mainCalendar}>
                     <Calendar events={events} />
                 </div>
 
-                {/* 右側：小日曆 + 圖例 */}
+                {/* 小日曆 + 圖例 */}
                 <aside id="sidebar" className={styles.sidebar}>
                     <div className={styles.legend}>
-                        <h3 className={styles.legendTitle}>Legend</h3>
+                        <h3 className={styles.legendTitle}>我的課程</h3>
                         <ul className={styles.legendList}>
                             {legendItems.map(item => (
                                 <li key={item.name} className={styles.legendItem}>
