@@ -8,7 +8,23 @@ import path from 'path';
 import {
     CounterSeed,
     UserSeed,
-    UserTagSeed,
+    Custom_tagSeed,
+    CourseSeed,
+    Teach_inSeed,
+    Assist_inSeed,
+    Study_inSeed,
+    AnnouncementSeed,
+    Discussion_boardSeed,
+    ExamsSeed,
+    Taken_examsSeed,
+    MaterialsSeed,
+    AssignmentsSeed,
+    Submitted_assSeed,
+    PostSeed,
+    Course_tagSeed,
+    NotificationSeed,
+    NotifiedSeed,
+    MailboxSeed,
 } from './seed.js';
 
 let mongoServer;
@@ -129,7 +145,23 @@ async function ExecuteSchemaScript(schemaContent) {
 async function SetupTestData() {
     await CounterSeed();
     await UserSeed();
-    await UserTagSeed();    
+    await Custom_tagSeed();
+    await CourseSeed();
+    await Teach_inSeed();
+    await Assist_inSeed();
+    await Study_inSeed();
+    await AnnouncementSeed();
+    await Discussion_boardSeed();
+    await ExamsSeed();
+    await Taken_examsSeed();
+    await MaterialsSeed();
+    await AssignmentsSeed();
+    await Submitted_assSeed();
+    await PostSeed();
+    await Course_tagSeed();
+    await NotificationSeed();
+    await NotifiedSeed();
+    await MailboxSeed();
 }
 
 // Mock console methods to reduce noise in tests

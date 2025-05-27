@@ -4,7 +4,8 @@
 // 2. 替換所有 "TemplateName" 為實際的功能名稱
 // 3. 根據實際需求修改測試案例
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { createMockReq, createMockRes } from './test-utils.js';
 
 // ========================================
 // SERVICE 層測試模板
@@ -141,21 +142,6 @@ describe('TemplateName Controller', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
-
-    // Mock 輔助函數
-    const createMockReq = (body = {}, params = {}, query = {}) => ({
-        body,
-        params,
-        query
-    });
-
-    const createMockRes = () => {
-        const res = {};
-        res.status = vi.fn().mockReturnValue(res);
-        res.send = vi.fn().mockReturnValue(res);
-        res.json = vi.fn().mockReturnValue(res);
-        return res;
-    };
 
     describe('CreateTemplateNameController', () => {
         it('應該成功處理創建請求', async () => {
