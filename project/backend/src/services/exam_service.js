@@ -69,7 +69,7 @@ async function FindProjectedExamsByCourseId(courseId) {
             { attachments: 0, description: 0, _id: 0 }
         ).toArray();
 
-        if (result == [] || result == null) {
+        if (result == null || result.length == 0) {
             return [];
         } else {
             return result;

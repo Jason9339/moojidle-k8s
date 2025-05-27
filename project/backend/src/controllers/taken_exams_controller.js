@@ -36,7 +36,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
         let studentsGrades = await FindStudyInJoinUserByCourseId(courseId);
 
         // no studentsin this course
-        if (studentsGrades == [] || studentsGrades == null) {
+        if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
         }
 
@@ -52,7 +52,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
         let exams = await FindProjectedExamsByCourseId(courseId);
 
         // no assign yet in the course
-        if (exams == [] || exams == null) {
+        if (exams == null || exams.length == 0) {
             res.status(200).send(studentsGrades);
         } else {
             // for each assigns

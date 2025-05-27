@@ -76,7 +76,7 @@ function GradesTab() {
     if (!simpleAssignsData || !simpleExamsData || !subAssignsData || !takenExamsData) {
         return (
             <>
-            {/* show nothing */}
+                {/* show nothing */}
             </>
         );
     }
@@ -85,7 +85,18 @@ function GradesTab() {
     // console.error(simpleExamsData);
     // console.error(subAssignsData);
     // console.error(takenExamsData);
-    console.error(role);
+    // console.error(role);
+
+    // merge data (assigns + exam)
+    let simpleGrades = [...simpleAssignsData, ...simpleExamsData];
+
+    let studentGrades = subAssignsData.map(subAss => {
+        const matchTakenExam = takenExamsData.find(examUser => examUser.user_id == subAss.user_id);
+        return {
+            ...subAss,
+            taken_exams: matchTakenExam.taken_exams,
+        };
+    });
 
     return (
         <>
@@ -94,7 +105,9 @@ function GradesTab() {
                     &#9660;
                 </button> */}
 
-                <SimpleGradeTable />
+                <SimpleGradeTable 
+                    simpleGrades = {simpleGrades}
+                />
             </div>
         </>
     );

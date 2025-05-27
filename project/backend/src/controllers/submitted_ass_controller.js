@@ -36,7 +36,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
         let studentsGrades = await FindStudyInJoinUserByCourseId(courseId);
 
         // no studentsin this course
-        if (studentsGrades == [] || studentsGrades == null) {
+        if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
         }
 
@@ -52,7 +52,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
         let assigns = await FindProjectedAssignmentsByCourseId(courseId);
 
         // no assign yet in the course
-        if (assigns == [] || assigns == null) {
+        if (assigns == null || assigns.length == 0) {
             res.status(200).send(studentsGrades);
         } else {
             // for each assigns
