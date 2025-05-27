@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:real-db": "vitest run --config vitest.config.real-db.js",
+    "test:real-db:watch": "vitest --config vitest.config.real-db.js",
+    "test:real-db:coverage": "vitest run --coverage --config vitest.config.real-db.js",
+    "test:server": "node test-server.js",
+    "dev": "npx nodemon main.js"
+  },
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.14.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^3.1.4",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1",
+    "vitest": "^3.1.4"
+  }
+}

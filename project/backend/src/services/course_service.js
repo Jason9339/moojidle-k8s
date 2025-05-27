@@ -96,6 +96,24 @@ async function FindCourseInCourseId(courseIds) {
 // Service to add a new course
 async function InsertCourse(courseData) {
     try {
+        // TDD 改進點 1: 添加輸入驗證
+        // 應該驗證必填字段，拒絕無效數據
+        /*
+        if (!courseData || !courseData.name) {
+            throw new Error('Course name is required');
+        }
+        
+        if (typeof courseData.name !== 'string' || courseData.name.trim() === '') {
+            throw new Error('Course name cannot be empty');
+        }
+        
+        if (courseData.name.length > 255) {
+            throw new Error('Course name is too long');
+        }
+        
+        // 驗證其他字段...
+        */
+        
         // 1. Generate the next course_id
         const nextCourseId = await GetNextCounterId("course");
         const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
@@ -103,7 +121,7 @@ async function InsertCourse(courseData) {
         // 2. Prepare the document to insert
         const newCourseDocument = {
             course_id: nextCourseId,
-            name: courseData.name,
+            name: courseData.name, // TDD: 這裡可能是 undefined，應該在上面驗證
             description: courseData.description || "",
             create_date: new Date(), // Set current date/time
             start_date: new Date(courseData.start_date) || new Date(), // Default to current date if not provided
@@ -137,6 +155,21 @@ async function InsertCourse(courseData) {
 // Service to change the course name and return the updated course
 async function UpdateCourseName(courseId, newName) {
     try {
+        // TDD 改進點 2: 添加輸入驗證
+        /*
+        if (!newName) {
+            throw new Error('Course name is required');
+        }
+        
+        if (typeof newName !== 'string' || newName.trim() === '') {
+            throw new Error('Course name cannot be empty');
+        }
+        
+        if (newName.length > 255) {
+            throw new Error('Course name is too long');
+        }
+        */
+        
         const result = await mongoose.connection.db.collection('course').updateOne(
             { course_id: courseId }, // Filter by course_id
             { $set: { name: newName } } // Update the name field
@@ -144,7 +177,9 @@ async function UpdateCourseName(courseId, newName) {
 
 
         if (result.matchedCount === 0) {
-            throw new Error(`Course with ID ${courseId} not found.`);
+            // TDD 改進點 3: 返回 null 而不是拋出錯誤，讓 controller 決定如何處理
+            // throw new Error(`Course with ID ${courseId} not found.`);
+            return null; // 改為返回 null
         }
 
         // Fetch the updated course
@@ -159,10 +194,17 @@ async function UpdateCourseName(courseId, newName) {
 // Service to remove a course by its course_id
 async function DeleteCourse(id) {
     try {
+        // TDD 改進點 4: 更嚴格的輸入驗證
+        /*
+        if (!id) {
+            throw new Error('Course ID is required');
+        }
+        */
+        
         // 1. Convert the incoming id (expected to be course_id) to an integer
         const courseIdInt = parseInt(id, 10);
         if (isNaN(courseIdInt)) {
-            throw new Error("Invalid course ID format. ID must be an integer.");
+            throw new Error("Invalid course ID format"); // TDD: 這個錯誤處理是好的
         }
 
         // 2. Delete the document matching the course_id
@@ -239,11 +281,25 @@ async function DeleteCourseRelationships(courseIdInt) {
 // 獲取課程詳細資訊
 async function FindCourseById(courseId) {
     try {
+        // TDD 改進點 5: 添加輸入驗證
+        /*
+        if (!courseId) {
+            throw new Error('Course ID is required');
+        }
+        
+        const courseIdInt = parseInt(courseId, 10);
+        if (isNaN(courseIdInt)) {
+            throw new Error('Invalid course ID format');
+        }
+        */
+        
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
 
         if (!course) {
-            throw new Error('找不到課程');
+            // TDD 改進點 6: 返回 null 而不是拋出錯誤
+            // throw new Error('找不到課程');
+            return null; // 改為返回 null，讓 controller 決定如何處理
         }
 
         // console.log("[getCourseDetails] 從數據庫獲取的原始課程數據:", course); // 新增日誌
@@ -268,7 +324,9 @@ async function FindCourseById(courseId) {
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
-        throw new Error(`Failed to retrieve course details: ${error.message}`);
+        // TDD 改進點 7: 不要包裝錯誤消息，直接拋出原始錯誤
+        // throw new Error(`Failed to retrieve course details: ${error.message}`);
+        throw error; // 改為直接拋出原始錯誤
     }
 }
 

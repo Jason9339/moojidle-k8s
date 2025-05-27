@@ -1,0 +1,68 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
+}
+
+.course-detail-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: calc(100% - 180px);
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.course-header {
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.course-title {
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.tab-menu {
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+}
+
+/* 讓 NavLink 看起來像按鈕 tab */
+.tab-menu a {
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+    padding-bottom: 4px;
+}
+
+.tab-menu a:hover {
+    color: #007bff;
+}
+
+/* 當前頁面高亮 */
+.tab-menu a.active {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+}

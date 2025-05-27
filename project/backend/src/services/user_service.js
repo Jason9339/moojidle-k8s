@@ -28,6 +28,9 @@ async function RegisterUser(userData) {
         // Find the highest user_id in the database and calculate the next user_id
         // we get this my querying into counter document
         const counter = await mongoose.connection.db.collection('counter').findOne();
+        if (!counter) {
+            throw new Error("Counter document not found. Please initialize your counter collection.");
+        }
         const nextUserId = counter.user + 1;
 
         // Insert the new user into the database

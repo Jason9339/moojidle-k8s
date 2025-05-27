@@ -104,7 +104,7 @@ db.createCollection("announcement", {
                 announce_date: { bsonType: "date" },
                 context: { bsonType: "string" },
                 user_id: { bsonType: "int" },
-                course_id: { bsonType: "int"},
+                course_id: { bsonType: "int"}
             }
         }
     }
@@ -175,14 +175,17 @@ db.createCollection("exams", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["exam_id", "in_course_id", "create_by_user_id", "exam_name", "exam_date", "create_date", "description"],
+            required: ["exam_id", "in_course_id", "create_by_user_id", "exam_name", "start_date", "end_date", "create_date", "max_score", "percentage", "description"],
             properties: {
                 exam_id: { bsonType: "int", description: "Primary key: Unique identifier for the exam" },
                 in_course_id: { bsonType: "int", description: "Foreign key: ID of the course the exam belongs to" },
                 create_by_user_id: { bsonType: "int", description: "Foreign key: User ID of the creator" },
                 exam_name: { bsonType: "string", description: "Name of the exam" },
-                exam_date: { bsonType: "date", description: "Date when the exam will be held" },
+                start_date: { bsonType: "date", description: "Date when the exam will be held" },
+                end_date: { bsonType: "date", description: "Date when the exam will end" },
                 create_date: { bsonType: "date", description: "Date when the exam was created" },
+                max_score: { bsonType: "number" },
+                percentage: { bsonType: "number" },
                 description: { bsonType: "string", description: "Description of the exam" },
                 attachments: {
                     bsonType: "array",
@@ -194,6 +197,38 @@ db.createCollection("exams", {
                         }
                     },
                     description: "Attachments related to the exam (optional)"
+                }
+            }
+        }
+    }
+});
+
+db.createCollection("taken_exams", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["t_exam_id", "exam_id", "taken_by_user_id", "taken_user_course_tag"],
+            properties: {
+                t_exam_id: { bsonType: "int" },
+                exam_id: { bsonType: "int"},
+                taken_by_user_id: { bsonType: "int"},
+                taken_user_course_tag: { bsonType: "string"},
+                score: { bsonType: "number"},
+                graded_by_user_id: { bsonType: "int"},
+                attachments: {
+                    bsonType: "array",
+                    items: { 
+                        bsonType: "object",
+                        properties: {
+                            filename: { bsonType: "string", description: "Name of the attached file" },
+                            url: { bsonType: "string", description: "URL of the attached file" },
+                            path_to_file: { bsonType: "string" }
+                        }
+                    }
+                },
+                description: {
+                    bsonType: "string",
+                    description: "Additional notes (optional)"
                 }
             }
         }
@@ -225,7 +260,7 @@ db.createCollection("assignments", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "start_date", "end_date"],
+            required: ["ass_id", "in_course_id", "create_by_user_id", "ass_name", "create_date", "start_date", "end_date", "max_score", "percentage"],
             properties: {
                 ass_id: { bsonType: "int", },
                 in_course_id: { bsonType: "int", },
@@ -234,6 +269,8 @@ db.createCollection("assignments", {
                 create_date: { bsonType: "date", },
                 start_date: { bsonType: "date", },
                 end_date: { bsonType: "date", },
+                max_score: { bsonType: "number" },
+                percentage: { bsonType: "number" },
                 description: { bsonType: "string", },
                 attachments: {
                     bsonType: "array",
@@ -277,13 +314,24 @@ db.createCollection("submitted_ass", {
                     bsonType: "date",
                     description: "Date of submission"
                 },
-                points: {
+                score: {
                     bsonType: "number",
                     description: "Score (added later)"
                 },
                 graded_by_user_id: {
                     bsonType: "int",
                     description: "Foreign key: User ID of the grader (added later)"
+                },
+                attachments: {
+                    bsonType: "array",
+                    items: { 
+                        bsonType: "object",
+                        properties: {
+                            filename: { bsonType: "string", description: "Name of the attached file" },
+                            url: { bsonType: "string", description: "URL of the attached file" },
+                            path_to_file: { bsonType: "string" }
+                        }
+                    }
                 },
                 description: {
                     bsonType: "string",
@@ -363,6 +411,36 @@ db.createCollection("post", {
                     },
                     description: "Tags associated with the post (optional)"
                 }
+            }
+        }
+    }
+});
+
+db.createCollection("notification", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["n_id", "event_id", "event_category", "context", "notified_date"],
+            properties: {
+                n_id: { bsonType: "int" },
+                event_id: { bsonType: "int" },
+                event_category: { bsonType: "string" },
+                context: { bsonType: "string" },
+                notified_date: { bsonType: "date" }
+            }
+        }
+    }
+});
+
+db.createCollection("notified", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["user_id", "n_id", "is_read"],
+            properties: {
+                user_id: { bsonType: "int" },
+                n_id: { bsonType: "int" },
+                is_read: { bsonType: "bool" }
             }
         }
     }

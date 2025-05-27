@@ -1,15 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import Toolbar from '../Toolbar/Toolbar';
 import WeekView from '../WeekView/WeekView/WeekView';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from './Calendar.module.css';
-
-import { format, parse, startOfWeek, getDay } from 'date-fns'
-import zhTW from 'date-fns/locale/zh-TW'
-
-const locales = { 'zh-TW': zhTW }
-const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales })
+import moment from 'moment';
+moment.locale('zh-tw')
+const localizer = momentLocalizer(moment)
 
 const Calendar = ({ events, ...props }) => {
 
