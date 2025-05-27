@@ -1,5 +1,4 @@
-import { useOutletContext } from "react-router-dom";
-import { useParams, useNavigate } from "react-router-dom";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 // api call
@@ -7,6 +6,12 @@ import { GetSimpleExams } from "@/services/ExamApi";
 import { GetSimpleCourseAssignments } from "@/services/AssignmentApi";
 import { GetSubAssInCourse } from "@/services/SubmittedAssignApi";
 import { GetTakenExamsInCourse } from "@/services/TakenExamApi";
+
+// components
+import SimpleGradeTable from "@/components/course_components/SimpleGradeTable/SimpleGradeTable";
+
+// css style
+import styles from "./GradesTab.module.css";
 
 function GradesTab() {
     const { role } = useOutletContext();
@@ -67,12 +72,12 @@ function GradesTab() {
         FetchTakenExams(courseId);
     }, []);
 
-    if (!simpleAssignsData || !simpleExamsData || !subAssignsData) {
+    // data hasn't fully arrived
+    if (!simpleAssignsData || !simpleExamsData || !subAssignsData || !takenExamsData) {
         return (
-            <div>
-                <h3>成績</h3>
-                <p>身分: {role.isTeacher ? "老師" : role.isAssistant ? "助教" : "學生"}</p>
-            </div>
+            <>
+            {/* show nothing */}
+            </>
         );
     }
 
@@ -80,12 +85,19 @@ function GradesTab() {
     // console.error(simpleExamsData);
     // console.error(subAssignsData);
     // console.error(takenExamsData);
+    console.error(role);
 
     return (
-        <div>
-            <h3>成績</h3>
-            <p>身分: {role.isTeacher ? "老師" : role.isAssistant ? "助教" : "學生"}</p>
-        </div>
+        <>
+            <div className={styles["grade-tab-container"]}>
+                {/* <button className={styles["toggle-button"]}>
+                    &#9660;
+                </button> */}
+
+                <SimpleGradeTable />
+            </div>
+        </>
     );
 }
+
 export default GradesTab;

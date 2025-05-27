@@ -1,0 +1,21 @@
+.grade-tab-container {
+    width: 100%;
+    min-height: 80%;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    background-color: rgb(231, 231, 231);
+    overflow-y: overlay;
+}
+
+.toggle-button {
+    position: absolute;
+    top: 1vh;
+    left: 0.5vw;
+
+    font-size: 23px;
+}
