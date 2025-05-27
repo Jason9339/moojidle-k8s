@@ -9,6 +9,7 @@ import { GetTakenExamsInCourse } from "@/services/TakenExamApi";
 
 // components
 import SimpleGradeTable from "@/components/course_components/SimpleGradeTable/SimpleGradeTable";
+import StudentsGradeTable from "@/components/course_components/StudentsGradeTable/StudentsGradeTable";
 
 // css style
 import styles from "./GradesTab.module.css";
@@ -107,6 +108,10 @@ function GradesTab() {
 
                 <SimpleGradeTable 
                     simpleGrades = {simpleGrades}
+                />
+
+                <StudentsGradeTable
+                    studentGrades = {studentGrades}
                 />
             </div>
         </>

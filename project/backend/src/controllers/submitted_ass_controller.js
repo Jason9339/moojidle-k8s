@@ -60,8 +60,14 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
                 for (const student of studentsGrades) {
                     let subAss = await FindProjectSubAssignByUserIdAssId(student.user_id, ass.ass_id);
 
-                    // push the last grade or null into the array
-                    student.sub_ass.push(subAss.at(-1) || null);
+                    // push the last grade into the array
+                    if(subAss.at(-1) == undefined){
+                        student.sub_ass.push({ ass_name: ass.ass_name });
+                    }else{
+                        let finalSubAss = subAss.at(-1);
+                        finalSubAss.ass_name = ass.ass_name;
+                        student.sub_ass.push(finalSubAss);
+                    }
                 }
             }
         }

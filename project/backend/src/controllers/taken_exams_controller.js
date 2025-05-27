@@ -60,8 +60,14 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
                 for (const student of studentsGrades) {
                     let takenExam = await FindProjectTakenExamByUserIdAssId(student.user_id, exam.exam_id);
 
-                    // push the last grade or null into the array
-                    student.taken_exams.push(takenExam.at(-1) || null);
+                    // push the last grade into the array
+                    if(takenExam.at(-1) == undefined){
+                        student.taken_exams.push({ exam_name: exam.exam_name });
+                    }else{
+                        let finalTakenExam = takenExam.at(-1);
+                        finalTakenExam.exam_name = exam.exam_name;
+                        student.sub_ass.push(finalTakenExam);
+                    }
                 }
             }
         }
