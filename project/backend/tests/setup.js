@@ -68,13 +68,13 @@ global.beforeEach = async () => {
     await LoadSchema();
 
     // 添加小延遲確保清理完成
-    await new Promise(resolve => setTimeout(resolve, 5));
+    // await new Promise(resolve => setTimeout(resolve, 5));
 
     // 重新初始化測試數據
     await SetupTestData();
 
     // 再次添加小延遲確保數據插入完成
-    await new Promise(resolve => setTimeout(resolve, 5));
+    // await new Promise(resolve => setTimeout(resolve, 5));
 };
 
 // 載入 Schema（從 setup-real-db.js 移植）
