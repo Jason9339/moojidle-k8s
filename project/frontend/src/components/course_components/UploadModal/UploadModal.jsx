@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"; // 引入 useRef
-import { UploadFile } from "@/services/file_api/FileApi";
+import { UploadMaterial, UploadAssignment } from "@/services/file_api/FileApi";
 import styles from "./UploadModal.module.css";
 
 const UploadModal = ({ onClose, courseId, onSuccess }) => {
@@ -63,7 +63,6 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
         );
         formData.append("uploadFile", renamedFile);
     
-        formData.append("type", type);
         formData.append("courseId", courseId);
         formData.append("createByUserId", userId);
         formData.append("description", description);
@@ -78,8 +77,13 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
         }
     
         try {
-            await UploadFile(formData);
-            alert("上傳成功！");
+            if (type === "assignment") {
+                await UploadAssignment(formData);
+                alert("作業上傳成功！");
+            } else {
+                await UploadMaterial(formData);
+                alert("教材上傳成功！");
+            }
             onSuccess();
             onClose();
         } catch (error) {

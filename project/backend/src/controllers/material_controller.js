@@ -9,7 +9,25 @@ import {
     FindCourseById
 } from '#src/services/course_service.js';
 
+import {
+    GetNextId,
+    InsertMaterialToDB
+} from '#src/services/file_services/file_db_service.js';
+
+import {
+    SaveFile,
+    DeleteFile
+} from '#src/services/file_services/file_storage_service.js';
+
 import CalculateWeek from '#src/utils/calculate_week.js';
+
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// 模擬 __dirname，因為使用的是 ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 取得特定課程的檔案
 async function GetCourseFiles(req, res) {
@@ -134,8 +152,112 @@ async function DeleteCourseMaterial(req, res) {
     }
 }
 
+// 上傳課程教材
+async function UploadCourseMaterial(req, res) {
+    try {
+        const { courseId } = req.params;
+        const {
+            createByUserId,
+            mName,
+            description,
+            displayDate
+        } = req.body;
+
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        // 儲存檔案到硬碟
+        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material");
+        const now = new Date();
+
+        const doc = {
+            m_id: await GetNextId("materials"),
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            m_name: mName,
+            description,
+            create_date: now,
+            display_date: new Date(displayDate),
+            path_to_file: savedFile.relativeUrl,
+            filename: savedFile.originalName
+        };
+
+        const dbResult = await InsertMaterialToDB(doc);
+
+        res.status(200).json({
+            message: "上傳教材成功",
+            fileId: savedFile.fileId,
+            fileName: savedFile.originalName,
+            data: dbResult
+        });
+    } catch (error) {
+        console.error("上傳教材錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 下載教材檔案
+function DownloadMaterial(req, res) {
+    const { path: filePathParam } = req.query;
+
+    if (!filePathParam) {
+        return res.status(400).json({ message: "Missing path parameter" });
+    }
+
+    const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
+    // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
+    const filePath = path.join(__dirname, "../../", sanitizedPath);
+    console.log("✅ Resolved file path:", filePath);
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error("❌ 檔案不存在:", filePath);
+            return res.status(404).json({ message: "File not found" });
+        }
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${path.basename(filePath)}"`
+        );
+
+        res.download(filePath, (err) => {
+            if (err) {
+                console.error("❌ 下載錯誤:", err);
+                res.status(500).json({ message: "Error downloading file" });
+            }
+        });
+    });
+}
+
+// 刪除教材檔案
+async function DeleteMaterial(req, res) {
+    try {
+        const { path: filePath } = req.query;
+        
+        if (!filePath) {
+            return res.status(400).json({ message: "缺少檔案路徑參數" });
+        }
+        
+        const result = await DeleteFile(filePath);
+        
+        if (result) {
+            return res.status(200).json({ message: "教材檔案刪除成功" });
+        } else {
+            return res.status(404).json({ message: "教材檔案不存在或刪除失敗" });
+        }
+    } catch (error) {
+        console.error("刪除教材檔案時發生錯誤:", error);
+        res.status(500).json({ message: "刪除教材檔案時發生錯誤", error: error.message });
+    }
+}
+
 export {
     GetCourseFiles,
     UpdateCourseMaterials,
-    DeleteCourseMaterial
+    DeleteCourseMaterial,
+    UploadCourseMaterial,
+    DownloadMaterial,
+    DeleteMaterial
 };
