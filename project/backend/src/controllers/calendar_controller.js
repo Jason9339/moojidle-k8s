@@ -30,7 +30,6 @@ async function GetCalendarEvents(req, res) {
             res.status(404).send({ message: "No event found" });
         }
 
-        console.log("study_in:", study_in)
         const courseIds = [study_in, teach_in, assist_in]
             .flat()
             .map(obj => obj.course_id);
