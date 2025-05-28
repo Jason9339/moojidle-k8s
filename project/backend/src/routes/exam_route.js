@@ -1,7 +1,9 @@
 import express from 'express';
 import {
     GetUpcomingExamsByUserId,
-    GetProjectedExamsByCourseId
+    GetProjectedExamsByCourseId,
+
+    UpdateExamScore
 } from '#src/controllers/exam_controller.js';
 
 const router = express.Router();
@@ -29,5 +31,12 @@ router.get('/coming', GetUpcomingExamsByUserId);
 //      ...............
 // ]
 router.get("/in-course/:courseId", GetProjectedExamsByCourseId);
+
+// frontend gives assId and payload of:
+// {
+//     max_score: newMaxScore,
+//     percentage: newPercentage
+// }
+router.put("/update-score/:examId", UpdateExamScore);
 
 export default router;

@@ -14,3 +14,13 @@ export const GetSimpleExams = async (courseId) => {
         throw err;
     }
 }
+
+export const UpdateExamScore = async (examId, payload) => {
+    try {
+        const response = await api.put(`/exams/update-score/${examId}`, payload);
+        return response.data;
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+};

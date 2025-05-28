@@ -2,8 +2,8 @@ import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 // api call
-import { GetSimpleExams } from "@/services/ExamApi";
-import { GetSimpleCourseAssignments } from "@/services/AssignmentApi";
+import { GetSimpleExams, UpdateExamScore } from "@/services/ExamApi";
+import { GetSimpleCourseAssignments, UpdateAssignmentScore } from "@/services/AssignmentApi";
 import { GetSubAssInCourse } from "@/services/SubmittedAssignApi";
 import { GetTakenExamsInCourse } from "@/services/TakenExamApi";
 
@@ -66,6 +66,32 @@ function GradesTab() {
         }
     }
 
+    async function SaveNewAssign(assId, newMaxScore, newPercentage) {
+        try {
+            const newScore = {
+                max_score: newMaxScore,
+                percentage: newPercentage
+            }
+            await UpdateAssignmentScore(assId, newScore);
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
+    async function SaveNewExam(examId, newMaxScore, newPercentage) {
+        try {
+            const newScore = {
+                max_score: newMaxScore,
+                percentage: newPercentage
+            }
+            await UpdateExamScore(examId, newScore);
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
     useEffect(() => {
         if (role.isStudent) {
             FetchSimpleAssigns(courseId);
@@ -121,6 +147,11 @@ function GradesTab() {
 
                 <SimpleGradeTable
                     simpleGrades={simpleGrades}
+                    canEdit={!role.isStudent}
+
+                    // call backs
+                    SaveNewAssign={SaveNewAssign}
+                    SaveNewExam={SaveNewExam}
                 />
 
                 <StudentsGradeTable

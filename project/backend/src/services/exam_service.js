@@ -79,7 +79,26 @@ async function FindProjectedExamsByCourseId(courseId) {
     }
 }
 
+async function UpdateOneExamScoreById(examId, max_score, percentage) {
+    try {           
+            const result = await mongoose.connection.db.collection('exams').updateOne(
+                { exam_id: examId },
+                { $set: { max_score: max_score, percentage: percentage } }
+            );
+
+            if (result.matchedCount === 0) {
+                return null;
+            }
+    
+            return result.matchedCount;
+        } catch (err) {
+            throw err;
+        }
+}
+
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    FindProjectedExamsByCourseId
+    FindProjectedExamsByCourseId,
+
+    UpdateOneExamScoreById
 };

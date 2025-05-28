@@ -18,3 +18,13 @@ export const GetSimpleCourseAssignments = async (courseId) => {
         throw err;
     }
 }
+
+export const UpdateAssignmentScore = async (assId, payload) => {
+    try {
+        const response = await api.put(`/assignment/update-score/${assId}`, payload);
+        return response.data;
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+};

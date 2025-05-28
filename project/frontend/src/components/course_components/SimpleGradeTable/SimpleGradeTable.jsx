@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 // css style
 import styles from "./SimpleGradeTable.module.css";
 
-function SimpleGradeTable({ simpleGrades }) {
+function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam }) {
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState(null);
 
@@ -45,10 +45,10 @@ function SimpleGradeTable({ simpleGrades }) {
             if (simpleGrades[i].max_score != tableData[i].max_score || simpleGrades[i].percentage != tableData[i].percentage) {
                 if (simpleGrades[i].ass_id != undefined) {
                     // update this assignment's max_score and percentage
-                    console.error("ass: ", simpleGrades[i].ass_id, simpleGrades[i].max_score, simpleGrades[i].percentage);
+                    SaveNewAssign(tableData[i].ass_id, tableData[i].max_score, tableData[i].percentage);
                 } else {
                     // update this exam's max_score and percentage
-                    console.error("exam: ", simpleGrades[i].exam_id, simpleGrades[i].max_score, simpleGrades[i].percentage);
+                    SaveNewExam(tableData[i].exam_id, tableData[i].max_score, tableData[i].percentage);
                 }
             }
         }
@@ -113,7 +113,7 @@ function SimpleGradeTable({ simpleGrades }) {
 
     return (
         <div className={styles["simple-grade-container"]}>
-            {isEditing ? (
+            {canEdit && isEditing ? (
                 <>
                     <button className={styles["edit-button"]} onClick={Done}>
                         完成
@@ -122,12 +122,12 @@ function SimpleGradeTable({ simpleGrades }) {
                         取消
                     </button>
                 </>
-            ) : (
+            ) : canEdit ? (
                 <button className={styles["edit-button"]} onClick={ToggleEdit}>
                     <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
                     編輯
                 </button>
-            )}
+            ) : null}
 
             <div className={styles["table-wrapper"]}>
                 <table className={styles["grade-table"]}>

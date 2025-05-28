@@ -1,8 +1,10 @@
 import express from 'express';
-import { 
+import {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
     GetProjectedAssignmentsInCourse,
+
+    UpdateAssignmentScore
 } from '#src/controllers/assignment_controller.js';
 
 const router = express.Router();
@@ -33,5 +35,12 @@ router.get('/course/:courseId', GetCourseAssignments);
 //     ................
 // ]
 router.get("/in-course/:courseId", GetProjectedAssignmentsInCourse);
+
+// frontend gives assId and payload of:
+// {
+//     max_score: newMaxScore,
+//     percentage: newPercentage
+// }
+router.put("/update-score/:assId", UpdateAssignmentScore);
 
 export default router;

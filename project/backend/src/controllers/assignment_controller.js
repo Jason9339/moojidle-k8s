@@ -5,6 +5,8 @@ import {
     // using
     FindAssignmentsByCourseId,
     FindProjectedAssignmentsByCourseId,
+
+    UpdateOneAssignScoreById
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -80,8 +82,32 @@ async function GetProjectedAssignmentsInCourse(req, res){
     }
 }
 
+async function UpdateAssignmentScore(req, res) {
+    try {
+        const assId = parseInt(req.params.assId);
+        const payload = req.body;
+
+        if(!payload || !payload.max_score || !payload.percentage){
+            return res.status(400).send("Lack of assignment Data.");
+        }
+
+        // get the exmas in the course
+        let result = await UpdateOneAssignScoreById(assId, payload.max_score, payload.percentage);
+
+        if(result == null){
+            res.status(404).send("assignment not found");
+        }
+
+        res.status(200).send("Update successful!");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
-    GetProjectedAssignmentsInCourse
+    GetProjectedAssignmentsInCourse,
+
+    UpdateAssignmentScore
 };

@@ -121,8 +121,27 @@ async function FindProjectedAssignmentsByCourseId(courseId) {
     }
 }
 
+async function UpdateOneAssignScoreById(assId, max_score, percentage) {
+    try {           
+            const result = await mongoose.connection.db.collection('assignments').updateOne(
+                { ass_id: assId },
+                { $set: { max_score: max_score, percentage: percentage } }
+            );
+
+            if (result.matchedCount === 0) {
+                return null;
+            }
+    
+            return result.matchedCount;
+        } catch (err) {
+            throw err;
+        }
+}
+
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
-    FindProjectedAssignmentsByCourseId
+    FindProjectedAssignmentsByCourseId,
+
+    UpdateOneAssignScoreById
 };

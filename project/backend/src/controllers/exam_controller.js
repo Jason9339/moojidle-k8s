@@ -1,6 +1,8 @@
 import {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    FindProjectedExamsByCourseId
+    FindProjectedExamsByCourseId,
+
+    UpdateOneExamScoreById
 } from '#src/services/exam_service.js';
 
 import {
@@ -42,7 +44,31 @@ async function GetProjectedExamsByCourseId(req, res) {
     }
 }
 
+async function UpdateExamScore(req, res) {
+    try {
+        const examId = parseInt(req.params.examId);
+        const payload = req.body;
+
+        if(!payload || !payload.max_score || !payload.percentage){
+            return res.status(400).send("Lack of exam Data.");
+        }
+
+        // get the exmas in the course
+        let result = await UpdateOneExamScoreById(examId, payload.max_score, payload.percentage);
+
+        if(result == null){
+            res.status(404).send("exam not found");
+        }
+
+        res.status(200).send("Update successful!");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
 export {
     GetUpcomingExamsByUserId,
-    GetProjectedExamsByCourseId
+    GetProjectedExamsByCourseId,
+
+    UpdateExamScore
 }
