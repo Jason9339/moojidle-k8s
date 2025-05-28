@@ -7,13 +7,16 @@ function AssignmentsTab() {
     if (!role.isTeacher && !role.isAssistant) {
         return (
             <div>
-                <h3>作業列表（學生）</h3>
-                <p>身分: 學生</p>
                 <AssignmentsStudentsTab courseId={course?.courseId} />
             </div>
         );
     }
     // 其他身分暫不顯示內容
-    return null;
+    return (
+        <div>
+            <h3>作業列表（教師/助教）</h3>
+            <p>身分: {role.isTeacher ? "教師" : "助教"}</p>
+        </div>
+    );
 }
 export default AssignmentsTab;
