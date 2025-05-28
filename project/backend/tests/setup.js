@@ -59,11 +59,13 @@ global.afterAll = async () => {
 
 global.beforeEach = async () => {
     // 每個測試前清理數據
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-        const collection = collections[key];
-        await collection.deleteMany({});
-    }
+    // const collections = mongoose.connection.collections;
+    // for (const key in collections) {
+    //     const collection = collections[key];
+    //     await collection.deleteMany({});
+    // }
+    await mongoose.connection.dropDatabase();
+    await LoadSchema();
 
     // 添加小延遲確保清理完成
     await new Promise(resolve => setTimeout(resolve, 5));
