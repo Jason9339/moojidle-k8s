@@ -9,15 +9,28 @@ import { FindExamsByCourseId } from "#src/services/exam_service.js";
 import { FindAssignmentsByCourseId } from "#src/services/assignment_service.js";
 
 async function GetCalendarEvents(req, res) {
+    if (!req.params.userId) {
+
+        res.status(400).send({ message: "userId is required" });
+        return;
+    }
 
     try {
+
         const user_id = parseInt(req.params.userId);
+
+
         const [study_in, teach_in, assist_in] = await Promise.all([
             FindStudyInCourseIdsByUserId(user_id),
             FindTeachInCourseIdsByUserId(user_id),
             FindAssistInCourseIdsByUserId(user_id),
         ]);
 
+        if (study_in.length + teach_in.length + assist_in.length == 0) {
+            res.status(404).send({ message: "No event found" });
+        }
+
+        console.log("study_in:", study_in)
         const courseIds = [study_in, teach_in, assist_in]
             .flat()
             .map(obj => obj.course_id);
@@ -35,7 +48,7 @@ async function GetCalendarEvents(req, res) {
             const examEvents = examData.map(exam => ({
                 title: exam.exam_name,
                 start: exam.start_date,
-                end: exam.exam_date,   // FIX: will be end_date after DB fix 
+                end: exam.end_date,
             }));
             result.push({
                 name,
