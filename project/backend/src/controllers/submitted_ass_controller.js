@@ -62,10 +62,11 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
 
                     // push the last grade into the array
                     if(subAss.at(-1) == undefined){
-                        student.sub_ass.push({ ass_name: ass.ass_name });
+                        student.sub_ass.push({ ass_name: ass.ass_name, percentage: ass.percentage });
                     }else{
                         let finalSubAss = subAss.at(-1);
                         finalSubAss.ass_name = ass.ass_name;
+                        finalSubAss.percentage = ass.percentage;
                         student.sub_ass.push(finalSubAss);
                     }
                 }

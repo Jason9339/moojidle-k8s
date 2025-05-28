@@ -7,7 +7,7 @@ function StudentsGradeTable({ studentGrades }) {
     if (studentGrades.length == 0) {
         return (
             <div>
-                No Data yet...
+                No Students yet...
             </div>
         );
     }
@@ -27,6 +27,7 @@ function StudentsGradeTable({ studentGrades }) {
     //                 "submit_user_course_tag": "StudentTag_3",
     //                 "submit_date": "2025-01-22T00:00:00.000Z",
     //                 "score": 43,
+    //                 "percentage": 0.1,
     //                 "graded_by_user_id": 2
     //             },
     //         .........
@@ -38,33 +39,78 @@ function StudentsGradeTable({ studentGrades }) {
     //                 "taken_by_user_id": 2,
     //                 "taken_user_course_tag": 'StudentTag_2',
     //                 "score": 100,        
+    //                 "percentage": 0.1,
     //                 "graded_by_user_id": 14,
     //             },
-    //          ..........   
-    // ]
+    //          .......... 
+    //      }  
     // ......
+    // ]
 
-    console.error(studentGrades);
+    function calcTotalScore(studentGrade) {
+        let sum = 0;
+        // start from student's assign score
+        for(let i = 0; i < studentGrade.sub_ass.length; i ++){
+            sum += ((studentGrade.sub_ass[i].score || 0) * studentGrade.sub_ass[i].percentage)
+        }
 
-    // let assignExamNames = [null];
-    // let content = [];
-    // for (let i = 0; i < simpleGrades.length; i++) {
-    //     // for each row, we want student's grade
-    //     assignExamNames.push(simpleGrades[i].ass_name || simpleGrades[i].exam_name);
-    //     maxScores.push(simpleGrades[i].max_score);
-    //     percentages.push(simpleGrades[i].percentage);
-    // }
+        // next is student's exam score
+        for(let i = 0; i < studentGrade.taken_exams.length; i ++){
+            sum += ((studentGrade.taken_exams[i].score || 0) * studentGrade.taken_exams[i].percentage)
+        }
 
-    // // get summary
-    // let maxGrade = 0;
-    // for (let i = 1; i < percentages.length; i ++){
-    //     // start from the 2nd element since the first one is the title on the left of that row
-    //     maxGrade += percentages[i];
-    // }
+        return sum.toFixed(2);
+    }
+
+    let assignExamNames = [null];
+    // add assignment names
+    for (let i = 0; i < studentGrades[0].sub_ass.length; i++) {
+        assignExamNames.push(studentGrades[0].sub_ass[i].ass_name);
+    }
+    // add exam names
+    for (let i = 0; i < studentGrades[0].taken_exams.length; i++) {
+        assignExamNames.push(studentGrades[0].taken_exams[i].exam_name);
+    }
+    assignExamNames.push("Total");
 
     return (
-        <div>
-            
+        <div className={styles["simple-grade-container"]}>
+            <hr className={styles["separate-line"]} />
+            <div className={styles["table-wrapper"]}>
+                <table className={styles["grade-table"]}>
+                    <thead>
+                        <tr>
+                            {assignExamNames.map((name, index) => (
+                                <th key={index} className={styles["header-row"]}>
+                                    {name}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {studentGrades.map((row, rowIndex) => (
+                            <tr key={rowIndex} className={styles["content-row"]}>
+                                <th className={styles["header-row"]}>
+                                    {row.name}
+                                </th>
+                                {row.sub_ass.map((cell, colIndex) =>
+                                    <td key={colIndex} className={styles["value"]}>
+                                        {cell.score || 0}
+                                    </td>
+                                )}
+                                {row.taken_exams.map((cell, colIndex) =>
+                                    <td key={colIndex} className={styles["value"]}>
+                                        {cell.score || 0}
+                                    </td>
+                                )}
+                                <td className={styles["value"]}>
+                                    {calcTotalScore(row)}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

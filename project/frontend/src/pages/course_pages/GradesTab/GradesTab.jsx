@@ -67,10 +67,17 @@ function GradesTab() {
     }
 
     useEffect(() => {
-        FetchSimpleAssigns(courseId);
-        FetchSimpleExams(courseId);
-        FetchSubAssigns(courseId);
-        FetchTakenExams(courseId);
+        if (role.isStudent) {
+            FetchSimpleAssigns(courseId);
+            FetchSimpleExams(courseId);
+            setSubAssignsData(-1);
+            setTakenExamsData(-1);
+        } else {
+            FetchSimpleAssigns(courseId);
+            FetchSimpleExams(courseId);
+            FetchSubAssigns(courseId);
+            FetchTakenExams(courseId);
+        }
     }, []);
 
     // data hasn't fully arrived
@@ -82,14 +89,20 @@ function GradesTab() {
         );
     }
 
-    // console.error(simpleAssignsData);
-    // console.error(simpleExamsData);
-    // console.error(subAssignsData);
-    // console.error(takenExamsData);
-    // console.error(role);
-
     // merge data (assigns + exam)
     let simpleGrades = [...simpleAssignsData, ...simpleExamsData];
+
+    if (role.isStudent) {
+        return (
+            <>
+                <div className={styles["grade-tab-container"]}>
+                    <SimpleGradeTable
+                        simpleGrades={simpleGrades}
+                    />
+                </div>
+            </>
+        );
+    }
 
     let studentGrades = subAssignsData.map(subAss => {
         const matchTakenExam = takenExamsData.find(examUser => examUser.user_id == subAss.user_id);
@@ -106,12 +119,12 @@ function GradesTab() {
                     &#9660;
                 </button> */}
 
-                <SimpleGradeTable 
-                    simpleGrades = {simpleGrades}
+                <SimpleGradeTable
+                    simpleGrades={simpleGrades}
                 />
 
                 <StudentsGradeTable
-                    studentGrades = {studentGrades}
+                    studentGrades={studentGrades}
                 />
             </div>
         </>

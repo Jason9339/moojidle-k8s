@@ -6,13 +6,66 @@
     flex-direction: column;
     justify-content: start;
     align-items: start;
+}
 
-    padding-top: 2vh;
+.edit-button {
+    position: absolute;
+    top: 0vh;
+    right: 1vw;
+
+    display: flex;
+    align-items: center;
+
+    background-color: #f0f2f7;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 18px;
+    font-weight: 500;
+    gap: 6px;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #e0e3ea;
+}
+
+.edit-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.cancel-button {
+    position: absolute;
+    top: 0vh;
+    right: 8vw;
+
+    display: flex;
+    align-items: center;
+
+    background-color: #f0f2f7;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 18px;
+    font-weight: 500;
+    gap: 6px;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.cancel-button:hover {
+    background-color: #e0e3ea;
 }
 
 .table-wrapper {
     width: 100%;
     overflow-x: overlay;
+ 
+    padding-top: 5vh;
 }
 
 .grade-table {
@@ -40,6 +93,10 @@
 .value {
     padding: 0.75rem;
     border: 1px solid #ddd;
+}
+
+.input-field {
+    padding: 0.75rem;
 }
 
 .summary-box {

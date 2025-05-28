@@ -1,18 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // css style
 import styles from "./SimpleGradeTable.module.css";
 
 function SimpleGradeTable({ simpleGrades }) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [tableData, setTableData] = useState(null);
+
     if (simpleGrades.length == 0) {
         return (
             <div>
-                No Data yet...
+                No assignments and test yet...
             </div>
         );
     }
 
-    // getting:
+    // initialize tableData when component loads
+    useEffect(() => {
+        // deep copy of the data
+        setTableData(simpleGrades.map(item => ({ ...item })));
+    }, [simpleGrades]);
+
+    if (!tableData) {
+        return (
+            <></>
+        )
+    }
+
+    function ToggleEdit() {
+        setIsEditing(prev => !prev);
+    }
+
+    function Cancel() {
+        setIsEditing(prev => !prev);
+        // revert back
+        setTableData(simpleGrades.map(item => ({ ...item })));
+    }
+
+    function Done() {
+        setIsEditing(prev => !prev);
+        // save changes by calling cb from parent page
+        // find the changed cells
+        for (let i = 0; i < simpleGrades.length; i++) {
+            if (simpleGrades[i].max_score != tableData[i].max_score || simpleGrades[i].percentage != tableData[i].percentage) {
+                if (simpleGrades[i].ass_id != undefined) {
+                    // update this assignment's max_score and percentage
+                    console.error("ass: ", simpleGrades[i].ass_id, simpleGrades[i].max_score, simpleGrades[i].percentage);
+                } else {
+                    // update this exam's max_score and percentage
+                    console.error("exam: ", simpleGrades[i].exam_id, simpleGrades[i].max_score, simpleGrades[i].percentage);
+                }
+            }
+        }
+    }
+
+    const HandleInputChange = (rowIndex, colIndex, value) => {
+        // deep copy of the data
+        let newData = tableData.map(item => ({ ...item }));
+        // minus 1 b/c the 1st column is header
+        colIndex = colIndex - 1;
+
+        if (rowIndex === 0) {
+            newData[colIndex].max_score = Number(value);
+        } else if (rowIndex === 1) {
+            newData[colIndex].percentage = Number(value);
+        }
+        setTableData(newData);
+    };
+
+    // simpleGrades is:
     // [
     //     {
     //         "ass_id": 5,
@@ -41,22 +97,38 @@ function SimpleGradeTable({ simpleGrades }) {
     let names = [null];
     let maxScores = ["Max Score"];
     let percentages = ["Percentage"];
-    for (let i = 0; i < simpleGrades.length; i++) {
-        names.push(simpleGrades[i].ass_name || simpleGrades[i].exam_name);
-        maxScores.push(simpleGrades[i].max_score);
-        percentages.push(simpleGrades[i].percentage);
+    for (let i = 0; i < tableData.length; i++) {
+        names.push(tableData[i].ass_name || tableData[i].exam_name);
+        maxScores.push(tableData[i].max_score);
+        percentages.push(tableData[i].percentage);
     }
     let content = [maxScores, percentages];
 
-    // get summary
+    // calculate  summary
     let maxGrade = 0;
-    for (let i = 1; i < percentages.length; i ++){
+    for (let i = 1; i < percentages.length; i++) {
         // start from the 2nd element since the first one is the title on the left of that row
         maxGrade += percentages[i];
     }
 
     return (
         <div className={styles["simple-grade-container"]}>
+            {isEditing ? (
+                <>
+                    <button className={styles["edit-button"]} onClick={Done}>
+                        完成
+                    </button>
+                    <button className={styles["cancel-button"]} onClick={Cancel}>
+                        取消
+                    </button>
+                </>
+            ) : (
+                <button className={styles["edit-button"]} onClick={ToggleEdit}>
+                    <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
+                    編輯
+                </button>
+            )}
+
             <div className={styles["table-wrapper"]}>
                 <table className={styles["grade-table"]}>
                     <thead>
@@ -78,7 +150,18 @@ function SimpleGradeTable({ simpleGrades }) {
                                         </th>
                                     ) : (
                                         <td key={colIndex} className={styles["value"]}>
-                                            {cell}
+                                            {isEditing ? (
+                                                <input
+                                                    className={styles["input-field"]}
+                                                    type="number"
+                                                    value={cell}
+                                                    onChange={(e) =>
+                                                        HandleInputChange(rowIndex, colIndex, e.target.value)
+                                                    }
+                                                />
+                                            ) : (
+                                                cell
+                                            )}
                                         </td>
                                     )
                                 )}
@@ -90,10 +173,10 @@ function SimpleGradeTable({ simpleGrades }) {
 
             <div className={styles["summary-box"]}>
                 <div className={styles["summary"]}>
-                    課程總站比: {maxGrade} 
+                    課程總站比: {maxGrade.toFixed(2)}
                 </div>
                 <div className={styles["summary"]}>
-                    課程最高分數: {maxGrade * 100}
+                    課程最高分數: {(maxGrade * 100).toFixed(2)}
                 </div>
             </div>
         </div>

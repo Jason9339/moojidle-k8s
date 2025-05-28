@@ -62,10 +62,11 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
 
                     // push the last grade into the array
                     if(takenExam.at(-1) == undefined){
-                        student.taken_exams.push({ exam_name: exam.exam_name });
+                        student.taken_exams.push({ exam_name: exam.exam_name, percentage: exam.percentage });
                     }else{
                         let finalTakenExam = takenExam.at(-1);
                         finalTakenExam.exam_name = exam.exam_name;
+                        finalTakenExam.percentage = exam.percentage;
                         student.sub_ass.push(finalTakenExam);
                     }
                 }
