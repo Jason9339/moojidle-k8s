@@ -49,6 +49,8 @@ export const HandleUploadAndInsert = async (req) => {
             end_date: new Date(endDate),
             description,
             create_date: now,
+            max_score: 100,
+            percentage: 0,
             attachments: [
                 {
                     filename: savedFile.originalName,

@@ -48,6 +48,8 @@ export const Upload = async (req, res, next) => {
                 end_date: new Date(endDate),
                 description,
                 create_date: now,
+                max_score: 100, // 預設最高分數
+                percentage: 0, // 預設佔總成績的百分比
                 attachments: [
                     {
                         filename: savedFile.originalName,
