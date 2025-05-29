@@ -4,7 +4,8 @@ import {
     InsertNotification,
     InsertNotified,
     FindNotificationById,
-    FindNotifiedByUserId
+    FindNotifiedByUserId,
+    DeleteNotifiedById
 } from '#src/services/notification_service'
 
 describe('Notification Service', () => {
@@ -78,6 +79,22 @@ describe('Notification Service', () => {
             expect(createdNotified).toBeDefined();
             expect(createdNotified[0].n_id).toBe(1);
             expect(createdNotified[0].user_id).toBe(1);
+        });
+    });
+
+    describe('DeleteNotifiedById', () => {
+        it('成功刪除Notified', async () => {
+
+            const notifiedData = {
+                n_id: 1,
+                user_id: 2,
+            };
+
+            const result = await DeleteNotifiedById(notifiedData);
+
+            expect(result).toBeDefined();
+            // 確保有一個被刪除
+            expect(result.deletedCount).toBe(1);  
         });
     });
 }); 
