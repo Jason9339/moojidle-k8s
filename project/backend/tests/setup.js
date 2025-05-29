@@ -33,9 +33,9 @@ let mongoServer;
 global.beforeAll = async (test) => {
     console.log('🚀 啟動測試環境 (Memory + Schema 驗證)');
 
-    // 創建內存中的 MongoDB 實例
+    // 創建內存中的 MongoDB 實例，使用 "moojidle" 作為資料庫名稱
     mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
+    const mongoUri = mongoServer.getUri("moojidle");
 
     // 連接到測試數據庫
     await mongoose.connect(mongoUri);
@@ -167,6 +167,7 @@ async function SetupTestData() {
 // Mock console methods to reduce noise in tests
 global.console = {
     ...console,
-    log: vi.fn(),
+    // log: vi.fn(),
+    error: vi.fn(),
     warn: vi.fn(),
 }; 
