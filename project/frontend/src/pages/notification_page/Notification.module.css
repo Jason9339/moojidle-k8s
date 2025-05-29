@@ -41,7 +41,7 @@
 
 .heading-divider {
     border-top: 2px solid #ccc;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .delete-button {
