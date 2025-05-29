@@ -16,23 +16,28 @@ const basePath = path.join(__dirname, "../../../uploads");
  * @returns {Promise<object>} 檔案資訊（包含路徑與 id 等）
  */
 export async function SaveFile(buffer, originalName, subfolder) {
-    const ext = path.extname(originalName);
-    const fileId = randomUUID();
-    const savedFileName = `${fileId}${ext}`;
-    const folderPath = path.join(basePath, subfolder);
+    try {
+        const ext = path.extname(originalName);
+        const fileId = randomUUID();
+        const savedFileName = `${fileId}${ext}`;
+        const folderPath = path.join(basePath, subfolder);
 
-    await fs.promises.mkdir(folderPath, { recursive: true });
+        await fs.promises.mkdir(folderPath, { recursive: true });
 
-    const fullPath = path.join(folderPath, savedFileName);
-    await fs.promises.writeFile(fullPath, buffer);
+        const fullPath = path.join(folderPath, savedFileName);
+        await fs.promises.writeFile(fullPath, buffer);
 
-    return {
-        fileId,
-        savedFileName,
-        fullPath,
-        relativeUrl: `/uploads/${subfolder}/${savedFileName}`,
-        originalName,
-    };
+        return {
+            fileId,
+            savedFileName,
+            fullPath,
+            relativeUrl: `/uploads/${subfolder}/${savedFileName}`,
+            originalName,
+        };
+    } catch (error) {
+        console.error(`[SaveFile] Error saving file ${originalName} to ${subfolder}:`, error);
+        throw new Error(`Failed to save file: ${error.message}`);
+    }
 }
 
 /**
