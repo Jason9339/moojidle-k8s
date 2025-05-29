@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styles from "./NotificationCard.module.css";
-import { FiTrash } from "react-icons/fi"; 
 
 function NotificationCard({ item, onSelectChange, isSelected }) {
     const date = new Date(item.notification.notified_date);
@@ -14,7 +13,9 @@ function NotificationCard({ item, onSelectChange, isSelected }) {
 
     const categoryMap = {
         course: "課程",
+        post: "討論版"
     };
+
     const displayCategory = categoryMap[item.notification.event_category] || item.notification.event_category;
 
     return (
