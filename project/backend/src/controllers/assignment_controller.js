@@ -9,7 +9,7 @@ import {
     UpdateOneAssignScoreById
 } from '#src/services/assignment_service.js';
 
-import { 
+import {
     FindCourseById
 } from '#src/services/course_service.js';
 
@@ -58,13 +58,13 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
-async function GetProjectedAssignmentsInCourse(req, res){
+async function GetProjectedAssignmentsInCourse(req, res) {
     try {
         const courseId = parseInt(req.params.courseId);
 
         // check if course exist
-        if((await FindCourseById(courseId)) == null){
-            res.status(404).send("course not found");
+        if ((await FindCourseById(courseId)) == null) {
+            res.status(404).send("course not found while finding simple assignments");
             return;
         }
 
@@ -72,7 +72,7 @@ async function GetProjectedAssignmentsInCourse(req, res){
         let assigns = await FindProjectedAssignmentsByCourseId(courseId);
 
         // can only be [] or [.....]
-        if(assigns === undefined){
+        if (assigns === undefined) {
             res.status(500).send("error on finding assigns in the course");
         }
 
@@ -87,14 +87,16 @@ async function UpdateAssignmentScore(req, res) {
         const assId = parseInt(req.params.assId);
         const payload = req.body;
 
-        if(!payload || !payload.max_score || !payload.percentage){
-            return res.status(400).send("Lack of assignment Data.");
+        if (!payload || !payload.max_score || !payload.percentage ||
+            typeof payload.max_score != "number" || typeof payload.percentage != "number"
+        ) {
+            return res.status(400).send("invalid assignment Data");
         }
 
         // get the exmas in the course
         let result = await UpdateOneAssignScoreById(assId, payload.max_score, payload.percentage);
 
-        if(result == null){
+        if (result == null) {
             res.status(404).send("assignment not found");
         }
 
