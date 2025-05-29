@@ -19,7 +19,9 @@ async function CounterSeed() {
         study_in: 1,
         submitted_ass: 1,
         teach_in: 1,
-        user: 3
+        user: 3,
+        notification: 1,
+        notified : 2
     });
 }
 
