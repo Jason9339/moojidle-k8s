@@ -31,6 +31,7 @@ import {
 import userRoute from '#src/routes/user_route.js';
 import courseRoute from '#src/routes/course_router.js';
 import courseMemberRoute from '#src/routes/course_member_route.js';
+import calendarRoute from '#src/routes/calendar_route.js';
 import assignmentRoute from '#src/routes/assignment_route.js';
 import materialRoute from '#src/routes/material_route.js';
 import announcementRoute from '#src/routes/announcement_route.js';
@@ -70,6 +71,7 @@ async function startTestServer() {
         app.use("/user", userRoute);
         app.use("/course", courseRoute);
         app.use("/course/member", courseMemberRoute);
+        app.use("/calendar", calendarRoute);
         app.use("/discussion-board", discussionBoardRoute);
         app.use("/post", postRoute);
         app.use("/assignment", assignmentRoute);
