@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { DownloadMaterial, DownloadAssignment } from "@/services/file_api/FileApi";
+import { DownloadMaterial } from "@/services/MaterialApi";
+import { DownloadAssignment } from "@/services/AssignmentApi";
 import styles from "./CourseTable.module.css";
 
 function CourseTable({

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react"; // 引入 useRef
-import { UploadMaterial, UploadAssignment } from "@/services/file_api/FileApi";
+import { UploadMaterial } from "@/services/MaterialApi";
+import { UploadAssignment } from "@/services/AssignmentApi";
 import styles from "./UploadModal.module.css";
 
 const UploadModal = ({ onClose, courseId, onSuccess }) => {

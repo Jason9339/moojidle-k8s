@@ -101,7 +101,7 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
-export const InsertAssignmentToDB = async (assignmentDoc) => {
+const InsertAssignmentToDB = async (assignmentDoc) => {
     const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
     return result;
 };

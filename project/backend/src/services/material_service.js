@@ -69,7 +69,7 @@ async function UpdateMaterialById(mId, updateObj) {
     }
 }
 
-export const InsertMaterialToDB = async (materialDoc) => {
+const InsertMaterialToDB = async (materialDoc) => {
     const result = await mongoose.connection.db.collection("materials").insertOne(materialDoc);
     return result;
 };
