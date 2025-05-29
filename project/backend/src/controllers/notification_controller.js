@@ -2,8 +2,7 @@ import {
     FindNotifiedByUserId,
     FindNotificationById,
     DeleteNotifiedById,
-    InsertNotification,
-    InsertNotified
+    SendNotify
 } from '#src/services/notification_service.js'
 
 async function GetNotified(req, res, next) {
@@ -69,29 +68,12 @@ async function NotifiedDeleter(req, res){
 async function Notify(req, res) {
     try {
         const { event_id, event_category, context, notified_userId} = req.body;
+        console.log(req.body)
 
-        const notificationData = {
-            event_id : event_id,
-            event_category : event_category,
-            context : context
-        }
-
-        const result = await InsertNotification(notificationData);
-        console.log(result);
+        const result = await SendNotify(req.body);
 
         if (result.error) {
             return res.status(404).send({ error: result.error });
-        }
-
-        for (const userId of notified_userId) {
-            const notifiedData = {
-                n_id: result.n_id,
-                user_id: userId
-            }
-            const notifiedResult = await InsertNotified(notifiedData);
-            if (notifiedResult.error) {
-                return res.status(404).send({ error: notifiedResult.error });
-            }
         }
 
         return res.status(200).send({ message: {result}});

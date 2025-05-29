@@ -5,13 +5,35 @@ import {
     InsertNotified,
     FindNotificationById,
     FindNotifiedByUserId,
-    DeleteNotifiedById
+    DeleteNotifiedById,
+    SendNotify
 } from '#src/services/notification_service'
 
 describe('Notification Service', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
+
+    describe('SendNotify', () => {
+        it('成功新建通知並發送給user', async () => {
+            const notificationData = {
+                event_id: 1,
+                event_category: "course",
+                context: "CI test",
+                notified_users: [{
+                    user_id: 1 
+                }]
+            }
+            const result = await SendNotify(notificationData);
+
+            expect(result).toBeDefined();
+            expect(result.insertedNotification.event_id).toBe(1);
+            expect(result.insertedNotification.event_category).toBe("course");
+            expect(result.insertedNotification.context).toBe("CI test");
+            expect(result.notifiedUsers[0].user_id).toBe(1);
+            expect(result.notifiedUsers[0].result.acknowledged).toBe(true);
+        });
+    });
 
     describe('FindNotificationById', () => {
         it('成功回傳通知', async () => {

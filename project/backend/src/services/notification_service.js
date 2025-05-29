@@ -18,7 +18,6 @@ async function InsertNotification(notificationData) {
             notified_date : date
         };
 
-        console.log(notification);
 
         const result = await mongoose.connection.db.collection('notification').insertOne(notification)
         result.n_id = nextNotificationId;
@@ -61,6 +60,53 @@ async function FindNotificationById(notificationID) {
     }
 }
 
+async function SendNotify(notificationData) {
+    try {
+        const counter = await mongoose.connection.db.collection('counter').findOne();
+        if (!counter) {
+            throw new Error("Counter document not found. Please initialize your counter collection.");
+        }
+
+        const nextNotificationId = counter.notification + 1;
+
+        const date = new Date();
+        const notification = {
+            n_id: nextNotificationId,
+            event_id: notificationData.event_id,
+            event_category: notificationData.event_category,
+            context: notificationData.context,
+            notified_date: date
+        };
+
+        await mongoose.connection.db.collection('notification').insertOne(notification);
+        await mongoose.connection.db.collection('counter').updateOne({}, { $inc: { notification: 1 } });
+
+        const notifiedInsertions = notificationData.notified_users.map(user => {
+            const notifiedData = {
+                n_id: nextNotificationId,
+                user_id: user.user_id,
+                is_read: false
+            };
+            return mongoose.connection.db.collection('notified').insertOne(notifiedData);
+        });
+
+        const notifiedResults = await Promise.all(notifiedInsertions);
+
+        return {
+            notification_id: nextNotificationId,
+            insertedNotification: notification,
+            notifiedUsers: notifiedResults.map((res, i) => ({
+                ...notificationData.notified_users[i],
+                result: res
+            }))
+        };
+
+    } catch (err) {
+        throw new Error("Failed to create notification: " + err.message);
+    }
+}
+
+
 async function FindNotifiedByUserId(userID) {
     try {
         const notifieds = await mongoose.connection.db.collection('notified').find({ user_id: userID }).toArray();;
@@ -89,5 +135,6 @@ export {
     InsertNotified,
     FindNotificationById,
     FindNotifiedByUserId,
-    DeleteNotifiedById
+    DeleteNotifiedById,
+    SendNotify
 }
