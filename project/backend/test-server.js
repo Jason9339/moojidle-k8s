@@ -52,10 +52,6 @@ async function startTestServer() {
         const mongoUri = mongoServer.getUri("moojidle");
         await mongoose.connect(mongoUri);
 
-        console.log('📋 資料庫連接資訊:');
-        console.log('  - URI:', mongoUri);
-        console.log('  - 資料庫名稱:', mongoose.connection.db.databaseName);
-
         // 2. 初始化測試資料
         // NOTICE, since we already test the database integrity in backend,
         // we dont need to input schema into the mongoDB, we just need seed!
