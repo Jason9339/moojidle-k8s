@@ -8,7 +8,23 @@ import path from 'path';
 import {
     CounterSeed,
     UserSeed,
-    UserTagSeed,
+    Custom_tagSeed,
+    CourseSeed,
+    Teach_inSeed,
+    Assist_inSeed,
+    Study_inSeed,
+    AnnouncementSeed,
+    Discussion_boardSeed,
+    ExamsSeed,
+    Taken_examsSeed,
+    MaterialsSeed,
+    AssignmentsSeed,
+    Submitted_assSeed,
+    PostSeed,
+    Course_tagSeed,
+    NotificationSeed,
+    NotifiedSeed,
+    MailboxSeed,
 } from './seed.js';
 
 let mongoServer;
@@ -43,20 +59,20 @@ global.afterAll = async () => {
 
 global.beforeEach = async () => {
     // 每個測試前清理數據
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-        const collection = collections[key];
-        await collection.deleteMany({});
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    for (const collectionInfo of collections) {
+        const collectionName = collectionInfo.name;
+        try {
+            const collection = mongoose.connection.db.collection(collectionName);
+            const deleteResult = await collection.deleteMany({});
+            console.log(`清理 ${collectionName}: ${deleteResult.deletedCount} 條記錄`);
+        } catch (error) {
+            console.warn(`清理 ${collectionName} 失敗:`, error.message);
+        }
     }
-
-    // 添加小延遲確保清理完成
-    await new Promise(resolve => setTimeout(resolve, 5));
 
     // 重新初始化測試數據
     await SetupTestData();
-
-    // 再次添加小延遲確保數據插入完成
-    await new Promise(resolve => setTimeout(resolve, 5));
 };
 
 // 載入 Schema（從 setup-real-db.js 移植）
@@ -129,7 +145,23 @@ async function ExecuteSchemaScript(schemaContent) {
 async function SetupTestData() {
     await CounterSeed();
     await UserSeed();
-    await UserTagSeed();    
+    await Custom_tagSeed();
+    await CourseSeed();
+    await Teach_inSeed();
+    await Assist_inSeed();
+    await Study_inSeed();
+    await AnnouncementSeed();
+    await Discussion_boardSeed();
+    await ExamsSeed();
+    await Taken_examsSeed();
+    await MaterialsSeed();
+    await AssignmentsSeed();
+    await Submitted_assSeed();
+    await PostSeed();
+    await Course_tagSeed();
+    await NotificationSeed();
+    await NotifiedSeed();
+    await MailboxSeed();
 }
 
 // Mock console methods to reduce noise in tests
