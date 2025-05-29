@@ -10,3 +10,14 @@ export const GetSubAssInCourse = async (courseId) => {
         throw err;
     }
 }
+
+export const GetOneStudentSubAssInCourse = async (courseId, userId) => {
+    try {
+        const response = await api.get(`/submitted-ass/in-course/${courseId}/user/${userId}`);
+
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}

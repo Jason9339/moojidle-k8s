@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 // api call
 import { GetSimpleExams, UpdateExamScore } from "@/services/ExamApi";
 import { GetSimpleCourseAssignments, UpdateAssignmentScore } from "@/services/AssignmentApi";
-import { GetSubAssInCourse } from "@/services/SubmittedAssignApi";
-import { GetTakenExamsInCourse } from "@/services/TakenExamApi";
+import { GetSubAssInCourse, GetOneStudentSubAssInCourse } from "@/services/SubmittedAssignApi";
+import { GetTakenExamsInCourse, GetOneStudentTakenExamsInCourse } from "@/services/TakenExamApi";
 
 // components
 import SimpleGradeTable from "@/components/course_components/SimpleGradeTable/SimpleGradeTable";
@@ -18,6 +18,7 @@ function GradesTab() {
     const { role } = useOutletContext();
     let { courseId } = useParams();
     courseId = parseInt(courseId);
+    const userId = (JSON.parse(localStorage.getItem("user"))).user_id;
 
     // use states
     const [simpleAssignsData, setSimpleAssignsData] = useState(null);
@@ -48,6 +49,7 @@ function GradesTab() {
         }
     }
 
+    // teachers & assistants
     async function FetchSubAssigns(courseId) {
         try {
             const result = await GetSubAssInCourse(courseId);
@@ -61,6 +63,27 @@ function GradesTab() {
     async function FetchTakenExams(courseId) {
         try {
             const result = await GetTakenExamsInCourse(courseId);
+            setTakenExamsData(result);
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
+    // students
+    async function FetchOneSubAssigns(courseId) {
+        try {
+            const result = await GetOneStudentSubAssInCourse(courseId, userId);
+            setSubAssignsData(result);
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
+    async function FetchOneTakenExams(courseId) {
+        try {
+            const result = await GetOneStudentTakenExamsInCourse(courseId, userId);
             setTakenExamsData(result);
         } catch (err) {
             console.error(err);
@@ -150,14 +173,13 @@ function GradesTab() {
     }
 
     useEffect(() => {
+        FetchSimpleAssigns(courseId);
+        FetchSimpleExams(courseId);
+
         if (role.isStudent) {
-            FetchSimpleAssigns(courseId);
-            FetchSimpleExams(courseId);
-            setSubAssignsData(-1);
-            setTakenExamsData(-1);
+            FetchOneSubAssigns(courseId);
+            FetchOneTakenExams(courseId);
         } else {
-            FetchSimpleAssigns(courseId);
-            FetchSimpleExams(courseId);
             FetchSubAssigns(courseId);
             FetchTakenExams(courseId);
         }
@@ -174,7 +196,16 @@ function GradesTab() {
 
     // merge data (assigns + exam)
     let simpleGrades = [...simpleAssignsData, ...simpleExamsData];
+    let studentGrades;
 
+    // handle student cases:------------------------------------------------------------------------
+    studentGrades = {
+        ...subAssignsData,
+        taken_exams: takenExamsData.taken_exams
+    };
+    // make it into an array of length of 1 for component to use
+    studentGrades = [studentGrades];
+    
     if (role.isStudent) {
         return (
             <>
@@ -182,13 +213,19 @@ function GradesTab() {
                     <SimpleGradeTable
                         simpleGrades={simpleGrades}
                     />
+
+                    <StudentsGradeTable
+                        studentGrades={studentGrades}
+                    />
                 </div>
             </>
         );
     }
 
+    // handle teacher and assistant cases:----------------------------------------------------------
+
     // since subAssignsData == [] iff takenExamsData == []
-    let studentGrades = subAssignsData.map(subAss => {
+    studentGrades = subAssignsData.map(subAss => {
         const matchTakenExam = takenExamsData.find(examUser => examUser.user_id == subAss.user_id);
         return {
             ...subAss,

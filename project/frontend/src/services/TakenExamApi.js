@@ -10,3 +10,14 @@ export const GetTakenExamsInCourse = async (courseId) => {
         throw err;
     }
 }
+
+export const GetOneStudentTakenExamsInCourse = async (courseId, userId) => {
+    try {
+        const response = await api.get(`/taken-exam/in-course/${courseId}/user/${userId}`);
+
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
