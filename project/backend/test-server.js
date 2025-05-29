@@ -47,7 +47,8 @@ async function startTestServer() {
     try {
         // 1. 啟動 MongoDB Memory Server
         mongoServer = await MongoMemoryServer.create();
-        const mongoUri = mongoServer.getUri();
+        // 使用 "moojidle" 作為資料庫名稱，與生產環境保持一致
+        const mongoUri = mongoServer.getUri("moojidle");
         await mongoose.connect(mongoUri);
 
         // 2. 初始化測試資料
