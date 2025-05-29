@@ -102,38 +102,6 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
-async function GetAssignmentSubmissionsByAssId(assignmentId) {
-    try {
-        const submissions = await mongoose.connection.db.collection("submitted_ass").aggregate([
-            { $match: { ass_id: assignmentId } },
-            { $lookup: {
-                from: "user",
-                localField: "submit_by_user_id",
-                foreignField: "user_id", 
-                as: "student_info"
-            }},
-            { $unwind: "$student_info" },
-            { $project: {
-                s_ass_id: 1,
-                ass_id: 1,
-                submit_by_user_id: 1,
-                submit_user_course_tag: 1,
-                submit_date: 1,
-                score: 1,
-                graded_by_user_id: 1,
-                attachments: 1,
-                description: 1,
-                "student_name": "$student_info.name",
-                "status": { $cond: { if: { $ifNull: ["$score", false] }, then: "已評分", else: "待評分" } }
-            }}
-        ]).toArray();
-        return submissions;
-    } catch (error) {
-        console.error(`[ GetAssignmentSubmissionsByAssId] ${error}`)
-        throw new Error(error.message)
-    }
-
-}
 
 
 async function GetCourseIdByAssignmentId(assignmentId) {
@@ -150,31 +118,14 @@ async function GetCourseIdByAssignmentId(assignmentId) {
 
 }
 
-async function GetAssignmentSubmissionStatus(assignmentId, courseId) {
+/**
+ * Get all submissions for a specific assignment with student details
+ * @param {number} assignmentId - The assignment ID
+ * @returns {Promise<Array>} Array of submission details
+ */
+async function GetSubmissionsByAssignmentId(assignmentId) {
     try {
         const db = mongoose.connection.db;
-        
-        // Step 1: Get all students in the course with their details
-        const studentsInCourse = await db.collection("study_in").aggregate([
-            { $match: { course_id: courseId } },
-            { $lookup: {
-                from: "user",
-                localField: "user_id",
-                foreignField: "user_id",
-                as: "user_info"
-            }},
-            { $unwind: "$user_info" },
-            { $project: {
-                user_id: 1,
-                student_id: 1,
-                name: "$user_info.name",
-                email: "$user_info.email",
-                student_tag: "$user_info.student_tag",
-                _id: 0
-            }}
-        ]).toArray();
-        
-        // Step 2: Get all submissions for this assignment with full details
         const submissions = await db.collection("submitted_ass").aggregate([
             { $match: { ass_id: assignmentId } },
             { $lookup: {
@@ -199,82 +150,52 @@ async function GetAssignmentSubmissionStatus(assignmentId, courseId) {
             }}
         ]).toArray();
         
-        // Step 3: Create a map of submissions by user ID for quick lookup
-        const submissionByUserId = {};
-        submissions.forEach(submission => {
-            submissionByUserId[submission.submit_by_user_id] = submission;
-        });
-        
-        // Step 4: Create comprehensive student status list with submission data where available
-        const studentStatusList = studentsInCourse.map(student => {
-            const submission = submissionByUserId[student.user_id];
-            return {
-                ...student,
-                submission_status: submission ? "已繳交" : "未繳交",
-                submission_date: submission ? submission.submit_date : null,
-                grading_status: submission ? submission.status : null,
-                score: submission ? submission.score : null,
-                submission_id: submission ? submission.s_ass_id : null,
-                has_attachments: submission && submission.attachments ? submission.attachments.length > 0 : false
-            };
-        });
-        
-        // Step 5: Split into submitted and non-submitted lists
-        const submittedStudents = studentStatusList.filter(student => student.submission_status === "已繳交");
-        const nonSubmittedStudents = studentStatusList.filter(student => student.submission_status === "未繳交");
-        
-        return {
-            all_students: studentStatusList,
-            submitted: submittedStudents,
-            non_submitted: nonSubmittedStudents,
-            submissions: submissions
-        };
+        return submissions;
     } catch (error) {
-        console.error("Error getting assignment submission status:", error);
+        console.error("Error getting submissions by assignment ID:", error);
         throw error;
     }
 }
 
 
-async function GetNonSubmittingStudentsByAssignmentId(assignmentId, courseId) {
+
+
+async function ReviewAssignmentSubmissionService(submissionId, score, graderId) {
     try {
+        
+        // Convert submission ID and score to appropriate types
+        const sAssId = parseInt(submissionId);
+        const numericScore = parseFloat(score);
+
+        console.log(sAssId, numericScore);
+        
+        
+        // Prepare update document
+        const updateDoc = {
+            $set: {
+                score: numericScore,
+                graded_by_user_id: parseInt(graderId),
+                // graded_date: new Date()
+            }
+        };
+        
+        
         const db = mongoose.connection.db;
-        // Find all students enrolled in the course
-        const enrolledStudents = await db.collection("study_in").aggregate([
-            { $match: { course_id: courseId } },
-            { $lookup: {
-                from: "user",
-                localField: "user_id",
-                foreignField: "user_id",
-                as: "student_info"
-            }},
-            { $unwind: "$student_info" },
-            { $project: {
-                user_id: 1,
-                "name": "$student_info.name",
-                "email": "$student_info.email",
-                "student_id": 1
-            }}
-        ]).toArray();
-
-        // Find all students who have submitted this assignment
-        const submittedStudentIds = await db.collection("submitted_ass")
-            .find({ ass_id: assignmentId })
-            .project({ submit_by_user_id: 1, _id: 0 })
-            .toArray()
-            .then(docs => docs.map(doc => doc.submit_by_user_id));
-
-        // Filter out students who have already submitted
-        const nonSubmittingStudents = enrolledStudents.filter(
-            student => !submittedStudentIds.includes(student.user_id)
+        const result = await db.collection("submitted_ass").updateOne(
+            { s_ass_id: sAssId },
+            updateDoc
         );
-
-        return nonSubmittingStudents;
+        
+        
+        return { updated: result.modifiedCount > 0, result };
     } catch (error) {
-        console.error("Error getting non-submitting students:", error);
+        console.error("Error reviewing assignment submission:", error);
         throw error;
     }
 }
+
+
+
 
 const InsertAssignmentToDB = async (assignmentData) => {
     try {
@@ -298,9 +219,8 @@ const InsertAssignmentToDB = async (assignmentData) => {
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
-    GetAssignmentSubmissionsByAssId,
-    GetNonSubmittingStudentsByAssignmentId,
     GetCourseIdByAssignmentId,
-    GetAssignmentSubmissionStatus,
+    GetSubmissionsByAssignmentId,
+    ReviewAssignmentSubmissionService,
     InsertAssignmentToDB
 };

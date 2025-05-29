@@ -8,9 +8,21 @@ export const GetTodoList = async (userId) => {
     return (await api.get(`/assignment/todo?user_id=${userId}`)).data;
 };
 
+
+// 老師查看作業
 export const GetAssignmentSubmissions = async (assignmentId) => {
     return (await api.get(`/assignment/${assignmentId}/submissions`)).data;
 };
+
+// 老師改作業
+export const GradeAssignment = async (graderId, submissionId, grade) => {
+    console.log(grade, graderId)
+    return (await api.patch(`/assignment/review/${submissionId}`, {
+        score:grade,
+        graderId: graderId
+    })).data;
+}
+
 // 上傳作業
 export const UploadAssignment = async (formData) => {
     try {

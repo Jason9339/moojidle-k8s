@@ -5,7 +5,8 @@ import {
     GetAssignmentSubmissions,
     UploadAssignment,
     DownloadAssignment,
-    DeleteAssignment
+    DeleteAssignment,
+    ReviewAssignmentSubmission
 } from '#src/controllers/assignment_controller.js';
 
 import { 
@@ -23,7 +24,11 @@ router.get('/todo', GetToDoAssignmentsByUserId);
 
 router.get('/course/:courseId', GetCourseAssignments);
 
+// get the course assignment Submissions Status
 router.get("/:assignmentId/submissions", GetAssignmentSubmissions);
+
+router.patch("/review/:submitAssignmentId", ReviewAssignmentSubmission);
+
 // POST /assignment/course/:courseId/upload
 router.post('/course/:courseId/upload', uploadWithMulter, UploadAssignment, MulterErrorHandling);
 
