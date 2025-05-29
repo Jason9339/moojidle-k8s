@@ -37,7 +37,6 @@ import announcementRoute from '#src/routes/announcement_route.js';
 import discussionBoardRoute from '#src/routes/discussion_board_route.js';
 import postRoute from '#src/routes/post_routes.js';
 import examRoute from '#src/routes/exam_route.js';
-import fileRoute from '#src/routes/file_routes/file_route.js';
 
 let mongoServer;
 let server;
@@ -48,7 +47,8 @@ async function startTestServer() {
     try {
         // 1. 啟動 MongoDB Memory Server
         mongoServer = await MongoMemoryServer.create();
-        const mongoUri = mongoServer.getUri();
+        // 使用 "moojidle" 作為資料庫名稱，與生產環境保持一致
+        const mongoUri = mongoServer.getUri("moojidle");
         await mongoose.connect(mongoUri);
 
         // 2. 初始化測試資料
@@ -76,7 +76,6 @@ async function startTestServer() {
         app.use("/material", materialRoute);
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
-        app.use("/file", fileRoute);
 
         // 測試專用端點
         app.post('/test/reset-database', async (req, res) => {
