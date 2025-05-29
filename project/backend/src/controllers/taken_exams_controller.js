@@ -51,11 +51,11 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
 
         let exams = await FindProjectedExamsByCourseId(courseId);
 
-        // no assign yet in the course
+        // no exam yet in the course
         if (exams == null || exams.length == 0) {
             res.status(200).send(studentsGrades);
         } else {
-            // for each assigns
+            // for each exam
             for (const exam of exams) {
                 for (const student of studentsGrades) {
                     let takenExam = await FindProjectTakenExamByUserIdAssId(student.user_id, exam.exam_id);
