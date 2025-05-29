@@ -7,6 +7,7 @@ import NotificationCard from "@/components/notification_components/NotificationC
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState(null);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const fetchNotifications = async () => {
         try {
@@ -23,16 +24,28 @@ function Notification() {
         fetchNotifications();
     }, []);
 
-    const handleDelete = async (notificationId) => {
+    const handleSelectChange = (id, checked) => {
+        setSelectedIds((prev) =>
+            checked ? [...prev, id] : prev.filter((n_id) => n_id !== id)
+        );
+    };
+
+    const handleBatchDelete = async () => {
+        if (selectedIds.length === 0) {
+            alert("請先勾選欲刪除的通知");
+            return;
+        }
+
+        const uid = JSON.parse(localStorage.getItem("user")).user_id;
         try {
-            const uid = JSON.parse(localStorage.getItem("user")).user_id;
-            const body = {
-                n_id: notificationId,
-                user_id: uid
-            };
-            await DeleteNotification(body); 
-            alert("刪除成功");
-            window.location.reload(); // 重新載入頁面
+            await Promise.all(
+                selectedIds.map((n_id) =>
+                    DeleteNotification({ n_id, user_id: uid })
+                )
+            );
+            alert("已刪除選取的通知");
+            fetchNotifications(); // 重新載入不使用 reload
+            setSelectedIds([]);
         } catch (err) {
             alert("刪除失敗，請稍後再試");
         }
@@ -47,6 +60,11 @@ function Notification() {
                 </div>
                 <hr className={styles["heading-divider"]} />
 
+                <div className={styles["button-row"]}>
+                    <button className={styles["delete-button"]} onClick={handleBatchDelete}>
+                        刪除選取項目
+                    </button>
+                </div>
                 <div className={styles["main-container"]}>
                     {error ? (
                         <p className="text-red-500">{error}</p>
@@ -57,7 +75,8 @@ function Notification() {
                             <NotificationCard
                                 key={item._id}
                                 item={item}
-                                onDelete={handleDelete}
+                                isSelected={selectedIds.includes(item.n_id)}
+                                onSelectChange={handleSelectChange}
                             />
                         ))
                     )}
@@ -66,5 +85,6 @@ function Notification() {
         </div>
     );
 }
+
 
 export default Notification;

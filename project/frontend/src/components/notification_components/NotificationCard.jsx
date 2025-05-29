@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styles from "./NotificationCard.module.css";
 import { FiTrash } from "react-icons/fi"; 
 
-function NotificationCard({ item, onDelete }) {
+function NotificationCard({ item, onSelectChange, isSelected }) {
     const date = new Date(item.notification.notified_date);
     const formattedDate = date.toLocaleDateString("zh-TW", {
         year: "numeric",
@@ -11,14 +11,21 @@ function NotificationCard({ item, onDelete }) {
         day: "numeric",
         weekday: "short"
     });
+
     const categoryMap = {
         course: "課程",
     };
     const displayCategory = categoryMap[item.notification.event_category] || item.notification.event_category;
+
     return (
-        <div
-            className={`${styles.row} ${item.is_read ? styles.read : styles.unread}`}
-        >
+        <div className={`${styles.row} ${item.is_read ? styles.read : styles.unread}`}>
+            <div className={styles.checkbox}>
+                <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => onSelectChange(item.n_id, e.target.checked)}
+                />
+            </div>
             <div className={styles.sender}>
                 系統通知 - {displayCategory}
             </div>
@@ -28,16 +35,14 @@ function NotificationCard({ item, onDelete }) {
             <div className={styles.date}>
                 {formattedDate}
             </div>
-            <div className={styles.delete} onClick={() => onDelete(item.n_id)} title="刪除通知">
-                <FiTrash size={20} />
-            </div>
         </div>
     );
 }
 
 NotificationCard.propTypes = {
     item: PropTypes.object.isRequired,
-    onDelete: PropTypes.func.isRequired,
+    onSelectChange: PropTypes.func.isRequired,
+    isSelected: PropTypes.bool.isRequired,
 };
 
 export default NotificationCard;

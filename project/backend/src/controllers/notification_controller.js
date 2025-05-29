@@ -1,7 +1,9 @@
 import { 
     FindNotifiedByUserId,
     FindNotificationById,
-    DeleteNotifiedById
+    DeleteNotifiedById,
+    InsertNotification,
+    InsertNotified
 } from '#src/services/notification_service.js'
 
 async function GetNotified(req, res, next) {
@@ -32,9 +34,8 @@ async function GetNotified(req, res, next) {
     }
 }
 
-async function NotifiedDeleter(req, res) {
-    try {
-        console.log(req.body)
+async function NotifiedDeleter(req, res){
+        try {
         const { n_id, user_id } = req.body;
         if (isNaN(n_id)) {
             return res.status(400).send({ error: "Invalid n_id" });
@@ -65,7 +66,44 @@ async function NotifiedDeleter(req, res) {
     }
 }
 
+async function Notify(req, res) {
+    try {
+        const { event_id, event_category, context, notified_userId} = req.body;
+
+        const notificationData = {
+            event_id : event_id,
+            event_category : event_category,
+            context : context
+        }
+
+        const result = await InsertNotification(notificationData);
+        console.log(result);
+
+        if (result.error) {
+            return res.status(404).send({ error: result.error });
+        }
+
+        for (const userId of notified_userId) {
+            const notifiedData = {
+                n_id: result.n_id,
+                user_id: userId
+            }
+            const notifiedResult = await InsertNotified(notifiedData);
+            if (notifiedResult.error) {
+                return res.status(404).send({ error: notifiedResult.error });
+            }
+        }
+
+        return res.status(200).send({ message: {result}});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ error: "An unexpected error occurred" });
+    }
+}
+
 export {
     GetNotified,
-    NotifiedDeleter
+    NotifiedDeleter,
+    Notify
 }

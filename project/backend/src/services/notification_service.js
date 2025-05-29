@@ -7,16 +7,21 @@ async function InsertNotification(notificationData) {
                 throw new Error("Counter document not found. Please initialize your counter collection.");
             }
         const nextNotificationId = counter.notification + 1;
+        
+        const date = new Date();
 
         const notification = {
             n_id: nextNotificationId,
             event_id : notificationData.event_id,
             event_category : notificationData.event_category,
             context : notificationData.context,
-            notified_date : notificationData.notified_date
+            notified_date : date
         };
 
+        console.log(notification);
+
         const result = await mongoose.connection.db.collection('notification').insertOne(notification)
+        result.n_id = nextNotificationId;
 
         await mongoose.connection.db.collection('counter').updateOne(
             {},
