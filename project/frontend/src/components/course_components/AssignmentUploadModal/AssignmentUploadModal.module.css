@@ -1,0 +1,247 @@
+.upload-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    z-index: 1000;
+    width: 500px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.upload-modal h2 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    text-align: center;
+}
+
+.upload-modal select,
+.upload-modal input[type="text"],
+.upload-modal input[type="date"],
+.upload-modal input[type="time"],
+.upload-modal input[type="number"],
+.upload-modal input[type="datetime-local"],
+.upload-modal textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.upload-modal textarea {
+    resize: none;
+    height: 80px;
+}
+
+.upload-modal button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 80px;
+}
+
+.upload-modal .button-group button:first-of-type {
+    background-color: #f44336;
+    color: white;
+}
+
+.upload-modal .button-group button:last-of-type {
+    background-color: #4caf50;
+    color: white;
+}
+
+.upload-modal label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    flex: 1;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: fit-content;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vertical-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.input-group input,
+.input-group select {
+    flex: 2;
+}
+
+.input-group textarea {
+    flex: 1;
+    width: 100%;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.button-group button {
+    flex: 1;
+}
+
+.datetime-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.datetime-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.datetime-item label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.datetime-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.datetime-inputs input {
+    flex: 1;
+}
+
+.score-group {
+    display: flex;
+    gap: 16px;
+}
+
+.score-group .input-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.score-group .input-group label {
+    white-space: nowrap;
+    margin-bottom: 6px;
+}
+
+.file-input-custom-area {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.custom-file-button {
+    background-color: #bebebe;
+    color: white;   
+    padding: 4px 6px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-right: 12px;
+}
+
+.custom-file-button:hover {
+    background-color: #919191;
+}
+
+.file-count-display {
+    font-size: 14px;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
+.file-list {
+    margin-top: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+.file-item:last-child {
+    margin-bottom: 0;
+}
+
+.file-name {
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: 8px;
+}
+
+.remove-file-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: unset;
+}
+
+.remove-file-button:hover {
+    background-color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+    .upload-modal {
+        width: 95%;
+    }
+    
+    .datetime-inputs {
+        flex-direction: column;
+    }
+    
+    .score-group {
+        flex-direction: column;
+    }
+} 

@@ -13,7 +13,8 @@ import {
 import { GetCourseAssignments } from "@/services/AssignmentApi";
 
 import CourseTable from "@/components/course_components/CourseTable/CourseTable";
-import UploadModal from "@/components/course_components/UploadModal/UploadModal";
+import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
+import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();
@@ -26,7 +27,8 @@ export default function CourseInfoPage() {
     const [materials, setMaterials] = useState([]);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [showMaterialUploadModal, setShowMaterialUploadModal] = useState(false);
+    const [showAssignmentUploadModal, setShowAssignmentUploadModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
@@ -118,9 +120,19 @@ export default function CourseInfoPage() {
                 <div className={styles["material-bar"]}>
                     <button
                         className={styles["material-button"]}
-                        onClick={() => setShowUploadModal(true)}
+                        onClick={() => {
+                            setShowMaterialUploadModal(true);
+                        }}
                     >
-                        上傳教材/作業
+                        上傳教材
+                    </button>
+                    <button
+                        className={styles["material-button"]}
+                        onClick={() => {
+                            setShowAssignmentUploadModal(true);
+                        }}
+                    >
+                        上傳作業
                     </button>
                     <button
                         className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
@@ -153,14 +165,28 @@ export default function CourseInfoPage() {
                 onMaterialsChange={handleMaterialsChange}
             />
 
-            {showUploadModal && (
+            {showMaterialUploadModal && (
                 <>
                     <div
                         className={styles["modal-overlay"]}
-                        onClick={() => setShowUploadModal(false)}
+                        onClick={() => setShowMaterialUploadModal(false)}
                     />
-                    <UploadModal
-                        onClose={() => setShowUploadModal(false)}
+                    <MaterialUploadModal
+                        onClose={() => setShowMaterialUploadModal(false)}
+                        courseId={courseId}
+                        onSuccess={() => window.location.reload()}
+                    />
+                </>
+            )}
+
+            {showAssignmentUploadModal && (
+                <>
+                    <div
+                        className={styles["modal-overlay"]}
+                        onClick={() => setShowAssignmentUploadModal(false)}
+                    />
+                    <AssignmentUploadModal
+                        onClose={() => setShowAssignmentUploadModal(false)}
                         courseId={courseId}
                         onSuccess={() => window.location.reload()}
                     />
