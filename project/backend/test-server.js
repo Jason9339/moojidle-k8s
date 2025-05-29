@@ -187,16 +187,13 @@ async function ResetTestDatabase() {
         try {
             const collection = mongoose.connection.db.collection(collectionName);
             const deleteResult = await collection.deleteMany({});
-            console.log(`清理 ${collectionName}: ${deleteResult.deletedCount} 條記錄`);
+            // console.log(`清理 ${collectionName}: ${deleteResult.deletedCount} 條記錄`);
         } catch (error) {
             console.warn(`清理 ${collectionName} 失敗:`, error.message);
         }
     }
     // 重新初始化基本資料
     await SetupInitialTestData();
-
-    // 確保資料插入完成
-    await new Promise(resolve => setTimeout(resolve, 10));
 
     // console.log('✅ 資料庫重置完成');
 }
