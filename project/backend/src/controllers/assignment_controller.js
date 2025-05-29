@@ -2,7 +2,9 @@ import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
     FindAssignmentsByCourseId,
     GetAssignmentSubmissionsByAssId,
-    GetCourseIdByAssignmentId
+    GetNonSubmittingStudentsByAssignmentId,
+    GetCourseIdByAssignmentId,
+    GetAssignmentSubmissionStatus
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -63,6 +65,8 @@ async function GetCourseAssignments(req, res) {
 
 
 
+
+
 async function GetAssignmentSubmissions(req, res) {
     try {
         const { assignmentId } = req.params;
@@ -75,29 +79,29 @@ async function GetAssignmentSubmissions(req, res) {
         }
         const assId = parseInt(assignmentId);
 
-
-
-
-        //TODO:
-        const submissions = await GetAssignmentSubmissionsByAssId(assId);
-
-        if (submissions.length != 0) {
-            const courseId = await GetCourseIdByAssignmentId(assId);
-            
-            const students = await FindStudyInJoinUserByCourseId(courseId);
-
+        // Get course ID from assignment ID
+        const courseId = await GetCourseIdByAssignmentId(assId);
+        
+        if (!courseId) {
+            return res.status(404).json({ message: "找不到對應的課程" });
         }
 
+        // Get comprehensive assignment submission status
+        const submissionData = await GetAssignmentSubmissionStatus(assId, courseId);
 
         return res.status(200).json({
-            submissions: submissions
+            submissions: submissionData.submissions,
+            nonSubmittingStudents: submissionData.non_submitted,
+            studentStatusList: submissionData.all_students,
+            submittedStudents: submissionData.submitted
         });
     } catch (error) {
-
         console.error("獲取繳交作業失敗", error);
         res.status(500).json({ message: error.message });
     }
 }
+
+
 
 
 
