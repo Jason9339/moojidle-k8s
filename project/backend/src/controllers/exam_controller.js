@@ -25,7 +25,7 @@ async function GetProjectedExamsByCourseId(req, res) {
 
         // check if course exist
         if((await FindCourseById(courseId)) == null){
-            res.status(404).send("course not found");
+            res.status(404).send("course not found while finding simplified exams");
             return;
         }
 
@@ -49,8 +49,10 @@ async function UpdateExamScore(req, res) {
         const examId = parseInt(req.params.examId);
         const payload = req.body;
 
-        if(!payload || !payload.max_score || !payload.percentage){
-            return res.status(400).send("Lack of exam Data.");
+        if (!payload || !payload.max_score || !payload.percentage ||
+            typeof payload.max_score != "number" || typeof payload.percentage != "number"
+        ) {
+            return res.status(400).send("invalid exam Data");
         }
 
         // get the exmas in the course
