@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // css style
 import styles from "./StudentsGradeTable.module.css";
@@ -10,6 +10,20 @@ function StudentsGradeTable({ studentGrades }) {
                 No Students yet...
             </div>
         );
+    }
+
+    const [tableData, setTableData] = useState(null);
+
+    // initialize tableData when component loads
+    useEffect(() => {
+        // deep copy of the data
+        setTableData(structuredClone(studentGrades));
+    }, [studentGrades]);
+
+    if (!tableData) {
+        return (
+            <></>
+        )
     }
 
     // getting:
@@ -47,16 +61,16 @@ function StudentsGradeTable({ studentGrades }) {
     // ......
     // ]
 
-    function calcTotalScore(studentGrade) {
+    function calcTotalScore(tableData) {
         let sum = 0;
         // start from student's assign score
-        for(let i = 0; i < studentGrade.sub_ass.length; i ++){
-            sum += ((studentGrade.sub_ass[i].score || 0) * studentGrade.sub_ass[i].percentage)
+        for(let i = 0; i < tableData.sub_ass.length; i ++){
+            sum += ((tableData.sub_ass[i].score || 0) * tableData.sub_ass[i].percentage)
         }
 
         // next is student's exam score
-        for(let i = 0; i < studentGrade.taken_exams.length; i ++){
-            sum += ((studentGrade.taken_exams[i].score || 0) * studentGrade.taken_exams[i].percentage)
+        for(let i = 0; i < tableData.taken_exams.length; i ++){
+            sum += ((tableData.taken_exams[i].score || 0) * tableData.taken_exams[i].percentage)
         }
 
         return sum.toFixed(2);
@@ -64,18 +78,17 @@ function StudentsGradeTable({ studentGrades }) {
 
     let assignExamNames = [null];
     // add assignment names
-    for (let i = 0; i < studentGrades[0].sub_ass.length; i++) {
-        assignExamNames.push(studentGrades[0].sub_ass[i].ass_name);
+    for (let i = 0; i < tableData[0].sub_ass.length; i++) {
+        assignExamNames.push(tableData[0].sub_ass[i].ass_name);
     }
     // add exam names
-    for (let i = 0; i < studentGrades[0].taken_exams.length; i++) {
-        assignExamNames.push(studentGrades[0].taken_exams[i].exam_name);
+    for (let i = 0; i < tableData[0].taken_exams.length; i++) {
+        assignExamNames.push(tableData[0].taken_exams[i].exam_name);
     }
     assignExamNames.push("Total");
 
     return (
         <div className={styles["simple-grade-container"]}>
-            <hr className={styles["separate-line"]} />
             <div className={styles["table-wrapper"]}>
                 <table className={styles["grade-table"]}>
                     <thead>
@@ -88,7 +101,7 @@ function StudentsGradeTable({ studentGrades }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {studentGrades.map((row, rowIndex) => (
+                        {tableData.map((row, rowIndex) => (
                             <tr key={rowIndex} className={styles["content-row"]}>
                                 <th className={styles["header-row"]}>
                                     {row.name}

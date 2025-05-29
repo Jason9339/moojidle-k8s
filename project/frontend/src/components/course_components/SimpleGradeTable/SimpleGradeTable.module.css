@@ -116,3 +116,12 @@
 .summary {
     padding-left: 5vw;
 }
+
+.separate-line {
+    width: 95%;
+    align-self: center;
+    
+    margin-top: 5vh;
+    border: none;
+    border-top: 1px solid;
+}

@@ -13,8 +13,27 @@
 
 .toggle-button {
     position: absolute;
-    top: 1vh;
+    top: -1vh;
     left: 0.5vw;
 
     font-size: 23px;
+}
+
+.toggle-button {
+    position: absolute;
+    top: -1vh;
+    left: 0.5vw;
+
+    background-color: #f0f2f7;
+    transition: background-color 0.2s ease;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #333;
+
+    font-size: 23px;
+    z-index: 100;
+}
+
+.toggle-button:hover {
+    background-color: #e0e3ea;
 }

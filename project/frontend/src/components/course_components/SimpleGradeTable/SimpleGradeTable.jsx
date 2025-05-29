@@ -179,6 +179,8 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
                     課程最高分數: {(maxGrade * 100).toFixed(2)}
                 </div>
             </div>
+
+            <hr className={styles["separate-line"]} />
         </div>
     );
 }

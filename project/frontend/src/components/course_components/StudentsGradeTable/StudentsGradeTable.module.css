@@ -7,14 +7,7 @@
     justify-content: start;
     align-items: start;
 
-    padding-top: 8vh;
-}
-
-.separate-line {
-    width: 95%;
-    align-self: center;
-    padding-bottom: 5vh;
-    size: 1px;
+    padding-top: 5vh;
 }
 
 .table-wrapper {
