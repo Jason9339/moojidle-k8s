@@ -20,7 +20,7 @@ describe('Taken Exam Test', () => {
     // Get
     // testing GetTakenExamsInCourse
     describe("GetTakenExamsInCourse integration test", async () => {
-        it("given a courseId, get each students' name and thier yaken exams(with percentage)", async () => {
+        it("given a courseId, get each students' name and their taken exams(with percentage)", async () => {
             const data = await GetTakenExamsInCourse(1);
     
             expect(data).toBeDefined();
