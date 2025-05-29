@@ -65,9 +65,24 @@ async function FindNotifiedByUserId(userID) {
     }
 }
 
+const DeleteNotifiedById = async (notificationData) => {
+    try {
+        const notificationID = notificationData.n_id;
+        const userID = notificationData.user_id;
+        const result = await mongoose.connection.db.collection('notified').deleteOne({
+            n_id: notificationID,
+            user_id: userID
+        });
+        return result;
+    } catch (error) {
+        console.error('Error deleting post:', error);
+    }
+};
+
 export {
     InsertNotification,
     InsertNotified,
     FindNotificationById,
-    FindNotifiedByUserId
+    FindNotifiedByUserId,
+    DeleteNotifiedById
 }
