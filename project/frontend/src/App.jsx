@@ -15,7 +15,7 @@ import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
-
+import Notification from "@/pages/notification_page/Notification";
 // pages for user related
 import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
@@ -65,9 +65,12 @@ function App() {
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
-                        {/* post pages relayed */}
+                        {/* post pages related */}
                         <Route path="/post-edit/:param" element={<PostEdit />} />
                         <Route path="/post/:id" element={<PostPage />} />
+
+                        {/* notification page related */}
+                        <Route path="/inbox" element={<Notification />} />
                     </Route>
                 </Routes>
             </Router>
