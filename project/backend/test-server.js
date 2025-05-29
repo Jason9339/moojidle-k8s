@@ -37,9 +37,7 @@ import announcementRoute from '#src/routes/announcement_route.js';
 import discussionBoardRoute from '#src/routes/discussion_board_route.js';
 import postRoute from '#src/routes/post_routes.js';
 import examRoute from '#src/routes/exam_route.js';
-import fileRoute from '#src/routes/file_routes/file_route.js';
-import notificationRout from '#src/routes/notification_route.js';
-
+import notificationRouter from '#src/routes/notification_route.js';
 
 let mongoServer;
 let server;
@@ -79,8 +77,7 @@ async function startTestServer() {
         app.use("/material", materialRoute);
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
-        app.use("/file", fileRoute);
-        app.use("/notification", notificationRout);
+        app.use("/notification", notificationRouter);
 
         // 測試專用端點
         app.post('/test/reset-database', async (req, res) => {
