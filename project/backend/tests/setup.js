@@ -167,7 +167,7 @@ async function SetupTestData() {
 // Mock console methods to reduce noise in tests
 global.console = {
     ...console,
-    // log: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
+    log: vi.fn(),
+    // error: vi.fn(),
+    // warn: vi.fn(),
 }; 

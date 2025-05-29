@@ -9,7 +9,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
 
         // check valid course
         if ((await FindCourseById(courseId)) == null) {
-            res.status(404).send("course not found");
+            res.status(404).send("course not found while finding submitted assignments");
             return;
         }
 
@@ -35,7 +35,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
         // ]
         let studentsGrades = await FindStudyInJoinUserByCourseId(courseId);
 
-        // no studentsin this course
+        // no students in this course
         if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
             console.error(studentsGrades);

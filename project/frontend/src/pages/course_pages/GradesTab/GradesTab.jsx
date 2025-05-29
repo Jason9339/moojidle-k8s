@@ -130,6 +130,7 @@ function GradesTab() {
         );
     }
 
+    // since subAssignsData == [] iff takenExamsData == []
     let studentGrades = subAssignsData.map(subAss => {
         const matchTakenExam = takenExamsData.find(examUser => examUser.user_id == subAss.user_id);
         return {
