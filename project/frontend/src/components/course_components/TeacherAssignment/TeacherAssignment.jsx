@@ -5,9 +5,126 @@ import { GoChevronDown, GoChevronUp } from "react-icons/go";
 
 
 function TeacherAssignment({ courseId, currentUserId }) {
+    const [assignments, setAssignments] = useState([]);
+    const [selectedIdx, setSelectedIdx] = useState(0);
+    const [tabStartIdx, setTabStartIdx] = useState(0);
+    const [descExpanded, setDescExpanded] = useState(false);
+    const [descOverflow, setDescOverflow] = useState(false);
+    const descRef = useRef(null);
+
+    // only show 5 assignments at a time
+    const groupSize = 5;
+
+    useEffect(() => {
+        async function fetchAssignments() {
+            const data = await GetCourseAssignments(courseId);
+            setAssignments(data || []);
+        }
+        fetchAssignments();
+    }, [courseId]);
+
+    // When assignments or selectedIdx changes, ensure selectedIdx is within the display range
+    useEffect(() => {
+        if (selectedIdx < tabStartIdx) {
+            setTabStartIdx(Math.floor(selectedIdx / groupSize) * groupSize);
+        } else if (selectedIdx >= tabStartIdx + groupSize) {
+            setTabStartIdx(Math.floor(selectedIdx / groupSize) * groupSize);
+        }
+    }, [selectedIdx, assignments.length, groupSize]); // Added groupSize for completeness
+
+    // Monitor if the description exceeds 5 lines
+    useEffect(() => {
+        setDescExpanded(false); // Automatically collapse when switching assignments
+        if (descRef.current) {
+            const lineHeight = parseFloat(getComputedStyle(descRef.current).lineHeight);
+            const maxLines = 5;
+            const maxHeight = lineHeight * maxLines;
+            setDescOverflow(descRef.current.scrollHeight > maxHeight + 1);
+        }
+    }, [selectedIdx, assignments]);
+
+    if (assignments.length === 0) {
+        return <div>No assignments yet</div>; 
+    }
+
+    const showLeftArrow = tabStartIdx > 0;
+    const showRightArrow = tabStartIdx + groupSize < assignments.length;
+
+    const itemsToDisplay = assignments.slice(tabStartIdx, tabStartIdx + groupSize);
+    
     return (
-        <p>"Teacher Assign"</p>
+        <div>
+            <div className={styles.tabListBox}>
+                <div className={styles.tabList}>
+                    <button
+                        className={`${styles.arrowBtn} ${!showLeftArrow ? styles.arrowBtnDisabled : ""}`}
+                        onClick={() => showLeftArrow && setTabStartIdx(tabStartIdx - groupSize)}
+                        disabled={!showLeftArrow}
+                    >
+                        ◀
+                    </button>
+                    <div
+                      className={
+                        itemsToDisplay.length > 0 && itemsToDisplay.length < groupSize
+                            ? `${styles.tabBtnGroup} ${styles.tabBtnGroupLeft}`
+                            : styles.tabBtnGroup
+                      }
+                    >
+                        {itemsToDisplay.map((a, idx) => {
+                            const realIdx = tabStartIdx + idx;
+                            return (
+                                <button
+                                    key={a.id}
+                                    onClick={() => setSelectedIdx(realIdx)}
+                                    className={`${styles.tabBtn} ${realIdx === selectedIdx ? styles.tabBtnActive : ""}`}
+                                >
+                                    {a.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <button
+                        className={`${styles.arrowBtn} ${!showRightArrow ? styles.arrowBtnDisabled : ""}`}
+                        onClick={() => showRightArrow && setTabStartIdx(tabStartIdx + groupSize)}
+                        disabled={!showRightArrow}
+                    >
+                        ▶
+                    </button>
+                </div>
+            </div>
+            <div className={styles.descBox}>
+                <div className={styles.descTitle}>
+                    {assignments[selectedIdx]?.name}
+                </div>
+                <div className={styles.verticalSpacer} /> 
+                <div
+                    ref={descRef}
+                    className={`${styles.descContent} ${!descExpanded && descOverflow ? styles.descContentCollapsed : ""}`}
+                >
+                    {assignments[selectedIdx]?.description}
+                </div>
+                {descOverflow && assignments[selectedIdx] && (
+                    <div className={styles.descToggleWrapper}>
+                        <button
+                            className={styles.descToggle}
+                            onClick={() => setDescExpanded(e => !e)}
+                            aria-label={descExpanded ? "縮合" : "展開"} 
+                            type="button"
+                        >
+                            <span> 
+                                {descExpanded ? "縮合" : "展開"} 
+                            </span>
+                            {descExpanded
+                                ? <GoChevronUp color="#1976d2" size="1.2em" />
+                                : <GoChevronDown color="#1976d2" size="1.2em" />
+                            }
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
     );
+
 }
 
 export default TeacherAssignment;

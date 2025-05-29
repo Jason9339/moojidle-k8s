@@ -2,10 +2,12 @@ import { useOutletContext } from "react-router-dom";
 import TeacherAssignment from "@/components/course_components/TeacherAssignment/TeacherAssignment";
 
 function AssignmentsTab() {
-    const { role } = useOutletContext();
+    const { role, course } = useOutletContext();
     return (
         <div>
-            {role.isTeacher ?  <TeacherAssignment />: role.isAssistant ? <TeacherAssignment />: "學生"}
+            {(role.isTeacher || role.isAssistant)
+                ? <TeacherAssignment courseId={course.courseId} />
+                : "學生"}
         </div>
     );
 }
