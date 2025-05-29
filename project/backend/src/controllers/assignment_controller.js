@@ -1,16 +1,14 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    InsertAssignmentToDB
 } from '#src/services/assignment_service.js';
 
 import { 
     FindCourseById
 } from '#src/services/course_service.js';
 
-import {
-    GetNextId,
-    InsertAssignmentToDB
-} from '#src/services/file_services/file_db_service.js';
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
 
 import {
     SaveFile,
@@ -92,7 +90,7 @@ async function UploadAssignment(req, res) {
         const now = new Date();
 
         const doc = {
-            ass_id: await GetNextId("assignments"),
+            ass_id: await GetNextCounterId("assignments"),
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             ass_name: assName,

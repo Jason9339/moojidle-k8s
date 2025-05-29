@@ -2,17 +2,15 @@ import {
     DeleteMaterialById,
     FindMaterialsByCourseId,
     FindMaterialById,
-    UpdateMaterialById
+    UpdateMaterialById,
+    InsertMaterialToDB
 } from '#src/services/material_service.js';
 
 import {
     FindCourseById
 } from '#src/services/course_service.js';
 
-import {
-    GetNextId,
-    InsertMaterialToDB
-} from '#src/services/file_services/file_db_service.js';
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
 
 import {
     SaveFile,
@@ -173,7 +171,7 @@ async function UploadCourseMaterial(req, res) {
         const now = new Date();
 
         const doc = {
-            m_id: await GetNextId("materials"),
+            m_id: await GetNextCounterId("materials"),
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             m_name: mName,
