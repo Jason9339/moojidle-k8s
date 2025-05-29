@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styles from "./NotificationCard.module.css";
 
-function NotificationCard({ item, onSelectChange, isSelected }) {
+function NotificationCard({ item, onSelectChange, isSelected, categoryMap }) {
     const date = new Date(item.notification.notified_date);
     const formattedDate = date.toLocaleDateString("zh-TW", {
         year: "numeric",
@@ -10,19 +10,6 @@ function NotificationCard({ item, onSelectChange, isSelected }) {
         day: "numeric",
         weekday: "short"
     });
-
-    const categoryMap = {
-        course: "課程",
-        post: "討論版",
-        course_status: "課程身分",
-        course_announcement:"課程公告",
-        login:"登入",
-        commend:"新留言",
-        homework:"作業",
-        score:"成績",
-        test:"考試",
-        
-    };
 
     const displayCategory = categoryMap[item.notification.event_category] || item.notification.event_category;
 
@@ -52,6 +39,7 @@ NotificationCard.propTypes = {
     item: PropTypes.object.isRequired,
     onSelectChange: PropTypes.func.isRequired,
     isSelected: PropTypes.bool.isRequired,
+    categoryMap: PropTypes.object.isRequired,
 };
 
 export default NotificationCard;

@@ -63,3 +63,18 @@
     display: flex;
     flex-direction: column;
 }
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-select {
+    padding: 6px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+}

@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
-import { GetnotificationData, DeleteNotification} from "@/services/NotificationApi.js";
+import { GetnotificationData, DeleteNotification } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [filterCategory, setFilterCategory] = useState("all");
+
+    const categoryMap = {
+        all: "全部",
+        course: "課程",
+        post: "討論版",
+        course_status: "課程身分",
+        course_announcement: "課程公告",
+        login: "登入",
+        commend: "新留言",
+        homework: "作業",
+        score: "成績",
+        test: "考試",
+    };
 
     const fetchNotifications = async () => {
         try {
@@ -44,12 +58,16 @@ function Notification() {
                 )
             );
             alert("已刪除選取的通知");
-            fetchNotifications(); // 重新載入不使用 reload
+            fetchNotifications();
             setSelectedIds([]);
         } catch (err) {
             alert("刪除失敗，請稍後再試");
         }
     };
+
+    const filteredNotifications = filterCategory === "all"
+        ? notifications
+        : notifications.filter((item) => item.notification.event_category === filterCategory);
 
     return (
         <div className={styles["app-layout"]}>
@@ -58,24 +76,40 @@ function Notification() {
                 <div className={styles["notification-left"]}>
                     <div className={styles["notification-heading-row"]}>
                         <h2 className={styles["notification-heading"]}>Notifications</h2>
-                        <button className={styles["delete-button"]} onClick={handleBatchDelete}>
-                            刪除選取項目
-                        </button>
+
+                        <div className={styles["filter-row"]}>
+                            <select
+                                className={styles["category-select"]}
+                                value={filterCategory}
+                                onChange={(e) => setFilterCategory(e.target.value)}
+                            >
+                                {Object.entries(categoryMap).map(([key, label]) => (
+                                    <option key={key} value={key}>
+                                        {label}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <button className={styles["delete-button"]} onClick={handleBatchDelete}>
+                                刪除選取項目
+                            </button>
+                        </div>
                     </div>
                     <hr className={styles["heading-divider"]} />
 
                     <div className={styles["main-container"]}>
                         {error ? (
                             <p className="text-red-500">{error}</p>
-                        ) : notifications.length === 0 ? (
+                        ) : filteredNotifications.length === 0 ? (
                             <p>目前沒有通知。</p>
                         ) : (
-                            notifications.map((item) => (
+                            filteredNotifications.map((item) => (
                                 <NotificationCard
                                     key={item._id}
                                     item={item}
                                     isSelected={selectedIds.includes(item.n_id)}
                                     onSelectChange={handleSelectChange}
+                                    categoryMap={categoryMap} // 把 categoryMap 傳下去
                                 />
                             ))
                         )}
@@ -84,8 +118,6 @@ function Notification() {
             </div>
         </div>
     );
-
 }
-
 
 export default Notification;
