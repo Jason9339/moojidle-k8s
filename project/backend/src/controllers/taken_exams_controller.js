@@ -86,7 +86,7 @@ async function GetStudentProjectedTakenExam(req, res) {
 
         // check valid course
         if ((await FindCourseById(courseId)) == null) {
-            res.status(404).send("course not found while finding taken exams");
+            res.status(404).send("course not found while finding taken exams for the student");
             return;
         }
 
