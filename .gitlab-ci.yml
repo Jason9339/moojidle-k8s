@@ -3,6 +3,9 @@ workflow:
     - if: $CI_COMMIT_BRANCH == "main"  # for push to main
       when: always
 
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # 只跑 MR
+      when: always
+
     # 只在 MR 開到 main 時執行
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
       when: always
