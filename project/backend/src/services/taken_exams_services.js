@@ -5,7 +5,7 @@ async function FindProjectTakenExamByUserIdAssId(userId, examId) {
         userId = parseInt(userId);
         examId = parseInt(examId);
 
-        const result = await mongoose.connection.db.collection('submitted_ass').find(
+        const result = await mongoose.connection.db.collection('taken_exams').find(
             {taken_by_user_id: userId, exam_id: examId}
         ).project(
             { attachments: 0, description: 0, _id: 0 }

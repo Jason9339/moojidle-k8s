@@ -11,6 +11,7 @@ async function FindProjectSubAssignByUserIdAssId(userId, assId) {
             { attachments: 0, description: 0, _id: 0 }
         ).toArray();
 
+        // will return an empty array if params are invalid
         return result;
     } catch (err) {
         throw err;

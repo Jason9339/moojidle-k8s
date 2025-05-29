@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, assert } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import {
     FindProjectedAssignmentsByCourseId,
 
@@ -61,6 +61,7 @@ describe("Testing Assignments' Services", () => {
     // Insert series:
 
     // Update series:
+    // testing UpdateOneAssignScoreById
     describe("Update the assignment's max_score and percentage", () => {
         it("given valid ass_id, max_score, percentage", async () => {
             const result = await UpdateOneAssignScoreById(1, 120, 0.5);
@@ -68,7 +69,7 @@ describe("Testing Assignments' Services", () => {
             expect(result).toBeDefined();
             expect(result).toBe(1);
 
-            const assigns = await FindProjectedAssignmentsByCourseId('1');
+            const assigns = await FindProjectedAssignmentsByCourseId(1);
             expect(assigns).toBeDefined();
             expect(assigns.length).toBe(1);
             expect(assigns[0].max_score).toBe(120);
