@@ -10,9 +10,10 @@ async function GetnotificationData(userID) {
     }
 }
 
-async function DeleteNotification(userID) {
+async function DeleteNotification(notifiedData) {
     try {
-        // TO DO
+        const response = await api.delete("notification/delete-notified", { data: notifiedData });
+        return response;
     } catch (error) {
         console.error("Failed to fetch post content:", error.message);
         throw error;

@@ -65,7 +65,7 @@ async function FindNotifiedByUserId(userID) {
     }
 }
 
-const DeleteNotifiedById = async (notificationData) => {
+async function DeleteNotifiedById(notificationData) {
     try {
         const notificationID = notificationData.n_id;
         const userID = notificationData.user_id;

@@ -34,6 +34,7 @@ async function GetNotified(req, res, next) {
 
 async function NotifiedDeleter(req, res) {
     try {
+        console.log(req.body)
         const { n_id, user_id } = req.body;
         if (isNaN(n_id)) {
             return res.status(400).send({ error: "Invalid n_id" });
