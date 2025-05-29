@@ -1,35 +1,46 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import request from 'supertest';
 import mongoose from 'mongoose';
-import app from '../../main.js';
+import { GetAssignmentSubmissionTimeController } from '#src/controllers/assignment_controller.js';
+import { createMockReq, createMockRes } from '../test-utils.js';
 
-// 請確保 main.js 有正確 export app
-
-describe('GET /assignment/:assignmentId/submission-time', () => {
+describe('GetAssignmentSubmissionTimeController', () => {
     beforeAll(async () => {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/moojidle_test');
         }
+        await mongoose.connection.db.collection('submitted_ass').insertOne({
+            s_ass_id: 1,
+            ass_id: 1,
+            submit_by_user_id: 3,
+            submit_user_course_tag: "User3's CustomTag_1",
+            submit_date: new Date("2025-01-14T00:00:00.000Z"),
+            score: 100,
+            graded_by_user_id: 2,
+            attachments: [],
+            description: "This is the submission for Assignment 1 by User 3."
+        });
     });
     afterAll(async () => {
+        await mongoose.connection.db.collection('submitted_ass').deleteMany({ ass_id: 1, submit_by_user_id: 3 });
         await mongoose.disconnect();
     });
 
     it('應該取得繳交時間（有繳交）', async () => {
-        // 測試資料庫必須有 ass_id:1, submit_by_user_id:15
-        const res = await request(app)
-            .get('/assignment/1/submission-time')
-            .query({ userId: 15 });
-        expect(res.status).toBe(200);
-        expect(res.body.submitTime).toBeDefined();
-        expect(new Date(res.body.submitTime).toString()).not.toBe('Invalid Date');
+        const req = createMockReq({}, { assignmentId: '1' }, { userId: '3' });
+        const res = createMockRes();
+        await GetAssignmentSubmissionTimeController(req, res);
+        expect(res.json).toHaveBeenCalled();
+        const data = res.json.mock.calls[0][0];
+        expect(data.submitTime).toBeDefined();
+        expect(new Date(data.submitTime).toString()).not.toBe('Invalid Date');
     });
 
     it('未繳交時應回傳 null', async () => {
-        const res = await request(app)
-            .get('/assignment/999/submission-time')
-            .query({ userId: 999 });
-        expect(res.status).toBe(200);
-        expect(res.body.submitTime).toBeNull();
+        const req = createMockReq({}, { assignmentId: '999' }, { userId: '999' });
+        const res = createMockRes();
+        await GetAssignmentSubmissionTimeController(req, res);
+        expect(res.json).toHaveBeenCalled();
+        const data = res.json.mock.calls[0][0];
+        expect(data.submitTime).toBeNull();
     });
 });
