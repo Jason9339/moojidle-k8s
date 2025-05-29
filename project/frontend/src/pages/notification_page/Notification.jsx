@@ -55,35 +55,36 @@ function Notification() {
         <div className={styles["app-layout"]}>
             <LeftBar />
             <div className={styles["page-container"]}>
-                <div className={styles["heading-row"]}>
-                    <h2 className={styles["heading-title"]}>Notifications</h2>
-                </div>
-                <hr className={styles["heading-divider"]} />
+                <div className={styles["notification-left"]}>
+                    <div className={styles["notification-heading-row"]}>
+                        <h2 className={styles["notification-heading"]}>Notifications</h2>
+                        <button className={styles["delete-button"]} onClick={handleBatchDelete}>
+                            刪除選取項目
+                        </button>
+                    </div>
+                    <hr className={styles["heading-divider"]} />
 
-                <div className={styles["button-row"]}>
-                    <button className={styles["delete-button"]} onClick={handleBatchDelete}>
-                        刪除選取項目
-                    </button>
-                </div>
-                <div className={styles["main-container"]}>
-                    {error ? (
-                        <p className="text-red-500">{error}</p>
-                    ) : notifications.length === 0 ? (
-                        <p>目前沒有通知。</p>
-                    ) : (
-                        notifications.map((item) => (
-                            <NotificationCard
-                                key={item._id}
-                                item={item}
-                                isSelected={selectedIds.includes(item.n_id)}
-                                onSelectChange={handleSelectChange}
-                            />
-                        ))
-                    )}
+                    <div className={styles["main-container"]}>
+                        {error ? (
+                            <p className="text-red-500">{error}</p>
+                        ) : notifications.length === 0 ? (
+                            <p>目前沒有通知。</p>
+                        ) : (
+                            notifications.map((item) => (
+                                <NotificationCard
+                                    key={item._id}
+                                    item={item}
+                                    isSelected={selectedIds.includes(item.n_id)}
+                                    onSelectChange={handleSelectChange}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
     );
+
 }
 
 
