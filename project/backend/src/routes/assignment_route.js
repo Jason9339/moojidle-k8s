@@ -1,7 +1,8 @@
 import express from 'express';
 import { 
     GetToDoAssignmentsByUserId,
-    GetCourseAssignments 
+    GetCourseAssignments,
+    GetAssignmentSubmissionTimeController 
 } from '#src/controllers/assignment_controller.js';
 
 const router = express.Router();
@@ -13,6 +14,8 @@ const router = express.Router();
 router.get('/todo', GetToDoAssignmentsByUserId);
 
 router.get('/course/:courseId', GetCourseAssignments);
+
+router.get('/:assignmentId/submission-time', GetAssignmentSubmissionTimeController);
 
 
 export default router;

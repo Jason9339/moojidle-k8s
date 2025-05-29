@@ -101,7 +101,22 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
+// 取得某用戶針對某作業的繳交時間
+async function GetAssignmentSubmissionTime(assignmentId, userId) {
+    const db = mongoose.connection.db;
+    const parsedAssignmentId = parseInt(assignmentId);
+    const parsedUserId = parseInt(userId);
+
+    const submission = await db.collection("submitted_ass").findOne({
+        ass_id: parsedAssignmentId,
+        submit_by_user_id: parsedUserId
+    });
+
+    return submission ? submission.submit_date : null;
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    GetAssignmentSubmissionTime
 };

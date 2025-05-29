@@ -1,6 +1,7 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    GetAssignmentSubmissionTime
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -52,7 +53,22 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
+// 取得作業繳交時間
+async function GetAssignmentSubmissionTimeController(req, res) {
+    try {
+        const { assignmentId } = req.params;
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ message: "缺少 userId" });
+
+        const submitTime = await GetAssignmentSubmissionTime(assignmentId, userId);
+        res.json({ submitTime });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    GetCourseAssignments
+    GetCourseAssignments,
+    GetAssignmentSubmissionTimeController
 };
