@@ -6,7 +6,7 @@ import { GetAllStudentsProjectedTakenExam, GetStudentProjectedTakenExam } from '
 // entry point http://localhost:PORT/taken-exam
 
 // frontend gives courseId
-// backend gives back submitted-ass for each student
+// backend gives back taken_exams for each student
 // [
 //     {
 //         "user_id": 1,
