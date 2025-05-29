@@ -101,7 +101,57 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
+async function GetAssignmentSubmissionsByAssId(assignmentId) {
+    try {
+        const submissions = await mongoose.connection.db.collection("submitted_ass").aggregate([
+            { $match: { ass_id: assignmentId } },
+            { $lookup: {
+                from: "user",
+                localField: "submit_by_user_id",
+                foreignField: "user_id", 
+                as: "student_info"
+            }},
+            { $unwind: "$student_info" },
+            { $project: {
+                s_ass_id: 1,
+                ass_id: 1,
+                submit_by_user_id: 1,
+                submit_user_course_tag: 1,
+                submit_date: 1,
+                score: 1,
+                graded_by_user_id: 1,
+                attachments: 1,
+                description: 1,
+                "student_name": "$student_info.name",
+                "status": { $cond: { if: { $ifNull: ["$score", false] }, then: "已評分", else: "待評分" } }
+            }}
+        ]).toArray();
+        return submissions;
+    } catch (error) {
+        console.error(`[ GetAssignmentSubmissionsByAssId] ${error}`)
+        throw new Error(error.message)
+    }
+
+}
+
+
+async function GetCourseIdByAssignmentId(assignmentId) {
+    try {
+        const assignment = await mongoose.connection.db.collection("assignments").findOne(
+            { ass_id: assignmentId },
+            { projection: { in_course_id: 1 } }
+        );
+        return assignment ? assignment.in_course_id : null;
+    } catch (error) {
+        console.error("Error getting course ID by assignment ID:", error);
+        throw error;
+    }
+
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    GetAssignmentSubmissionsByAssId,
+    GetCourseIdByAssignmentId
 };

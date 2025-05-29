@@ -1,11 +1,20 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    GetAssignmentSubmissionsByAssId,
+    GetCourseIdByAssignmentId
 } from '#src/services/assignment_service.js';
 
 import { 
     FindCourseById
+
 } from '#src/services/course_service.js';
+
+import {
+    FindTeachInJoinUserByCourseId,
+    FindAssistInByCourseID,
+    FindStudyInJoinUserByCourseId,
+} from '#src/services/course_member_service.js'
 
 import CalculateWeek from '#src/utils/calculate_week.js';
 
@@ -52,7 +61,48 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
+
+
+async function GetAssignmentSubmissions(req, res) {
+    try {
+        const { assignmentId } = req.params;
+
+        console.log(assignmentId)
+
+        // Validate input
+        if (!assignmentId) {
+            return res.status(400).json({ message: "缺少作業ID" });
+        }
+        const assId = parseInt(assignmentId);
+
+
+
+
+        //TODO:
+        const submissions = await GetAssignmentSubmissionsByAssId(assId);
+
+        if (submissions.length != 0) {
+            const courseId = await GetCourseIdByAssignmentId(assId);
+            
+            const students = await FindStudyInJoinUserByCourseId(courseId);
+
+        }
+
+
+        return res.status(200).json({
+            submissions: submissions
+        });
+    } catch (error) {
+
+        console.error("獲取繳交作業失敗", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+
 export {
     GetToDoAssignmentsByUserId,
-    GetCourseAssignments
+    GetCourseAssignments,
+    GetAssignmentSubmissions
 };

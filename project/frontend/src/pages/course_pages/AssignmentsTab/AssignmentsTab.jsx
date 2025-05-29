@@ -28,7 +28,7 @@ function AssignmentsTab() {
         <div>
             <h3>作業列表</h3>
             <p>身分: {role.isTeacher ? "老師" : role.isAssistant ? "助教" : "學生"}</p>
-                {role.isTeacher && <TeacherAssignmentReview assignmentId="1" submissions={mockSubmissions} />}
+                {role.isTeacher && <TeacherAssignmentReview assignmentId="1"  />}
         </div>
     );
 }

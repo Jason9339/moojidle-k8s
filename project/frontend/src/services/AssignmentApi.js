@@ -7,3 +7,7 @@ export const GetCourseAssignments = async (courseId) => {
 export const GetTodoList = async (userId) => {
     return (await api.get(`/assignment/todo?user_id=${userId}`)).data;
 };
+
+export const GetAssignmentSubmissions = async (assignmentId) => {
+    return (await api.get(`/assignment/${assignmentId}/submissions`)).data;
+};
