@@ -21,7 +21,7 @@ describe('Submitted Assignment Test', () => {
     // Get
     // testing GetSubAssInCourse
     describe("GetSubAssInCourse integration test", async () => {
-        it("given a courseId, get each students' name and thier submitted assigns(with percentage)", async () => {
+        it("given a courseId, get each students' name and their submitted assigns(with percentage)", async () => {
             const data = await GetSubAssInCourse(1);
     
             expect(data).toBeDefined();

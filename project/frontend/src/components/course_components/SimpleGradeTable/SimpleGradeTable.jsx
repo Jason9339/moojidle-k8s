@@ -39,18 +39,36 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
 
     function Done() {
         setIsEditing(prev => !prev);
+        let updatedAssigns = [];
+        let updatedExams = [];
         // save changes by calling cb from parent page
         // find the changed cells
         for (let i = 0; i < simpleGrades.length; i++) {
             if (simpleGrades[i].max_score != tableData[i].max_score || simpleGrades[i].percentage != tableData[i].percentage) {
                 if (simpleGrades[i].ass_id != undefined) {
-                    // update this assignment's max_score and percentage
-                    SaveNewAssign(tableData[i].ass_id, tableData[i].max_score, tableData[i].percentage);
+                    // get ready to update this assignment's max_score and percentage
+                    updatedAssigns.push({
+                        assId: tableData[i].ass_id,
+                        newMaxScore: tableData[i].max_score,
+                        newPercentage: tableData[i].percentage
+                    });
                 } else {
-                    // update this exam's max_score and percentage
-                    SaveNewExam(tableData[i].exam_id, tableData[i].max_score, tableData[i].percentage);
+                    // get ready to update this exam's max_score and percentage
+                    updatedExams.push({
+                        examId: tableData[i].exam_id,
+                        newMaxScore: tableData[i].max_score,
+                        newPercentage: tableData[i].percentage
+                    });
                 }
             }
+        }
+
+        // Call both updates if needed
+        if (updatedAssigns.length > 0) {
+            SaveNewAssign(updatedAssigns);
+        }
+        if (updatedExams.length > 0) {
+            SaveNewExam(updatedExams);
         }
     }
 

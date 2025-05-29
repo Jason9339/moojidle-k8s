@@ -91,36 +91,42 @@ function GradesTab() {
         }
     }
 
-    async function SaveNewAssign(assId, newMaxScore, newPercentage) {
+    async function SaveNewAssign(updatedAssigns) {
         try {
-            const newScore = {
-                max_score: newMaxScore,
-                percentage: newPercentage
-            }
-            await UpdateAssignmentScore(assId, newScore);
-
-            // update frontend state instead of re-fetching
+            // deep copying states
             let tempSimpleAssigns = structuredClone(simpleAssignsData);
             let tempSubAssigns = structuredClone(subAssignsData);
 
-            for (let i = 0; i < tempSimpleAssigns.length; i++) {
-                if (tempSimpleAssigns[i].ass_id == assId) {
-                    tempSimpleAssigns[i].max_score = newMaxScore;
-                    tempSimpleAssigns[i].percentage = newPercentage;
-                }
-            }
+            // apply all updates through api
+            for (let i = 0; i < updatedAssigns.length; i++) {
+                const { assId, newMaxScore, newPercentage } = updatedAssigns[i];
 
-            for (let i = 0; i < tempSubAssigns.length; i++) {
-                // for each students
-                for (let j = 0; j < tempSubAssigns[i].sub_ass.length; j++) {
-                    // for each submitted assigns that student has
-                    if (tempSubAssigns[i].sub_ass[j].ass_id == assId) {
-                        tempSubAssigns[i].sub_ass[j].percentage = newPercentage;
+                // Await API call
+                await UpdateAssignmentScore(assId, {
+                    max_score: newMaxScore,
+                    percentage: newPercentage
+                });
+
+                // Update tempSimpleAssigns
+                for (let j = 0; j < tempSimpleAssigns.length; j++) {
+                    if (tempSimpleAssigns[j].ass_id === assId) {
+                        tempSimpleAssigns[j].max_score = newMaxScore;
+                        tempSimpleAssigns[j].percentage = newPercentage;
+                        break;
+                    }
+                }
+
+                // Update tempSubAssigns
+                for (let j = 0; j < tempSubAssigns.length; j++) {
+                    for (let k = 0; k < tempSubAssigns[j].sub_ass.length; k++) {
+                        if (tempSubAssigns[j].sub_ass[k].ass_id === assId) {
+                            tempSubAssigns[j].sub_ass[k].percentage = newPercentage;
+                        }
                     }
                 }
             }
 
-            // write back
+            // write back instead of re-fetching
             setSimpleAssignsData(structuredClone(tempSimpleAssigns));
             setSubAssignsData(structuredClone(tempSubAssigns));
         } catch (err) {
@@ -129,36 +135,42 @@ function GradesTab() {
         }
     }
 
-    async function SaveNewExam(examId, newMaxScore, newPercentage) {
+    async function SaveNewExam(updatedExams) {
         try {
-            const newScore = {
-                max_score: newMaxScore,
-                percentage: newPercentage
-            }
-            await UpdateExamScore(examId, newScore);
-
-            // update frontend state instead of re-fetching
+            // deep copying states
             let tempSimpleExams = structuredClone(simpleExamsData);
             let tempTakenExams = structuredClone(takenExamsData);
 
-            for (let i = 0; i < tempSimpleExams.length; i++) {
-                if (tempSimpleExams[i].exam_id == examId) {
-                    tempSimpleExams[i].max_score = newMaxScore;
-                    tempSimpleExams[i].percentage = newPercentage;
-                }
-            }
+            // apply all updates through api
+            for (let i = 0; i < updatedExams.length; i++) {
+                const { examId, newMaxScore, newPercentage } = updatedExams[i];
 
-            for (let i = 0; i < tempTakenExams.length; i++) {
-                // for each students
-                for (let j = 0; j < tempTakenExams[i].taken_exams.length; j++) {
-                    // for each submitted assigns that student has
-                    if (tempTakenExams[i].taken_exams[j].exam_id == examId) {
-                        tempTakenExams[i].taken_exams[j].percentage = newPercentage;
+                // Await API call
+                await UpdateExamScore(examId, {
+                    max_score: newMaxScore,
+                    percentage: newPercentage
+                });
+
+                // Update tempSimpleExams
+                for (let j = 0; j < tempSimpleExams.length; j++) {
+                    if (tempSimpleExams[j].exam_id === examId) {
+                        tempSimpleExams[j].max_score = newMaxScore;
+                        tempSimpleExams[j].percentage = newPercentage;
+                        break;
+                    }
+                }
+
+                // Update tempTakenExams
+                for (let j = 0; j < tempTakenExams.length; j++) {
+                    for (let k = 0; k < tempTakenExams[j].taken_exams.length; k++) {
+                        if (tempTakenExams[j].taken_exams[k].exam_id === examId) {
+                            tempTakenExams[j].taken_exams[k].percentage = newPercentage;
+                        }
                     }
                 }
             }
 
-            // write back
+            // write back instead of re-fetching
             setSimpleExamsData(structuredClone(tempSimpleExams));
             setTakenExamsData(structuredClone(tempTakenExams));
         } catch (err) {
