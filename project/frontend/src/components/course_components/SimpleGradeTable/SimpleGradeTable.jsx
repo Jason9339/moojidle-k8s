@@ -52,7 +52,6 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
                         newMaxScore: tableData[i].max_score,
                         newPercentage: tableData[i].percentage
                     });
-                    // SaveNewAssign(tableData[i].ass_id, tableData[i].max_score, tableData[i].percentage);
                 } else {
                     // get ready to update this exam's max_score and percentage
                     updatedExams.push({
@@ -60,7 +59,6 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
                         newMaxScore: tableData[i].max_score,
                         newPercentage: tableData[i].percentage
                     });
-                    // SaveNewExam(tableData[i].exam_id, tableData[i].max_score, tableData[i].percentage);
                 }
             }
         }
