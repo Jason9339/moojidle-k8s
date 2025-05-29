@@ -28,7 +28,7 @@ function NotificationCard({ item, onDelete }) {
             <div className={styles.date}>
                 {formattedDate}
             </div>
-            <div className={styles.delete} onClick={() => onDelete(item._id)} title="刪除通知">
+            <div className={styles.delete} onClick={() => onDelete(item.n_id)} title="刪除通知">
                 <FiTrash size={20} />
             </div>
         </div>

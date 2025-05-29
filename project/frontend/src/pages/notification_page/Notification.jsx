@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
-import { GetnotificationData} from "@/services/NotificationApi.js";
-import NotificationCard from "@/components/NotificationCard/NotificationCard.jsx";
+import { GetnotificationData, DeleteNotification} from "@/services/NotificationApi.js";
+import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
@@ -23,13 +23,16 @@ function Notification() {
         fetchNotifications();
     }, []);
 
-    // 刪除通知函式
     const handleDelete = async (notificationId) => {
         try {
-            // await DeleteNotification(notificationId); // 從 API 刪除
-            // setNotifications((prev) =>
-            //     prev.filter((item) => item._id !== notificationId)
-            // );
+            const uid = JSON.parse(localStorage.getItem("user")).user_id;
+            const body = {
+                n_id: notificationId,
+                user_id: uid
+            };
+            await DeleteNotification(body); 
+            alert("刪除成功");
+            window.location.reload(); // 重新載入頁面
         } catch (err) {
             alert("刪除失敗，請稍後再試");
         }
