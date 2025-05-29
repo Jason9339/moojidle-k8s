@@ -23,6 +23,8 @@
     text-align: left;
     table-layout: auto;
     margin: auto;
+
+    table-layout: fixed;
 }
 
 .header-row {
@@ -30,6 +32,8 @@
     padding: 0.75rem;
     border: 1px solid #ddd;
     font-weight: bold;
+
+    word-wrap: break-word;
 }
 
 .content-row {
@@ -40,4 +44,7 @@
 .value {
     padding: 0.75rem;
     border: 1px solid #ddd;
+
+    width: 500px;
+    word-wrap: break-word;
 }
