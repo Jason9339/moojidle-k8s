@@ -61,9 +61,9 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
                     let takenExam = await FindProjectTakenExamByUserIdAssId(student.user_id, exam.exam_id);
 
                     // push the last grade into the array
-                    if(takenExam.at(-1) == undefined){
+                    if (takenExam.at(-1) == undefined) {
                         student.taken_exams.push({ exam_name: exam.exam_name, percentage: exam.percentage });
-                    }else{
+                    } else {
                         let finalTakenExam = takenExam.at(-1);
                         finalTakenExam.exam_name = exam.exam_name;
                         finalTakenExam.percentage = exam.percentage;
@@ -79,6 +79,89 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
     }
 }
 
+async function GetStudentProjectedTakenExam(req, res) {
+    try {
+        const courseId = parseInt(req.params.courseId);
+        const userId = parseInt(req.params.userId);
+
+        // check valid course
+        if ((await FindCourseById(courseId)) == null) {
+            res.status(404).send("course not found while finding taken exams");
+            return;
+        }
+
+        // get students, FindStudyInJoinUserByCourseId gets:
+        // [
+        //     {
+        //         "user_id": 1,
+        //         "name": "User 1",
+        //         "contact_ways": [
+        //             {
+        //                 "approach": "social_media",
+        //                 "details": "@user65"
+        //             },
+        //             {
+        //                 "approach": "phone",
+        //                 "details": "555-9868"
+        //             }
+        //         ],
+        //         "email": "user1@example.com",
+        //         "student_id": 3099
+        //     },
+        //    ....................
+        // ]
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+
+        // check if student is in that course
+        let isStudent = false;
+        let studentGrade;
+        for (let i = 0; i < students.length; i++) {
+            if (students[i].user_id == userId) {
+                isStudent = true;
+                studentGrade = students[i];
+
+                // remove redundant property
+                delete studentGrade.contact_ways;
+                delete studentGrade.email;
+            }
+        }
+        if (!isStudent) {
+            res.status(404).send("can't find this student in the course");
+            return;
+        }
+
+        // prepare the property to fill with grade
+        studentGrade.taken_exams = [];
+        let exams = await FindProjectedExamsByCourseId(courseId);
+
+        // no exam yet in the course
+        if (exams == null || exams.length == 0) {
+            res.status(200).send(studentGrade);
+        } else {
+            // for each exam
+            for (const exam of exams) {
+                let takenExam = await FindProjectTakenExamByUserIdAssId(userId, exam.exam_id);
+
+                // push the last grade into the array
+                if (takenExam.at(-1) == undefined) {
+                    studentGrade.taken_exams.push({ exam_name: exam.exam_name, percentage: exam.percentage });
+                } else {
+                    let finalTakenExam = takenExam.at(-1);
+                    finalTakenExam.exam_name = exam.exam_name;
+                    finalTakenExam.percentage = exam.percentage;
+                    studentGrade.taken_exams.push(finalTakenExam);
+                }
+            }
+        }
+
+        res.status(200).send(studentGrade);
+
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     GetAllStudentsProjectedTakenExam,
+    GetStudentProjectedTakenExam,
 }

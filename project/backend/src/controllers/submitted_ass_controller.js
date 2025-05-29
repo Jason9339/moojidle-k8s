@@ -80,6 +80,89 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
     }
 }
 
+async function GetStudentProjectedSubAssign(req, res) {
+    try {
+        const courseId = parseInt(req.params.courseId);
+        const userId = parseInt(req.params.userId);
+
+        // check valid course
+        if ((await FindCourseById(courseId)) == null) {
+            res.status(404).send("course not found while finding taken exams");
+            return;
+        }
+
+        // get students, FindStudyInJoinUserByCourseId gets:
+        // [
+        //     {
+        //         "user_id": 1,
+        //         "name": "User 1",
+        //         "contact_ways": [
+        //             {
+        //                 "approach": "social_media",
+        //                 "details": "@user65"
+        //             },
+        //             {
+        //                 "approach": "phone",
+        //                 "details": "555-9868"
+        //             }
+        //         ],
+        //         "email": "user1@example.com",
+        //         "student_id": 3099
+        //     },
+        //    ....................
+        // ]
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+
+        // check if student is in that course
+        let isStudent = false;
+        let studentGrade;
+        for (let i = 0; i < students.length; i++) {
+            if (students[i].user_id == userId) {
+                isStudent = true;
+                studentGrade = students[i];
+
+                // remove redundant property
+                delete studentGrade.contact_ways;
+                delete studentGrade.email;
+            }
+        }
+        if (!isStudent) {
+            res.status(404).send("can't find this student in the course");
+            return;
+        }
+
+        // prepare the property to fill with grade
+        studentGrade.sub_ass = [];
+        let assigns = await FindProjectedAssignmentsByCourseId(courseId);
+
+        // no assignment yet in the course
+        if (assigns == null || assigns.length == 0) {
+            res.status(200).send(studentGrade);
+        } else {
+            // for each assignment
+            for (const assign of assigns) {
+                let subAss = await FindProjectSubAssignByUserIdAssId(userId, assign.ass_id);
+
+                // push the last grade into the array
+                if (subAss.at(-1) == undefined) {
+                    studentGrade.sub_ass.push({ ass_name: assign.ass_name, percentage: assign.percentage });
+                } else {
+                    let finalSubAss = subAss.at(-1);
+                    finalSubAss.ass_name = assign.ass_name;
+                    finalSubAss.percentage = assign.percentage;
+                    studentGrade.sub_ass.push(finalSubAss);
+                }
+            }
+        }
+
+        res.status(200).send(studentGrade);
+
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     GetAllStudentsProjectedSubAssign,
+    GetStudentProjectedSubAssign,
 }
