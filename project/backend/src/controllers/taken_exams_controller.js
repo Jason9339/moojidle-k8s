@@ -67,7 +67,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
                         let finalTakenExam = takenExam.at(-1);
                         finalTakenExam.exam_name = exam.exam_name;
                         finalTakenExam.percentage = exam.percentage;
-                        student.sub_ass.push(finalTakenExam);
+                        student.taken_exams.push(finalTakenExam);
                     }
                 }
             }
