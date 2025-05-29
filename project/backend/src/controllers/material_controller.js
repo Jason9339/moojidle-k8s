@@ -10,8 +10,6 @@ import {
     FindCourseById
 } from '#src/services/course_service.js';
 
-import GetNextCounterId from '#src/utils/get_next_counter_id.js';
-
 import {
     SaveFile,
     DeleteFile
@@ -170,8 +168,7 @@ async function UploadCourseMaterial(req, res) {
         const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material");
         const now = new Date();
 
-        const doc = {
-            m_id: await GetNextCounterId("materials"),
+        const materialData = {
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             m_name: mName,
@@ -182,7 +179,7 @@ async function UploadCourseMaterial(req, res) {
             filename: savedFile.originalName
         };
 
-        const dbResult = await InsertMaterialToDB(doc);
+        const dbResult = await InsertMaterialToDB(materialData);
 
         res.status(200).json({
             message: "上傳教材成功",

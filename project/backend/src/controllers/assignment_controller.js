@@ -8,8 +8,6 @@ import {
     FindCourseById
 } from '#src/services/course_service.js';
 
-import GetNextCounterId from '#src/utils/get_next_counter_id.js';
-
 import {
     SaveFile,
     DeleteFile
@@ -89,8 +87,7 @@ async function UploadAssignment(req, res) {
         const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
         const now = new Date();
 
-        const doc = {
-            ass_id: await GetNextCounterId("assignments"),
+        const assignmentData = {
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             ass_name: assName,
@@ -108,7 +105,7 @@ async function UploadAssignment(req, res) {
             ]
         };
 
-        const dbResult = await InsertAssignmentToDB(doc);
+        const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
             message: "上傳作業成功",
