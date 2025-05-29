@@ -6,6 +6,7 @@ import {
 
 import {
     GetSubAssInCourse,
+    GetOneStudentSubAssInCourse
 } from '@/services/SubmittedAssignApi.js'
 
 describe('Submitted Assignment Test', () => {
@@ -32,6 +33,22 @@ describe('Submitted Assignment Test', () => {
             expect(data[0].sub_ass[0].ass_id).toBe(1);
             expect(data[0].sub_ass[0].score).toBe(100);
             expect(data[0].sub_ass[0].percentage).toBe(0.1);
+        });
+    });
+
+    // testing GetOneStudentSubAssInCourse
+    describe("GetOneStudentSubAssInCourse integration test", async () => {
+        it("given a courseId and a userId, get student's name and their submitted assigns(with percentage)", async () => {
+            const data = await GetOneStudentSubAssInCourse(1, 3);
+    
+            expect(data).toBeDefined();
+            expect(data.name).toBe("User 3");
+
+            expect(data.sub_ass).toBeDefined();
+            expect(data.sub_ass.length).toBeGreaterThanOrEqual(1);
+            expect(data.sub_ass[0].ass_id).toBe(1);
+            expect(data.sub_ass[0].score).toBe(100);
+            expect(data.sub_ass[0].percentage).toBe(0.1);
         });
     });
     

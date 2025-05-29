@@ -6,6 +6,7 @@ import {
 
 import {
     GetTakenExamsInCourse,
+    GetOneStudentTakenExamsInCourse,
 } from '@/services/TakenExamApi.js'
 
 describe('Taken Exam Test', () => {
@@ -32,6 +33,22 @@ describe('Taken Exam Test', () => {
             expect(data[0].taken_exams[0].exam_id).toBe(1);
             expect(data[0].taken_exams[0].score).toBe(100);
             expect(data[0].taken_exams[0].percentage).toBe(0.1);
+        });
+    });
+
+    // testing GetOneStudentTakenExamsInCourse
+    describe("GetOneStudentTakenExamsInCourse integration test", async () => {
+        it("given a courseId and a userId, get student's name and their taken exams(with percentage)", async () => {
+            const data = await GetOneStudentTakenExamsInCourse(1, 3);
+    
+            expect(data).toBeDefined();
+            expect(data.name).toBe("User 3");
+
+            expect(data.taken_exams).toBeDefined();
+            expect(data.taken_exams.length).toBeGreaterThanOrEqual(1);
+            expect(data.taken_exams[0].exam_id).toBe(1);
+            expect(data.taken_exams[0].score).toBe(100);
+            expect(data.taken_exams[0].percentage).toBe(0.1);
         });
     });
     
