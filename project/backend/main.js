@@ -27,7 +27,6 @@ import examRoute from "#src/routes/exam_route.js"
 import courseRoute from "#src/routes/course_router.js"
 import courseMemberRoute from "#src/routes/course_member_route.js"
 import userRoute from "#src/routes/user_route.js"
-import fileRoute from "#src/routes/file_routes/file_route.js";
 import materialRoute from "#src/routes/material_route.js";
 import announcementRoute from "#src/routes/announcement_route.js";
 import discussionBoardRoute from "#src/routes/discussion_board_route.js"
@@ -46,8 +45,6 @@ app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);
 app.use("/submitted-ass", subAssRoute)
 app.use("/taken-exam", takenExamRoute)
-
-app.use("/file", fileRoute);
 
 // Routes ends --------------------------------------------------------------------------
 

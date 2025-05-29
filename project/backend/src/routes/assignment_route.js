@@ -3,9 +3,19 @@ import {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
     GetProjectedAssignmentsInCourse,
+    DownloadAssignment,
 
-    UpdateAssignmentScore
+    UploadAssignment,
+
+    UpdateAssignmentScore,
+    
+    DeleteAssignment,
 } from '#src/controllers/assignment_controller.js';
+
+import { 
+    uploadWithMulter, 
+    MulterErrorHandling 
+} from '#src/utils/multer_config.js';
 
 const router = express.Router();
 
@@ -42,5 +52,14 @@ router.get("/in-course/:courseId", GetProjectedAssignmentsInCourse);
 //     percentage: newPercentage
 // }
 router.put("/update-score/:assId", UpdateAssignmentScore);
+
+// POST /assignment/course/:courseId/upload
+router.post('/course/:courseId/upload', uploadWithMulter, UploadAssignment, MulterErrorHandling);
+
+// GET /assignment/download
+router.get('/download', DownloadAssignment);
+
+// DELETE /assignment/delete
+router.delete('/delete', DeleteAssignment);
 
 export default router;
