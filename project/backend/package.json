@@ -9,7 +9,6 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
     "dev:test": "node test-server.js",
     "dev": "npx nodemon main.js"
   },
