@@ -174,6 +174,16 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
             throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
         }
         
+        const db = mongoose.connection.db;
+        
+        // 先檢查提交是否存在
+        const existingSubmission = await db.collection("submitted_ass").findOne(
+            { s_ass_id: sAssId }
+        );
+        
+        if (!existingSubmission) {
+            throw new Error("Submission not found");
+        }
         
         // Prepare update document
         const updateDoc = {
@@ -184,13 +194,10 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
             }
         };
         
-        
-        const db = mongoose.connection.db;
         const result = await db.collection("submitted_ass").updateOne(
             { s_ass_id: sAssId },
             updateDoc
         );
-        
         
         return { updated: result.modifiedCount > 0, result };
     } catch (error) {

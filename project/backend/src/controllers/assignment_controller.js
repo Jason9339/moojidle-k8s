@@ -78,7 +78,7 @@ async function GetCourseAssignments(req, res) {
 
 
 
-async function GetAssignmentSubmissions(req, res) { //TODO: service 重構
+async function GetAssignmentSubmissions(req, res) {
     try {
         const { assignmentId } = req.params;
 
@@ -92,13 +92,14 @@ async function GetAssignmentSubmissions(req, res) { //TODO: service 重構
 
         // Get course ID from assignment ID
         const courseId = await GetCourseIdByAssignmentId(assId); 
+        // console.log("courseId", courseId)
         if (!courseId) {
             return res.status(404).json({ message: "找不到對應的課程" });
         }
         
         const studentInCourse = await FindStudyInJoinUserByCourseId(courseId);
 
-        console.log("學生列表:", studentInCourse);
+        // console.log("學生列表:", studentInCourse);
         
         const submissions = await GetSubmissionsByAssignmentId(assId);
 
