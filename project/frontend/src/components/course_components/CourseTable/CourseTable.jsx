@@ -154,8 +154,8 @@ function CourseTable({
                     <tr>
                         <th>Week</th>
                         <th>Lecture</th>
-                        <th>Assignments/Exams</th>
-                        <th>Reference</th>
+                        <th>Assignments</th>
+                        <th>Exams</th>
                     </tr>
                 </thead>
                 <tbody>

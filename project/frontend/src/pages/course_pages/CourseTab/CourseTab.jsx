@@ -118,41 +118,56 @@ export default function CourseInfoPage() {
         <div>
             {isEditor && (
                 <div className={styles["material-bar"]}>
-                    <button
-                        className={styles["material-button"]}
-                        onClick={() => {
-                            setShowMaterialUploadModal(true);
-                        }}
-                    >
-                        上傳教材
-                    </button>
-                    <button
-                        className={styles["material-button"]}
-                        onClick={() => {
-                            setShowAssignmentUploadModal(true);
-                        }}
-                    >
-                        上傳作業
-                    </button>
-                    <button
-                        className={`${styles["material-button"]} ${isEditMode ? styles["active"] : ""}`}
-                        onClick={toggleEditMode}
-                        disabled={isSaving}
-                    >
-                        {isSaving ? "保存中..." : isEditMode ? "完成編輯" : "編輯教材"}
-                    </button>
-                    {isEditMode && (
+                    <div className={styles["function-group"]}>
+                        <span className={styles["function-label"]}>內容管理</span>
                         <button
-                            className={`${styles["material-button"]} ${styles["cancel"]}`}
+                            className={styles["upload-button"]}
                             onClick={() => {
-                                setEditedMaterials([]);
-                                setIsEditMode(false);
+                                setShowMaterialUploadModal(true);
                             }}
+                        >
+                            上傳教材
+                        </button>
+                        <button
+                            className={styles["upload-button"]}
+                            onClick={() => {
+                                setShowAssignmentUploadModal(true);
+                            }}
+                        >
+                            上傳作業
+                        </button>
+                        <button
+                            className={styles["upload-button"]}
+                            onClick={() => {
+                                // TODO: 上傳考試
+                            }}
+                        >
+                            上傳考試
+                        </button>
+                    </div>
+                    
+                    <div className={styles["function-group"]}>
+                        <span className={styles["function-label"]}>編輯操作</span>
+                        <button
+                            className={`${styles["edit-button"]} ${isEditMode ? styles["active"] : ""}`}
+                            onClick={toggleEditMode}
                             disabled={isSaving}
                         >
-                            取消
+                            {isSaving ? "保存中..." : isEditMode ? "完成編輯" : "編輯教材"}
                         </button>
-                    )}
+                        {isEditMode && (
+                            <button
+                                className={styles["cancel-button"]}
+                                onClick={() => {
+                                    setEditedMaterials([]);
+                                    setIsEditMode(false);
+                                }}
+                                disabled={isSaving}
+                            >
+                                取消
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
 
