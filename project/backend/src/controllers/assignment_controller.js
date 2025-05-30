@@ -195,16 +195,27 @@ async function UploadAssignment(req, res) {
             assName,
             startDate,
             endDate,
-            description
+            description,
+            maxScore,
+            percentage
         } = req.body;
 
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({ message: "No file uploaded" });
+        // 支援多檔案上傳
+        const files = req.files || []; // 使用 req.files 而不是 req.file
+        if (!files || files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" });
         }
 
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+        // 儲存所有檔案到硬碟
+        const savedFiles = [];
+        for (const file of files) {
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
+        }
+
         const now = new Date();
 
         const assignmentData = {
@@ -215,22 +226,17 @@ async function UploadAssignment(req, res) {
             end_date: new Date(endDate),
             description,
             create_date: now,
-            max_score: 100, // 預設最高分數
-            percentage: 0, // 預設佔總成績的百分比
-            attachments: [
-                {
-                    filename: savedFile.originalName,
-                    path_to_file: savedFile.relativeUrl
-                }
-            ]
+            max_score: parseFloat(maxScore) || 100, // 使用傳入的值或預設100
+            percentage: parseFloat(percentage) || 0, // 使用傳入的值或預設0
+            attachments: savedFiles // 多檔案附件
         };
 
         const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
             message: "上傳作業成功",
-            fileId: savedFile.fileId,
-            fileName: savedFile.originalName,
+            filesCount: savedFiles.length,
+            fileNames: savedFiles.map(f => f.filename),
             data: dbResult
         });
     } catch (error) {
