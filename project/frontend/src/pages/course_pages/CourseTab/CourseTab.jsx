@@ -12,6 +12,8 @@ import {
 
 import { GetCourseAssignments } from "@/services/AssignmentApi";
 
+import { GetCourseExams } from "@/services/ExamApi";
+
 import CourseTable from "@/components/course_components/CourseTable/CourseTable";
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
@@ -26,6 +28,7 @@ export default function CourseInfoPage() {
     const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
     const [assignments, setAssignments] = useState([]);
+    const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showMaterialUploadModal, setShowMaterialUploadModal] = useState(false);
     const [showAssignmentUploadModal, setShowAssignmentUploadModal] = useState(false);

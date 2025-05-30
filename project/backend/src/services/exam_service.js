@@ -106,8 +106,63 @@ async function GetExamsByCourseId(courseId) {
     }
 }
 
+async function AddExamByCourseId(examData) {
+    try {
+        const db = mongoose.connection.db;
+        // 生成下一個 exam_id
+        const nextExamId = await GetNextCounterId("exams");
+
+        // 準備要插入的文檔
+        const examDoc = {
+            exam_id: nextExamId,
+            ...examData
+        };
+
+        const result = await mongoose.connection.db.collection("exams").insertOne(examDoc);
+        return result;
+    } catch (error) {
+        console.error(`[InsertExamToDB] Error inserting exam:`, error);
+        throw new Error(`Failed to insert exam: ${error.message}`);
+    }
+}
+
+async function AddExamAttachment(examId, attachments) {
+    try {
+        const db = mongoose.connection.db;
+        await db.collection("exams").updateOne(
+            { exam_id: examId },
+            { $push: { attachments: { $each: attachments } } }
+        );
+    } catch (error) {
+        console.error("AddExamAttachment error:", error);
+        throw error;
+    }
+}
+
+async function RemoveExamAttachment(examId, filename) {
+    try {
+        const db = mongoose.connection.db;
+        await db.collection("exams").updateOne(
+            { exam_id: examId },
+            { $pull: { attachments: { filename } } }
+        );
+    } catch (error) {
+        console.error("RemoveExamAttachment error:", error);
+        throw error;
+    }
+}
+
+async function FindExamById(examId) {
+    const db = mongoose.connection.db;
+    return db.collection("exams").findOne({ exam_id: parseInt(examId) });
+}
+
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
     GetExamsByCourseId,
+    AddExamByCourseId,
+    AddExamAttachment,
+    RemoveExamAttachment,
+    FindExamById
     // getComingExams
 };
