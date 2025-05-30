@@ -189,11 +189,98 @@ async function DeleteAssignment(req, res) {
     }
 }
 
+// 學生繳交作業
+async function SubmitAssignment(req, res) {
+    try {
+        const { assignmentId } = req.params;
+        const { submitByUserId, description } = req.body;
+        const file = req.file;
+        
+        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}`);
+        
+        if (!file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+        if (!assignmentId || !submitByUserId) {
+            return res.status(400).json({ message: "缺少必要參數" });
+        }
+        
+        // 儲存檔案到硬碟
+        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+        console.log(`[SubmitAssignment] 檔案已儲存:`, savedFile);
+        
+        const now = new Date();
+        // 取得下一個 s_ass_id
+        const db = (await import('mongoose')).default.connection.db;
+        const last = await db.collection("submitted_ass").find().sort({ s_ass_id: -1 }).limit(1).toArray();
+        const nextSAssId = last.length > 0 ? last[0].s_ass_id + 1 : 1;
+        
+        // 查 assignment 取得 in_course_id
+        const assignment = await db.collection("assignments").findOne({ ass_id: parseInt(assignmentId) });
+        let submit_user_course_tag = "";
+        if (assignment && assignment.in_course_id) {
+            submit_user_course_tag = `StudentTag_${submitByUserId}`;
+        } else {
+            submit_user_course_tag = `StudentTag_${submitByUserId}`;
+        }
+        
+        // 組成繳交資料
+        const submission = {
+            s_ass_id: nextSAssId,
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(submitByUserId),
+            submit_user_course_tag,
+            submit_date: now,
+            attachments: savedFile ? [{
+                filename: savedFile.originalName,
+                url: savedFile.relativeUrl
+            }] : [],
+            description: description || ""
+        };
+        
+        console.log(`[SubmitAssignment] 準備寫入資料庫的submission:`, submission);
+        
+        await db.collection("submitted_ass").insertOne(submission);
+        
+        console.log(`[SubmitAssignment] 作業繳交成功，s_ass_id: ${nextSAssId}`);
+        
+        res.status(200).json({ message: "作業繳交成功", data: submission });
+    } catch (error) {
+        console.error("學生繳交作業錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 取得某學生針對某作業的繳交紀錄
+async function GetAssignmentSubmission(req, res) {
+    try {
+        const { assignmentId } = req.params;
+        const { user_id } = req.query;
+        console.log(`[GetAssignmentSubmission] 查詢參數: assignmentId=${assignmentId}, user_id=${user_id}`);
+        
+        if (!user_id) return res.status(400).json({ message: "缺少 user_id" });
+        
+        const db = (await import('mongoose')).default.connection.db;
+        const submission = await db.collection("submitted_ass").findOne({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(user_id)
+        });
+        
+        console.log(`[GetAssignmentSubmission] 查詢結果:`, submission);
+        res.json({ data: submission });
+    } catch (error) {
+        console.error(`[GetAssignmentSubmission] 錯誤:`, error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
     GetAssignmentSubmissionTimeController,
     UploadAssignment,
     DownloadAssignment,
-    DeleteAssignment
+    DeleteAssignment,
+    SubmitAssignment,
+    GetAssignmentSubmission // 新增導出
 };

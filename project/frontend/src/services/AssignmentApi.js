@@ -65,3 +65,33 @@ export const DeleteAssignmentFile = async (pathToFile) => {
         throw new Error(error.response?.data?.message || "刪除作業時發生錯誤");
     }
 };
+
+// 學生繳交作業
+export const SubmitAssignment = async (assignmentId, formData) => {
+    try {
+        const endpoint = `/assignment/${assignmentId}/submit`;
+        const response = await api.post(endpoint, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (err) {
+        console.error("繳交作業失敗", err);
+        throw new Error(err.response?.data?.message || "繳交作業發生錯誤");
+    }
+};
+
+// 取得單一作業的繳交紀錄（學生）
+export const GetAssignmentSubmission = async (assignmentId) => {
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userId = user?.user_id;
+        if (!userId) return null;
+        const res = await api.get(`/assignment/${assignmentId}/submission`, { params: { user_id: userId } });
+        return res.data?.data || null;
+    } catch (error) {
+        console.error("取得作業繳交紀錄失敗:", error);
+        return null;
+    }
+};

@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react"; // 引入 useRef
+import React, { useState, useRef, useEffect } from "react"; // 引入 useRef
 import { UploadMaterial } from "@/services/MaterialApi";
-import { UploadAssignment } from "@/services/AssignmentApi";
+import { UploadAssignment, SubmitAssignment } from "@/services/AssignmentApi";
 import styles from "./UploadModal.module.css";
 
-const UploadModal = ({ onClose, courseId, onSuccess }) => {
+// mode: "material" | "assignment" | "student-assignment"
+const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "material" }) => {
     const [file, setFile] = useState(null);
     const [type, setType] = useState("material");
     const [name, setName] = useState("");
@@ -11,14 +12,21 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
     const [endDate, setEndDate] = useState("");
     const [displayDate, setDisplayDate] = useState("");
     const [startDate, setStartDate] = useState("");
-
-    // 建立一個 ref 來存取隱藏的 file input
     const fileInputRef = useRef(null);
 
+    // 根據 mode 自動設定 type
+    useEffect(() => {
+        if (mode === "student-assignment") setType("student-assignment");
+        else if (mode === "assignment") setType("assignment");
+        else setType("material");
+    }, [mode]);
+
     const handleUpload = async () => {
-        if (!name.trim()) {
-            alert("請輸入名稱");
-            return;
+        if (type === "material" || type === "assignment") {
+            if (!name.trim()) {
+                alert("請輸入名稱");
+                return;
+            }
         }
         if (type === "assignment") {
             if (!startDate) {
@@ -55,38 +63,42 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
         }
     
         const formData = new FormData();
-    
-        // 解決中文檔案名稱亂碼問題
-        const renamedFile = new File(
-            [file],
-            encodeURIComponent(file.name),
-            { type: file.type }
-        );
+        const renamedFile = new File([
+            file
+        ], encodeURIComponent(file.name), { type: file.type });
         formData.append("uploadFile", renamedFile);
     
         formData.append("courseId", courseId);
-        formData.append("createByUserId", userId);
         formData.append("description", description);
     
         if (type === "assignment") {
+            formData.append("createByUserId", userId);
             formData.append("assName", name);
             formData.append("startDate", new Date(startDate).toISOString());
             formData.append("endDate", new Date(endDate).toISOString());
-        } else {
+        } else if (type === "material") {
+            formData.append("createByUserId", userId);
             formData.append("mName", name);
             formData.append("displayDate", displayDate);
+        } else if (type === "student-assignment") {
+            // 學生繳交作業
+            formData.append("assignmentId", assignmentId);
+            formData.append("submitByUserId", userId);
+            // 只需檔案與描述
         }
-    
         try {
             if (type === "assignment") {
                 await UploadAssignment(formData);
                 alert("作業上傳成功！");
-            } else {
+            } else if (type === "material") {
                 await UploadMaterial(formData);
                 alert("教材上傳成功！");
+            } else if (type === "student-assignment") {
+                await SubmitAssignment(assignmentId, formData);
+                alert("作業繳交成功！");
             }
-            onSuccess();
-            onClose();
+            onSuccess && onSuccess();
+            onClose && onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
             alert("上傳失敗：" + error.message);
@@ -108,35 +120,39 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
 
     return (
         <div className={styles["upload-modal"]}>
-            <h2>上傳檔案</h2>
-
-            <div className={styles["input-group"]}>
-                <label htmlFor="type">選擇類型</label>
-                <select
-                    id="type"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                >
-                    <option value="material">教材</option>
-                    <option value="assignment">作業</option>
-                </select>
-            </div>
-
-            <div className={styles["input-group"]}>
-                <label htmlFor="name">
-                    {type === "assignment" ? "作業名稱" : "教材名稱"}
-                </label>
-                <input
-                    id="name"
-                    type="text"
-                    placeholder={type === "assignment" ? "作業名稱" : "教材名稱"}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-            </div>
-
-            {type === "assignment" && (
+            <h2>{mode === "student-assignment" ? "繳交作業" : "上傳檔案"}</h2>
+            {/* 類型選擇只在一般模式顯示 */}
+            {mode === "material" || mode === "assignment" ? (
+                <div className={styles["input-group"]}>
+                    <label htmlFor="type">選擇類型</label>
+                    <select
+                        id="type"
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                    >
+                        <option value="material">教材</option>
+                        <option value="assignment">作業</option>
+                    </select>
+                </div>
+            ) : null}
+            {/* 名稱欄位只在非學生繳交時顯示 */}
+            {mode !== "student-assignment" && (
+                <div className={styles["input-group"]}>
+                    <label htmlFor="name">
+                        {type === "assignment" ? "作業名稱" : "教材名稱"}
+                    </label>
+                    <input
+                        id="name"
+                        type="text"
+                        placeholder={type === "assignment" ? "作業名稱" : "教材名稱"}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                    />
+                </div>
+            )}
+            {/* 作業起訖日僅在新增作業時顯示 */}
+            {type === "assignment" && mode !== "student-assignment" && (
                 <>
                     <div className={styles["input-group"]}>
                         <label htmlFor="startDate">開始日期時間</label>
@@ -160,8 +176,8 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                     </div>
                 </>
             )}
-
-            {type === "material" && (
+            {/* 顯示日期僅在教材時顯示 */}
+            {type === "material" && mode !== "student-assignment" && (
                 <div className={styles["input-group"]}>
                     <label htmlFor="displayDate">顯示日期</label>
                     <input
@@ -184,10 +200,8 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
                     required
                 />
             </div>
-
-            {/* 修改後的檔案選擇區塊 */}
             <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label>選擇檔案</label> {/* 這個 label 是給整個檔案選擇區塊的 */}
+                <label>選擇檔案</label>
                 <div className={styles["file-input-custom-area"]}>
                     <button
                         type="button"
@@ -213,7 +227,7 @@ const UploadModal = ({ onClose, courseId, onSuccess }) => {
 
             <div className={styles["button-group"]}>
                 <button onClick={onClose}>取消</button>
-                <button onClick={handleUpload}>上傳</button>
+                <button onClick={handleUpload}>{mode === "student-assignment" ? "繳交" : "上傳"}</button>
             </div>
         </div>
     );

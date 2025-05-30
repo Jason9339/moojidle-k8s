@@ -1,7 +1,8 @@
 // 學生作業列表元件
 import React, { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPaperclip, FaUpload } from "react-icons/fa";
-import { GetCourseAssignments } from "@/services/AssignmentApi";
+import { GetCourseAssignments, GetAssignmentSubmission } from "@/services/AssignmentApi";
+import UploadModal from "../UploadModal/UploadModal";
 import "./AssignmentsStudentsTab.css";
 
 export default function AssignmentsStudentsTab({ courseId }) {
@@ -9,6 +10,9 @@ export default function AssignmentsStudentsTab({ courseId }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expanded, setExpanded] = useState({});
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [currentAssignment, setCurrentAssignment] = useState(null);
+    const [submissionMap, setSubmissionMap] = useState({});
 
     useEffect(() => {
         if (!courseId) return;
@@ -17,7 +21,46 @@ export default function AssignmentsStudentsTab({ courseId }) {
             .then(setAssignments)
             .catch(() => setError("無法取得作業列表"))
             .finally(() => setLoading(false));
-    }, [courseId]);
+    }, [courseId]);    useEffect(() => {
+        if (!courseId || assignments.length === 0) return;
+        // 取得所有作業的繳交紀錄
+        refreshSubmissionMapWithAssignments(assignments);
+    }, [assignments, courseId]);const refreshAssignments = async () => {
+        setLoading(true);
+        try {
+            const newAssignments = await GetCourseAssignments(courseId);
+            setAssignments(newAssignments);
+            // 立即用新的作業列表來刷新 submission map
+            await refreshSubmissionMapWithAssignments(newAssignments);
+        } catch (error) {
+            setError("無法取得作業列表");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const refreshSubmissionMapWithAssignments = async (assignmentsList) => {
+        if (!courseId || !assignmentsList || assignmentsList.length === 0) return;
+        // 取得所有作業的繳交紀錄
+        try {
+            const results = await Promise.all(assignmentsList.map(a =>
+                GetAssignmentSubmission(a.id)
+                    .then(data => ({ assId: a.id, submission: data }))
+                    .catch(() => ({ assId: a.id, submission: null }))
+            ));
+            const map = {};
+            results.forEach(({ assId, submission }) => {
+                map[assId] = submission;
+            });
+            setSubmissionMap(map);
+        } catch (error) {
+            console.error("刷新繳交紀錄失敗:", error);
+        }
+    };
+
+    const refreshSubmissionMap = () => {
+        refreshSubmissionMapWithAssignments(assignments);
+    };
 
     const toggleExpand = (id) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -54,7 +97,16 @@ export default function AssignmentsStudentsTab({ courseId }) {
 
     return (
         <div className="assignments-container">
-            {/* <h2 className="assignments-title">作業列表</h2> */}
+            {showUploadModal && currentAssignment && (                <UploadModal
+                    onClose={() => setShowUploadModal(false)}
+                    courseId={courseId}
+                    assignmentId={currentAssignment.id}
+                    mode="student-assignment"                    onSuccess={async () => {
+                        setShowUploadModal(false);
+                        await refreshAssignments();
+                    }}
+                />
+            )}
             {sortedWeeks.length === 0 ? (
                 <div className="empty-assignments-card">
                     <p>此課程目前沒有作業</p>
@@ -62,9 +114,6 @@ export default function AssignmentsStudentsTab({ courseId }) {
             ) : (
                 sortedWeeks.map(week => (
                     <div key={week} className="week-section" style={{marginBottom: '8px'}}>
-                        {/* <div className="week-divider" style={{margin: '12px 0', height: '0.5px'}}>
-                            <span className="week-tag">第 {week} 週</span>
-                        </div> */}
                         <div className="assignments-list" style={{gap: '4px'}}>
                             {groupedAssignments[week].map(assignment => (
                                 <div key={assignment.id} className="assignment-card" style={{width: '100%', maxWidth: '100%', minHeight: '36px', margin: '0 0 4px 0', fontSize: 'clamp(13px, 1vw, 16px)', boxSizing: 'border-box', padding: '10px 14px'}}>
@@ -108,11 +157,29 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                 </div>
                                             )}
                                             <div className="assignment-actions">
-                                                <button className="submit-button">
+                                                <button className="submit-button" onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}>
                                                     <FaUpload className="button-icon" />
                                                     提交作業
                                                 </button>
                                             </div>
+                                            {/* 顯示繳交紀錄 */}
+                                            {submissionMap[assignment.id] && (
+                                                <div className="assignment-submission-info" style={{marginTop:'8px',padding:'8px',background:'#f6ffed',border:'1px solid #b7eb8f',borderRadius:'4px'}}>
+                                                    <div>已繳交：</div>
+                                                    <div>繳交時間：{submissionMap[assignment.id].submit_date ? new Date(submissionMap[assignment.id].submit_date).toLocaleString('zh-TW') : '無'}</div>
+                                                    {submissionMap[assignment.id].attachments && submissionMap[assignment.id].attachments.length > 0 && (
+                                                        <div>檔案：
+                                                            <ul style={{margin:0,paddingLeft:'1em'}}>
+                                                                {submissionMap[assignment.id].attachments.map((att, idx) => (
+                                                                    <li key={idx}>
+                                                                        <a href={att.url} target="_blank" rel="noopener noreferrer">{att.filename}</a>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
                                         </>
                                     )}
                                 </div>
