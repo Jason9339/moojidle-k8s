@@ -92,6 +92,30 @@ export default function AssignmentsStudentsTab({ courseId }) {
         });
     };
 
+    // 判斷繳交狀態
+    const getSubmissionStatus = (assignment) => {
+        const submission = submissionMap[assignment.id];
+        const now = new Date();
+        const dueDate = new Date(assignment.dueDate);
+        
+        if (!submission) {
+            // 未繳交
+            if (now > dueDate) {
+                return { status: 'overdue', label: '遲交', color: '#ff4d4f', bgColor: '#fff2f0' };
+            } else {
+                return { status: 'pending', label: '未繳交', color: '#faad14', bgColor: '#fffbe6' };
+            }
+        } else {
+            // 已繳交
+            const submitDate = new Date(submission.submit_date);
+            if (submitDate > dueDate) {
+                return { status: 'late', label: '遲交', color: '#ff4d4f', bgColor: '#fff2f0' };
+            } else {
+                return { status: 'submitted', label: '已繳交', color: '#52c41a', bgColor: '#f6ffed' };
+            }
+        }
+    };
+
     if (loading) return <div>載入中...</div>;
     if (error) return <div style={{color:'red'}}>{error}</div>;
 
@@ -115,87 +139,152 @@ export default function AssignmentsStudentsTab({ courseId }) {
                 sortedWeeks.map(week => (
                     <div key={week} className="week-section" style={{marginBottom: '8px'}}>
                         <div className="assignments-list" style={{gap: '4px'}}>
-                            {groupedAssignments[week].map(assignment => (
-                                <div key={assignment.id} className="assignment-card" style={{width: '100%', maxWidth: '100%', minHeight: '36px', margin: '0 0 4px 0', fontSize: 'clamp(13px, 1vw, 16px)', boxSizing: 'border-box', padding: '10px 14px'}}>
+                            {groupedAssignments[week].map(assignment => {
+                                const submissionStatus = getSubmissionStatus(assignment);
+                                return (                                <div key={assignment.id} className="assignment-card" style={{width: '100%', maxWidth: '100%', minHeight: '36px', margin: '0 0 4px 0', fontSize: 'clamp(13px, 1vw, 16px)', boxSizing: 'border-box', padding: '10px 14px'}}>
                                     <div className="assignment-header" style={{display:'flex',alignItems:'center',cursor:'pointer', minHeight: '24px'}} onClick={() => toggleExpand(assignment.id)}>
                                         <span style={{fontSize:'1.1em',color:'#1890ff',marginRight:8}}>{expanded[assignment.id] ? '▲' : '▼'}</span>
                                         <h3 className="assignment-title" style={{fontSize: 'clamp(15px, 1.2vw, 18px)', flex:1, margin:0}}>{assignment.name}</h3>
+                                        {(() => {
+                                            const statusInfo = getSubmissionStatus(assignment);
+                                            return (
+                                                <span 
+                                                    className="status-badge"
+                                                    style={{
+                                                        color: statusInfo.color,
+                                                        backgroundColor: statusInfo.bgColor,
+                                                        padding: '2px 8px',
+                                                        borderRadius: '12px',
+                                                        fontSize: '12px',
+                                                        fontWeight: '500',
+                                                        border: `1px solid ${statusInfo.color}`,
+                                                        marginLeft: '8px'
+                                                    }}
+                                                >
+                                                    {statusInfo.label}
+                                                </span>
+                                            );
+                                        })()}
                                     </div>
-                                    {expanded[assignment.id] && (
-                                        <>
-                                            <div className="assignment-meta">
-                                                <div className="tag tag-orange">
-                                                    <FaCalendarAlt className="tag-icon" />
-                                                    截止日期: {formatDate(assignment.dueDate)}
+                                        {expanded[assignment.id] && (
+                                            <>
+                                                <div className="assignment-meta">
+                                                    <div className="tag tag-orange">
+                                                        <FaCalendarAlt className="tag-icon" />
+                                                        截止日期: {formatDate(assignment.dueDate)}
+                                                    </div>
+                                                    <div className="tag tag-green">
+                                                        作業 ID: {assignment.id}
+                                                    </div>
                                                 </div>
-                                                <div className="tag tag-green">
-                                                    作業 ID: {assignment.id}
+                                                <div className="assignment-description">
+                                                    <p className="description-label">作業說明：</p>
+                                                    <p>{assignment.description || '無說明'}</p>
                                                 </div>
-                                            </div>
-                                            <div className="assignment-description">
-                                                <p className="description-label">作業說明：</p>
-                                                <p>{assignment.description || '無說明'}</p>
-                                            </div>
-                                            {assignment.attachments && assignment.attachments.length > 0 && (
-                                                <div className="assignment-attachments">
-                                                    <p className="attachments-label">附件：</p>
-                                                    <ul className="attachments-list">
-                                                        {assignment.attachments.map((attachment, idx) => (
-                                                            <li key={idx} className="attachment-item">
-                                                                <a 
-                                                                    className="attachment-link" 
-                                                                    href={attachment.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                >
-                                                                    <FaPaperclip className="file-icon" />
-                                                                    {attachment.filename}
-                                                                </a>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}                                            <div className="assignment-actions">
-                                                {submissionMap[assignment.id] ? (
-                                                    <button 
-                                                        className="submit-button submitted" 
-                                                        onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
-                                                    >
-                                                        <FaUpload className="button-icon" />
-                                                        修改作業
-                                                    </button>
-                                                ) : (
-                                                    <button 
-                                                        className="submit-button" 
-                                                        onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
-                                                    >
-                                                        <FaUpload className="button-icon" />
-                                                        提交作業
-                                                    </button>
-                                                )}
-                                            </div>
-                                            {/* 顯示繳交紀錄 */}
-                                            {submissionMap[assignment.id] && (
-                                                <div className="assignment-submission-info" style={{marginTop:'8px',padding:'8px',background:'#f6ffed',border:'1px solid #b7eb8f',borderRadius:'4px'}}>
-                                                    <div>已繳交：</div>
-                                                    <div>繳交時間：{submissionMap[assignment.id].submit_date ? new Date(submissionMap[assignment.id].submit_date).toLocaleString('zh-TW') : '無'}</div>
-                                                    {submissionMap[assignment.id].attachments && submissionMap[assignment.id].attachments.length > 0 && (
-                                                        <div>檔案：
-                                                            <ul style={{margin:0,paddingLeft:'1em'}}>
-                                                                {submissionMap[assignment.id].attachments.map((att, idx) => (
-                                                                    <li key={idx}>
-                                                                        <a href={att.url} target="_blank" rel="noopener noreferrer">{att.filename}</a>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
+                                                {assignment.attachments && assignment.attachments.length > 0 && (
+                                                    <div className="assignment-attachments">
+                                                        <p className="attachments-label">附件：</p>
+                                                        <ul className="attachments-list">
+                                                            {assignment.attachments.map((attachment, idx) => (
+                                                                <li key={idx} className="attachment-item">
+                                                                    <a 
+                                                                        className="attachment-link" 
+                                                                        href={attachment.url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                    >
+                                                                        <FaPaperclip className="file-icon" />
+                                                                        {attachment.filename}
+                                                                    </a>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}                                            <div className="assignment-actions">
+                                                    {submissionMap[assignment.id] ? (
+                                                        <button 
+                                                            className="submit-button submitted" 
+                                                            onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
+                                                        >
+                                                            <FaUpload className="button-icon" />
+                                                            修改作業
+                                                        </button>
+                                                    ) : (
+                                                        <button 
+                                                            className="submit-button" 
+                                                            onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
+                                                        >
+                                                            <FaUpload className="button-icon" />
+                                                            提交作業
+                                                        </button>
                                                     )}
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            ))}
+                                                </div>                                                {/* 顯示繳交紀錄 */}
+                                                {(() => {
+                                                    const statusInfo = getSubmissionStatus(assignment);
+                                                    const submission = submissionMap[assignment.id];
+                                                    
+                                                    if (submission) {
+                                                        // 已繳交的情況
+                                                        return (
+                                                            <div 
+                                                                className="assignment-submission-info" 
+                                                                style={{
+                                                                    marginTop:'8px',
+                                                                    padding:'8px',
+                                                                    background: statusInfo.bgColor,
+                                                                    border: `1px solid ${statusInfo.color}`,
+                                                                    borderRadius:'4px'
+                                                                }}
+                                                            >
+                                                                <div style={{color: statusInfo.color, fontWeight: '500'}}>
+                                                                    {statusInfo.label}
+                                                                    {statusInfo.status === 'late' && ' (超過截止時間)'}
+                                                                </div>
+                                                                <div>繳交時間：{submission.submit_date ? new Date(submission.submit_date).toLocaleString('zh-TW') : '無'}</div>
+                                                                <div>截止時間：{formatDate(assignment.dueDate)}</div>
+                                                                {submission.attachments && submission.attachments.length > 0 && (
+                                                                    <div>檔案：
+                                                                        <ul style={{margin:0,paddingLeft:'1em'}}>
+                                                                            {submission.attachments.map((att, idx) => (
+                                                                                <li key={idx}>
+                                                                                    <a href={att.url} target="_blank" rel="noopener noreferrer">{att.filename}</a>
+                                                                                </li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    } else if (statusInfo.status === 'overdue') {
+                                                        // 未繳交且已過期的情況
+                                                        return (
+                                                            <div 
+                                                                className="assignment-submission-info" 
+                                                                style={{
+                                                                    marginTop:'8px',
+                                                                    padding:'8px',
+                                                                    background: statusInfo.bgColor,
+                                                                    border: `1px solid ${statusInfo.color}`,
+                                                                    borderRadius:'4px'
+                                                                }}
+                                                            >
+                                                                <div style={{color: statusInfo.color, fontWeight: '500'}}>
+                                                                    ⚠️ {statusInfo.label} - 已超過截止時間
+                                                                </div>
+                                                                <div>截止時間：{formatDate(assignment.dueDate)}</div>
+                                                                <div style={{color: '#666', fontSize: '12px', marginTop: '4px'}}>
+                                                                    請盡快提交作業
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })()}
+                                            </>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 ))

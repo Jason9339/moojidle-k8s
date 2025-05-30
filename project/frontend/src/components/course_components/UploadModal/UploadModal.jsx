@@ -7,6 +7,7 @@ import styles from "./UploadModal.module.css";
 const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "material" }) => {
     const [files, setFiles] = useState([]); // 改為多檔案支援
     const [existingFiles, setExistingFiles] = useState([]); // 已提交的檔案
+    const [deletedFiles, setDeletedFiles] = useState([]); // 標記要刪除的檔案
     const [type, setType] = useState("material");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -14,7 +15,7 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
     const [displayDate, setDisplayDate] = useState("");
     const [startDate, setStartDate] = useState("");
     const [loading, setLoading] = useState(false);
-    const fileInputRef = useRef(null);    // 根據 mode 自動設定 type
+    const fileInputRef = useRef(null);// 根據 mode 自動設定 type
     useEffect(() => {
         if (mode === "student-assignment") {
             setType("student-assignment");
@@ -120,12 +121,36 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                 alert("作業上傳成功！");
             } else if (type === "material") {
                 await UploadMaterial(formData);
-                alert("教材上傳成功！");
-            } else if (type === "student-assignment") {
-                await SubmitAssignment(assignmentId, formData);
-                alert(files.length > 0 ? "檔案上傳成功！" : "作業更新成功！");
+                alert("教材上傳成功！");            } else if (type === "student-assignment") {
+                // 學生繳交作業 - 處理檔案新增和刪除
+                
+                // 先處理要刪除的檔案
+                for (const fileUrl of deletedFiles) {
+                    try {
+                        await DeleteSubmittedFile(assignmentId, fileUrl);
+                        console.log(`檔案已刪除: ${fileUrl}`);
+                    } catch (error) {
+                        console.error(`刪除檔案失敗: ${fileUrl}`, error);
+                        // 繼續處理其他檔案，不中斷整個流程
+                    }
+                }
+                
+                // 如果有新檔案要上傳，才調用 SubmitAssignment
+                if (files.length > 0) {
+                    await SubmitAssignment(assignmentId, formData);
+                    alert(`作業更新成功！新增了 ${files.length} 個檔案${deletedFiles.length > 0 ? `，刪除了 ${deletedFiles.length} 個檔案` : ''}`);
+                } else if (deletedFiles.length > 0) {
+                    alert(`作業更新成功！刪除了 ${deletedFiles.length} 個檔案`);
+                } else {
+                    // 只更新描述
+                    await SubmitAssignment(assignmentId, formData);
+                    alert("作業描述更新成功！");
+                }
+                
                 // 重新載入已提交的檔案
                 await loadExistingSubmission();
+                // 清空暫存的刪除列表
+                setDeletedFiles([]);
             }
             
             // 清空檔案選擇
@@ -145,24 +170,14 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
         } finally {
             setLoading(false);
         }
-    };
-
-    // 刪除已提交的檔案
-    const handleDeleteExistingFile = async (fileUrl) => {
-        if (!window.confirm("確定要刪除這個檔案嗎？")) {
-            return;
-        }
+    };    // 標記檔案為刪除（暫存操作）
+    const handleDeleteExistingFile = (fileUrl) => {
+        //if (!window.confirm("確定要刪除這個檔案嗎？此操作將在您按下「更新作業」後生效。")) {
+          //  return;
+        //}
         
-        try {
-            await DeleteSubmittedFile(assignmentId, fileUrl);
-            alert("檔案刪除成功！");
-            // 重新載入已提交的檔案
-            await loadExistingSubmission();
-            onSuccess && onSuccess();
-        } catch (error) {
-            console.error("刪除檔案失敗:", error);
-            alert("刪除失敗：" + error.message);
-        }
+        // 將檔案加入刪除列表
+        setDeletedFiles(prev => [...prev, fileUrl]);
     };
 
     // 處理檔案選擇按鈕點擊事件
@@ -245,25 +260,25 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
     // 移除選擇的檔案
     const removeSelectedFile = (index) => {
         setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-    };
-
-    return (
+    };    return (
         <div className={styles["upload-modal"]}>
             <h2>{mode === "student-assignment" ? "繳交作業" : "上傳檔案"}</h2>
-            {/* 類型選擇只在一般模式顯示 */}
-            {mode === "material" || mode === "assignment" ? (
-                <div className={styles["input-group"]}>
-                    <label htmlFor="type">選擇類型</label>
-                    <select
-                        id="type"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                    >
-                        <option value="material">教材</option>
-                        <option value="assignment">作業</option>
-                    </select>
-                </div>
-            ) : null}
+            
+            <div className={styles["modal-content"]}>
+                {/* 類型選擇只在一般模式顯示 */}
+                {mode === "material" || mode === "assignment" ? (
+                    <div className={styles["input-group"]}>
+                        <label htmlFor="type">選擇類型</label>
+                        <select
+                            id="type"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                        >
+                            <option value="material">教材</option>
+                            <option value="assignment">作業</option>
+                        </select>
+                    </div>
+                ) : null}
             {/* 名稱欄位只在非學生繳交時顯示 */}
             {mode !== "student-assignment" && (
                 <div className={styles["input-group"]}>
@@ -331,19 +346,28 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
             </div>            {/* 顯示已提交的檔案（僅學生繳交模式） */}
             {mode === "student-assignment" && existingFiles.length > 0 && (
                 <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                    <label>已提交的檔案 ({existingFiles.length} 個)</label>
+                    <label>已提交的檔案 ({existingFiles.filter(f => !deletedFiles.includes(f.url || f.filename)).length} 個)</label>
                     <div className={styles["existing-files-list"]}>
                         {existingFiles.map((attachment, index) => {
                             const fileName = attachment.filename || attachment.url?.split('/').pop() || `檔案${index + 1}`;
                             const fileSize = attachment.size ? `(${(attachment.size / 1024).toFixed(1)} KB)` : '';
+                            const fileIdentifier = attachment.url || attachment.filename;
+                            const isMarkedForDeletion = deletedFiles.includes(fileIdentifier);
+                            
                             return (
-                                <div key={index} className={styles["existing-file-item"]}>
+                                <div 
+                                    key={index} 
+                                    className={`${styles["existing-file-item"]} ${isMarkedForDeletion ? styles["file-marked-for-deletion"] : ""}`}
+                                >
                                     <div className={styles["file-info"]}>
-                                        <span className={styles["file-name"]}>{fileName}</span>
+                                        <span className={styles["file-name"]}>
+                                            {isMarkedForDeletion && <span className={styles["deletion-mark"]}>[待刪除] </span>}
+                                            {fileName}
+                                        </span>
                                         <span className={styles["file-size"]}>{fileSize}</span>
                                     </div>
                                     <div className={styles["file-actions"]}>
-                                        {attachment.url && (
+                                        {!isMarkedForDeletion && attachment.url && (
                                             <a 
                                                 href={attachment.url} 
                                                 target="_blank" 
@@ -353,20 +377,30 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                                                 下載
                                             </a>
                                         )}
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDeleteExistingFile(attachment.url || attachment.filename)}
-                                            className={styles["delete-file-button"]}
-                                        >
-                                            刪除
-                                        </button>
+                                        {isMarkedForDeletion ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setDeletedFiles(prev => prev.filter(url => url !== fileIdentifier))}
+                                                className={styles["restore-file-button"]}
+                                            >
+                                                取消刪除
+                                            </button>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteExistingFile(fileIdentifier)}
+                                                className={styles["delete-file-button"]}
+                                            >
+                                                刪除
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
-            )}            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
+            )}<div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
                 <label>
                     {mode === "student-assignment" ? "新增檔案" : "選擇檔案"}
                     {mode === "student-assignment" && (
@@ -432,9 +466,38 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                         ) : (
                             <span>尚未選擇任何檔案</span>
                         )}
+                    </div>                )}
+            </div>
+              {/* 學生提交模式的狀態提示 */}
+            {mode === "student-assignment" && (
+                <div className={styles["status-info"]}>
+                    <div className={styles["status-item"]}>
+                        <strong>目前狀態：</strong>
+                        {existingFiles.length > 0 ? (
+                            <span className={styles["status-submitted"]}>
+                                已提交 {existingFiles.filter(f => !deletedFiles.includes(f.url || f.filename)).length} 個檔案
+                            </span>
+                        ) : (
+                            <span className={styles["status-not-submitted"]}>尚未提交</span>
+                        )}
                     </div>
-                )}
-            </div>            <div className={styles["button-group"]}>
+                    {files.length > 0 && (
+                        <div className={styles["status-item"]}>
+                            <strong>準備新增：</strong>
+                            <span className={styles["status-pending"]}>{files.length} 個檔案</span>
+                        </div>
+                    )}
+                    {deletedFiles.length > 0 && (
+                        <div className={styles["status-item"]}>
+                            <strong>準備刪除：</strong>
+                            <span className={styles["status-delete"]}>{deletedFiles.length} 個檔案</span>
+                        </div>
+                    )}
+                </div>
+            )}
+            </div>
+            
+            <div className={styles["button-group"]}>
                 <button onClick={onClose} disabled={loading}>取消</button>
                 <button 
                     onClick={handleUpload}
@@ -448,28 +511,6 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                     )}
                 </button>
             </div>
-            
-            {/* 學生提交模式的狀態提示 */}
-            {mode === "student-assignment" && (
-                <div className={styles["status-info"]}>
-                    <div className={styles["status-item"]}>
-                        <strong>目前狀態：</strong>
-                        {existingFiles.length > 0 ? (
-                            <span className={styles["status-submitted"]}>
-                                已提交 {existingFiles.length} 個檔案
-                            </span>
-                        ) : (
-                            <span className={styles["status-not-submitted"]}>尚未提交</span>
-                        )}
-                    </div>
-                    {files.length > 0 && (
-                        <div className={styles["status-item"]}>
-                            <strong>準備新增：</strong>
-                            <span className={styles["status-pending"]}>{files.length} 個檔案</span>
-                        </div>
-                    )}
-                </div>
-            )}
         </div>
     );
 };

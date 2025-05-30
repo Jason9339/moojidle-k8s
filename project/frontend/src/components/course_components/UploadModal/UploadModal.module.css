@@ -8,17 +8,20 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     padding: 24px;
     z-index: 1000;
-    width: 400px;
-    max-width: 90%;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow: hidden;
 }
 
 .upload-modal h2 {
     margin: 0 0 16px 0;
     font-size: 20px;
     text-align: center;
+    flex-shrink: 0; /* 標題不會被壓縮 */
 }
 
 .upload-modal select,
@@ -93,6 +96,7 @@
     justify-content: space-between;
     gap: 10px;
     margin-top: 8px;
+    flex-shrink: 0;
 }
 
 .button-group button {
@@ -365,4 +369,109 @@
     border: 2px dashed #ddd;
     border-radius: 8px;
     background-color: #fafafa;
+}
+
+/* 新增可滾動的內容區域 */
+.modal-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    margin-right: -4px;
+}
+
+/* 自定義滾動條樣式 */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 響應式設計改進 */
+@media (max-width: 480px) {
+    .upload-modal {
+        width: 95vw;
+        max-height: 95vh;
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .modal-content {
+        padding-right: 2px;
+        margin-right: -2px;
+    }
+    
+    .file-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .section-controls {
+        align-self: flex-end;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .pagination-button {
+        min-width: 80px;
+    }
+}
+
+@media (max-height: 600px) {
+    .upload-modal {
+        max-height: 95vh;
+        padding: 12px;
+    }
+    
+    .upload-modal h2 {
+        margin-bottom: 8px;
+        font-size: 18px;
+    }
+}
+
+/* 檔案刪除標記樣式 */
+.file-marked-for-deletion {
+    opacity: 0.6;
+    background-color: #fff2f0 !important;
+    border-color: #ffccc7 !important;
+}
+
+.deletion-mark {
+    color: #ff4d4f;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.restore-file-button {
+    background-color: #52c41a;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.restore-file-button:hover {
+    background-color: #73d13d;
+}
+
+.status-delete {
+    color: #ff4d4f;
+    font-weight: 500;
 }
