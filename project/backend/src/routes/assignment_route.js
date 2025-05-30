@@ -14,6 +14,7 @@ import {
 
 import { 
     uploadWithMulter, 
+    uploadMultipleWithMulter,
     MulterErrorHandling 
 } from '#src/utils/multer_config.js';
 
@@ -53,8 +54,8 @@ router.get("/in-course/:courseId", GetProjectedAssignmentsInCourse);
 // }
 router.put("/update-score/:assId", UpdateAssignmentScore);
 
-// POST /assignment/course/:courseId/upload
-router.post('/course/:courseId/upload', uploadWithMulter, UploadAssignment, MulterErrorHandling);
+// POST /assignment/course/:courseId/upload - 支援多檔案上傳
+router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadAssignment, MulterErrorHandling);
 
 // GET /assignment/download
 router.get('/download', DownloadAssignment);
