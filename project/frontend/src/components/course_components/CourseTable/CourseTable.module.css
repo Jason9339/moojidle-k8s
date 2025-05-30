@@ -94,7 +94,32 @@
 
 .material-table th,
 .material-table td {
-    max-width: 220px; /* 你可以依照表格總寬度微調這個數字 */
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 14px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
+}
+
+.material-table th:first-child,
+.material-table td:first-child {
+    width: 100px;
+    max-width: 100px;
+    min-width: 80px;
+}
+
+.material-table th:not(:first-child),
+.material-table td:not(:first-child) {
+    width: 220px;
+    max-width: 220px;
+    min-width: 120px;
+}
+
+/* .material-table th,
+.material-table td {
+    max-width: 220px; 
     width: 220px;
     border: 1px solid #ccc;
     padding: 6px 8px;
@@ -109,7 +134,7 @@
 .material-table th {
     background-color: #f9f9f9;
     font-weight: bold;
-}
+} */
 
 /* To Do 區塊 */
 .todo-panel {
