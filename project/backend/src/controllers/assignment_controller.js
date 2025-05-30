@@ -90,16 +90,27 @@ async function UploadAssignment(req, res) {
             assName,
             startDate,
             endDate,
-            description
+            description,
+            maxScore,
+            percentage
         } = req.body;
 
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({ message: "No file uploaded" });
+        // 支援多檔案上傳
+        const files = req.files || []; // 使用 req.files 而不是 req.file
+        if (!files || files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" });
         }
 
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+        // 儲存所有檔案到硬碟
+        const savedFiles = [];
+        for (const file of files) {
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
+        }
+
         const now = new Date();
 
         const assignmentData = {
@@ -110,22 +121,17 @@ async function UploadAssignment(req, res) {
             end_date: new Date(endDate),
             description,
             create_date: now,
-            max_score: 100, // 預設最高分數
-            percentage: 0, // 預設佔總成績的百分比
-            attachments: [
-                {
-                    filename: savedFile.originalName,
-                    path_to_file: savedFile.relativeUrl
-                }
-            ]
+            max_score: parseFloat(maxScore) || 100, // 使用傳入的值或預設100
+            percentage: parseFloat(percentage) || 0, // 使用傳入的值或預設0
+            attachments: savedFiles // 多檔案附件
         };
 
         const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
             message: "上傳作業成功",
-            fileId: savedFile.fileId,
-            fileName: savedFile.originalName,
+            filesCount: savedFiles.length,
+            fileNames: savedFiles.map(f => f.filename),
             data: dbResult
         });
     } catch (error) {
@@ -189,62 +195,96 @@ async function DeleteAssignment(req, res) {
     }
 }
 
-// 學生繳交作業
+// 學生繳交作業 - 支援多檔案上傳和修改
 async function SubmitAssignment(req, res) {
     try {
         const { assignmentId } = req.params;
         const { submitByUserId, description } = req.body;
-        const file = req.file;
+        const files = req.files || [];
         
-        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}`);
+        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${files.length}`);
         
-        if (!file) {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
         if (!assignmentId || !submitByUserId) {
             return res.status(400).json({ message: "缺少必要參數" });
         }
         
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
-        console.log(`[SubmitAssignment] 檔案已儲存:`, savedFile);
-        
-        const now = new Date();
-        // 取得下一個 s_ass_id
         const db = (await import('mongoose')).default.connection.db;
-        const last = await db.collection("submitted_ass").find().sort({ s_ass_id: -1 }).limit(1).toArray();
-        const nextSAssId = last.length > 0 ? last[0].s_ass_id + 1 : 1;
+        const now = new Date();
         
-        // 查 assignment 取得 in_course_id
-        const assignment = await db.collection("assignments").findOne({ ass_id: parseInt(assignmentId) });
-        let submit_user_course_tag = "";
-        if (assignment && assignment.in_course_id) {
-            submit_user_course_tag = `StudentTag_${submitByUserId}`;
-        } else {
-            submit_user_course_tag = `StudentTag_${submitByUserId}`;
+        // 檢查是否已有提交紀錄
+        const existingSubmission = await db.collection("submitted_ass").findOne({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(submitByUserId)
+        });
+        
+        let savedFiles = [];
+        
+        // 如果有新檔案要上傳，先儲存到硬碟
+        if (files.length > 0) {
+            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);
+            for (const file of files) {
+                const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submit");
+                savedFiles.push({
+                    filename: savedFile.originalName,
+                    url: savedFile.relativeUrl,
+                    fileId: savedFile.fileId
+                });
+                console.log(`[SubmitAssignment] 檔案已儲存: ${savedFile.originalName}`);
+            }
         }
         
-        // 組成繳交資料
-        const submission = {
-            s_ass_id: nextSAssId,
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(submitByUserId),
-            submit_user_course_tag,
-            submit_date: now,
-            attachments: savedFile ? [{
-                filename: savedFile.originalName,
-                url: savedFile.relativeUrl
-            }] : [],
-            description: description || ""
-        };
-        
-        console.log(`[SubmitAssignment] 準備寫入資料庫的submission:`, submission);
-        
-        await db.collection("submitted_ass").insertOne(submission);
-        
-        console.log(`[SubmitAssignment] 作業繳交成功，s_ass_id: ${nextSAssId}`);
-        
-        res.status(200).json({ message: "作業繳交成功", data: submission });
+        if (existingSubmission) {
+            // 更新現有提交 - 將新檔案添加到現有檔案列表
+            const updatedAttachments = [...(existingSubmission.attachments || []), ...savedFiles];
+            
+            const updateData = {
+                submit_date: now, // 更新提交時間為最後修改時間
+                attachments: updatedAttachments,
+                description: description || existingSubmission.description
+            };
+            
+            await db.collection("submitted_ass").updateOne(
+                { 
+                    ass_id: parseInt(assignmentId),
+                    submit_by_user_id: parseInt(submitByUserId)
+                },
+                { $set: updateData }
+            );
+            
+            console.log(`[SubmitAssignment] 作業更新成功，s_ass_id: ${existingSubmission.s_ass_id}`);
+            
+            const updatedSubmission = { ...existingSubmission, ...updateData };
+            res.status(200).json({ 
+                message: files.length > 0 ? "檔案上傳成功" : "作業更新成功", 
+                data: updatedSubmission 
+            });
+        } else {
+            // 新建提交紀錄
+            const last = await db.collection("submitted_ass").find().sort({ s_ass_id: -1 }).limit(1).toArray();
+            const nextSAssId = last.length > 0 ? last[0].s_ass_id + 1 : 1;
+            
+            // 查 assignment 取得 in_course_id
+            const assignment = await db.collection("assignments").findOne({ ass_id: parseInt(assignmentId) });
+            const submit_user_course_tag = `StudentTag_${submitByUserId}`;
+            
+            const submission = {
+                s_ass_id: nextSAssId,
+                ass_id: parseInt(assignmentId),
+                submit_by_user_id: parseInt(submitByUserId),
+                submit_user_course_tag,
+                submit_date: now,
+                attachments: savedFiles,
+                description: description || ""
+            };
+            
+            console.log(`[SubmitAssignment] 準備寫入資料庫的submission:`, submission);
+            
+            await db.collection("submitted_ass").insertOne(submission);
+            
+            console.log(`[SubmitAssignment] 作業繳交成功，s_ass_id: ${nextSAssId}`);
+            
+            res.status(200).json({ message: "作業繳交成功", data: submission });
+        }
     } catch (error) {
         console.error("學生繳交作業錯誤:", error);
         res.status(500).json({ message: error.message });
@@ -274,6 +314,71 @@ async function GetAssignmentSubmission(req, res) {
     }
 }
 
+// 刪除學生提交的單個檔案
+async function DeleteSubmittedFile(req, res) {
+    try {
+        const { assignmentId } = req.params;
+        const { submitByUserId, fileUrl } = req.body;
+        
+        console.log(`[DeleteSubmittedFile] 刪除檔案: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, fileUrl=${fileUrl}`);
+        
+        if (!assignmentId || !submitByUserId || !fileUrl) {
+            return res.status(400).json({ message: "缺少必要參數" });
+        }
+        
+        const db = (await import('mongoose')).default.connection.db;
+        const now = new Date();
+        
+        // 查找現有提交紀錄
+        const submission = await db.collection("submitted_ass").findOne({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(submitByUserId)
+        });
+        
+        if (!submission) {
+            return res.status(404).json({ message: "未找到提交紀錄" });
+        }
+        
+        // 從附件列表中移除指定檔案
+        const updatedAttachments = submission.attachments.filter(att => att.url !== fileUrl);
+        
+        // 刪除硬碟上的檔案
+        const { DeleteFile } = await import('#src/services/file_services/file_storage_service.js');
+        try {
+            await DeleteFile(fileUrl);
+            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${fileUrl}`);
+        } catch (deleteError) {
+            console.warn(`[DeleteSubmittedFile] 刪除硬碟檔案失敗: ${deleteError.message}`);
+            // 繼續執行，不要因為檔案刪除失敗而中斷整個操作
+        }
+        
+        // 更新資料庫紀錄
+        await db.collection("submitted_ass").updateOne(
+            { 
+                ass_id: parseInt(assignmentId),
+                submit_by_user_id: parseInt(submitByUserId)
+            },
+            { 
+                $set: { 
+                    attachments: updatedAttachments,
+                    submit_date: now // 更新最後修改時間
+                }
+            }
+        );
+        
+        console.log(`[DeleteSubmittedFile] 檔案刪除成功`);
+        
+        res.status(200).json({ 
+            message: "檔案刪除成功",
+            data: { attachments: updatedAttachments }
+        });
+        
+    } catch (error) {
+        console.error("刪除提交檔案錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
@@ -282,5 +387,6 @@ export {
     DownloadAssignment,
     DeleteAssignment,
     SubmitAssignment,
-    GetAssignmentSubmission // 新增導出
+    GetAssignmentSubmission, // 新增導出
+    DeleteSubmittedFile // 新增刪除學生提交檔案的功能
 };

@@ -7,11 +7,13 @@ import {
     DownloadAssignment,
     DeleteAssignment,
     SubmitAssignment,
-    GetAssignmentSubmission // 新增：取得單一作業的繳交紀錄
+    GetAssignmentSubmission,
+    DeleteSubmittedFile // 新增：刪除學生提交檔案
 } from '#src/controllers/assignment_controller.js';
 
 import { 
     uploadWithMulter, 
+    uploadMultipleWithMulter,
     MulterErrorHandling 
 } from '#src/utils/multer_config.js';
 
@@ -29,8 +31,8 @@ router.get('/:assignmentId/submission-time', GetAssignmentSubmissionTimeControll
 
 router.get('/:assignmentId/submission', GetAssignmentSubmission); // 新增：取得單一作業的繳交紀錄
 
-// POST /assignment/course/:courseId/upload
-router.post('/course/:courseId/upload', uploadWithMulter, UploadAssignment, MulterErrorHandling);
+// POST /assignment/course/:courseId/upload - 支援多檔案上傳
+router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadAssignment, MulterErrorHandling);
 
 // GET /assignment/download
 router.get('/download', DownloadAssignment);
@@ -38,7 +40,10 @@ router.get('/download', DownloadAssignment);
 // DELETE /assignment/delete
 router.delete('/delete', DeleteAssignment);
 
-// 學生繳交作業
-router.post('/:assignmentId/submit', uploadWithMulter, SubmitAssignment, MulterErrorHandling);
+// 學生繳交作業 - 支援多檔案上傳
+router.post('/:assignmentId/submit', uploadMultipleWithMulter, SubmitAssignment, MulterErrorHandling);
+
+// 刪除學生提交的檔案
+router.delete('/:assignmentId/submit-file', DeleteSubmittedFile);
 
 export default router;

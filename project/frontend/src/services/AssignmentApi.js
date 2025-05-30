@@ -95,3 +95,26 @@ export const GetAssignmentSubmission = async (assignmentId) => {
         return null;
     }
 };
+
+// 刪除學生提交的檔案
+export const DeleteSubmittedFile = async (assignmentId, fileUrl) => {
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userId = user?.user_id;
+        if (!userId) {
+            throw new Error("請先登入");
+        }
+
+        const endpoint = `/assignment/${assignmentId}/submit-file`;
+        const response = await api.delete(endpoint, {
+            data: {
+                submitByUserId: userId,
+                fileUrl: fileUrl
+            }
+        });
+        return response.data;
+    } catch (err) {
+        console.error("刪除提交檔案失敗", err);
+        throw new Error(err.response?.data?.message || "刪除檔案發生錯誤");
+    }
+};

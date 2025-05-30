@@ -155,12 +155,24 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                         ))}
                                                     </ul>
                                                 </div>
-                                            )}
-                                            <div className="assignment-actions">
-                                                <button className="submit-button" onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}>
-                                                    <FaUpload className="button-icon" />
-                                                    提交作業
-                                                </button>
+                                            )}                                            <div className="assignment-actions">
+                                                {submissionMap[assignment.id] ? (
+                                                    <button 
+                                                        className="submit-button submitted" 
+                                                        onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
+                                                    >
+                                                        <FaUpload className="button-icon" />
+                                                        修改作業
+                                                    </button>
+                                                ) : (
+                                                    <button 
+                                                        className="submit-button" 
+                                                        onClick={() => { setCurrentAssignment(assignment); setShowUploadModal(true); }}
+                                                    >
+                                                        <FaUpload className="button-icon" />
+                                                        提交作業
+                                                    </button>
+                                                )}
                                             </div>
                                             {/* 顯示繳交紀錄 */}
                                             {submissionMap[assignment.id] && (
