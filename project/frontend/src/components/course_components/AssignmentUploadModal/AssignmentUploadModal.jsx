@@ -28,25 +28,25 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
             alert("請選擇結束日期和時間");
             return;
         }
-        
+
         const startDateTime = new Date(`${startDate}T${startTime}`);
         const endDateTime = new Date(`${endDate}T${endTime}`);
-        
+
         if (endDateTime <= startDateTime) {
             alert("結束時間必須在開始時間之後");
             return;
         }
-        
+
         if (!maxScore || parseFloat(maxScore) <= 0) {
             alert("請輸入有效的最高成績");
             return;
         }
-        
+
         if (!percentage || parseFloat(percentage) <= 0 || parseFloat(percentage) > 100) {
             alert("請輸入有效的百分比 (1-100)");
             return;
         }
-        
+
         if (!description.trim()) {
             alert("請輸入簡介/描述");
             return;
@@ -126,41 +126,34 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
                 />
             </div>
 
-            <div className={styles["datetime-group"]}>
-                <div className={styles["datetime-item"]}>
-                    <label>開始日期時間</label>
-                    <div className={styles["datetime-inputs"]}>
-                        <input
-                            type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="time"
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                            required
-                        />
-                    </div>
-                </div>
-                
-                <div className={styles["datetime-item"]}>
-                    <label>結束日期時間</label>
-                    <div className={styles["datetime-inputs"]}>
-                        <input
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="time"
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            required
-                        />
-                    </div>
+            <div className={styles["datetime-row"]}>
+                <label>作業時間區間</label>
+                <div className={styles["datetime-inline"]}>
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                        required
+                    />
+                    <span className={styles["range-separator"]}>~</span>
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                        required
+                    />
                 </div>
             </div>
 
@@ -178,7 +171,7 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
                         required
                     />
                 </div>
-                
+
                 <div className={styles["input-group"]}>
                     <label htmlFor="percentage">成績佔比 (%)</label>
                     <input
@@ -230,7 +223,7 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
                         {files.length === 0 ? "尚未選擇任何檔案" : `已選擇 ${files.length} 個檔案`}
                     </span>
                 </div>
-                
+
                 {files.length > 0 && (
                     <div className={styles["file-list"]}>
                         {files.map((file, index) => (
