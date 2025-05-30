@@ -146,6 +146,7 @@ export default function CourseInfoPage() {
                         <button
                             className={styles["upload-button"]}
                             onClick={() => {
+                                setShowExamUploadModal(true);
                                 // TODO: 上傳考試
                             }}
                         >
@@ -210,6 +211,20 @@ export default function CourseInfoPage() {
                     />
                     <AssignmentUploadModal
                         onClose={() => setShowAssignmentUploadModal(false)}
+                        courseId={courseId}
+                        onSuccess={() => window.location.reload()}
+                    />
+                </>
+            )}
+
+            {showExamUploadModal && (
+                <>
+                    <div
+                        className={styles["modal-overlay"]}
+                        onClick={() => setShowExamUploadModal(false)}
+                    />
+                    <ExamUploadModal
+                        onClose={() => setShowExamUploadModal(false)}
                         courseId={courseId}
                         onSuccess={() => window.location.reload()}
                     />
