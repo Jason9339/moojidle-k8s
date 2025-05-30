@@ -9,7 +9,7 @@ db.createCollection("user", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["user_id", "name", "contact_ways", "email", "pw"], 
+            required: ["user_id", "name", "contact_ways", "email", "pw", "create_date"], 
             properties: {
                 user_id: {
                     bsonType: "int",
@@ -47,7 +47,8 @@ db.createCollection("user", {
                 pw: {
                     bsonType: "string",
                     description: "User password"
-                }
+                },
+                create_date: { bsonType: "date" }
             }
         }
     }

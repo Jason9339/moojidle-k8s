@@ -1,13 +1,27 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    InsertAssignmentToDB
 } from '#src/services/assignment_service.js';
 
 import { 
     FindCourseById
 } from '#src/services/course_service.js';
 
+import {
+    SaveFile,
+    DeleteFile
+} from '#src/services/file_services/file_storage_service.js';
+
 import CalculateWeek from '#src/utils/calculate_week.js';
+
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// 模擬 __dirname，因為使用的是 ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function GetToDoAssignmentsByUserId(req, res) {
     try {
@@ -52,7 +66,124 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
+// 上傳課程作業
+async function UploadAssignment(req, res) {
+    try {
+        const { courseId } = req.params;
+        const {
+            createByUserId,
+            assName,
+            startDate,
+            endDate,
+            description,
+            maxScore,
+            percentage
+        } = req.body;
+
+        // 支援多檔案上傳
+        const files = req.files || []; // 使用 req.files 而不是 req.file
+        if (!files || files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" });
+        }
+
+        // 儲存所有檔案到硬碟
+        const savedFiles = [];
+        for (const file of files) {
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
+        }
+
+        const now = new Date();
+
+        const assignmentData = {
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            ass_name: assName,
+            start_date: new Date(startDate),
+            end_date: new Date(endDate),
+            description,
+            create_date: now,
+            max_score: parseFloat(maxScore) || 100, // 使用傳入的值或預設100
+            percentage: parseFloat(percentage) || 0, // 使用傳入的值或預設0
+            attachments: savedFiles // 多檔案附件
+        };
+
+        const dbResult = await InsertAssignmentToDB(assignmentData);
+
+        res.status(200).json({
+            message: "上傳作業成功",
+            filesCount: savedFiles.length,
+            fileNames: savedFiles.map(f => f.filename),
+            data: dbResult
+        });
+    } catch (error) {
+        console.error("上傳作業錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 下載作業檔案
+function DownloadAssignment(req, res) {
+    const { path: filePathParam } = req.query;
+
+    if (!filePathParam) {
+        return res.status(400).json({ message: "Missing path parameter" });
+    }
+
+    const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
+    // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
+    const filePath = path.join(__dirname, "../../", sanitizedPath);
+    console.log("✅ Resolved file path:", filePath);
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error("❌ 檔案不存在:", filePath);
+            return res.status(404).json({ message: "File not found" });
+        }
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${path.basename(filePath)}"`
+        );
+
+        res.download(filePath, (err) => {
+            if (err) {
+                console.error("❌ 下載錯誤:", err);
+                res.status(500).json({ message: "Error downloading file" });
+            }
+        });
+    });
+}
+
+// 刪除作業檔案
+async function DeleteAssignment(req, res) {
+    try {
+        const { path: filePath } = req.query;
+        
+        if (!filePath) {
+            return res.status(400).json({ message: "缺少檔案路徑參數" });
+        }
+        
+        const result = await DeleteFile(filePath);
+        
+        if (result) {
+            return res.status(200).json({ message: "作業檔案刪除成功" });
+        } else {
+            return res.status(404).json({ message: "作業檔案不存在或刪除失敗" });
+        }
+    } catch (error) {
+        console.error("刪除作業檔案時發生錯誤:", error);
+        res.status(500).json({ message: "刪除作業檔案時發生錯誤", error: error.message });
+    }
+}
+
 export {
     GetToDoAssignmentsByUserId,
-    GetCourseAssignments
+    GetCourseAssignments,
+    UploadAssignment,
+    DownloadAssignment,
+    DeleteAssignment
 };

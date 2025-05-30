@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import {
     Register,
     Login,
@@ -7,24 +7,12 @@ import {
     GetUserTags,
     UpdatePassword
 } from '#src/controllers/user_controller.js';
+import { createMockReq, createMockRes } from '../test-utils.js';
 
 describe('User Controller', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
-
-    // 輔助函數創建 mock req 和 res 對象
-    const createMockReq = (body = {}, params = {}) => ({
-        body,
-        params
-    });
-
-    const createMockRes = () => {
-        const res = {};
-        res.status = vi.fn().mockReturnValue(res);
-        res.send = vi.fn().mockReturnValue(res);
-        return res;
-    };
 
     describe('Register', () => {
         it('應該成功註冊新用戶', async () => {

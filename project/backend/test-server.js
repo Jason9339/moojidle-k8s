@@ -8,7 +8,23 @@ import mongoose from 'mongoose';
 import {
     CounterSeed,
     UserSeed,
-    UserTagSeed,
+    Custom_tagSeed,
+    CourseSeed,
+    Teach_inSeed,
+    Assist_inSeed,
+    Study_inSeed,
+    AnnouncementSeed,
+    Discussion_boardSeed,
+    ExamsSeed,
+    Taken_examsSeed,
+    MaterialsSeed,
+    AssignmentsSeed,
+    Submitted_assSeed,
+    PostSeed,
+    Course_tagSeed,
+    NotificationSeed,
+    NotifiedSeed,
+    MailboxSeed,
 } from './tests/seed.js';
 
 // 導入路由
@@ -21,7 +37,6 @@ import announcementRoute from '#src/routes/announcement_route.js';
 import discussionBoardRoute from '#src/routes/discussion_board_route.js';
 import postRoute from '#src/routes/post_routes.js';
 import examRoute from '#src/routes/exam_route.js';
-import fileRoute from '#src/routes/file_routes/file_route.js';
 
 let mongoServer;
 let server;
@@ -32,7 +47,8 @@ async function startTestServer() {
     try {
         // 1. 啟動 MongoDB Memory Server
         mongoServer = await MongoMemoryServer.create();
-        const mongoUri = mongoServer.getUri();
+        // 使用 "moojidle" 作為資料庫名稱，與生產環境保持一致
+        const mongoUri = mongoServer.getUri("moojidle");
         await mongoose.connect(mongoUri);
 
         // 2. 初始化測試資料
@@ -60,7 +76,6 @@ async function startTestServer() {
         app.use("/material", materialRoute);
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
-        app.use("/file", fileRoute);
 
         // 測試專用端點
         app.post('/test/reset-database', async (req, res) => {
@@ -141,26 +156,43 @@ async function SetupInitialTestData() {
 
     await CounterSeed();
     await UserSeed();
-    await UserTagSeed();
+    await Custom_tagSeed();
+    await CourseSeed();
+    await Teach_inSeed();
+    await Assist_inSeed();
+    await Study_inSeed();
+    await AnnouncementSeed();
+    await Discussion_boardSeed();
+    await ExamsSeed();
+    await Taken_examsSeed();
+    await MaterialsSeed();
+    await AssignmentsSeed();
+    await Submitted_assSeed();
+    await PostSeed();
+    await Course_tagSeed();
+    await NotificationSeed();
+    await NotifiedSeed();
+    await MailboxSeed();
 
     // console.log('✅ 測試資料初始化完成');
 }
 
 // 重置測試資料庫
 async function ResetTestDatabase() {
-    // console.log('🔄 重置測試資料庫...');
-
-    // 清理所有資料
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-        await collections[key].deleteMany({});
+    // 每個測試前清理數據
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    for (const collectionInfo of collections) {
+        const collectionName = collectionInfo.name;
+        try {
+            const collection = mongoose.connection.db.collection(collectionName);
+            const deleteResult = await collection.deleteMany({});
+            // console.log(`清理 ${collectionName}: ${deleteResult.deletedCount} 條記錄`);
+        } catch (error) {
+            console.warn(`清理 ${collectionName} 失敗:`, error.message);
+        }
     }
-
     // 重新初始化基本資料
     await SetupInitialTestData();
-
-    // 確保資料插入完成
-    await new Promise(resolve => setTimeout(resolve, 10));
 
     // console.log('✅ 資料庫重置完成');
 }
