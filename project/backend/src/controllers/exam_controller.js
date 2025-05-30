@@ -1,5 +1,6 @@
 import {
-    FindFromExamJoinStudyInJoinCourseByUserId
+    FindFromExamJoinStudyInJoinCourseByUserId,
+    GetExamsByCourseId
     // getComingExams as getComingExamsService
 } from '#src/services/exam_service.js';
 
@@ -26,7 +27,19 @@ async function GetUpcomingExamsByUserId(req, res) {
 //     }
 // };
 
+async function CourseExams(req, res) {
+    try {
+        const courseId = req.params.courseId;
+        const exams = await GetExamsByCourseId(courseId);
+        return res.status(200).json(exams);
+    } catch (error) {
+        console.error("Error in CourseExams:", error);
+        res.status(500).send("Failed to fetch exams for course");
+    }
+}
+
 export {
-    GetUpcomingExamsByUserId
+    GetUpcomingExamsByUserId,
+    CourseExams,
     // getComingExams
 }

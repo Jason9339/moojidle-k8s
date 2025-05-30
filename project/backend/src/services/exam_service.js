@@ -89,7 +89,25 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
 //     }
 // }
 
+async function GetExamsByCourseId(courseId) {
+    try {
+        const db = mongoose.connection.db;
+        const parsedCourseId = parseInt(courseId, 10);
+
+        const exams = await db.collection('exams')
+            .find({ in_course_id: parsedCourseId })
+            .sort({ start_date: 1 }) 
+            .toArray();
+
+        return exams
+    } catch (error) {
+        console.error("[GetExamsByCourseId] Error:", error);
+        throw new Error(`Failed to retrieve exams for course: ${error.message}`);
+    }
+}
+
 export {
-    FindFromExamJoinStudyInJoinCourseByUserId
+    FindFromExamJoinStudyInJoinCourseByUserId,
+    GetExamsByCourseId,
     // getComingExams
 };
