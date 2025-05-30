@@ -180,3 +180,15 @@
 .announcement-left {
     flex-grow: 1;
 }
+
+.delete-announcement-button {
+    padding: 8px 12px;
+    background-color: #f44336;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-end;
+    margin-left: 8px;
+    white-space: nowrap;
+}

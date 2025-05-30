@@ -6,6 +6,7 @@ import {
     GetAnnouncements,
     CreateAnnouncement,
     EditAnnouncement,
+    DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
 
 function AnnouncementsPage() {
@@ -110,6 +111,17 @@ function AnnouncementsPage() {
         }
     };
 
+    const handleDeleteAnnouncement = async (announcement) => {
+        if (!window.confirm("確定要刪除這則公告嗎？")) return;
+        try {
+            await DeleteAnnouncement(announcement.a_id); 
+            setAnnouncements(await GetAnnouncements(courseId));
+        } catch (err) {
+            setError("刪除失敗");
+            console.error(err);
+        }
+    };
+
     const handleContextChange = (e) => {
         const value = e.target.value;
         setNewAnnouncementContext(
@@ -156,12 +168,20 @@ function AnnouncementsPage() {
                                 </p>
                             </div>
                             {canEdit && (
-                                <button
-                                    className={styles["edit-announcement-button"]}
-                                    onClick={() => openEditModal(a)}
-                                >
-                                    編輯公告
-                                </button>
+                                <>
+                                    <button
+                                        className={styles["edit-announcement-button"]}
+                                        onClick={() => openEditModal(a)}
+                                    >
+                                        編輯
+                                    </button>
+                                    <button
+                                        className={styles["delete-announcement-button"]}
+                                        onClick={() => handleDeleteAnnouncement(a)}
+                                    >
+                                        刪除
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>

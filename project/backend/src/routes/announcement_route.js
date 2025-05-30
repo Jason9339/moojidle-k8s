@@ -7,7 +7,7 @@ import {
     EditAnnouncement,
     DeleteAnnouncement
 } from '#src/controllers/announcement_controller.js';
-import { Delete } from '#src/controllers/user_controller';
+
 
 // ----- Announcement Routes -----
 // entry point http://localhost:PORT/announcement
@@ -22,7 +22,7 @@ router.post("/course/:courseId", CreateAnnouncement);
 router.post("/:announcementId/edit", EditAnnouncement);
 
 // DELETE /announcement/:announcementId
-// router.delete("/:announcementId/delete", DeleteAnnouncement);
+router.delete("/:announcementId/delete", DeleteAnnouncement);
 
 
 export default router; 

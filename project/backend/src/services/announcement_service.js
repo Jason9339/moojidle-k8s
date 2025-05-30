@@ -79,5 +79,5 @@ export {
     FindAnnouncementByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement,
-    // DeleteAnnouncementByAnnouncementID
+    DeleteAnnouncementByAnnouncementID
 }; 
