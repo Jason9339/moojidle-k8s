@@ -83,15 +83,13 @@ describe("Assignment Service", () => {
             expect(updatedSubmission.graded_by_user_id).toBe(1);
         });
 
-        it('當提交不存在時應該返回updated為false', async () => {
+        it('當提交不存在時應該返回錯誤', async () => {
             const submitAssignmentId = 999;
             const score = 85;
             const graderId = 1;
 
-            const result = await ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId);
-
-            expect(result).toBeDefined();
-            expect(result.updated).toBe(false);
+            await expect(ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId))
+                .rejects.toThrow();
         });
 
         it('應該驗證分數範圍', async () => {
