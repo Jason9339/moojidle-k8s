@@ -33,9 +33,9 @@ let mongoServer;
 global.beforeAll = async (test) => {
     console.log('🚀 啟動測試環境 (Memory + Schema 驗證)');
 
-    // 創建內存中的 MongoDB 實例
+    // 創建內存中的 MongoDB 實例，使用 "moojidle" 作為資料庫名稱
     mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
+    const mongoUri = mongoServer.getUri("moojidle");
 
     // 連接到測試數據庫
     await mongoose.connect(mongoUri);
@@ -59,20 +59,20 @@ global.afterAll = async () => {
 
 global.beforeEach = async () => {
     // 每個測試前清理數據
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-        const collection = collections[key];
-        await collection.deleteMany({});
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    for (const collectionInfo of collections) {
+        const collectionName = collectionInfo.name;
+        try {
+            const collection = mongoose.connection.db.collection(collectionName);
+            const deleteResult = await collection.deleteMany({});
+            console.log(`清理 ${collectionName}: ${deleteResult.deletedCount} 條記錄`);
+        } catch (error) {
+            console.warn(`清理 ${collectionName} 失敗:`, error.message);
+        }
     }
-
-    // 添加小延遲確保清理完成
-    await new Promise(resolve => setTimeout(resolve, 5));
 
     // 重新初始化測試數據
     await SetupTestData();
-
-    // 再次添加小延遲確保數據插入完成
-    await new Promise(resolve => setTimeout(resolve, 5));
 };
 
 // 載入 Schema（從 setup-real-db.js 移植）
@@ -168,6 +168,9 @@ async function SetupTestData() {
 global.console = {
     ...console,
     log: vi.fn(),
+    // log: console.log,  // 開啟 console.log
     error: vi.fn(),
+    // error: console.error,  // 開啟 console.error
     warn: vi.fn(),
+    // warn: console.warn,  // 開啟 console.warn
 }; 

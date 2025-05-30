@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { DeleteFile } from '#src/services/file_services/file_storage_service.js';
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
 
 async function FindMaterialsByCourseId(courseId) {
     try {
@@ -69,9 +70,23 @@ async function UpdateMaterialById(mId, updateObj) {
     }
 }
 
-const InsertMaterialToDB = async (materialDoc) => {
-    const result = await mongoose.connection.db.collection("materials").insertOne(materialDoc);
-    return result;
+const InsertMaterialToDB = async (materialData) => {
+    try {
+        // 生成下一個 material ID
+        const nextMaterialId = await GetNextCounterId("materials");
+        
+        // 準備要插入的文檔
+        const materialDoc = {
+            m_id: nextMaterialId,
+            ...materialData
+        };
+        
+        const result = await mongoose.connection.db.collection("materials").insertOne(materialDoc);
+        return result;
+    } catch (error) {
+        console.error(`[InsertMaterialToDB] Error inserting material:`, error);
+        throw new Error(`Failed to insert material: ${error.message}`);
+    }
 };
 
 export {

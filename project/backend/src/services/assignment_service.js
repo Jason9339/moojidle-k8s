@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
 
 // Fetch unsubmitted assignments for a specific user
 async function GetToDoAssignmentsByUserId(user_id) {
@@ -101,9 +102,23 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
-const InsertAssignmentToDB = async (assignmentDoc) => {
-    const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
-    return result;
+const InsertAssignmentToDB = async (assignmentData) => {
+    try {
+        // 生成下一個 assignment ID
+        const nextAssignmentId = await GetNextCounterId("assignments");
+        
+        // 準備要插入的文檔
+        const assignmentDoc = {
+            ass_id: nextAssignmentId,
+            ...assignmentData
+        };
+        
+        const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
+        return result;
+    } catch (error) {
+        console.error(`[InsertAssignmentToDB] Error inserting assignment:`, error);
+        throw new Error(`Failed to insert assignment: ${error.message}`);
+    }
 };
 
 export {
