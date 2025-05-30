@@ -8,6 +8,7 @@ function CourseTable({
     course,
     materials,
     assignments,
+    exams,
     isEditMode,
     onMaterialsChange,
 }) {
@@ -147,6 +148,20 @@ function CourseTable({
             : "";
     }, []);
 
+    const [expandedExams, setExpandedExams] = useState({});
+    const toggleExam = (examId) => {
+        if (!examId) return;
+        setExpandedExams((prev) => ({
+            ...prev,
+            [examId]: !prev[examId],
+        }));
+    };
+    const examsByWeek = useMemo(() => {
+        return Array.from({ length: weekNum }, (_, i) => {
+            const w = i + 1;
+            return exams.filter((e) => e.week === w || (!e.week && w === 1));
+        });
+    }, [exams, weekNum]);
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>
@@ -162,6 +177,7 @@ function CourseTable({
                     {Array.from({ length: weekNum }, (_, i) => {
                         const weekMaterials = getMaterialsForWeek(i);
                         const weekAssignments = assignmentsByWeek[i];
+                        const weekExams = examsByWeek[i];
                         const dateRange = weekDateRanges[i];
 
                         return (
@@ -308,7 +324,44 @@ function CourseTable({
                                     ))}
                                 </td>
                                 <td>
-                                    <span style={{ color: "#999" }}>-</span>
+                                    {examsByWeek[i].map((exam, idx) => (
+                                        <div key={idx}>
+                                            <div
+                                                onClick={() => toggleExam(exam.id)}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    fontWeight: "bold",
+                                                    color: "#198754",
+                                                }}
+                                            >
+                                                <span className={styles["exam-name"]} title={exam.name}>
+                                                    {exam.name}
+                                                </span>
+                                            </div>
+                                            {expandedExams[exam.id] && (
+                                                <div className={styles["assignment-file-list"]}>
+                                                    {exam.attachments?.length > 0 ? (
+                                                        exam.attachments.map((f, i) => (
+                                                            <div
+                                                                key={i}
+                                                                className={styles["clickable-material"]}
+                                                                onClick={() =>
+                                                                    handleExamDownload(
+                                                                        f.path_to_file,
+                                                                        f.filename
+                                                                    )
+                                                                }
+                                                            >
+                                                                {f.filename}
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <span>（無附件）</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </td>
                             </tr>
                         );

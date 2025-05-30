@@ -17,6 +17,7 @@ import { GetCourseExams } from "@/services/ExamApi";
 import CourseTable from "@/components/course_components/CourseTable/CourseTable";
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
+import ExamUploadModal from "@/components/course_components/ExamUploadModal/ExamUploadModal";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();
@@ -32,6 +33,7 @@ export default function CourseInfoPage() {
     const [loading, setLoading] = useState(true);
     const [showMaterialUploadModal, setShowMaterialUploadModal] = useState(false);
     const [showAssignmentUploadModal, setShowAssignmentUploadModal] = useState(false);
+    const [showExamUploadModal, setShowExamUploadModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
@@ -40,15 +42,17 @@ export default function CourseInfoPage() {
         const fetchCourseData = async () => {
             try {
                 setLoading(true);
-                const [courseData, materialsData, assignmentsData] =
+                const [courseData, materialsData, assignmentsData, examData] =
                     await Promise.all([
                         GetCourseDetails(courseId),
                         GetCourseMaterials(courseId),
                         GetCourseAssignments(courseId),
+                        // GetCourseExams(courseId),
                     ]);
                 setCourse(courseData);
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
+                // setExams(examData);
             } catch (error) {
                 console.error("獲取課程數據失敗:", error);
                 navigate("/dashboard");
@@ -179,6 +183,7 @@ export default function CourseInfoPage() {
                 course={course}
                 materials={materials}
                 assignments={assignments}
+                exams={exams}
                 isEditMode={isEditMode}
                 onMaterialsChange={handleMaterialsChange}
             />
