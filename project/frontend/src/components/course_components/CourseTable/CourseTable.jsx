@@ -154,8 +154,8 @@ function CourseTable({
                     <tr>
                         <th>Week</th>
                         <th>Lecture</th>
-                        <th>Assignments/Exams</th>
-                        <th>Reference</th>
+                        <th>Assignments</th>
+                        <th>Exams</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -265,7 +265,9 @@ function CourseTable({
                                                     color: "#084298",
                                                 }}
                                             >
-                                                {a.name}
+                                                <span className={styles["assignment-name"]} title={a.name}>
+                                                    {a.name}
+                                                </span>
                                             </div>
                                             {expandedAssignments[a.id] && (
                                                 <div
