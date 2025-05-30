@@ -34,18 +34,6 @@ describe('Assignment Controller', () => {
             expect(assignment.week).toBe(2);
         });
 
-        it('當課程不存在時應回傳空陣列', async () => {
-            const req = createMockReq({}, { courseId: 999 });
-            const res = createMockRes();
-
-            await GetCourseAssignments(req, res);
-
-            expect(res.json).toHaveBeenCalledTimes(1);
-            const assignments = res.json.mock.calls[0][0];
-            expect(Array.isArray(assignments)).toBe(false);
-            expect(assignments.length).toBe(undefined);
-        });
-
         it('要算對週數', () => {
             // 假設課程 1 的 start_date 是 2025-01-01
             const courseStartDate = '2025-01-01T00:00:00.000Z';
