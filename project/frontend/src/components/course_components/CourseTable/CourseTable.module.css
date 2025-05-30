@@ -103,17 +103,35 @@
     overflow: visible;
 }
 
-.material-table th:first-child,
-.material-table td:first-child {
-    width: 100px;
-    max-width: 100px;
-    min-width: 80px;
+/* Week列 */
+.material-table th:nth-child(1),
+.material-table td:nth-child(1) {
+    width: 70px;
+    max-width: 70px;
+    min-width: 60px;
 }
 
-.material-table th:not(:first-child),
-.material-table td:not(:first-child) {
-    width: 220px;
-    max-width: 220px;
+/* Lecture列 */
+.material-table th:nth-child(2),
+.material-table td:nth-child(2) {
+    width: 200px;
+    max-width: 200px;
+    min-width: 150px;
+}
+
+/* Assignments列 */
+.material-table th:nth-child(3),
+.material-table td:nth-child(3) {
+    width: 200px;
+    max-width: 200px;
+    min-width: 150px;
+}
+
+/* Exams列 */
+.material-table th:nth-child(4),
+.material-table td:nth-child(4) {
+    width: 150px;
+    max-width: 150px;
     min-width: 120px;
 }
 
@@ -186,12 +204,13 @@
 /* 編輯模式樣式 */
 .edit-material-item {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-    padding: 6px;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding: 8px;
     border-radius: 4px;
     background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
 }
 
 .material-input {
@@ -200,11 +219,31 @@
     border-radius: 4px;
     font-size: 14px;
     height: 32px;
-    width: 180px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     margin: 0px;
 }
 
 .material-input:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
+.material-date-input {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 32px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0px;
+}
+
+.material-date-input:focus {
     outline: none;
     border-color: #4dabf7;
     box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
@@ -215,11 +254,12 @@
     color: #842029;
     border: none;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 6px 12px;
     font-size: 12px;
     cursor: pointer;
-    width: 50px;
+    width: fit-content;
     height: 32px;
+    align-self: flex-end;
 }
 
 .delete-material-btn:hover {
@@ -304,22 +344,6 @@
     font-size: 12px;
     color: #6c757d;
     flex-shrink: 0;
-}
-
-.material-date-input {
-    padding: 4px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    height: 32px;
-    width: 140px; /* 調整成適當寬度 */
-    margin: 0px;
-}
-
-.material-date-input:focus {
-    outline: none;
-    border-color: #4dabf7;
-    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
 }
 
 .clickable-material:hover {
