@@ -167,7 +167,12 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
         const sAssId = parseInt(submissionId);
         const numericScore = parseFloat(score);
 
-        console.log(sAssId, numericScore);
+        // console.log(sAssId, numericScore);
+        const score_lb = 0;
+        const score_ub = 100;
+        if (score < score_lb || score > score_ub) {
+            throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
+        }
         
         
         // Prepare update document
