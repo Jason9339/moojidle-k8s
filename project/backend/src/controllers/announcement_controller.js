@@ -1,7 +1,8 @@
 import {
     FindAnnouncementByCourseId,
     InsertAnnouncement,
-    UpdateAnnouncement
+    UpdateAnnouncement,
+    // DeleteAnnouncementByAnnouncementID
 } from '#src/services/announcement_service.js';
 
 // 取得特定課程的公告
@@ -40,8 +41,20 @@ const EditAnnouncement = async (req, res) => {
     }
 };
 
+// async function DeleteAnnouncement(req, res) {
+//     try {
+//         const { announcementId } = req.params;
+//         await DeleteAnnouncementByAnnouncementID(announcementId);
+//         res.status(204).send(); 
+//     } catch (error) {
+//         console.error("刪除課程公告錯誤:", error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }
+
 export {
     GetCourseAnnouncements,
     CreateAnnouncement,
-    EditAnnouncement
+    EditAnnouncement,
+    // DeleteAnnouncement
 }; 

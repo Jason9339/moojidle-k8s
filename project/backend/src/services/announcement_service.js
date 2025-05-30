@@ -62,8 +62,22 @@ async function UpdateAnnouncement(announcementId, context, announce_date) {
     }
 }
 
+async function DeleteAnnouncementByAnnouncementID(announcementId) {
+    try {
+        const result = await mongoose.connection.db.collection('announcement').deleteOne({ a_id: parseInt(announcementId) });
+
+        if (result.deletedCount === 0) {
+            throw new Error('Announcement not found');
+        }
+    } catch (error) {
+        console.error(`[deleteAnnouncement] Error deleting announcement ID ${announcementId}:`, error);
+        throw new Error(`Failed to delete announcement: ${error.message}`);
+    }
+}
+
 export {
     FindAnnouncementByCourseId,
     InsertAnnouncement,
-    UpdateAnnouncement
+    UpdateAnnouncement,
+    // DeleteAnnouncementByAnnouncementID
 }; 
