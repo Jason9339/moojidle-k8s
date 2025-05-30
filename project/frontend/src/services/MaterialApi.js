@@ -28,3 +28,61 @@ export const DeleteCourseMaterial = async (courseId, materialId) => {
         throw error;
     }
 };
+
+// 上傳教材
+export const UploadMaterial = async (formData) => {
+    try {
+        const courseId = formData.get('courseId');
+        const endpoint = `/material/course/${courseId}/upload`;
+        
+        const response = await api.post(endpoint, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (err) {
+        console.error("上傳教材失敗", err);
+        throw new Error(err.response?.data?.message || "上傳教材發生錯誤");
+    }
+};
+
+// 下載教材檔案
+export const DownloadMaterial = async (pathToFile, filename) => {
+    try {
+        const response = await api.get(`/material/download`, {
+            params: { path: pathToFile },
+            responseType: 'blob',
+        });
+
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName = filename;
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+            if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
+        }
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    } catch (error) {
+        console.error("下載教材錯誤:", error);
+    }
+};
+
+// 刪除教材檔案
+export const DeleteMaterialFile = async (pathToFile) => {
+    try {
+        const response = await api.delete('/material/delete', {
+            params: { path: pathToFile }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("刪除教材失敗", error);
+        throw new Error(error.response?.data?.message || "刪除教材時發生錯誤");
+    }
+};
