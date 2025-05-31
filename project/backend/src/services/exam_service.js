@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
+
 // Fetch upcoming exams for a specific user
 async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
     try {
@@ -109,10 +111,9 @@ async function GetExamsByCourseId(courseId) {
 async function AddExamByCourseId(examData) {
     try {
         const db = mongoose.connection.db;
-        // 生成下一個 exam_id
+
         const nextExamId = await GetNextCounterId("exams");
 
-        // 準備要插入的文檔
         const examDoc = {
             exam_id: nextExamId,
             ...examData
@@ -126,32 +127,6 @@ async function AddExamByCourseId(examData) {
     }
 }
 
-async function AddExamAttachment(examId, attachments) {
-    try {
-        const db = mongoose.connection.db;
-        await db.collection("exams").updateOne(
-            { exam_id: examId },
-            { $push: { attachments: { $each: attachments } } }
-        );
-    } catch (error) {
-        console.error("AddExamAttachment error:", error);
-        throw error;
-    }
-}
-
-async function RemoveExamAttachment(examId, filename) {
-    try {
-        const db = mongoose.connection.db;
-        await db.collection("exams").updateOne(
-            { exam_id: examId },
-            { $pull: { attachments: { filename } } }
-        );
-    } catch (error) {
-        console.error("RemoveExamAttachment error:", error);
-        throw error;
-    }
-}
-
 async function FindExamById(examId) {
     const db = mongoose.connection.db;
     return db.collection("exams").findOne({ exam_id: parseInt(examId) });
@@ -161,8 +136,6 @@ export {
     FindFromExamJoinStudyInJoinCourseByUserId,
     GetExamsByCourseId,
     AddExamByCourseId,
-    AddExamAttachment,
-    RemoveExamAttachment,
     FindExamById
     // getComingExams
 };

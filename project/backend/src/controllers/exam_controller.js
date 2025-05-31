@@ -2,13 +2,17 @@ import {
     FindFromExamJoinStudyInJoinCourseByUserId,
     GetExamsByCourseId,
     AddExamByCourseId,
-    AddExamAttachment,
-    RemoveExamAttachment,
     FindExamById
     // getComingExams as getComingExamsService
 } from '#src/services/exam_service.js';
 
-import { SaveFile, DeleteFile } from '#src/services/file_services/file_storage_service.js';
+import { 
+    SaveFile, 
+    DeleteFile 
+} from '#src/services/file_services/file_storage_service.js';
+
+import CalculateWeek from '#src/utils/calculate_week.js';
+
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -61,9 +65,19 @@ async function AddExam(req, res) {
 }
 
 // 上傳考試附件
-async function UploadExamAttachment(req, res) {
+async function UploadExam(req, res) {
     try {
-        const { examId } = req.params;
+        const { courseId } = req.params;
+        const {
+            createByUserId,
+            examName,
+            startDate,
+            endDate,
+            description,
+            maxScore,
+            percentage
+        } = req.body;
+
         const files = req.files || [];
         if (!files.length) return res.status(400).json({ message: "No files uploaded" });
 
@@ -76,7 +90,22 @@ async function UploadExamAttachment(req, res) {
             });
         }
 
-        await AddExamAttachment(parseInt(examId), savedFiles);
+        const now = new Date();
+
+        const examData = {
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            exam_name: examName,
+            start_date: new Date(startDate),
+            end_date: new Date(endDate),
+            description,
+            create_date: now,
+            max_score: parseFloat(maxScore) || 100, // 使用傳入的值或預設100
+            percentage: parseFloat(percentage) || 0, // 使用傳入的值或預設0
+            attachments: savedFiles // 多檔案附件
+        };
+
+        const dbResult = await AddExamByCourseId(examData);
 
         res.status(200).json({
             message: "考試附件上傳成功",
@@ -90,19 +119,25 @@ async function UploadExamAttachment(req, res) {
 }
 
 // 下載考試附件
-function DownloadExamAttachment(req, res) {
+function DownloadExam(req, res) {
     const { path: filePathParam } = req.query;
     if (!filePathParam) return res.status(400).json({ message: "Missing path parameter" });
 
     const sanitizedPath = filePathParam.replace(/^\/+/, "");
     const filePath = path.join(__dirname, "../../", sanitizedPath);
+    console.log("✅ Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
             console.error("❌ 檔案不存在:", filePath);
             return res.status(404).json({ message: "File not found" });
         }
-        res.setHeader("Content-Disposition", `attachment; filename="${path.basename(filePath)}"`);
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${path.basename(filePath)}"`
+        );
+
         res.download(filePath, (err) => {
             if (err) {
                 console.error("❌ 下載錯誤:", err);
@@ -112,23 +147,24 @@ function DownloadExamAttachment(req, res) {
     });
 }
 
-// 刪除考試附件
-async function DeleteExamAttachment(req, res) {
+async function DeleteExam(req, res) {
     try {
-        const { path: filePath, examId, filename } = req.query;
-        if (!filePath || !examId || !filename) {
-            return res.status(400).json({ message: "缺少必要參數" });
+        const { path: filePath } = req.query;
+        
+        if (!filePath) {
+            return res.status(400).json({ message: "缺少檔案路徑參數" });
         }
+        
         const result = await DeleteFile(filePath);
+        
         if (result) {
-            await RemoveExamAttachment(parseInt(examId), filename);
-            return res.status(200).json({ message: "考試附件刪除成功" });
+            return res.status(200).json({ message: "考試檔案刪除成功" });
         } else {
-            return res.status(404).json({ message: "考試附件不存在或刪除失敗" });
+            return res.status(404).json({ message: "考試檔案不存在或刪除失敗" });
         }
     } catch (error) {
-        console.error("刪除考試附件時發生錯誤:", error);
-        res.status(500).json({ message: "刪除考試附件時發生錯誤", error: error.message });
+        console.error("刪除考試檔案時發生錯誤:", error);
+        res.status(500).json({ message: "刪除考試檔案時發生錯誤", error: error.message });
     }
 }
 
@@ -136,8 +172,8 @@ export {
     GetUpcomingExamsByUserId,
     CourseExams,
     AddExam,
-    UploadExamAttachment,
-    DownloadExamAttachment,
-    DeleteExamAttachment
+    UploadExam,
+    DownloadExam,
+    DeleteExam
     // getComingExams
 }
