@@ -18,8 +18,11 @@ describe('Calendar Controller', () => {
 
             await GetCalendarEvents(req, res);
 
+            const data = res.send.mock.calls[0][0];
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.data).not.toBeNull();
+            expect(data).toBeDefined();
+            expect(data).toBeInstanceOf(Array);
+            expect(data.length).toBeGreaterThan(0);
         })
 
 
@@ -60,8 +63,11 @@ describe('Calendar Controller', () => {
 
             await GetCalendarEvents(req, res);
 
+            const data = res.send.mock.calls[0][0];
+
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.data).toEqual([]);
+            expect(data).toBeDefined();
+            expect(data.length).toBe(0);
         })
     })
 

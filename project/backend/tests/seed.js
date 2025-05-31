@@ -155,6 +155,13 @@ async function Teach_inSeed() {
             "user_id": 1,
             "course_id": 1
         },
+
+        // Calendar
+        {
+            "user_id": 4,
+            "course_id": 2,
+            "student_id": 1
+        }
     ]);
 }
 
@@ -175,12 +182,7 @@ async function Study_inSeed() {
             "student_id": 1
         },
 
-        // Calendar
-        {
-            "user_id": 4,
-            "course_id": 2,
-            "student_id": 1
-        }
+
     ]);
 }
 

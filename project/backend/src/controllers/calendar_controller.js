@@ -5,6 +5,7 @@ import {
     FindCourseById,
 } from "#src/services/course_service.js";
 
+import { FindOneUserById } from "#src/services/user_service.js";
 import { FindExamsByCourseId } from "#src/services/exam_service.js";
 import { FindAssignmentsByCourseId } from "#src/services/assignment_service.js";
 
@@ -20,6 +21,10 @@ async function GetCalendarEvents(req, res) {
         const user_id = parseInt(req.params.userId);
 
 
+        if (!await FindOneUserById(user_id)) {
+            res.status(404).send({ message: "User not found" });
+            return;
+        }
         const [study_in, teach_in, assist_in] = await Promise.all([
             FindStudyInCourseIdsByUserId(user_id),
             FindTeachInCourseIdsByUserId(user_id),
@@ -49,12 +54,17 @@ async function GetCalendarEvents(req, res) {
                 start: exam.start_date,
                 end: exam.end_date,
             }));
-            result.push({
-                name,
-                course_id,
-                color,
-                events: [...assEvents, ...examEvents],
-            });
+
+            if (assEvents.length !== 0 && examEvents.length !== 0) {
+
+
+                result.push({
+                    name,
+                    course_id,
+                    color,
+                    events: [...assEvents, ...examEvents],
+                });
+            }
         }
 
         res.status(200).send(result);
