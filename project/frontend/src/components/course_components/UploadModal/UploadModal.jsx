@@ -136,16 +136,19 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                 await UploadMaterial(formData);
                 alert("教材上傳成功！");            } else if (type === "student-assignment") {
                 // 學生繳交作業 - 處理檔案新增和刪除
-                  // 檢查是否要完全清空所有內容的情況
+                
+                // 檢查是否要完全清空所有內容的情況
                 const isEmptyDescription = !description.trim();
                 const hasNoNewFiles = files.length === 0;
                 const willDeleteAllExistingFiles = existingFiles.length > 0 && 
                     deletedFiles.length === existingFiles.length;
-                const willHaveNoFilesAfterOperation = (existingFiles.length - deletedFiles.length + files.length) === 0;
-                
-                // 只有當用戶真正想要完全清空所有內容時才刪除整個記錄
-                // 條件：描述為空 AND 沒有新檔案 AND (刪除所有現有檔案 OR 結果將沒有任何檔案)
-                if (isEmptyDescription && hasNoNewFiles && willDeleteAllExistingFiles && willHaveNoFilesAfterOperation) {                    try {
+                const hasAnyExistingContent = existingFiles.length > 0 || 
+                    (existingSubmission && existingSubmission.description && existingSubmission.description.trim());
+                  // 情況1: 用戶想要完全清空所有內容（描述為空，沒有新檔案，且要刪除所有現有檔案）
+                // 情況2: 用戶提交空的描述和空的檔案列表，但有現有內容存在
+                if ((isEmptyDescription && hasNoNewFiles && willDeleteAllExistingFiles) ||
+                    (isEmptyDescription && hasNoNewFiles && deletedFiles.length === 0 && hasAnyExistingContent)) {
+                    try {
                         await DeleteSubmissionRecord(assignmentId);
                         alert("作業提交記錄已完全清除！");
                         
@@ -159,7 +162,8 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                             fileInputRef.current.value = '';
                         }
                         
-                        // 通知父組件更新狀態                        onSuccess && onSuccess();
+                        // 通知父組件更新狀態
+                        onSuccess && onSuccess();
                         return; // 結束處理，不需要繼續執行其他邏輯
                     } catch (error) {
                         console.error("清除作業提交記錄失敗:", error);
@@ -188,29 +192,8 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                         // 繼續處理其他檔案，不中斷整個流程
                     }
                 }                // 處理剩餘的檔案操作和提交
-                const hasNewFiles = files.length > 0;
-                const hasDeleteOperations = deletedCount > 0;
-                const currentDescription = description.trim();
-                const existingDescription = (existingSubmission?.description || "").trim();
-                const hasDescriptionChange = currentDescription !== existingDescription;
-                
-                // 計算操作後將會有的內容
-                const willHaveFiles = hasNewFiles || (existingSubmission?.files && 
-                    existingSubmission.files.some(file => !deletedFiles.some(deleted => deleted.url === file.url)));
-                const willHaveContent = willHaveFiles || currentDescription !== "";
-                
-                // 只有在以下情況才調用 SubmitAssignment：
-                // 1. 有新檔案要上傳
-                // 2. 有刪除操作（需要更新記錄）
-                // 3. 描述有實際變更
-                // 4. 在沒有現有記錄的情況下，必須在操作後有實際內容才能創建新記錄
-                const shouldSubmit = hasNewFiles || 
-                                   hasDeleteOperations || 
-                                   hasDescriptionChange ||
-                                   (!existingSubmission && willHaveContent);
-                
-                if (shouldSubmit && (existingSubmission || willHaveContent)) {
-                    // 確保不會創建空的提交記錄
+                if (files.length > 0 || deletedCount === 0 || description !== (existingSubmission?.description || "")) {
+                    // 有新檔案、沒有刪除操作、或描述有變更，需要調用 SubmitAssignment
                     try {
                         const submitResult = await SubmitAssignment(assignmentId, formData);
                         
@@ -490,16 +473,7 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                                         <span className={styles["file-size"]}>{fileSize}</span>
                                     </div>
                                     <div className={styles["file-actions"]}>
-                                        {!isMarkedForDeletion && attachment.url && (
-                                            <a 
-                                                href={attachment.url} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className={styles["download-button"]}
-                                            >
-                                                下載
-                                            </a>
-                                        )}
+                                        {/* 下載按鈕已移除 */}
                                         {isMarkedForDeletion ? (
                                             <button
                                                 type="button"

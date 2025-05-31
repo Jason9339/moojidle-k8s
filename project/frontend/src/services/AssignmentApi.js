@@ -38,7 +38,7 @@ export const DownloadAssignment = async (pathToFile, filename) => {
         let fileName = filename;
         if (contentDisposition) {
             const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-            if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
+            if (fileNameMatch && fileNameMatch.length === 2) fileName = fileNameMatch[1];
         }
 
         const url = window.URL.createObjectURL(new Blob([response.data]));

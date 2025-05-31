@@ -1,7 +1,7 @@
 // 學生作業列表元件
 import React, { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPaperclip, FaUpload } from "react-icons/fa";
-import { GetCourseAssignments, GetAssignmentSubmission } from "@/services/AssignmentApi";
+import { GetCourseAssignments, GetAssignmentSubmission, DownloadAssignment } from "@/services/AssignmentApi";
 import UploadModal from "../UploadModal/UploadModal";
 import "./AssignmentsStudentsTab.css";
 
@@ -119,6 +119,26 @@ export default function AssignmentsStudentsTab({ courseId }) {
     if (loading) return <div>載入中...</div>;
     if (error) return <div style={{color:'red'}}>{error}</div>;
 
+    // 處理作業附件下載（老師上傳的檔案）
+    const handleAssignmentDownload = async (attachment) => {
+        try {
+            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+        } catch (e) {
+            alert(`下載失敗：${attachment.filename}`);
+            console.error("下載作業附件錯誤:", e);
+        }
+    };
+
+    // 處理學生繳交檔案下載
+    const handleSubmittedFileDownload = async (attachment) => {
+        try {
+            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+        } catch (e) {
+            alert(`下載失敗：${attachment.filename}`);
+            console.error("下載學生繳交檔案錯誤:", e);
+        }
+    };
+
     return (
         <div className="assignments-container">
             {showUploadModal && currentAssignment && (                <UploadModal
@@ -181,21 +201,21 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                     <p className="description-label">作業說明：</p>
                                                     <p>{assignment.description || '無說明'}</p>
                                                 </div>
+                                                {/* 附件下載按鈕 */}
                                                 {assignment.attachments && assignment.attachments.length > 0 && (
                                                     <div className="assignment-attachments">
                                                         <p className="attachments-label">附件：</p>
                                                         <ul className="attachments-list">
                                                             {assignment.attachments.map((attachment, idx) => (
                                                                 <li key={idx} className="attachment-item">
-                                                                    <a 
-                                                                        className="attachment-link" 
-                                                                        href={attachment.url}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
+                                                                    <span
+                                                                        className="attachment-link"
+                                                                        onClick={() => handleAssignmentDownload(attachment)}
+                                                                        style={{ cursor: 'pointer', color: '#1890ff', textDecoration: 'underline' }}
                                                                     >
                                                                         <FaPaperclip className="file-icon" />
                                                                         {attachment.filename}
-                                                                    </a>
+                                                                    </span>
                                                                 </li>
                                                             ))}
                                                         </ul>
@@ -242,12 +262,18 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                                 </div>
                                                                 <div>繳交時間：{submission.submit_date ? new Date(submission.submit_date).toLocaleString('zh-TW') : '無'}</div>
                                                                 <div>截止時間：{formatDate(assignment.dueDate)}</div>
+                                                                {/* 學生繳交檔案下載按鈕 */}
                                                                 {submission.attachments && submission.attachments.length > 0 && (
                                                                     <div>檔案：
                                                                         <ul style={{margin:0,paddingLeft:'1em'}}>
                                                                             {submission.attachments.map((att, idx) => (
                                                                                 <li key={idx}>
-                                                                                    <a href={att.url} target="_blank" rel="noopener noreferrer">{att.filename}</a>
+                                                                                    <span
+                                                                                        onClick={() => handleSubmittedFileDownload(att)}
+                                                                                        style={{ cursor: 'pointer', color: '#1890ff', textDecoration: 'underline' }}
+                                                                                    >
+                                                                                        {att.filename}
+                                                                                    </span>
                                                                                 </li>
                                                                             ))}
                                                                         </ul>
