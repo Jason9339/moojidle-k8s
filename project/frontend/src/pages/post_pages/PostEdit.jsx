@@ -13,6 +13,7 @@ const PostEdit = () => {
     const { state } = useLocation();
     const initialCourse = state?.selectedCourse || null;
     const initialBoard = state?.selectedBoard || null;
+    const isEditing = !!state?.current?.post;
 
     const [selectedCourse, setSelectedCourse] = useState(initialCourse);
     const [selectedBoard, setSelectedBoard] = useState(initialBoard);

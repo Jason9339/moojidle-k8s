@@ -8,6 +8,7 @@ function PostContent({
     showMenu,
     setShowMenu,
     handleDeletePost,
+    handleEditPost,
     description,
     textareaRef,
 }) {
@@ -30,6 +31,13 @@ function PostContent({
                                 <li className={styles.dropdownItem} onClick={handleDeletePost}>
                                     刪除貼文
                                 </li>
+                                
+                            )}
+                            {currentUserId === post.post_by_user_id && (
+                                <li className={styles.dropdownItem} onClick={handleEditPost}>
+                                    編輯貼文
+                                </li>
+                                
                             )}
                             <li className={styles.dropdownItem}>檢舉</li>
                         </ul>

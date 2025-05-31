@@ -65,11 +65,10 @@ async function CreatePost(postData) {
 
 async function EditPost(postID, postData) {
     try {
-        const response = await api.put(`post/${postID}`, postData);
+        const response = await api.put(`/post/${postID}`, postData);
         return response.data;
     } catch (error) {
         console.error("EditPost API error:", error);
-        // 丟出錯誤給呼叫者處理
         throw new Error(error.response?.data?.error || error.response?.data?.message || "伺服器錯誤");
     }
 }

@@ -10,7 +10,7 @@ import ExamsTab from "@/pages/course_pages/ExamsTab/ExamsTab";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
-import PostEdit from "@/pages/post_pages/PostEdit";
+import PostEdit2 from "@/pages/post_pages/PostEdit2";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
@@ -66,7 +66,7 @@ function App() {
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
                         {/* post pages relayed */}
-                        <Route path="/post-edit/:param" element={<PostEdit />} />
+                        <Route path="/post-edit/:id" element={<PostEdit2 />} />
                         <Route path="/post/:id" element={<PostPage />} />
                     </Route>
                 </Routes>
