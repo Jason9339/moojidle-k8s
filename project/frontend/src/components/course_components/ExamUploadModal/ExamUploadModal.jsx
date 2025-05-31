@@ -100,9 +100,7 @@ const ExamUploadModal = ({ onClose, courseId, onSuccess }) => {
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
-            setFiles(Array.from(e.target.files));
-        } else {
-            setFiles([]);
+            setFiles(prevFiles => [...prevFiles, ...Array.from(e.target.files)]);
         }
     };
 
