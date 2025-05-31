@@ -146,8 +146,8 @@ export default function AssignmentsStudentsTab({ courseId }) {
                     courseId={courseId}
                     assignmentId={currentAssignment.id}
                     mode="student-assignment"                    onSuccess={async () => {
-                        setShowUploadModal(false);
                         await refreshAssignments();
+                        setShowUploadModal(false);
                     }}
                 />
             )}
