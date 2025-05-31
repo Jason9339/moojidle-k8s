@@ -98,7 +98,7 @@ async function GetExamsByCourseId(courseId) {
 
         const exams = await db.collection('exams')
             .find({ in_course_id: parsedCourseId })
-            .sort({ start_date: 1 }) 
+            .sort({ end_date: 1 }) 
             .toArray();
 
         return exams

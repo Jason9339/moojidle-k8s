@@ -2,9 +2,12 @@ import {
     FindFromExamJoinStudyInJoinCourseByUserId,
     GetExamsByCourseId,
     AddExamByCourseId,
-    FindExamById
     // getComingExams as getComingExamsService
 } from '#src/services/exam_service.js';
+
+import { 
+    FindCourseById
+} from '#src/services/course_service.js';
 
 import { 
     SaveFile, 
@@ -48,7 +51,7 @@ async function CourseExams(req, res) {
         const { courseId } = req.params;
 
         let formattedExams = await GetExamsByCourseId(courseId);
-        const course = await FindExamById(courseId);
+        const course = await FindCourseById(courseId);
 
         // 使用 start_date 而非 create_date
         const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
@@ -72,16 +75,6 @@ async function CourseExams(req, res) {
     } catch (error) {
         console.error("取得課程作業錯誤:", error);
         res.status(500).json({ message: error.message });
-    }
-}
-
-async function AddExam(req, res) {
-    try {
-        const newExam = await AddExamByCourseId(req.body);
-        res.status(201).json({ message: "Exam added successfully", exam: newExam });
-    } catch (error) {
-        console.error("Error in AddExam:", error);
-        res.status(500).send("Failed to add exam");
     }
 }
 
@@ -131,7 +124,8 @@ async function UploadExam(req, res) {
         res.status(200).json({
             message: "考試附件上傳成功",
             filesCount: savedFiles.length,
-            fileNames: savedFiles.map(f => f.filename)
+            fileNames: savedFiles.map(f => f.filename),
+            data: dbResult
         });
     } catch (error) {
         console.error("上傳考試附件錯誤:", error);
@@ -192,7 +186,6 @@ async function DeleteExam(req, res) {
 export {
     GetUpcomingExamsByUserId,
     CourseExams,
-    AddExam,
     UploadExam,
     DownloadExam,
     DeleteExam
