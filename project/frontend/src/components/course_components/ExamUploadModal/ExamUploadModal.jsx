@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-// import { UploadExam } from "@/services/ExamApi"; // 你要實作這個 API
+import { UploadExam } from "@/services/ExamApi"; // 你要實作這個 API
 import styles from "./ExamUploadModal.module.css";
 
 const ExamUploadModal = ({ onClose, courseId, onSuccess }) => {

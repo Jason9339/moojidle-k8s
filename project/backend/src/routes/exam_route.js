@@ -22,9 +22,6 @@ router.get('/coming', GetUpcomingExamsByUserId);
 // get all couses exams
 router.get('/:courseId', CourseExams);
 
-// 取得某課程所有考試
-router.get('/:courseId', CourseExams);
-
 // POST /assignment/course/:courseId/upload - 支援多檔案上傳
 router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadExam, MulterErrorHandling);
 

@@ -5,7 +5,7 @@ export const GetComingUpList = async (userId) => {
 };
 
 export const GetCourseExams = async (courseId) => {
-    return (await api.get(`/exams/course/${courseId}`)).data;
+    return (await api.get(`/exams/${courseId}`)).data;
 }
 
 export const UploadExam = async (formData) => {

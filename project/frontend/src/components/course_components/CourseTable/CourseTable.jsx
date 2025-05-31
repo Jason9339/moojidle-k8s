@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { DownloadMaterial } from "@/services/MaterialApi";
 import { DownloadAssignment } from "@/services/AssignmentApi";
+import { DownloadExam } from "@/services/ExamApi";
 import styles from "./CourseTable.module.css";
 
 function CourseTable({
@@ -35,6 +36,15 @@ function CourseTable({
     const handleAssignmentDownload = async (path, filename) => {
         try {
             await DownloadAssignment(path, filename);
+        } catch (e) {
+            alert(`下載失敗：${filename}`);
+            console.error("Assignment download error:", e);
+        }
+    };
+
+    const handleExamDownload = async (path, filename) => {
+        try {
+            await DownloadExam(path, filename);
         } catch (e) {
             alert(`下載失敗：${filename}`);
             console.error("Assignment download error:", e);
@@ -156,12 +166,14 @@ function CourseTable({
             [examId]: !prev[examId],
         }));
     };
+    
     const examsByWeek = useMemo(() => {
         return Array.from({ length: weekNum }, (_, i) => {
             const w = i + 1;
             return exams.filter((e) => e.week === w || (!e.week && w === 1));
         });
     }, [exams, weekNum]);
+
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>
@@ -324,21 +336,21 @@ function CourseTable({
                                     ))}
                                 </td>
                                 <td>
-                                    {examsByWeek[i].map((exam, idx) => (
+                                    {weekExams.map((exam, idx) => (
                                         <div key={idx}>
                                             <div
-                                                onClick={() => toggleExam(exam.id)}
+                                                onClick={() => toggleExam(exam.exam_id ?? exam.id)}
                                                 style={{
                                                     cursor: "pointer",
                                                     fontWeight: "bold",
-                                                    color: "#198754",
+                                                    color: "#084298",
                                                 }}
                                             >
-                                                <span className={styles["exam-name"]} title={exam.name}>
-                                                    {exam.name}
+                                                <span className={styles["exam-name"]} title={exam.exam_name ?? exam.name}>
+                                                    {exam.exam_name ?? exam.name}
                                                 </span>
                                             </div>
-                                            {expandedExams[exam.id] && (
+                                            {expandedExams[exam.exam_id ?? exam.id] && (
                                                 <div className={styles["assignment-file-list"]}>
                                                     {exam.attachments?.length > 0 ? (
                                                         exam.attachments.map((f, i) => (

@@ -47,12 +47,12 @@ export default function CourseInfoPage() {
                         GetCourseDetails(courseId),
                         GetCourseMaterials(courseId),
                         GetCourseAssignments(courseId),
-                        // GetCourseExams(courseId),
+                        GetCourseExams(courseId),
                     ]);
                 setCourse(courseData);
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
-                // setExams(examData);
+                setExams(examData);
             } catch (error) {
                 console.error("獲取課程數據失敗:", error);
                 navigate("/dashboard");
