@@ -31,12 +31,13 @@ describe('Calendar Controller', () => {
 
 
             expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({ message: 'userId is required' });
 
 
         })
 
 
-        it('userId不存在，或者user沒任何參與時應該返回404', async () => {
+        it('userId不存在時應該返回404', async () => {
             const req = createMockReq({}, {
                 userId: '9999'
             });
@@ -45,9 +46,22 @@ describe('Calendar Controller', () => {
             await GetCalendarEvents(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.send).toHaveBeenCalledWith([])
+            expect(res.send).toHaveBeenCalledWith({ message: 'User not found' });
 
 
+        })
+
+        it('user 沒任何作業和考試時回傳空陣列', async () => {
+            const req = createMockReq({}, {
+                userId: '4'
+            });
+
+            const res = createMockRes();
+
+            await GetCalendarEvents(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.data).toEqual([]);
         })
     })
 
