@@ -93,7 +93,6 @@ async function UploadExam(req, res) {
         } = req.body;
 
         const files = req.files || [];
-        if (!files.length) return res.status(400).json({ message: "No files uploaded" });
 
         const savedFiles = [];
         for (const file of files) {
@@ -122,7 +121,7 @@ async function UploadExam(req, res) {
         const dbResult = await AddExamByCourseId(examData);
 
         res.status(200).json({
-            message: "考試附件上傳成功",
+            message: savedFiles.length > 0 ? "考試上傳成功（包含附件）" : "考試上傳成功",
             filesCount: savedFiles.length,
             fileNames: savedFiles.map(f => f.filename),
             data: dbResult

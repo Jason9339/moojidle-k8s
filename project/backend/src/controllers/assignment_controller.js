@@ -81,10 +81,7 @@ async function UploadAssignment(req, res) {
         } = req.body;
 
         // 支援多檔案上傳
-        const files = req.files || []; // 使用 req.files 而不是 req.file
-        if (!files || files.length === 0) {
-            return res.status(400).json({ message: "No files uploaded" });
-        }
+        const files = req.files || [];
 
         // 儲存所有檔案到硬碟
         const savedFiles = [];
@@ -114,7 +111,7 @@ async function UploadAssignment(req, res) {
         const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
-            message: "上傳作業成功",
+            message: savedFiles.length > 0 ? "作業上傳成功（包含附件）" : "作業上傳成功",
             filesCount: savedFiles.length,
             fileNames: savedFiles.map(f => f.filename),
             data: dbResult

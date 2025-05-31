@@ -47,15 +47,6 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
             return;
         }
 
-        if (!description.trim()) {
-            alert("請輸入簡介/描述");
-            return;
-        }
-        if (files.length === 0) {
-            alert("請選擇至少一個檔案");
-            return;
-        }
-
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
@@ -187,18 +178,17 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
             </div>
 
             <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label htmlFor="description">簡介/描述</label>
+                <label htmlFor="description">簡介/描述 (optional)</label>
                 <textarea
                     id="description"
                     placeholder="簡介/描述"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                 />
             </div>
 
             <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label>選擇檔案 (可選擇多個)</label>
+                <label>選擇檔案 (可選擇多個) (optional)</label>
                 <div className={styles["file-input-custom-area"]}>
                     <button
                         type="button"
@@ -215,7 +205,6 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
                         onChange={handleFileChange}
                         ref={fileInputRef}
                         style={{ display: "none" }}
-                        required
                     />
                     <span className={styles["file-count-display"]}>
                         {files.length === 0 ? "尚未選擇任何檔案" : `已選擇 ${files.length} 個檔案`}
