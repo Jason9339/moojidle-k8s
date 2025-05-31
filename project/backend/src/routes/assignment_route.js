@@ -8,7 +8,8 @@ import {
     DeleteAssignment,
     SubmitAssignment,
     GetAssignmentSubmission,
-    DeleteSubmittedFile // 新增：刪除學生提交檔案
+    DeleteSubmittedFile, // 新增：刪除學生提交檔案
+    DeleteSubmissionRecord // 新增：完全刪除學生作業提交記錄
 } from '#src/controllers/assignment_controller.js';
 
 import { 
@@ -45,5 +46,8 @@ router.post('/:assignmentId/submit', uploadMultipleWithMulter, SubmitAssignment,
 
 // 刪除學生提交的檔案
 router.delete('/:assignmentId/submit-file', DeleteSubmittedFile);
+
+// 完全刪除學生的作業提交記錄
+router.delete('/:assignmentId/submission', DeleteSubmissionRecord);
 
 export default router;

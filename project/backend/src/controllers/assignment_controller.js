@@ -221,27 +221,58 @@ async function SubmitAssignment(req, res) {
         
         // 如果有新檔案要上傳，先儲存到硬碟
         if (files.length > 0) {
-            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);
-            for (const file of files) {
+            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);            for (const file of files) {
                 const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submit");
                 savedFiles.push({
                     filename: savedFile.originalName,
                     url: savedFile.relativeUrl,
+                    path_to_file: savedFile.relativeUrl,
                     fileId: savedFile.fileId
                 });
                 console.log(`[SubmitAssignment] 檔案已儲存: ${savedFile.originalName}`);
             }
         }
-        
-        if (existingSubmission) {
+          if (existingSubmission) {
             // 更新現有提交 - 將新檔案添加到現有檔案列表
             const updatedAttachments = [...(existingSubmission.attachments || []), ...savedFiles];
+            const finalDescription = description !== undefined ? description : existingSubmission.description;
+            
+            // 檢查更新後的內容是否完全為空
+            const hasDescription = finalDescription && finalDescription.trim() !== '';
+            const hasFiles = updatedAttachments.length > 0;
+            
+            if (!hasDescription && !hasFiles) {
+                // 描述為空且沒有檔案，完全刪除提交記錄
+                await db.collection("submitted_ass").deleteOne({
+                    ass_id: parseInt(assignmentId),
+                    submit_by_user_id: parseInt(submitByUserId)
+                });
+                
+                console.log(`[SubmitAssignment] 提交記錄已完全刪除（描述和檔案都為空）`);
+                
+                res.status(200).json({ 
+                    message: "作業提交記錄已完全清除",
+                    data: { 
+                        deleted: true,
+                        reason: "描述和檔案都為空" 
+                    }
+                });
+                return;
+            }
             
             const updateData = {
                 submit_date: now, // 更新提交時間為最後修改時間
                 attachments: updatedAttachments,
-                description: description || existingSubmission.description
+                description: finalDescription
             };
+            
+            console.log(`[SubmitAssignment] 更新數據:`, {
+                原始描述: existingSubmission.description,
+                傳入描述: description,
+                最終描述: updateData.description,
+                描述是否為undefined: description === undefined,
+                描述是否為空字串: description === ""
+            });
             
             await db.collection("submitted_ass").updateOne(
                 { 
@@ -338,43 +369,128 @@ async function DeleteSubmittedFile(req, res) {
         if (!submission) {
             return res.status(404).json({ message: "未找到提交紀錄" });
         }
-        
-        // 從附件列表中移除指定檔案
+          // 從附件列表中移除指定檔案
         const updatedAttachments = submission.attachments.filter(att => att.url !== fileUrl);
+        
+        // 找到要刪除的檔案資訊
+        const fileToDelete = submission.attachments.find(att => att.url === fileUrl);
+        const deleteFilePath = fileToDelete?.path_to_file || fileToDelete?.url || fileUrl;
         
         // 刪除硬碟上的檔案
         const { DeleteFile } = await import('#src/services/file_services/file_storage_service.js');
         try {
-            await DeleteFile(fileUrl);
-            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${fileUrl}`);
+            await DeleteFile(deleteFilePath);
+            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${deleteFilePath}`);
         } catch (deleteError) {
             console.warn(`[DeleteSubmittedFile] 刪除硬碟檔案失敗: ${deleteError.message}`);
             // 繼續執行，不要因為檔案刪除失敗而中斷整個操作
         }
         
-        // 更新資料庫紀錄
-        await db.collection("submitted_ass").updateOne(
-            { 
+        // 檢查是否需要完全刪除提交記錄
+        const hasDescription = submission.description && submission.description.trim() !== '';
+        const hasOtherFiles = updatedAttachments.length > 0;
+        
+        if (!hasDescription && !hasOtherFiles) {
+            // 描述為空且沒有其他檔案，完全刪除提交記錄
+            await db.collection("submitted_ass").deleteOne({
                 ass_id: parseInt(assignmentId),
                 submit_by_user_id: parseInt(submitByUserId)
-            },
-            { 
-                $set: { 
-                    attachments: updatedAttachments,
-                    submit_date: now // 更新最後修改時間
+            });
+            
+            console.log(`[DeleteSubmittedFile] 提交記錄已完全刪除（無描述且無其他檔案）`);
+            
+            res.status(200).json({ 
+                message: "檔案刪除成功，提交記錄已完全清除",
+                data: { 
+                    deleted: true,
+                    reason: "無描述且無其他檔案" 
                 }
-            }
-        );
-        
-        console.log(`[DeleteSubmittedFile] 檔案刪除成功`);
-        
-        res.status(200).json({ 
-            message: "檔案刪除成功",
-            data: { attachments: updatedAttachments }
-        });
+            });
+        } else {
+            // 仍有描述或其他檔案，僅更新附件列表
+            await db.collection("submitted_ass").updateOne(
+                { 
+                    ass_id: parseInt(assignmentId),
+                    submit_by_user_id: parseInt(submitByUserId)
+                },
+                { 
+                    $set: { 
+                        attachments: updatedAttachments,
+                        submit_date: now // 更新最後修改時間
+                    }
+                }
+            );
+            
+            console.log(`[DeleteSubmittedFile] 檔案刪除成功，提交記錄已更新`);
+            
+            res.status(200).json({ 
+                message: "檔案刪除成功",
+                data: { 
+                    attachments: updatedAttachments,
+                    deleted: false 
+                }
+            });
+        }
         
     } catch (error) {
         console.error("刪除提交檔案錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 完全刪除學生的作業提交記錄
+async function DeleteSubmissionRecord(req, res) {
+    try {
+        const { assignmentId } = req.params;
+        const { submitByUserId } = req.body;
+        
+        console.log(`[DeleteSubmissionRecord] 刪除提交記錄: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}`);
+        
+        if (!assignmentId || !submitByUserId) {
+            return res.status(400).json({ message: "缺少必要參數" });
+        }
+        
+        const db = (await import('mongoose')).default.connection.db;
+        
+        // 查找現有提交紀錄
+        const submission = await db.collection("submitted_ass").findOne({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(submitByUserId)
+        });
+        
+        if (!submission) {
+            return res.status(404).json({ message: "未找到提交紀錄" });
+        }
+        
+        // 刪除所有相關檔案
+        const { DeleteFile } = await import('#src/services/file_services/file_storage_service.js');
+        if (submission.attachments && submission.attachments.length > 0) {
+            for (const attachment of submission.attachments) {
+                const deleteFilePath = attachment.path_to_file || attachment.url;
+                try {
+                    await DeleteFile(deleteFilePath);
+                    console.log(`[DeleteSubmissionRecord] 硬碟檔案已刪除: ${deleteFilePath}`);
+                } catch (deleteError) {
+                    console.warn(`[DeleteSubmissionRecord] 刪除硬碟檔案失敗: ${deleteError.message}`);
+                }
+            }
+        }
+        
+        // 刪除提交記錄
+        await db.collection("submitted_ass").deleteOne({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(submitByUserId)
+        });
+        
+        console.log(`[DeleteSubmissionRecord] 提交記錄已完全刪除`);
+        
+        res.status(200).json({ 
+            message: "作業提交記錄已完全刪除",
+            data: { deleted: true }
+        });
+        
+    } catch (error) {
+        console.error("刪除提交記錄錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 }
@@ -388,5 +504,6 @@ export {
     DeleteAssignment,
     SubmitAssignment,
     GetAssignmentSubmission, // 新增導出
-    DeleteSubmittedFile // 新增刪除學生提交檔案的功能
+    DeleteSubmittedFile, // 新增刪除學生提交檔案的功能
+    DeleteSubmissionRecord // 新增完全刪除學生作業提交記錄的功能
 };

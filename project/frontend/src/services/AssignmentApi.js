@@ -118,3 +118,25 @@ export const DeleteSubmittedFile = async (assignmentId, fileUrl) => {
         throw new Error(err.response?.data?.message || "刪除檔案發生錯誤");
     }
 };
+
+// 完全刪除學生的作業提交記錄
+export const DeleteSubmissionRecord = async (assignmentId) => {
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userId = user?.user_id;
+        if (!userId) {
+            throw new Error("請先登入");
+        }
+
+        const endpoint = `/assignment/${assignmentId}/submission`;
+        const response = await api.delete(endpoint, {
+            data: {
+                submitByUserId: userId
+            }
+        });
+        return response.data;
+    } catch (err) {
+        console.error("刪除作業提交記錄失敗", err);
+        throw new Error(err.response?.data?.message || "刪除提交記錄發生錯誤");
+    }
+};
