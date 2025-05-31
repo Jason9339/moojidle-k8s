@@ -141,7 +141,6 @@ async function UpdateUserTags(userId, newTags) {
 
 async function UpdateUserContactWay(userId, newContactWay) {
     let result;
-
     try {
         result = await mongoose.connection.db.collection('user').updateOne(
             { user_id: parseInt(userId) },
