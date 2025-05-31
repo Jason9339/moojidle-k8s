@@ -65,7 +65,7 @@ const CalendarPage = () => {
                     <Calendar events={events} />
                 </div>
 
-                {/* 小日曆 + 圖例 */}
+                {/* 圖例 */}
                 <aside id="sidebar" className={styles.sidebar}>
                     <div className={styles.legend}>
                         <h3 className={styles.legendTitle}>我的課程</h3>
