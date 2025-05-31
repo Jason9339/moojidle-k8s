@@ -45,12 +45,33 @@ async function GetUpcomingExamsByUserId(req, res) {
 
 async function CourseExams(req, res) {
     try {
-        const courseId = req.params.courseId;
-        const exams = await GetExamsByCourseId(courseId);
-        return res.status(200).json(exams);
+        const { courseId } = req.params;
+
+        let formattedExams = await GetExamsByCourseId(courseId);
+        const course = await FindExamById(courseId);
+
+        // 使用 start_date 而非 create_date
+        const courseStartDate = course.start_date || course.create_date; // 如果沒有 start_date 則使用 create_date 作為備用
+        const courseWeekNum = course.week_num || 16; // 使用課程設定的週數，如果沒有則默認為16週
+
+        formattedExams = formattedExams.map((exam) => {
+            const examDate = exam.start_date || exam.create_date;
+            const week = CalculateWeek(courseStartDate, examDate, courseWeekNum);
+            return {
+                id: exam.exam_id,
+                name: exam.exam_name,
+                description: exam.description,
+                dueDate: exam.end_date,
+                startDate: exam.start_date,
+                attachments: exam.attachments || [],
+                week: week
+            };
+        })
+
+        res.json(formattedExams);
     } catch (error) {
-        console.error("Error in CourseExams:", error);
-        res.status(500).send("Failed to fetch exams for course");
+        console.error("取得課程作業錯誤:", error);
+        res.status(500).json({ message: error.message });
     }
 }
 
