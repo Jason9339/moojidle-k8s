@@ -176,7 +176,7 @@ async function UpdateData(req, res) {
 }
 
 async function UpdateTags(req, res) {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id, 10);
     const { tags } = req.body;
 
     if (!tags) {
