@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { UploadMaterial } from "@/services/MaterialApi";
+import { UploadMaterialFile, UploadMaterialLink } from "@/services/MaterialApi";
 import styles from "./MaterialUploadModal.module.css";
 
 const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
@@ -7,6 +7,8 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [displayDate, setDisplayDate] = useState("");
+    const [uploadType, setUploadType] = useState("file"); // "file" 或 "link"
+    const [url, setUrl] = useState("");
 
     const fileInputRef = useRef(null);
 
@@ -19,13 +21,17 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
             alert("請選擇顯示日期");
             return;
         }
-        if (!description.trim()) {
-            alert("請輸入簡介/描述");
-            return;
-        }
-        if (!file) {
-            alert("請選擇檔案");
-            return;
+        
+        if (uploadType === "file") {
+            if (!file) {
+                alert("請選擇檔案");
+                return;
+            }
+        } else {
+            if (!url.trim()) {
+                alert("請輸入連結");
+                return;
+            }
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
@@ -35,24 +41,38 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
             return;
         }
 
-        const formData = new FormData();
-
-        // 解決中文檔案名稱亂碼問題
-        const renamedFile = new File(
-            [file],
-            encodeURIComponent(file.name),
-            { type: file.type }
-        );
-        formData.append("uploadFile", renamedFile);
-        formData.append("courseId", courseId);
-        formData.append("createByUserId", userId);
-        formData.append("description", description);
-        formData.append("mName", name);
-        formData.append("displayDate", displayDate);
-
         try {
-            await UploadMaterial(formData);
-            alert("教材上傳成功！");
+            if (uploadType === "file") {
+                const formData = new FormData();
+                
+                // 解決中文檔案名稱亂碼問題
+                const renamedFile = new File(
+                    [file],
+                    encodeURIComponent(file.name),
+                    { type: file.type }
+                );
+                formData.append("uploadFile", renamedFile);
+                formData.append("courseId", courseId);
+                formData.append("createByUserId", userId);
+                formData.append("description", description);
+                formData.append("mName", name);
+                formData.append("displayDate", displayDate);
+                
+                await UploadMaterialFile(formData);
+                alert("教材檔案上傳成功！");
+            } else {
+                const linkData = {
+                    createByUserId: userId,
+                    mName: name,
+                    description: description,
+                    displayDate: displayDate,
+                    url: url
+                };
+                
+                await UploadMaterialLink(courseId, linkData);
+                alert("教材連結新增成功！");
+            }
+            
             onSuccess();
             onClose();
         } catch (error) {
@@ -101,40 +121,75 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
             </div>
 
             <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label htmlFor="description">簡介/描述</label>
+                <label htmlFor="description">簡介/描述 (optional)</label>
                 <textarea
                     id="description"
                     placeholder="簡介/描述"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                 />
             </div>
 
-            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label>選擇檔案</label>
-                <div className={styles["file-input-custom-area"]}>
-                    <button
-                        type="button"
-                        onClick={handleFileButtonClick}
-                        className={styles["custom-file-button"]}
-                    >
-                        選擇檔案
-                    </button>
-                    <input
-                        id="file"
-                        type="file"
-                        accept="*"
-                        onChange={handleFileChange}
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        required
-                    />
-                    <span className={styles["file-name-display"]}>
-                        {file ? file.name : "尚未選擇任何檔案"}
-                    </span>
+            <div className={styles["input-group"]}>
+                <label>教材類型</label>
+                <div className={styles["radio-group"]}>
+                    <label className={`${styles["radio-label"]} ${uploadType === "file" ? styles["radio-label-selected"] : ""}`}>
+                        <input
+                            type="radio"
+                            value="file"
+                            checked={uploadType === "file"}
+                            onChange={(e) => setUploadType(e.target.value)}
+                        />
+                        <span>檔案</span>
+                    </label>
+                    <label className={`${styles["radio-label"]} ${uploadType === "link" ? styles["radio-label-selected"] : ""}`}>
+                        <input
+                            type="radio"
+                            value="link"
+                            checked={uploadType === "link"}
+                            onChange={(e) => setUploadType(e.target.value)}
+                        />
+                        <span>連結</span>
+                    </label>
                 </div>
             </div>
+
+            {uploadType === "file" ? (
+                <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
+                    <label>選擇檔案</label>
+                    <div className={styles["file-input-custom-area"]}>
+                        <button
+                            type="button"
+                            onClick={handleFileButtonClick}
+                            className={styles["custom-file-button"]}
+                        >
+                            選擇檔案
+                        </button>
+                        <input
+                            id="file"
+                            type="file"
+                            accept="*"
+                            onChange={handleFileChange}
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
+                        />
+                        <span className={styles["file-name-display"]}>
+                            {file ? file.name : "尚未選擇任何檔案"}
+                        </span>
+                    </div>
+                </div>
+            ) : (
+                <div className={styles["input-group"]}>
+                    <label htmlFor="url">連結網址</label>
+                    <input
+                        id="url"
+                        type="url"
+                        placeholder="https://example.com"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                    />
+                </div>
+            )}
 
             <div className={styles["button-group"]}>
                 <button onClick={onClose}>取消</button>

@@ -25,11 +25,17 @@ function CourseTable({
         }));
     };
 
-    const handleMaterialDownload = async (path, filename) => {
+    const handleMaterialDownload = async (material) => {
         try {
-            await DownloadMaterial(path, filename);
+            if (material.path_to_file) {
+                // 檔案類型：使用 DownloadMaterial API
+                await DownloadMaterial(material.path_to_file, material.filename || material.name);
+            } else if (material.url) {
+                // 連結類型：直接打開連結
+                window.open(material.url, '_blank');
+            }
         } catch (e) {
-            alert(`下載失敗：${filename}`);
+            alert(`下載失敗：${material.name}`);
             console.error("Download error:", e);
         }
     };
@@ -268,7 +274,7 @@ function CourseTable({
                                             <div
                                                 key={idx}
                                                 className={styles["clickable-material"]}
-                                                onClick={() => handleMaterialDownload(m.path_to_file, m.filename)}
+                                                onClick={() => handleMaterialDownload(m)}
                                             >
                                                 <span className={styles["material-name"]} title={m.name}>
                                                     {m.name}
