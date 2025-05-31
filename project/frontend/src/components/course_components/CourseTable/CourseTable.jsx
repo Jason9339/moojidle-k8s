@@ -15,6 +15,7 @@ function CourseTable({
 }) {
     const [editingMaterials, setEditingMaterials] = useState([]);
     const [expandedAssignments, setExpandedAssignments] = useState({});
+    const [expandedExams, setExpandedExams] = useState({});
 
     const toggleAssignment = (assignmentId) => {
         if (!assignmentId) return;
@@ -158,7 +159,6 @@ function CourseTable({
             : "";
     }, []);
 
-    const [expandedExams, setExpandedExams] = useState({});
     const toggleExam = (examId) => {
         if (!examId) return;
         setExpandedExams((prev) => ({
@@ -174,6 +174,7 @@ function CourseTable({
         });
     }, [exams, weekNum]);
 
+    console.log(exams);
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>

@@ -22,13 +22,13 @@ router.get('/coming', GetUpcomingExamsByUserId);
 // get all couses exams
 router.get('/:courseId', CourseExams);
 
-// POST /assignment/course/:courseId/upload - 支援多檔案上傳
+// POST /exams/course/:courseId/upload - 支援多檔案上傳
 router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadExam, MulterErrorHandling);
 
-// GET /assignment/download
-router.get('/download', DownloadExam);
+// GET /exams/download
+router.get('/download/download', DownloadExam);
 
-// DELETE /assignment/delete
+// DELETE /exams/delete
 router.delete('/delete', DeleteExam);
 
 

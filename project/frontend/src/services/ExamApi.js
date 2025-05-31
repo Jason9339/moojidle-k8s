@@ -27,7 +27,7 @@ export const UploadExam = async (formData) => {
 
 export const DownloadExam = async (pathToFile, filename) => {
     try {
-        const response = await api.get(`/exams/download`, {
+        const response = await api.get(`/exams/download/download`, {
             params: { path: pathToFile },
             responseType: 'blob',
         });
@@ -47,7 +47,7 @@ export const DownloadExam = async (pathToFile, filename) => {
         link.click();
         link.parentNode.removeChild(link);
     } catch (error) {
-        console.error("下載作業錯誤:", error);
+        console.error(error);
     }
 };
 
