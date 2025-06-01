@@ -153,27 +153,37 @@ async function UpdatePassword(req, res) {
 async function UpdateData(req, res) {
     const userId = req.params.id;
     const { contactWays } = req.body;
-    if (!contactWays) {
-        return res.status(400).send({ message: "Contact ways are required" });
+
+    if (!Array.isArray(contactWays) || contactWays.length === 0) { // 確保 `contactWays` 為陣列
+        return res.status(400).send({ message: "Contact ways must be a non-empty array" });
     }
 
     try {
-        // check if user exists
+        // 檢查用戶是否存在
         const user = await FindOneUserById(userId);
         if (!user) {
             return res.status(404).send({ message: "User not found" });
         }
-        // update contact ways
-        const result = await UpdateUserContactWay(userId, contactWays);
-        if (result.modifiedCount > 0) {
+
+        let updatedCount = 0;
+        for (const newContactWay of contactWays) { // 遍歷每個 contact way 進行更新
+            const result = await UpdateUserContactWay(userId, newContactWay);
+            if (result.modifiedCount > 0) {
+                updatedCount += result.modifiedCount;
+            }
+        }
+
+        if (updatedCount > 0) {
             res.status(200).send({ message: "Contact ways updated successfully" });
         } else {
             res.status(500).send({ message: "Failed to update contact ways" });
         }
     } catch (err) {
+        console.error("Error processing request:", err);
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
+
 
 async function UpdateTags(req, res) {
     const userId = parseInt(req.params.id, 10);

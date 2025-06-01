@@ -143,15 +143,21 @@ async function UpdateUserContactWay(userId, newContactWay) {
     let result;
     try {
         result = await mongoose.connection.db.collection('user').updateOne(
-            { user_id: parseInt(userId) },
-            { $set: { contact_ways: newContactWay } }
+            { user_id: parseInt(userId), "contact_ways.approach": newContactWay.approach }, // 確保匹配的數據存在
+            { 
+                $set: { 
+                    "contact_ways.$.approach": newContactWay.approach, 
+                    "contact_ways.$.details": newContactWay.details 
+                } 
+            }
         );
     } catch (err) {
-        console.log(err);
+        console.error("Error updating contact ways:", err);
     }
 
     return result;
 }
+
 
 export {
     RegisterUser,
