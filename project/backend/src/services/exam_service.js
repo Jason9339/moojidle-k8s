@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
+
 // Fetch upcoming exams for a specific user
 async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
     try {
@@ -96,9 +98,56 @@ async function UpdateOneExamScoreById(examId, max_score, percentage) {
         }
 }
 
+async function FindExamsByCourseId(courseId) {
+    try {
+        const db = mongoose.connection.db;
+        const parsedCourseId = parseInt(courseId, 10);
+
+        const exams = await db.collection('exams')
+            .find({ in_course_id: parsedCourseId })
+            .sort({ end_date: 1 }) 
+            .toArray();
+
+        return exams
+    } catch (error) {
+        console.error("[GetExamsByCourseId] Error:", error);
+        throw new Error(`Failed to retrieve exams for course: ${error.message}`);
+    }
+}
+
+async function AddExamByCourseId(examData) {
+    try {
+        const db = mongoose.connection.db;
+
+        const nextExamId = await GetNextCounterId("exams");
+
+        const examDoc = {
+            exam_id: nextExamId,
+            ...examData
+        };
+
+        const result = await mongoose.connection.db.collection("exams").insertOne(examDoc);
+        return result;
+    } catch (error) {
+        console.error(`[InsertExamToDB] Error inserting exam:`, error);
+        throw new Error(`Failed to insert exam: ${error.message}`);
+    }
+}
+
+async function FindExamById(examId) {
+    const db = mongoose.connection.db;
+    return db.collection("exams").findOne({ exam_id: parseInt(examId) });
+}
+
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
     FindProjectedExamsByCourseId,
+    FindExamsByCourseId,
+    FindExamById,
 
-    UpdateOneExamScoreById
+    AddExamByCourseId,
+    
+    UpdateOneExamScoreById,
+    
+    // getComingExams
 };
