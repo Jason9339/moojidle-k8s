@@ -1,0 +1,304 @@
+.upload-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 32px;
+    z-index: 1000;
+    width: 670px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.upload-modal h2 {
+    margin: 0 0 0 0;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+    font-weight: 600;
+}
+
+.upload-modal select,
+.upload-modal input[type="text"],
+.upload-modal input[type="date"],
+.upload-modal input[type="time"],
+.upload-modal input[type="number"],
+.upload-modal input[type="datetime-local"],
+.upload-modal textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.upload-modal select:focus,
+.upload-modal input:focus,
+.upload-modal textarea:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.upload-modal textarea {
+    resize: none;
+    height: 100px;
+    font-family: inherit;
+}
+
+.upload-modal button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    min-width: 100px;
+}
+
+.upload-modal label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 14px;
+    display: block;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.horizontal-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.horizontal-group .input-group {
+    flex: 1;
+}
+
+.vertical-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    flex: 1;
+    width: 100%;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.upload-modal .button-group button:first-of-type {
+    background-color: #dc3545;
+    color: white;
+}
+
+.upload-modal .button-group button:first-of-type:hover {
+    background-color: #c82333;
+}
+
+.upload-modal .button-group button:last-of-type {
+    background-color: #28a745;
+    color: white;
+}
+
+.upload-modal .button-group button:last-of-type:hover {
+    background-color: #218838;
+}
+
+.datetime-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.datetime-row > label {
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.datetime-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.datetime-inline input[type="date"],
+.datetime-inline input[type="time"] {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    margin: 0;
+}
+
+.range-separator {
+    font-weight: 600;
+    font-size: 16px;
+    color: #666;
+    padding: 0 4px;
+}
+
+.score-group {
+    display: flex;
+    gap: 20px;
+}
+
+.score-group .input-group {
+    flex: 1;
+}
+
+.file-input-custom-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.custom-file-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.custom-file-button:hover {
+    background-color: #5a6268;
+}
+
+.file-count-display {
+    font-size: 14px;
+    color: #666;
+    flex-grow: 1;
+}
+
+.file-list {
+    margin-top: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+.file-item:last-child {
+    margin-bottom: 0;
+}
+
+.file-name {
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: 8px;
+}
+
+.remove-file-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: unset;
+}
+
+.remove-file-button:hover {
+    background-color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+    .upload-modal {
+        width: 95%;
+        padding: 24px;
+    }
+
+    .score-group {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .datetime-inline {
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    .datetime-inline input[type="date"],
+    .datetime-inline input[type="time"] {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .button-group button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}

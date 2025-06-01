@@ -148,8 +148,8 @@ async function DeleteCourseMaterial(req, res) {
     }
 }
 
-// 上傳課程教材
-async function UploadCourseMaterial(req, res) {
+// 上傳課程教材 - 檔案
+async function UploadCourseMaterialFile(req, res) {
     try {
         const { courseId } = req.params;
         const {
@@ -159,20 +159,29 @@ async function UploadCourseMaterial(req, res) {
             displayDate
         } = req.body;
 
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({ message: "No file uploaded" });
+        if (!mName || !mName.trim()) {
+            return res.status(400).json({ message: "請輸入教材名稱" });
         }
 
+        if (!displayDate) {
+            return res.status(400).json({ message: "請選擇顯示日期" });
+        }
+
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ message: "請選擇檔案" });
+        }
+
+        const now = new Date();
+        
         // 儲存檔案到硬碟
         const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material");
-        const now = new Date();
-
+        
         const materialData = {
             in_course_id: parseInt(courseId),
             create_by_user_id: parseInt(createByUserId),
             m_name: mName,
-            description,
+            description: description || "",
             create_date: now,
             display_date: new Date(displayDate),
             path_to_file: savedFile.relativeUrl,
@@ -182,13 +191,64 @@ async function UploadCourseMaterial(req, res) {
         const dbResult = await InsertMaterialToDB(materialData);
 
         res.status(200).json({
-            message: "上傳教材成功",
+            message: "教材檔案上傳成功",
             fileId: savedFile.fileId,
             fileName: savedFile.originalName,
             data: dbResult
         });
+
     } catch (error) {
-        console.error("上傳教材錯誤:", error);
+        console.error("上傳教材檔案錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 上傳課程教材 - 連結
+async function UploadCourseMaterialLink(req, res) {
+    try {
+        const { courseId } = req.params;
+        const {
+            createByUserId,
+            mName,
+            description,
+            displayDate,
+            url
+        } = req.body;
+
+        if (!mName || !mName.trim()) {
+            return res.status(400).json({ message: "請輸入教材名稱" });
+        }
+
+        if (!displayDate) {
+            return res.status(400).json({ message: "請選擇顯示日期" });
+        }
+
+        if (!url || !url.trim()) {
+            return res.status(400).json({ message: "請輸入連結" });
+        }
+
+        const now = new Date();
+        
+        const materialData = {
+            in_course_id: parseInt(courseId),
+            create_by_user_id: parseInt(createByUserId),
+            m_name: mName,
+            description: description || "",
+            create_date: now,
+            display_date: new Date(displayDate),
+            url: url
+        };
+
+        const dbResult = await InsertMaterialToDB(materialData);
+
+        res.status(200).json({
+            message: "教材連結新增成功",
+            url: url,
+            data: dbResult
+        });
+
+    } catch (error) {
+        console.error("新增教材連結錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 }
@@ -204,7 +264,7 @@ function DownloadMaterial(req, res) {
     const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
     // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ Resolved file path:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -252,7 +312,8 @@ export {
     GetCourseFiles,
     UpdateCourseMaterials,
     DeleteCourseMaterial,
-    UploadCourseMaterial,
+    UploadCourseMaterialFile,
+    UploadCourseMaterialLink,
     DownloadMaterial,
     DeleteMaterial
 };

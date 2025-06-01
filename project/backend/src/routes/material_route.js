@@ -3,7 +3,8 @@ import {
     GetCourseFiles, 
     UpdateCourseMaterials, 
     DeleteCourseMaterial,
-    UploadCourseMaterial,
+    UploadCourseMaterialFile,
+    UploadCourseMaterialLink,
     DownloadMaterial,
     DeleteMaterial
 } from '#src/controllers/material_controller.js';
@@ -23,8 +24,11 @@ router.get('/course/:courseId/materials', GetCourseFiles);
 // POST /material/course/:courseId/materials
 router.post('/course/:courseId/materials', UpdateCourseMaterials);
 
-// POST /material/course/:courseId/upload
-router.post('/course/:courseId/upload', uploadWithMulter, UploadCourseMaterial, MulterErrorHandling);
+// POST /material/course/:courseId/upload-file - 專門處理檔案上傳
+router.post('/course/:courseId/upload-file', uploadWithMulter, UploadCourseMaterialFile, MulterErrorHandling);
+
+// POST /material/course/:courseId/upload-link - 專門處理連結上傳
+router.post('/course/:courseId/upload-link', UploadCourseMaterialLink);
 
 // DELETE /material/course/:courseId/materials/:materialId
 router.delete('/course/:courseId/materials/:materialId', DeleteCourseMaterial);
