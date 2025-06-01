@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { UploadMaterialFile, UploadMaterialLink } from "@/services/MaterialApi";
 import styles from "./MaterialUploadModal.module.css";
 
-const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
+const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [file, setFile] = useState(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -11,6 +11,22 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
     const [url, setUrl] = useState("");
 
     const fileInputRef = useRef(null);
+
+    // 計算課程的開始和結束日期範圍
+    const dateRange = useMemo(() => {
+        if (!course?.start_date || !course?.week_num) {
+            return { min: null, max: null };
+        }
+        
+        const startDate = new Date(course.start_date);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + (course.week_num * 7) - 1);
+        
+        return {
+            min: startDate.toISOString().split('T')[0],
+            max: endDate.toISOString().split('T')[0]
+        };
+    }, [course]);
 
     const handleUpload = async () => {
         if (!name.trim()) {
@@ -109,13 +125,22 @@ const MaterialUploadModal = ({ onClose, courseId, onSuccess }) => {
                 />
             </div>
 
-            <div className={styles["input-group"]}>
-                <label htmlFor="displayDate">顯示日期</label>
+            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
+                <label htmlFor="displayDate">
+                    顯示日期
+                    {dateRange.min && dateRange.max && (
+                        <small style={{ color: '#6c757d', fontSize: '12px', marginLeft: '8px' }}>
+                            (可選擇範圍：{dateRange.min} 至 {dateRange.max})
+                        </small>
+                    )}
+                </label>
                 <input
                     id="displayDate"
                     type="date"
                     value={displayDate}
                     onChange={(e) => setDisplayDate(e.target.value)}
+                    min={dateRange.min}
+                    max={dateRange.max}
                     required
                 />
             </div>

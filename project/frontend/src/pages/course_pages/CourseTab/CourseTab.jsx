@@ -198,6 +198,7 @@ export default function CourseInfoPage() {
                     <MaterialUploadModal
                         onClose={() => setShowMaterialUploadModal(false)}
                         courseId={courseId}
+                        course={course}
                         onSuccess={() => window.location.reload()}
                     />
                 </>
@@ -212,6 +213,7 @@ export default function CourseInfoPage() {
                     <AssignmentUploadModal
                         onClose={() => setShowAssignmentUploadModal(false)}
                         courseId={courseId}
+                        course={course}
                         onSuccess={() => window.location.reload()}
                     />
                 </>
@@ -226,6 +228,7 @@ export default function CourseInfoPage() {
                     <ExamUploadModal
                         onClose={() => setShowExamUploadModal(false)}
                         courseId={courseId}
+                        course={course}
                         onSuccess={() => window.location.reload()}
                     />
                 </>

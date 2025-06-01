@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { UploadAssignment } from "@/services/AssignmentApi";
 import styles from "./AssignmentUploadModal.module.css";
 
-const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
+const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -14,6 +14,22 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
     const [percentage, setPercentage] = useState("");
 
     const fileInputRef = useRef(null);
+
+    // 計算課程的開始和結束日期範圍
+    const dateRange = useMemo(() => {
+        if (!course?.start_date || !course?.week_num) {
+            return { min: null, max: null };
+        }
+        
+        const startDate = new Date(course.start_date);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + (course.week_num * 7) - 1);
+        
+        return {
+            min: startDate.toISOString().split('T')[0],
+            max: endDate.toISOString().split('T')[0]
+        };
+    }, [course]);
 
     const handleUpload = async () => {
         if (!name.trim()) {
@@ -116,12 +132,21 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
             </div>
 
             <div className={styles["datetime-row"]}>
-                <label>作業時間區間</label>
+                <label>
+                    作業時間區間
+                    {dateRange.min && dateRange.max && (
+                        <small style={{ color: '#6c757d', fontSize: '12px', marginLeft: '8px' }}>
+                            (可選擇日期範圍：{dateRange.min} 至 {dateRange.max})
+                        </small>
+                    )}
+                </label>
                 <div className={styles["datetime-inline"]}>
                     <input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
+                        min={dateRange.min}
+                        max={dateRange.max}
                         required
                     />
                     <input
@@ -135,6 +160,8 @@ const AssignmentUploadModal = ({ onClose, courseId, onSuccess }) => {
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
+                        min={dateRange.min}
+                        max={dateRange.max}
                         required
                     />
                     <input
