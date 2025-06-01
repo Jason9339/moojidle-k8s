@@ -1,8 +1,8 @@
 import React, { useState, useRef, useMemo } from "react";
-import { UploadAssignment } from "@/services/AssignmentApi";
-import styles from "./AssignmentUploadModal.module.css";
+import { UploadExam } from "@/services/ExamApi"; 
+import styles from "./ExamUploadModal.module.css";
 
-const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
+const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -33,7 +33,7 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     const handleUpload = async () => {
         if (!name.trim()) {
-            alert("請輸入作業名稱");
+            alert("請輸入考試名稱");
             return;
         }
         if (!startDate || !startTime) {
@@ -63,6 +63,11 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
             return;
         }
 
+        if (!description.trim()) {
+            alert("請輸入簡介/描述");
+            return;
+        }
+
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
@@ -84,15 +89,15 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         formData.append("courseId", courseId);
         formData.append("createByUserId", userId);
         formData.append("description", description);
-        formData.append("assName", name);
+        formData.append("examName", name);
         formData.append("startDate", startDateTime.toISOString());
         formData.append("endDate", endDateTime.toISOString());
         formData.append("maxScore", parseFloat(maxScore));
         formData.append("percentage", parseFloat(percentage));
 
         try {
-            await UploadAssignment(formData);
-            alert("作業上傳成功！");
+            await UploadExam(formData);
+            alert("考試上傳成功！");
             onSuccess();
             onClose();
         } catch (error) {
@@ -117,14 +122,14 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     return (
         <div className={styles["upload-modal"]}>
-            <h2>上傳作業</h2>
+            <h2>上傳考試</h2>
 
             <div className={styles["input-group"]}>
-                <label htmlFor="name">作業名稱</label>
+                <label htmlFor="name">考試名稱</label>
                 <input
                     id="name"
                     type="text"
-                    placeholder="作業名稱"
+                    placeholder="考試名稱"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -133,7 +138,7 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
             <div className={styles["datetime-row"]}>
                 <label>
-                    作業時間區間
+                    考試時間區間
                     {dateRange.min && dateRange.max && (
                         <small style={{ color: '#6c757d', fontSize: '12px', marginLeft: '8px' }}>
                             (可選擇日期範圍：{dateRange.min} 至 {dateRange.max})
@@ -205,12 +210,13 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
             </div>
 
             <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label htmlFor="description">簡介/描述 (optional)</label>
+                <label htmlFor="description">簡介/描述</label>
                 <textarea
                     id="description"
                     placeholder="簡介/描述"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    required
                 />
             </div>
 
@@ -264,4 +270,4 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     );
 };
 
-export default AssignmentUploadModal; 
+export default ExamUploadModal;

@@ -29,11 +29,11 @@ export const DeleteCourseMaterial = async (courseId, materialId) => {
     }
 };
 
-// 上傳教材
-export const UploadMaterial = async (formData) => {
+// 上傳教材 - 檔案
+export const UploadMaterialFile = async (formData) => {
     try {
         const courseId = formData.get('courseId');
-        const endpoint = `/material/course/${courseId}/upload`;
+        const endpoint = `/material/course/${courseId}/upload-file`;
         
         const response = await api.post(endpoint, formData, {
             headers: {
@@ -42,8 +42,25 @@ export const UploadMaterial = async (formData) => {
         });
         return response.data;
     } catch (err) {
-        console.error("上傳教材失敗", err);
-        throw new Error(err.response?.data?.message || "上傳教材發生錯誤");
+        console.error("上傳教材檔案失敗", err);
+        throw new Error(err.response?.data?.message || "上傳教材檔案發生錯誤");
+    }
+};
+
+// 上傳教材 - 連結
+export const UploadMaterialLink = async (courseId, linkData) => {
+    try {
+        const endpoint = `/material/course/${courseId}/upload-link`;
+        
+        const response = await api.post(endpoint, linkData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return response.data;
+    } catch (err) {
+        console.error("新增教材連結失敗", err);
+        throw new Error(err.response?.data?.message || "新增教材連結發生錯誤");
     }
 };
 

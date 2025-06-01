@@ -23,6 +23,7 @@
 
 .upload-modal select,
 .upload-modal input[type="text"],
+.upload-modal input[type="url"],
 .upload-modal input[type="date"],
 .upload-modal input[type="datetime-local"],
 .upload-modal textarea {
@@ -58,11 +59,15 @@
     color: white;
 }
 
-.upload-modal label {
+.upload-modal label:not(.radio-label) {
     font-weight: bold;
     margin-bottom: 4px;
     flex: 1;
     display: block;
+}
+
+.upload-modal .radio-label {
+    margin-bottom: 0 !important;
 }
 
 .input-group {
@@ -128,4 +133,60 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-grow: 1;
+}
+
+.radio-group {
+    display: flex;
+    gap: 0;
+    margin-top: 6px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 0;
+    background-color: transparent;
+    color: #666;
+    border: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    position: relative;
+    user-select: none;
+    font-size: 14px;
+}
+
+.radio-label:first-child {
+    border-right: 1px solid #ddd;
+}
+
+.radio-label:hover:not(.radio-label-selected) {
+    background-color: #f5f5f5;
+}
+
+.radio-label-selected {
+    background-color: #3b9ff1;
+    color: white;
+    font-weight: 600;
+}
+
+.radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.radio-label span {
+    pointer-events: none;
+    transition: color 0.2s ease;
 } 

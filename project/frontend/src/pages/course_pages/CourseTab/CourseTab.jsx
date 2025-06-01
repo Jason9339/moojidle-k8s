@@ -12,9 +12,12 @@ import {
 
 import { GetCourseAssignments } from "@/services/AssignmentApi";
 
+import { GetCourseExams } from "@/services/ExamApi";
+
 import CourseTable from "@/components/course_components/CourseTable/CourseTable";
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
+import ExamUploadModal from "@/components/course_components/ExamUploadModal/ExamUploadModal";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();
@@ -26,9 +29,11 @@ export default function CourseInfoPage() {
     const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
     const [assignments, setAssignments] = useState([]);
+    const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showMaterialUploadModal, setShowMaterialUploadModal] = useState(false);
     const [showAssignmentUploadModal, setShowAssignmentUploadModal] = useState(false);
+    const [showExamUploadModal, setShowExamUploadModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
@@ -37,15 +42,17 @@ export default function CourseInfoPage() {
         const fetchCourseData = async () => {
             try {
                 setLoading(true);
-                const [courseData, materialsData, assignmentsData] =
+                const [courseData, materialsData, assignmentsData, examData] =
                     await Promise.all([
                         GetCourseDetails(courseId),
                         GetCourseMaterials(courseId),
                         GetCourseAssignments(courseId),
+                        GetCourseExams(courseId),
                     ]);
                 setCourse(courseData);
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
+                setExams(examData);
             } catch (error) {
                 console.error("獲取課程數據失敗:", error);
                 navigate("/dashboard");
@@ -139,6 +146,7 @@ export default function CourseInfoPage() {
                         <button
                             className={styles["upload-button"]}
                             onClick={() => {
+                                setShowExamUploadModal(true);
                                 // TODO: 上傳考試
                             }}
                         >
@@ -176,6 +184,7 @@ export default function CourseInfoPage() {
                 course={course}
                 materials={materials}
                 assignments={assignments}
+                exams={exams}
                 isEditMode={isEditMode}
                 onMaterialsChange={handleMaterialsChange}
             />
@@ -189,6 +198,7 @@ export default function CourseInfoPage() {
                     <MaterialUploadModal
                         onClose={() => setShowMaterialUploadModal(false)}
                         courseId={courseId}
+                        course={course}
                         onSuccess={() => window.location.reload()}
                     />
                 </>
@@ -203,6 +213,22 @@ export default function CourseInfoPage() {
                     <AssignmentUploadModal
                         onClose={() => setShowAssignmentUploadModal(false)}
                         courseId={courseId}
+                        course={course}
+                        onSuccess={() => window.location.reload()}
+                    />
+                </>
+            )}
+
+            {showExamUploadModal && (
+                <>
+                    <div
+                        className={styles["modal-overlay"]}
+                        onClick={() => setShowExamUploadModal(false)}
+                    />
+                    <ExamUploadModal
+                        onClose={() => setShowExamUploadModal(false)}
+                        courseId={courseId}
+                        course={course}
                         onSuccess={() => window.location.reload()}
                     />
                 </>
