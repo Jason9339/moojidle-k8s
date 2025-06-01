@@ -125,15 +125,27 @@ async function UpdateUserPassword(userId, newPassword) {
     return result;
 }
 
-async function UpdateUserTags(userId, newTags) {
+async function UpdateUserTags(userId, _id, newTags) {
     let result;
     try {
+        // 確認該 _id 存在
+        const existingTag = await mongoose.connection.db.collection('custom_tag').findOne({
+            user_id: parseInt(userId),
+            _id: new mongoose.Types.ObjectId(_id) // 確保 _id 是合法的 ObjectId
+        });
+
+        if (!existingTag) {
+            return { modifiedCount: 0, message: "Tag not found" };
+        }
+
+        // 針對指定 _id 修改 `user_tag`
         result = await mongoose.connection.db.collection('custom_tag').updateOne(
-            { user_id: parseInt(userId) },
+            { user_id: parseInt(userId), _id: new mongoose.Types.ObjectId(_id) },
             { $set: { user_tag: newTags } }
         );
     } catch (err) {
-        console.log(err);
+        console.error("Error updating user tags:", err);
+        return { modifiedCount: 0, message: "An error occurred", error: err.message };
     }
 
     return result;

@@ -189,24 +189,37 @@ async function UpdateTags(req, res) {
     const userId = parseInt(req.params.id, 10);
     const { tags } = req.body;
 
-    if (!tags) {
-        return res.status(400).send({ message: "Tags are required" });
+    if (!Array.isArray(tags) || tags.length === 0) { // 確保 `tags` 為陣列且非空
+        return res.status(400).send({ message: "Tags must be a non-empty array" });
     }
 
     try {
-        // check if user exists
+        // 確保用戶存在
         const user = await FindOneUserById(userId);
         if (!user) {
             return res.status(404).send({ message: "User not found" });
         }
-        // update tags
-        const result = await UpdateUserTags(userId, tags);
-        if (result.modifiedCount > 0) {
+
+        let updatedCount = 0;
+        for (const { _id, user_tag } of tags) { // 遍歷 `tags` 陣列
+            if (!_id || !user_tag) {
+                console.warn(`Skipping tag update due to missing _id or user_tag:`, { _id, user_tag });
+                continue; // 跳過無效數據
+            }
+
+            const result = await UpdateUserTags(userId, _id, user_tag);
+            if (result.modifiedCount > 0) {
+                updatedCount += result.modifiedCount;
+            }
+        }
+
+        if (updatedCount > 0) {
             res.status(200).send({ message: "Tags updated successfully" });
         } else {
             res.status(500).send({ message: "Failed to update tags" });
         }
     } catch (err) {
+        console.error("Error updating tags:", err);
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
