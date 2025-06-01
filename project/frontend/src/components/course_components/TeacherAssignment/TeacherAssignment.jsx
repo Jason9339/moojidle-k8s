@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./TeacherAssignment.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 
+import TeacherAssignmentReview from "@/components/course_components/TeacherAssignmentReview/TeacherAssignmentReview";
+
+
 function TeacherAssignment({ assignments }) {
     const [selectedIdx, setSelectedIdx] = useState(0);
     const [tabStartIdx, setTabStartIdx] = useState(0);
@@ -40,7 +43,9 @@ function TeacherAssignment({ assignments }) {
     const showRightArrow = tabStartIdx + groupSize < assignments.length;
 
     const itemsToDisplay = assignments.slice(tabStartIdx, tabStartIdx + groupSize);
-    
+
+    const assignmentId = assignments[selectedIdx]?.id || 0;
+
     return (
         <div>
             <div className={styles.tabListBox}>
@@ -53,11 +58,11 @@ function TeacherAssignment({ assignments }) {
                         ◀
                     </button>
                     <div
-                      className={
-                        itemsToDisplay.length > 0 && itemsToDisplay.length < groupSize
-                            ? `${styles.tabBtnGroup} ${styles.tabBtnGroupLeft}`
-                            : styles.tabBtnGroup
-                      }
+                        className={
+                            itemsToDisplay.length > 0 && itemsToDisplay.length < groupSize
+                                ? `${styles.tabBtnGroup} ${styles.tabBtnGroupLeft}`
+                                : styles.tabBtnGroup
+                        }
                     >
                         {itemsToDisplay.map((a, idx) => {
                             const realIdx = tabStartIdx + idx;
@@ -111,7 +116,7 @@ function TeacherAssignment({ assignments }) {
                     </div>
                 )}
             </div>
-             <div>hello</div>
+            <TeacherAssignmentReview assignmentId={assignmentId} />
         </div>
     );
 }
