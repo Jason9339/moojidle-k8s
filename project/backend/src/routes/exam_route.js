@@ -4,7 +4,7 @@ import {
     GetCourseExams,
     UploadExam,
     DownloadExam,
-    DeleteExam
+    // DeleteExam
     // getComingExams
 } from '#src/controllers/exam_controller.js';
 
@@ -29,7 +29,7 @@ router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadExam, Mu
 router.get('/download/download', DownloadExam);
 
 // DELETE /exams/delete
-router.delete('/delete', DeleteExam);
+// router.delete('/delete', DeleteExam);
 
 
 export default router;

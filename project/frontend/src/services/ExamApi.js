@@ -51,14 +51,14 @@ export const DownloadExam = async (pathToFile, filename) => {
     }
 };
 
-export const DeleteExamFile = async (pathToFile) => {
-    try {
-        const response = await api.delete('/exams/delete', {
-            params: { path: pathToFile }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("刪除考試失敗", error);
-        throw new Error(error.response?.data?.message || "刪除考試時發生錯誤");
-    }
-};
+// export const DeleteExamFile = async (pathToFile) => {
+//     try {
+//         const response = await api.delete('/exams/delete', {
+//             params: { path: pathToFile }
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error("刪除考試失敗", error);
+//         throw new Error(error.response?.data?.message || "刪除考試時發生錯誤");
+//     }
+// };

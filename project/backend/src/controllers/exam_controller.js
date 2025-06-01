@@ -161,32 +161,32 @@ function DownloadExam(req, res) {
     });
 }
 
-async function DeleteExam(req, res) {
-    try {
-        const { path: filePath } = req.query;
+// async function DeleteExam(req, res) {
+//     try {
+//         const { path: filePath } = req.query;
         
-        if (!filePath) {
-            return res.status(400).json({ message: "缺少檔案路徑參數" });
-        }
+//         if (!filePath) {
+//             return res.status(400).json({ message: "缺少檔案路徑參數" });
+//         }
         
-        const result = await DeleteFile(filePath);
+//         const result = await DeleteFile(filePath);
         
-        if (result) {
-            return res.status(200).json({ message: "考試檔案刪除成功" });
-        } else {
-            return res.status(404).json({ message: "考試檔案不存在或刪除失敗" });
-        }
-    } catch (error) {
-        console.error("刪除考試檔案時發生錯誤:", error);
-        res.status(500).json({ message: "刪除考試檔案時發生錯誤", error: error.message });
-    }
-}
+//         if (result) {
+//             return res.status(200).json({ message: "考試檔案刪除成功" });
+//         } else {
+//             return res.status(404).json({ message: "考試檔案不存在或刪除失敗" });
+//         }
+//     } catch (error) {
+//         console.error("刪除考試檔案時發生錯誤:", error);
+//         res.status(500).json({ message: "刪除考試檔案時發生錯誤", error: error.message });
+//     }
+// }
 
 export {
     GetUpcomingExamsByUserId,
     GetCourseExams,
     UploadExam,
     DownloadExam,
-    DeleteExam
+    // DeleteExam
     // getComingExams
 }
