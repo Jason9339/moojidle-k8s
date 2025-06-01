@@ -9,19 +9,6 @@ export const GetTodoList = async (userId) => {
 };
 
 
-// 老師查看作業
-export const GetAssignmentSubmissions = async (assignmentId) => {
-    return (await api.get(`/assignment/${assignmentId}/submissions`)).data;
-};
-
-// 老師改作業
-export const GradeAssignment = async (graderId, submissionId, grade) => {
-    console.log(grade, graderId)
-    return (await api.patch(`/assignment/review/${submissionId}`, {
-        score:grade,
-        graderId: graderId
-    })).data;
-}
 
 export const DownloadAssignmentSubmissionFile = async (submissionId, filename) => {
 

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { GetCourseAssignments } from "@/services/AssignmentApi";
 import TeacherAssignment from "@/components/course_components/TeacherAssignment/TeacherAssignment";
 
-import TeacherAssignmentReview from "@/components/course_components/TeacherAssignmentReview/TeacherAssignmentReview";
 
 
 
@@ -22,7 +21,6 @@ function AssignmentsTab() {
         }
     }, [course.courseId, role]);
 
-    // Get the submission of assignment
 
 
     return (

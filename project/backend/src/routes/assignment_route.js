@@ -2,11 +2,9 @@ import express from 'express';
 import { 
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
-    GetAssignmentSubmissions,
     UploadAssignment,
     DownloadAssignment,
     // DeleteAssignment,
-    ReviewAssignmentSubmission
 } from '#src/controllers/assignment_controller.js';
 
 import { 
@@ -25,10 +23,6 @@ router.get('/todo', GetToDoAssignmentsByUserId);
 
 router.get('/course/:courseId', GetCourseAssignments);
 
-// get the course assignment Submissions Status
-router.get("/:assignmentId/submissions", GetAssignmentSubmissions);
-
-router.patch("/review/:submitAssignmentId", ReviewAssignmentSubmission);
 
 // POST /assignment/course/:courseId/upload - 支援多檔案上傳
 router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadAssignment, MulterErrorHandling);

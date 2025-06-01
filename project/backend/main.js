@@ -31,6 +31,7 @@ import materialRoute from "#src/routes/material_route.js";
 import announcementRoute from "#src/routes/announcement_route.js";
 import discussionBoardRoute from "#src/routes/discussion_board_route.js"
 import postRoute from "#src/routes/post_routes.js"
+import submitAssignmentRoute from "#src/routes/submit_assignment_route.js";
 
 app.use("/user", userRoute);
 app.use("/course", courseRoute);
@@ -38,6 +39,7 @@ app.use("/course/member", courseMemberRoute);
 app.use("/discussion-board", discussionBoardRoute);
 app.use("/post", postRoute);
 app.use("/assignment", assignmentRoute);
+app.use("/submit-assignment", submitAssignmentRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);
