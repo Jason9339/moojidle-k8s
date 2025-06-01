@@ -1,7 +1,8 @@
 // 學生作業列表元件
 import React, { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPaperclip, FaUpload } from "react-icons/fa";
-import { GetCourseAssignments, GetAssignmentSubmission, DownloadAssignment } from "@/services/AssignmentApi";
+import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
+import { GetAssignmentSubmission } from "@/services/SubmittedAssignmentApi";
 import UploadModal from "../UploadModal/UploadModal";
 import "./AssignmentsStudentsTab.css";
 

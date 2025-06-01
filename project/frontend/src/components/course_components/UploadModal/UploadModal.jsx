@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react"; // 引入 useRef
 import { UploadMaterial } from "@/services/MaterialApi";
-import { UploadAssignment, SubmitAssignment, GetAssignmentSubmission, DeleteSubmittedFile, DeleteSubmissionRecord } from "@/services/AssignmentApi";
+import { UploadAssignment } from "@/services/AssignmentApi";
+import { SubmitAssignment, GetAssignmentSubmission, DeleteSubmittedFile, DeleteSubmissionRecord } from "@/services/SubmittedAssignmentApi";
 import styles from "./UploadModal.module.css";
 
 // mode: "material" | "assignment" | "student-assignment"
