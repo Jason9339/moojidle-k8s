@@ -167,24 +167,34 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
         const sAssId = parseInt(submissionId);
         const numericScore = parseFloat(score);
 
-        // console.log(sAssId, numericScore);
-        const score_lb = 0;
-        const score_ub = 100;
-        if (score < score_lb || score > score_ub) {
-            throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
-        }
         
         const db = mongoose.connection.db;
         
         // 先檢查提交是否存在
         const existingSubmission = await db.collection("submitted_ass").findOne(
             { s_ass_id: sAssId }
-        );
-        
+        ); 
         if (!existingSubmission) {
             throw new Error("Submission not found");
         }
         
+        const score_lb = 0;
+        // 獲取作業的最大分數
+        const assignment = await db.collection("assignments").findOne(
+            { ass_id: existingSubmission.ass_id }
+        );
+
+        if (!assignment) {
+            throw new Error("Associated assignment not found");
+        }
+        const score_ub = assignment.max_score;
+
+        if (score < score_lb || score > score_ub) {
+            throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
+        }
+
+
+
         // Prepare update document
         const updateDoc = {
             $set: {
