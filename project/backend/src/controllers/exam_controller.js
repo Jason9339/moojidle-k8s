@@ -139,7 +139,7 @@ function DownloadExam(req, res) {
 
     const sanitizedPath = filePathParam.replace(/^\/+/, "");
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ Resolved file path:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {

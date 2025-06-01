@@ -180,7 +180,6 @@ function CourseTable({
         });
     }, [exams, weekNum]);
 
-    console.log(exams);
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>
