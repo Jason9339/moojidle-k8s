@@ -1,8 +1,5 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    FindAssignmentsByCourseId,
-    GetAssignmentSubmissionTime,
-    InsertAssignmentToDB,
     CreateAssignmentService,
     GetCourseAssignmentsService,
     GetAssignmentSubmissionTimeService,
