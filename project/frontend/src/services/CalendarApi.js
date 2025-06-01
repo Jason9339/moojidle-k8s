@@ -4,9 +4,10 @@ export async function GetCalendarEventsByUserId(userId) {
 
     try {
         const response = await api.get(`/calendar/get-events/${userId}`);
+        console.log(response.data)
         const data = response.data.map((courseWithEvents) => {
-            const events = courseWithEvents.events.map(({ title, start, end }) => ({
-                title: title, start: new Date(start), end: new Date(end)
+            const events = courseWithEvents.events.map(({ start, end, color, ...rest }) => ({
+                ...rest, courseColor: color, start: new Date(start), end: new Date(end)
             })
             );
 
@@ -16,6 +17,7 @@ export async function GetCalendarEventsByUserId(userId) {
 
         })
 
+        console.log("data", data);
         return data;
     }
     catch (e) {

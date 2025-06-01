@@ -42,7 +42,7 @@ const CalendarPage = () => {
                     map.set(item.name, icolor)
                 }
                 item.events.forEach((event) => {
-                    evts.push({ ...event, child: { name: event.title, color: icolor } });
+                    evts.push({ ...event, child: { name: event.title, color: icolor, event } });
                 })
 
             })

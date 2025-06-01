@@ -20,7 +20,6 @@ function WeekTimeView({
 
     const weekStartMoment = moment(date).startOf('week');
     const weekEndNextMoment = moment(weekStartMoment).add(7, 'days');
-    const totalMs = weekEndNextMoment.valueOf() - weekStartMoment.valueOf();
 
     const segments = events
         .filter(evt => {
@@ -29,21 +28,37 @@ function WeekTimeView({
             return evtEndVal > weekStartMoment.valueOf() && evtStartVal < weekEndNextMoment.valueOf();
         })
         .map(evt => {
-            const evtStartM = moment(getStart(evt));
-            const evtEndM = moment(getEnd(evt));
-            const startClampedVal = Math.max(evtStartM.valueOf(), weekStartMoment.valueOf());
-            const endClampedVal = Math.min(evtEndM.valueOf(), weekEndNextMoment.valueOf());
-            const leftPct = ((startClampedVal - weekStartMoment.valueOf()) / totalMs) * 100;
-            const widthPct = ((endClampedVal - startClampedVal) / totalMs) * 100;
+            const startM = moment(getStart(evt))
+            const endM = moment(getEnd(evt))
 
-            if (!evt.child.color) evt.child.color = EVENT_DEFAULT_COLOR;
+            // To current week
+            const startClamped = moment.max(startM, weekStartMoment)
+            const endClamped = moment.min(endM, weekEndNextMoment)
+
+            // start day index of the week
+            const dayIndex = startClamped.diff(weekStartMoment, 'days')
+
+            const rawDays = endClamped
+                .clone()
+                .endOf('day')
+                .diff(startClamped.clone().startOf('day'), 'days', true)
+
+            // how many days last of the events
+            const spanDays = Math.max(1, Math.ceil(rawDays))
+
+            const leftPct = (dayIndex / 7) * 100
+            const widthPct = (spanDays / 7) * 100
+
+            if (!evt.child?.color) evt.child.color = EVENT_DEFAULT_COLOR;
 
             return {
                 evt,
-                startM: evtStartM,
+                startM,
+                dayIndex,
+                spanDays,
                 leftPct,
-                widthPct
-            };
+                widthPct,
+            }
         });
 
     const rows = [];
@@ -103,9 +118,6 @@ function WeekTimeView({
                             }}
                             onMouseLeave={() => setShowTooltip(false)}
                         >
-                            <span className={styles.eventTime}>
-                                {seg.startM.format('HH:mm')}
-                            </span>
                             <span className={styles.eventTitle}>
                                 {seg.evt.title}
                             </span>
