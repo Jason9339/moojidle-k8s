@@ -2,7 +2,14 @@ import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
     FindAssignmentsByCourseId,
     GetAssignmentSubmissionTime,
-    InsertAssignmentToDB
+    InsertAssignmentToDB,
+    CreateAssignmentService,
+    GetCourseAssignmentsService,
+    GetAssignmentSubmissionTimeService,
+    SubmitAssignmentService,
+    GetAssignmentSubmissionService,
+    DeleteSubmittedFileService,
+    DeleteSubmissionRecordService
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -90,7 +97,7 @@ async function GetAssignmentSubmissionTimeController(req, res) {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ message: "缺少 userId" });
 
-        const submitTime = await GetAssignmentSubmissionTime(assignmentId, userId);
+        const submitTime = await GetAssignmentSubmissionTimeService(assignmentId, userId);
         res.json({ submitTime });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -142,7 +149,7 @@ async function UploadAssignment(req, res) {
             attachments: savedFiles // 多檔案附件
         };
 
-        const dbResult = await InsertAssignmentToDB(assignmentData);
+        const dbResult = await CreateAssignmentService(assignmentData);
 
         res.status(200).json({
             message: "上傳作業成功",
@@ -224,20 +231,12 @@ async function SubmitAssignment(req, res) {
             return res.status(400).json({ message: "缺少必要參數" });
         }
         
-        const db = (await import('mongoose')).default.connection.db;
-        const now = new Date();
-        
-        // 檢查是否已有提交紀錄
-        const existingSubmission = await db.collection("submitted_ass").findOne({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(submitByUserId)
-        });
-        
         let savedFiles = [];
         
         // 如果有新檔案要上傳，先儲存到硬碟
         if (files.length > 0) {
-            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);            for (const file of files) {
+            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);
+            for (const file of files) {
                 const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submit");
                 savedFiles.push({
                     filename: savedFile.originalName,
@@ -248,90 +247,22 @@ async function SubmitAssignment(req, res) {
                 console.log(`[SubmitAssignment] 檔案已儲存: ${savedFile.originalName}`);
             }
         }
-          if (existingSubmission) {
-            // 更新現有提交 - 將新檔案添加到現有檔案列表
-            const updatedAttachments = [...(existingSubmission.attachments || []), ...savedFiles];
-            const finalDescription = description !== undefined ? description : existingSubmission.description;
-            
-            // 檢查更新後的內容是否完全為空
-            const hasDescription = finalDescription && finalDescription.trim() !== '';
-            const hasFiles = updatedAttachments.length > 0;
-            
-            if (!hasDescription && !hasFiles) {
-                // 描述為空且沒有檔案，完全刪除提交記錄
-                await db.collection("submitted_ass").deleteOne({
-                    ass_id: parseInt(assignmentId),
-                    submit_by_user_id: parseInt(submitByUserId)
-                });
-                
-                console.log(`[SubmitAssignment] 提交記錄已完全刪除（描述和檔案都為空）`);
-                
-                res.status(200).json({ 
-                    message: "作業提交記錄已完全清除",
-                    data: { 
-                        deleted: true,
-                        reason: "描述和檔案都為空" 
-                    }
-                });
-                return;
-            }
-            
-            const updateData = {
-                submit_date: now, // 更新提交時間為最後修改時間
-                attachments: updatedAttachments,
-                description: finalDescription
-            };
-            
-            console.log(`[SubmitAssignment] 更新數據:`, {
-                原始描述: existingSubmission.description,
-                傳入描述: description,
-                最終描述: updateData.description,
-                描述是否為undefined: description === undefined,
-                描述是否為空字串: description === ""
-            });
-            
-            await db.collection("submitted_ass").updateOne(
-                { 
-                    ass_id: parseInt(assignmentId),
-                    submit_by_user_id: parseInt(submitByUserId)
-                },
-                { $set: updateData }
-            );
-            
-            console.log(`[SubmitAssignment] 作業更新成功，s_ass_id: ${existingSubmission.s_ass_id}`);
-            
-            const updatedSubmission = { ...existingSubmission, ...updateData };
+        
+        // 調用 service 層處理業務邏輯
+        const result = await SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles);
+        
+        if (result.deleted) {
             res.status(200).json({ 
-                message: files.length > 0 ? "檔案上傳成功" : "作業更新成功", 
-                data: updatedSubmission 
+                message: "作業提交記錄已完全清除",
+                data: result
             });
         } else {
-            // 新建提交紀錄
-            const last = await db.collection("submitted_ass").find().sort({ s_ass_id: -1 }).limit(1).toArray();
-            const nextSAssId = last.length > 0 ? last[0].s_ass_id + 1 : 1;
-            
-            // 查 assignment 取得 in_course_id
-            const assignment = await db.collection("assignments").findOne({ ass_id: parseInt(assignmentId) });
-            const submit_user_course_tag = `StudentTag_${submitByUserId}`;
-            
-            const submission = {
-                s_ass_id: nextSAssId,
-                ass_id: parseInt(assignmentId),
-                submit_by_user_id: parseInt(submitByUserId),
-                submit_user_course_tag,
-                submit_date: now,
-                attachments: savedFiles,
-                description: description || ""
-            };
-            
-            console.log(`[SubmitAssignment] 準備寫入資料庫的submission:`, submission);
-            
-            await db.collection("submitted_ass").insertOne(submission);
-            
-            console.log(`[SubmitAssignment] 作業繳交成功，s_ass_id: ${nextSAssId}`);
-            
-            res.status(200).json({ message: "作業繳交成功", data: submission });
+            res.status(200).json({ 
+                message: files.length > 0 ? "檔案上傳成功" : "作業更新成功", 
+                data: result 
+            });
         }
+        
     } catch (error) {
         console.error("學生繳交作業錯誤:", error);
         res.status(500).json({ message: error.message });
@@ -347,11 +278,7 @@ async function GetAssignmentSubmission(req, res) {
         
         if (!user_id) return res.status(400).json({ message: "缺少 user_id" });
         
-        const db = (await import('mongoose')).default.connection.db;
-        const submission = await db.collection("submitted_ass").findOne({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(user_id)
-        });
+        const submission = await GetAssignmentSubmissionService(assignmentId, user_id);
         
         console.log(`[GetAssignmentSubmission] 查詢結果:`, submission);
         res.json({ data: submission });
@@ -373,76 +300,31 @@ async function DeleteSubmittedFile(req, res) {
             return res.status(400).json({ message: "缺少必要參數" });
         }
         
-        const db = (await import('mongoose')).default.connection.db;
-        const now = new Date();
-        
-        // 查找現有提交紀錄
-        const submission = await db.collection("submitted_ass").findOne({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(submitByUserId)
-        });
-        
-        if (!submission) {
-            return res.status(404).json({ message: "未找到提交紀錄" });
-        }
-          // 從附件列表中移除指定檔案
-        const updatedAttachments = submission.attachments.filter(att => att.url !== fileUrl);
-        
-        // 找到要刪除的檔案資訊
-        const fileToDelete = submission.attachments.find(att => att.url === fileUrl);
-        const deleteFilePath = fileToDelete?.path_to_file || fileToDelete?.url || fileUrl;
+        // 調用 service 層處理業務邏輯
+        const result = await DeleteSubmittedFileService(assignmentId, submitByUserId, fileUrl);
         
         // 刪除硬碟上的檔案
-        const { DeleteFile } = await import('#src/services/file_services/file_storage_service.js');
         try {
-            await DeleteFile(deleteFilePath);
-            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${deleteFilePath}`);
+            await DeleteFile(result.deleteFilePath);
+            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${result.deleteFilePath}`);
         } catch (deleteError) {
             console.warn(`[DeleteSubmittedFile] 刪除硬碟檔案失敗: ${deleteError.message}`);
             // 繼續執行，不要因為檔案刪除失敗而中斷整個操作
         }
         
-        // 檢查是否需要完全刪除提交記錄
-        const hasDescription = submission.description && submission.description.trim() !== '';
-        const hasOtherFiles = updatedAttachments.length > 0;
-        
-        if (!hasDescription && !hasOtherFiles) {
-            // 描述為空且沒有其他檔案，完全刪除提交記錄
-            await db.collection("submitted_ass").deleteOne({
-                ass_id: parseInt(assignmentId),
-                submit_by_user_id: parseInt(submitByUserId)
-            });
-            
-            console.log(`[DeleteSubmittedFile] 提交記錄已完全刪除（無描述且無其他檔案）`);
-            
+        if (result.deleted) {
             res.status(200).json({ 
                 message: "檔案刪除成功，提交記錄已完全清除",
                 data: { 
                     deleted: true,
-                    reason: "無描述且無其他檔案" 
+                    reason: result.reason
                 }
             });
         } else {
-            // 仍有描述或其他檔案，僅更新附件列表
-            await db.collection("submitted_ass").updateOne(
-                { 
-                    ass_id: parseInt(assignmentId),
-                    submit_by_user_id: parseInt(submitByUserId)
-                },
-                { 
-                    $set: { 
-                        attachments: updatedAttachments,
-                        submit_date: now // 更新最後修改時間
-                    }
-                }
-            );
-            
-            console.log(`[DeleteSubmittedFile] 檔案刪除成功，提交記錄已更新`);
-            
             res.status(200).json({ 
                 message: "檔案刪除成功",
                 data: { 
-                    attachments: updatedAttachments,
+                    attachments: result.attachments,
                     deleted: false 
                 }
             });
@@ -466,22 +348,12 @@ async function DeleteSubmissionRecord(req, res) {
             return res.status(400).json({ message: "缺少必要參數" });
         }
         
-        const db = (await import('mongoose')).default.connection.db;
-        
-        // 查找現有提交紀錄
-        const submission = await db.collection("submitted_ass").findOne({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(submitByUserId)
-        });
-        
-        if (!submission) {
-            return res.status(404).json({ message: "未找到提交紀錄" });
-        }
+        // 調用 service 層處理業務邏輯
+        const result = await DeleteSubmissionRecordService(assignmentId, submitByUserId);
         
         // 刪除所有相關檔案
-        const { DeleteFile } = await import('#src/services/file_services/file_storage_service.js');
-        if (submission.attachments && submission.attachments.length > 0) {
-            for (const attachment of submission.attachments) {
+        if (result.attachments && result.attachments.length > 0) {
+            for (const attachment of result.attachments) {
                 const deleteFilePath = attachment.path_to_file || attachment.url;
                 try {
                     await DeleteFile(deleteFilePath);
@@ -491,14 +363,6 @@ async function DeleteSubmissionRecord(req, res) {
                 }
             }
         }
-        
-        // 刪除提交記錄
-        await db.collection("submitted_ass").deleteOne({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(submitByUserId)
-        });
-        
-        console.log(`[DeleteSubmissionRecord] 提交記錄已完全刪除`);
         
         res.status(200).json({ 
             message: "作業提交記錄已完全刪除",
