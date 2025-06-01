@@ -4,7 +4,7 @@
     border-radius: 15px;
     padding: 8px 8px; 
     margin-bottom: 1.5%; 
-    /* background: #f7f7f7; */
+    background-color: white;
 }
 
 /* 各個作業 */
@@ -14,6 +14,7 @@
     justify-content: space-between;
     padding: 0;      
     gap: 0;
+    background-color: white;
 }
 
 /* 箭頭 */
@@ -30,44 +31,40 @@
     justify-content: center;
 }
 
-.tabBtnGroup { /* 合併後的 .tabBtnGroup 樣式 */
+.tabBtnGroup { 
     flex: 1;
     display: flex;
-    justify-content: center;  /* 置中排列 */
-    gap: 10px; /* 按鈕間距略微減少 */
+    justify-content: center;  
+    gap: 15px; 
 }
 
 .tabBtn {
-    width: 225px; /* 固定寬度，可依需求調整 */
+    width: 225px;
     min-width: 0;
     max-width: 100%;
-    padding: 6px 14px; /* 上下 padding 減少 */
-    border-radius: 8px; /* 圓角略微調整 */
+    padding: 6px 14px; 
+    border-radius: 8px; 
     border: 2px solid #ccc;
     background: #eee;
-    font-size: 1.1rem; /* 字體大小減少 */
+    font-size: 1.1rem; 
     cursor: pointer;
     transition: background 0.2s, border 0.2s;
-    white-space: nowrap;      /* 不允許換行 */
-    overflow: hidden;         /* 超出隱藏 */
-    text-overflow: ellipsis;  /* 超出顯示... */
+    white-space: nowrap;      
+    overflow: hidden;         
+    text-overflow: ellipsis;  
     text-align: center;
     box-sizing: border-box;
 }
 
-/* .tabBtnGroup 的重複定義已移除 */
-
 .tabBtnGroupLeft {
     justify-content: flex-start !important;
-    margin-left: 8px; /* 維持您上次調整的間距 */
+    margin-left: 100px; 
 }
 
 .tabBtnActive {
     border: 2px solid #ffb380;
     background: #ffb380;
 }
-
-/* .arrowBtn 的重複定義已移除 */
 
 .arrowBtnDisabled {
     opacity: 0.3;
@@ -77,15 +74,16 @@
 .descBox {
     border: 2px solid #222;
     border-radius: 10px;
-    padding: 15px; /* padding 減少 */
-    min-height: 70px; /* 最小高度減少 */
+    padding: 15px; 
+    min-height: 70px; 
+    background-color: white;
 }
 
 .descTitle {
     font-weight: bold;   
-    font-size: 1.2rem; /* 字體大小減少 */
+    font-size: 1.2rem; 
     word-break: break-all; 
-    margin-bottom: 8px; /* 底部間距減少 */
+    margin-bottom: 8px; 
 }
 
 .descHint {
@@ -93,31 +91,31 @@
 }
 
 .descContent {
-    font-size: 0.9rem; /* 字體大小減少 */
-    line-height: 1.5; /* 行高略微調整 */
+    font-size: 0.9rem; 
+    line-height: 1.5; 
     white-space: pre-line;
     transition: max-height 0.2s;
     word-break: break-all; 
     overflow: hidden;
-    margin-bottom: 6px; /* 底部間距減少 */
+    margin-bottom: 6px; 
 }
 
 .descContentCollapsed {
-    max-height: calc(1.5em * 5); /* 5行，根據新的 line-height 和 font-size 調整 */
+    max-height: calc(1.5em * 5); 
     overflow: hidden;
 }
 
 .descToggleWrapper {
     position: relative;
-    min-height: 28px; /* 預留空間給按鈕，減少 */
+    min-height: 28px; 
 }
 
 .descToggle {
     position: absolute;
-    right: 10px; /* 位置微調 */
-    bottom: 6px; /* 位置微調 */
+    right: 10px; 
+    bottom: 6px; 
     color: #1976d2;
-    font-size: 0.9rem;           /* 字體大小減少 */
+    font-size: 0.9rem;          
     cursor: pointer;
     user-select: none;
     background: none;
@@ -126,11 +124,10 @@
     line-height: 1;
     display: flex;
     align-items: center;
-    gap: 2px;                  /* 讓文字和箭頭靠近 */
+    gap: 2px;                  
 }
 
-/* 新增 verticalSpacer class */
 .verticalSpacer {
-    height: 8px; /* 高度減少 */
+    height: 8px; 
 }
 
