@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
-import { GetAssignmentSubmissionTime } from '../../src/services/assignment_service.js';
+import { GetAssignmentSubmissionTime } from '../../src/services/submitted_ass_service.js';
 
 // 測試前請確保測試資料庫有 submitted_ass 資料
 

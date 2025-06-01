@@ -32,21 +32,34 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
     const loadExistingSubmission = async () => {
         if (mode === "student-assignment" && assignmentId) {
             try {
+                console.log(`[loadExistingSubmission] 載入作業提交記錄: assignmentId=${assignmentId}`);
                 const submission = await GetAssignmentSubmission(assignmentId);
+                console.log(`[loadExistingSubmission] 取得的提交記錄:`, submission);
+                
                 if (submission) {
                     setExistingSubmission(submission); // 保存完整的提交記錄
                     setExistingFiles(submission.attachments || []);
                     setDescription(submission.description || "");
+                    console.log(`[loadExistingSubmission] 設定已存在檔案數量: ${(submission.attachments || []).length}`);
                 } else {
+                    console.log(`[loadExistingSubmission] 沒有找到提交記錄，清空狀態`);
                     setExistingSubmission(null);
                     setExistingFiles([]);
                     setDescription("");
+                }
+                
+                // 清空暫存的操作狀態
+                setDeletedFiles([]);
+                setFiles([]);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
                 }
             } catch (error) {
                 console.error("載入已提交作業失敗:", error);
                 setExistingSubmission(null);
                 setExistingFiles([]);
                 setDescription("");
+                setDeletedFiles([]);
             }
         }
     };const handleUpload = async () => {
@@ -206,10 +219,23 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                     
                     try {
                         const submitResult = await SubmitAssignment(assignmentId, formData);
-                        
-                        // 檢查後端是否因為內容為空而自動刪除了提交記錄
+                          // 檢查後端是否因為內容為空而自動刪除了提交記錄
                         if (submitResult.data && submitResult.data.deleted === true) {
-                            alert("作業提交記錄已完全清除（描述和檔案都為空）");
+                            console.log(`[UploadModal] 後端自動刪除了提交記錄，原因: ${submitResult.data.reason}`);
+                            
+                            // 清空前端狀態
+                            setFiles([]);
+                            setExistingFiles([]);
+                            setExistingSubmission(null);
+                            setDeletedFiles([]);
+                            setDescription("");
+                            
+                            // 清空檔案輸入
+                            if (fileInputRef.current) {
+                                fileInputRef.current.value = '';
+                            }
+                            
+                            alert(`作業提交記錄已完全清除（${submitResult.data.reason}）${submitResult.data.deletedCount ? `，共刪除 ${submitResult.data.deletedCount} 個記錄` : ''}`);
                         } else {
                             // 正常的更新或提交
                             if (submissionDeleted && files.length > 0) {
@@ -254,9 +280,7 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
             alert("上傳失敗：" + error.message);        } finally {
             setLoading(false);
         }
-    };
-
-    // 清空所有內容的處理函數
+    };    // 清空所有內容的處理函數
     const handleClearAll = async () => {
         if (!window.confirm("確定要清空所有作業內容嗎？此操作將刪除所有已提交的檔案和描述，且無法復原。")) {
             return;
@@ -264,13 +288,23 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
         
         setLoading(true);
         try {
-            await DeleteSubmissionRecord(assignmentId);
-            alert("作業提交記錄已完全清除！");
+            // 確保有用戶 ID
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userId = user?.user_id;
+            if (!userId) {
+                alert("請先登入");
+                return;
+            }
             
-            // 清空前端狀態
+            console.log(`[handleClearAll] 開始清空作業: assignmentId=${assignmentId}, userId=${userId}`);
+            
+            await DeleteSubmissionRecord(assignmentId);
+            console.log(`[handleClearAll] 刪除請求已完成`);
+            
+            // 立即清空前端狀態
             setFiles([]);
             setExistingFiles([]);
-            setExistingSubmission(null); // 清空完整的提交記錄
+            setExistingSubmission(null);
             setDeletedFiles([]);
             setDescription("");
             
@@ -279,6 +313,10 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                 fileInputRef.current.value = '';
             }
             
+            // 重新載入確認狀態
+            await loadExistingSubmission();
+            
+            alert("作業提交記錄已完全清除！");
             onSuccess && onSuccess();
         } catch (error) {
             console.error("清空作業內容失敗:", error);
