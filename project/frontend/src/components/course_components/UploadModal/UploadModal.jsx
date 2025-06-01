@@ -136,18 +136,15 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                 await UploadMaterial(formData);
                 alert("教材上傳成功！");            } else if (type === "student-assignment") {
                 // 學生繳交作業 - 處理檔案新增和刪除
-                
-                // 檢查是否要完全清空所有內容的情況
+                  // 檢查是否要完全清空所有內容的情況
                 const isEmptyDescription = !description.trim();
                 const hasNoNewFiles = files.length === 0;
                 const willDeleteAllExistingFiles = existingFiles.length > 0 && 
                     deletedFiles.length === existingFiles.length;
-                const hasAnyExistingContent = existingFiles.length > 0 || 
-                    (existingSubmission && existingSubmission.description && existingSubmission.description.trim());
-                  // 情況1: 用戶想要完全清空所有內容（描述為空，沒有新檔案，且要刪除所有現有檔案）
-                // 情況2: 用戶提交空的描述和空的檔案列表，但有現有內容存在
-                if ((isEmptyDescription && hasNoNewFiles && willDeleteAllExistingFiles) ||
-                    (isEmptyDescription && hasNoNewFiles && deletedFiles.length === 0 && hasAnyExistingContent)) {
+                
+                // 只有一種情況才刪除整個提交記錄：用戶想要完全清空所有內容
+                // (描述為空，沒有新檔案，且要刪除所有現有檔案)
+                if (isEmptyDescription && hasNoNewFiles && willDeleteAllExistingFiles) {
                     try {
                         await DeleteSubmissionRecord(assignmentId);
                         alert("作業提交記錄已完全清除！");
@@ -194,6 +191,18 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                 }                // 處理剩餘的檔案操作和提交
                 if (files.length > 0 || deletedCount === 0 || description !== (existingSubmission?.description || "")) {
                     // 有新檔案、沒有刪除操作、或描述有變更，需要調用 SubmitAssignment
+                    
+                    // 計算要保留的檔案（排除被刪除的檔案）
+                    const remainingFiles = existingFiles.filter(file => 
+                        !deletedFiles.includes(file.url || file.filename)
+                    );
+                    
+                    // 如果有刪除操作或者只是更新描述，需要發送 keepFiles 參數
+                    if (deletedFiles.length > 0 || (remainingFiles.length > 0 && files.length === 0)) {
+                        console.log(`[UploadModal] 發送 keepFiles:`, remainingFiles);
+                        formData.append("keepFiles", JSON.stringify(remainingFiles));
+                    }
+                    
                     try {
                         const submitResult = await SubmitAssignment(assignmentId, formData);
                         

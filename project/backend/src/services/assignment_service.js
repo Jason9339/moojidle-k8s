@@ -136,12 +136,12 @@ const InsertAssignmentToDB = async (assignmentData) => {
 };
 
 // 學生繳交作業 - 支援多檔案上傳和修改
-async function SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles) {
+async function SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles, keepFiles = null) {
     try {
         const db = mongoose.connection.db;
         const now = new Date();
         
-        console.log(`[SubmitAssignmentService] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${savedFiles.length}`);
+        console.log(`[SubmitAssignmentService] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${savedFiles.length}, keepFiles=${keepFiles ? 'provided' : 'null'}`);
         
         // 檢查是否已有提交紀錄
         const existingSubmission = await db.collection("submitted_ass").findOne({
@@ -150,8 +150,20 @@ async function SubmitAssignmentService(assignmentId, submitByUserId, description
         });
         
         if (existingSubmission) {
-            // 更新現有提交 - 將新檔案添加到現有檔案列表
-            const updatedAttachments = [...(existingSubmission.attachments || []), ...savedFiles];
+            // 更新現有提交
+            let updatedAttachments;
+            
+            // 處理檔案邏輯
+            if (keepFiles && Array.isArray(keepFiles)) {
+                // 如果提供了 keepFiles，直接使用 keepFiles 作為保留的檔案，再加上新檔案
+                console.log(`[SubmitAssignmentService] 使用 keepFiles 模式，保留 ${keepFiles.length} 個檔案`);
+                updatedAttachments = [...keepFiles, ...savedFiles];
+            } else {
+                // 傳統模式：合併現有檔案和新檔案
+                console.log(`[SubmitAssignmentService] 使用傳統模式，合併現有檔案和新檔案`);
+                updatedAttachments = [...(existingSubmission.attachments || []), ...savedFiles];
+            }
+            
             const finalDescription = description !== undefined ? description : existingSubmission.description;
             
             // 檢查更新後的內容是否完全為空

@@ -219,18 +219,29 @@ async function DeleteAssignment(req, res) {
 async function SubmitAssignment(req, res) {
     try {
         const { assignmentId } = req.params;
-        const { submitByUserId, description } = req.body;
+        const { submitByUserId, description, keepFiles } = req.body;
         const files = req.files || [];
         
-        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${files.length}`);
+        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${files.length}, keepFiles=${keepFiles ? 'true' : 'false'}`);
         
         if (!assignmentId || !submitByUserId) {
             return res.status(400).json({ message: "缺少必要參數" });
         }
         
         let savedFiles = [];
+        let parsedKeepFiles = null;
         
-        // 如果有新檔案要上傳，先儲存到硬碟
+        // 解析 keepFiles 參數（如果前端以JSON字串形式傳送）
+        if (keepFiles) {
+            try {
+                parsedKeepFiles = typeof keepFiles === 'string' ? JSON.parse(keepFiles) : keepFiles;
+                console.log(`[SubmitAssignment] 解析 keepFiles:`, parsedKeepFiles);
+            } catch (error) {
+                console.warn(`[SubmitAssignment] keepFiles 解析失敗:`, error);
+                parsedKeepFiles = null;
+            }
+        }
+          // 如果有新檔案要上傳，先儲存到硬碟
         if (files.length > 0) {
             console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);
             for (const file of files) {
@@ -246,7 +257,7 @@ async function SubmitAssignment(req, res) {
         }
         
         // 調用 service 層處理業務邏輯
-        const result = await SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles);
+        const result = await SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles, parsedKeepFiles);
         
         if (result.deleted) {
             res.status(200).json({ 
