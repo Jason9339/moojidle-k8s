@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef } from "react"; 
 import styles from "./TeacherAssignment.module.css";
-import { GetCourseAssignments } from "@/services/AssignmentApi";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 
-
-function TeacherAssignment({ courseId, currentUserId }) {
-    const [assignments, setAssignments] = useState([]);
+function TeacherAssignment({ assignments }) {
     const [selectedIdx, setSelectedIdx] = useState(0);
     const [tabStartIdx, setTabStartIdx] = useState(0);
     const [descExpanded, setDescExpanded] = useState(false);
@@ -15,26 +12,18 @@ function TeacherAssignment({ courseId, currentUserId }) {
     // only show 5 assignments at a time
     const groupSize = 5;
 
-    useEffect(() => {
-        async function fetchAssignments() {
-            const data = await GetCourseAssignments(courseId);
-            setAssignments(data || []);
-        }
-        fetchAssignments();
-    }, [courseId]);
-
-    // When assignments or selectedIdx changes, ensure selectedIdx is within the display range
+    // 當 assignments 或 selectedIdx 變動時，確保 selectedIdx 在顯示範圍內
     useEffect(() => {
         if (selectedIdx < tabStartIdx) {
             setTabStartIdx(Math.floor(selectedIdx / groupSize) * groupSize);
         } else if (selectedIdx >= tabStartIdx + groupSize) {
             setTabStartIdx(Math.floor(selectedIdx / groupSize) * groupSize);
         }
-    }, [selectedIdx, assignments.length, groupSize]); // Added groupSize for completeness
+    }, [selectedIdx, assignments.length, groupSize]);
 
-    // Monitor if the description exceeds 5 lines
+    // 監控 description 是否超過 5 行
     useEffect(() => {
-        setDescExpanded(false); // Automatically collapse when switching assignments
+        setDescExpanded(false); // 切換 assignment 時自動收合
         if (descRef.current) {
             const lineHeight = parseFloat(getComputedStyle(descRef.current).lineHeight);
             const maxLines = 5;
@@ -43,7 +32,7 @@ function TeacherAssignment({ courseId, currentUserId }) {
         }
     }, [selectedIdx, assignments]);
 
-    if (assignments.length === 0) {
+    if (!assignments || assignments.length === 0) {
         return <div>No assignments yet</div>; 
     }
 
@@ -122,17 +111,9 @@ function TeacherAssignment({ courseId, currentUserId }) {
                     </div>
                 )}
             </div>
-
-            {/*  子宏哥哥 可以從這裡開始 */}
-
-
-
-
-
-
+             <div>hello</div>
         </div>
     );
-
 }
 
 export default TeacherAssignment;
