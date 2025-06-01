@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Calendar from "@/components/calendar_components/Calendar/Calendar";
 
@@ -6,6 +6,7 @@ import Calendar from "@/components/calendar_components/Calendar/Calendar";
 import { GetCalendarEventsByUserId } from "@/services/CalendarApi";
 
 import styles from "./CalendarPage.module.css";
+import moment from "moment";
 
 
 const typeColorMap = {
@@ -13,13 +14,13 @@ const typeColorMap = {
     'exam': '#7D7DFF',
 }
 const CalendarPage = () => {
-    const [events, setEvents] = useState([]);
+    const [rawEvents, setRawEvents] = useState([]);
     const [legendItems, setLegendItems] = useState([]);
 
     useEffect(() => {
         const fetchEvents = async () => {
             const userId = JSON.parse(localStorage.getItem("user")).user_id;
-            const events = await GetCalendarEventsByUserId(userId);
+            let events = await GetCalendarEventsByUserId(userId);
 
             // (Legend) For course variants record. 
             const map = new Map();
@@ -32,14 +33,13 @@ const CalendarPage = () => {
                 }
             })
 
+            setRawEvents(events);
             setLegendItems(Array.from(map, ([name, color]) => ({ name, color })))
-            console.log("events:", events)
-            setEvents(events);
+
+
         };
         fetchEvents();
     }, []);
-
-
 
     return (
         <>
@@ -47,7 +47,7 @@ const CalendarPage = () => {
             <div className={styles.container}>
                 {/* 主日曆 */}
                 <div id="main-calendar" className={styles.mainCalendar}>
-                    <Calendar events={events} />
+                    <Calendar events={rawEvents} />
                 </div>
 
                 {/* 圖例 */}
