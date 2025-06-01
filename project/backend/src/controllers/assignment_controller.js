@@ -133,7 +133,7 @@ function DownloadAssignment(req, res) {
     const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
     // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ Resolved file path:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {

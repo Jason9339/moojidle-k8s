@@ -16,7 +16,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
         setError("");
         setIsSaving(true);
         try {
-            console.log("修改課程:", { courseId: course.courseId, newName: courseName });
+            // console.log("修改課程:", { courseId: course.courseId, newName: courseName });
             onClose(); // 待實作完整儲存邏輯
         } catch (err) {
             console.error("儲存課程失敗:", err);
@@ -30,7 +30,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
         setError("");
         setIsDeleting(true);
         try {
-            console.log("刪除課程:", course.courseId);
+            // console.log("刪除課程:", course.courseId);
             await DeleteCourse(course.courseId);
             onDeleteCourse(course.courseId);
             onClose();
