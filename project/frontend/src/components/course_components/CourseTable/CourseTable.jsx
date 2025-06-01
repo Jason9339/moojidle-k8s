@@ -265,7 +265,9 @@ function CourseTable({
                                                     color: "#084298",
                                                 }}
                                             >
-                                                {a.name}
+                                                <span className={styles["assignment-name"]} title={a.name}>
+                                                    {a.name}
+                                                </span>
                                             </div>
                                             {expandedAssignments[a.id] && (
                                                 <div
