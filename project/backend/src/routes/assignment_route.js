@@ -5,7 +5,7 @@ import {
     GetAssignmentSubmissions,
     UploadAssignment,
     DownloadAssignment,
-    DeleteAssignment,
+    // DeleteAssignment,
     ReviewAssignmentSubmission
 } from '#src/controllers/assignment_controller.js';
 
@@ -37,6 +37,6 @@ router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadAssignme
 router.get('/download', DownloadAssignment);
 
 // DELETE /assignment/delete
-router.delete('/delete', DeleteAssignment);
+// router.delete('/delete', DeleteAssignment);
 
 export default router;

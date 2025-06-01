@@ -202,10 +202,7 @@ async function UploadAssignment(req, res) {
         } = req.body;
 
         // 支援多檔案上傳
-        const files = req.files || []; // 使用 req.files 而不是 req.file
-        if (!files || files.length === 0) {
-            return res.status(400).json({ message: "No files uploaded" });
-        }
+        const files = req.files || [];
 
         // 儲存所有檔案到硬碟
         const savedFiles = [];
@@ -235,7 +232,7 @@ async function UploadAssignment(req, res) {
         const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
-            message: "上傳作業成功",
+            message: savedFiles.length > 0 ? "作業上傳成功（包含附件）" : "作業上傳成功",
             filesCount: savedFiles.length,
             fileNames: savedFiles.map(f => f.filename),
             data: dbResult
@@ -260,7 +257,7 @@ function DownloadAssignment(req, res) {
     const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
     // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ Resolved file path:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -283,26 +280,26 @@ function DownloadAssignment(req, res) {
 }
 
 // 刪除作業檔案
-async function DeleteAssignment(req, res) {
-    try {
-        const { path: filePath } = req.query;
+// async function DeleteAssignment(req, res) {
+//     try {
+//         const { path: filePath } = req.query;
         
-        if (!filePath) {
-            return res.status(400).json({ message: "缺少檔案路徑參數" });
-        }
+//         if (!filePath) {
+//             return res.status(400).json({ message: "缺少檔案路徑參數" });
+//         }
         
-        const result = await DeleteFile(filePath);
+//         const result = await DeleteFile(filePath);
         
-        if (result) {
-            return res.status(200).json({ message: "作業檔案刪除成功" });
-        } else {
-            return res.status(404).json({ message: "作業檔案不存在或刪除失敗" });
-        }
-    } catch (error) {
-        console.error("刪除作業檔案時發生錯誤:", error);
-        res.status(500).json({ message: "刪除作業檔案時發生錯誤", error: error.message });
-    }
-}
+//         if (result) {
+//             return res.status(200).json({ message: "作業檔案刪除成功" });
+//         } else {
+//             return res.status(404).json({ message: "作業檔案不存在或刪除失敗" });
+//         }
+//     } catch (error) {
+//         console.error("刪除作業檔案時發生錯誤:", error);
+//         res.status(500).json({ message: "刪除作業檔案時發生錯誤", error: error.message });
+//     }
+// }
 
 export {
     GetToDoAssignmentsByUserId,
@@ -311,5 +308,5 @@ export {
     ReviewAssignmentSubmission,
     UploadAssignment,
     DownloadAssignment,
-    DeleteAssignment
+    // DeleteAssignment
 };
