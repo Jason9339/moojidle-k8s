@@ -6,9 +6,13 @@ import {
     GetCourseIdByAssignmentId,
     GetSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
+    FindAssignmentsByCourseId
+
 } from "#src/services/assignment_service.js";
 
-describe("Assignment Service", () => {
+
+
+describe('Assignment Service', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
@@ -38,7 +42,7 @@ describe("Assignment Service", () => {
             expect(result).toBeDefined();
             expect(Array.isArray(result)).toBe(true);
             expect(result.length).toBeGreaterThan(0);
-            
+
             const result_0 = result[0]; // 取第一筆資料進行驗證
 
             expect(result_0.s_ass_id).toBe(1);
@@ -89,7 +93,7 @@ describe("Assignment Service", () => {
             const graderId = 1;
 
             await expect(ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId))
-                .rejects.toThrow();
+            .rejects.toThrow();
         });
 
         it('應該驗證分數範圍', async () => {
@@ -98,7 +102,7 @@ describe("Assignment Service", () => {
             const graderId = 1;
 
             await expect(ReviewAssignmentSubmissionService(submitAssignmentId, invalidScore, graderId))
-                .rejects.toThrow();
+            .rejects.toThrow();
         });
 
         it('應該驗證分數上限', async () => {
@@ -107,7 +111,7 @@ describe("Assignment Service", () => {
             const graderId = 1;
 
             await expect(ReviewAssignmentSubmissionService(submitAssignmentId, invalidScore, graderId))
-                .rejects.toThrow();
+            .rejects.toThrow();
         });
     });
 
@@ -115,3 +119,27 @@ describe("Assignment Service", () => {
 
 });
 
+describe('FindAssignmentsByCourseId', () => {
+    it('應該要根據CourseId找到其之下的作業', async () => {
+        const assignments = await FindAssignmentsByCourseId(1);
+
+        expect(assignments).toBeDefined();
+        expect(Array.isArray(assignments)).toBe(true);
+        expect(assignments.length).toBe(1);
+
+        const assignment = assignments[0];
+        expect(assignment.ass_id).toBe(1);
+        expect(assignment.in_course_id).toBe(1);
+        expect(assignment.ass_name).toBe('Assignment 1 for Course 1');
+        expect(assignment.max_score).toBe(100);
+        expect(assignment.percentage).toBe(0.1);
+        expect(assignment.description).toBe('This is the description for Assignment 1.');
+        expect(Array.isArray(assignment.attachments)).toBe(true);
+    });
+
+    it('當課程不存在時應該返回空陣列', async () => {
+        const assignments = await FindAssignmentsByCourseId(999);
+        expect(Array.isArray(assignments)).toBe(true);
+        expect(assignments.length).toBe(0);
+    });
+});

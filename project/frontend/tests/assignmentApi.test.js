@@ -5,7 +5,7 @@ import {
 } from './setup.js'
 
 
-import {GetAssignmentSubmissions, GradeAssignment} from '@/services/AssignmentApi.js'
+import {GetAssignmentSubmissions, GradeAssignment,     GetCourseAssignments} from '@/services/AssignmentApi.js'
 
 describe('前端 AssignmentApi 整合測試', () => {
     beforeAll(async () => {
@@ -60,7 +60,7 @@ describe('前端 AssignmentApi 整合測試', () => {
 
             // Act & Assert
             await expect(GetAssignmentSubmissions(nonExistentAssignmentId))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
 
         it('當傳入無效的作業ID時應該拋出錯誤', async () => {
@@ -68,7 +68,7 @@ describe('前端 AssignmentApi 整合測試', () => {
 
             // Act & Assert
             await expect(GetAssignmentSubmissions(invalidAssignmentId))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
     })
 
@@ -126,7 +126,7 @@ describe('前端 AssignmentApi 整合測試', () => {
 
             // Act & Assert
             await expect(GradeAssignment(nonExistentSubmissionId, score, graderId))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
 
         it('當分數為負數時應該拋出錯誤', async () => {
@@ -136,7 +136,7 @@ describe('前端 AssignmentApi 整合測試', () => {
 
             // Act & Assert
             await expect(GradeAssignment(submitAssignmentId, invalidScore, graderId))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
 
         it('當分數超過100時應該拋出錯誤', async () => {
@@ -146,21 +146,21 @@ describe('前端 AssignmentApi 整合測試', () => {
 
             // Act & Assert
             await expect(GradeAssignment(submitAssignmentId, invalidScore, graderId))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
 
         it('當缺少必要參數時應該拋出錯誤', async () => {
             // 測試缺少 submitAssignmentId
             await expect(GradeAssignment(null, 85, 1))
-                .rejects.toThrow()
+            .rejects.toThrow()
 
             // 測試缺少 score
             await expect(GradeAssignment(1, null, 1))
-                .rejects.toThrow()
+            .rejects.toThrow()
 
             // 測試缺少 graderId
             await expect(GradeAssignment(1, 85, null))
-                .rejects.toThrow()
+            .rejects.toThrow()
         })
 
         it('應該正確處理邊界分數值', async () => {
@@ -183,5 +183,31 @@ describe('前端 AssignmentApi 整合測試', () => {
             expect(updatedSubmission.score).toBe(100)
         })
     })
+
+    describe('GetCourseAssignments 整合測試', () => {
+        it('應該成功從後端獲取課程的作業資料', async () => {
+            const courseId = 1
+
+            // Act
+            const assignments = await GetCourseAssignments(courseId)
+
+            // Assert
+            expect(assignments).toBeDefined()
+            expect(Array.isArray(assignments)).toBe(true)
+            expect(assignments.length).toBeGreaterThan(0)
+
+            const assignment = assignments[0]
+            expect(assignment.id).toBe(1)
+            expect(assignment.name).toBe('Assignment 1 for Course 1')
+            expect(assignment.description).toBe('This is the description for Assignment 1.')
+            expect(Array.isArray(assignment.attachments)).toBe(true)
+            expect(assignment.dueDate).toBeDefined()
+            expect(assignment.startDate).toBeDefined()
+            expect(typeof assignment.week).toBe('number')
+        })
+
+    })
+
 })
+
 
