@@ -10,7 +10,7 @@ export const GetTodoList = async (userId) => {
 
 export const GetSimpleCourseAssignments = async (courseId) => {
     try {
-        const response = await api.get(`/assignment/in-course/${courseId}`);
+        const response = await api.get(`/assignment/simple-assigns/in-course/${courseId}`);
 
         return response.data;
     } catch (err) {

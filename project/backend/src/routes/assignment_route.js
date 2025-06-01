@@ -45,7 +45,7 @@ router.get('/course/:courseId', GetCourseAssignments);
 //     },
 //     ................
 // ]
-router.get("/in-course/:courseId", GetProjectedAssignmentsInCourse);
+router.get("/simple-assigns/in-course/:courseId", GetProjectedAssignmentsInCourse);
 
 // frontend gives assId and payload of:
 // {

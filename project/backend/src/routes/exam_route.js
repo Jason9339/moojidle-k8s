@@ -52,7 +52,7 @@ router.get('/download/download', DownloadExam);
 //     },
 //      ...............
 // ]
-router.get("/in-course/:courseId", GetProjectedExamsByCourseId);
+router.get("/simple-exams/in-course/:courseId", GetProjectedExamsByCourseId);
 
 // frontend gives assId and payload of:
 // {

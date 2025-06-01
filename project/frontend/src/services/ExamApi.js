@@ -6,7 +6,7 @@ export const GetComingUpList = async (userId) => {
 
 export const GetSimpleExams = async (courseId) => {
     try {
-        const response = await api.get(`/exams/in-course/${courseId}`);
+        const response = await api.get(`/exams/simple-exams/in-course/${courseId}`);
 
         return response.data;
     } catch (err) {
