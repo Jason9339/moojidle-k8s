@@ -8,7 +8,7 @@ export const GetAssignmentSubmissions = async (assignmentId) => {
 
 // 老師改作業
 export const GradeAssignment = async (graderId, submissionId, grade) => {
-    console.log(grade, graderId)
+    console.log("Grade", grade,"graderId", graderId)
     return (await api.patch(`/submit-assignment/review/${submissionId}`, {
         score:grade,
         graderId: graderId
