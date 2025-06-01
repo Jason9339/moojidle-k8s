@@ -489,12 +489,29 @@ const UploadModal = ({ onClose, courseId, assignmentId, onSuccess, mode = "mater
                     />
                 </div>
             )}            <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                <label htmlFor="description">簡介/描述</label>
+                <label htmlFor="description">
+                    簡介/描述
+                    {mode === "student-assignment" && (
+                        <span className={styles["char-counter"]}>
+                            ({description.length}/500字)
+                        </span>
+                    )}
+                </label>
                 <textarea
                     id="description"
                     placeholder="簡介/描述"
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => {
+                        if (mode === "student-assignment") {
+                            // 學生提交模式限制500字
+                            if (e.target.value.length <= 500) {
+                                setDescription(e.target.value);
+                            }
+                        } else {
+                            setDescription(e.target.value);
+                        }
+                    }}
+                    maxLength={mode === "student-assignment" ? 500 : undefined}
                     required={mode !== "student-assignment"}
                 />
             </div>{/* 顯示已提交的檔案（僅學生繳交模式） */}

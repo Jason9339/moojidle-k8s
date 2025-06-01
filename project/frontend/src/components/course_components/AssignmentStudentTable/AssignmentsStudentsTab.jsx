@@ -260,12 +260,11 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                                 <div style={{color: statusInfo.color, fontWeight: '500'}}>
                                                                     {statusInfo.label}
                                                                     {statusInfo.status === 'late' && ' (超過截止時間)'}
-                                                                </div>
-                                                                <div>繳交時間：{submission.submit_date ? new Date(submission.submit_date).toLocaleString('zh-TW') : '無'}</div>
+                                                                </div>                                                                <div>繳交時間：{submission.submit_date ? new Date(submission.submit_date).toLocaleString('zh-TW') : '無'}</div>
                                                                 <div>截止時間：{formatDate(assignment.dueDate)}</div>
                                                                 {/* 學生繳交檔案下載按鈕 */}
                                                                 {submission.attachments && submission.attachments.length > 0 && (
-                                                                    <div>檔案：
+                                                                    <div style={{marginTop: '8px'}}>檔案：
                                                                         <ul style={{margin:0,paddingLeft:'1em'}}>
                                                                             {submission.attachments.map((att, idx) => (
                                                                                 <li key={idx}>
@@ -278,6 +277,24 @@ export default function AssignmentsStudentsTab({ courseId }) {
                                                                                 </li>
                                                                             ))}
                                                                         </ul>
+                                                                    </div>
+                                                                )}
+                                                                {/* 學生提交的描述 */}
+                                                                {submission.description && (
+                                                                    <div style={{marginTop: '8px'}}>
+                                                                        <div style={{fontWeight: '500', marginBottom: '4px'}}>提交說明：</div>
+                                                                        <div style={{
+                                                                            backgroundColor: '#f8f9fa',
+                                                                            border: '1px solid #e9ecef',
+                                                                            borderRadius: '4px',
+                                                                            padding: '8px',
+                                                                            fontSize: '14px',
+                                                                            lineHeight: '1.4',
+                                                                            whiteSpace: 'pre-wrap',
+                                                                            wordBreak: 'break-word'
+                                                                        }}>
+                                                                            {submission.description}
+                                                                        </div>
                                                                     </div>
                                                                 )}
                                                             </div>
