@@ -46,7 +46,7 @@ async function GetCourseAssignments(req, res) {
     try {
         const { courseId } = req.params;
 
-        let formattedAssignments = await FindAssignmentsByCourseId(courseId);
+        let formattedAssignments = await GetCourseAssignmentsService(courseId);
         const course = await FindCourseById(courseId);
 
         // 使用 start_date 而非 create_date
