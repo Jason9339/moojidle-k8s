@@ -96,6 +96,14 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
     setReviewingSubmission(null);
   };
 
+
+  const handleAttachmentClick = (file, event) => {
+    event.stopPropagation();
+    console.log(`Attachment link clicked: ${file.filename}, URL: ${file.url}`);
+    // Future download/preview logic can be added here
+  };
+
+
   return (
     <div className={`${styles["teacher-assignment-review"]}`}>
       <h2>Assignment Review</h2>
@@ -157,12 +165,12 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
                                     {submission.attachments.map((file, fileIndex) => (
                                       <div key={fileIndex} className={`${styles["attachment-item"]}`}>
                                         <a 
-                                          href={file.url} 
+                                          // href={file.url} 
                                           download={file.filename}
                                           className={`${styles["attachment-link"]}`}
-                                          target="_blank"
+                                          // target="_blank"
                                           rel="noopener noreferrer"
-                                          onClick={(e) => e.stopPropagation()}
+                                          onClick={(e) => handleAttachmentClick(file, e)}
                                         >
                                           {file.filename}
                                         </a>

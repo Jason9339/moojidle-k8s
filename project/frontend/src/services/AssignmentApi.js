@@ -23,6 +23,33 @@ export const GradeAssignment = async (graderId, submissionId, grade) => {
     })).data;
 }
 
+export const DownloadAssignmentSubmissionFile = async (submissionId, filename) => {
+
+    try {
+        const response = await api.get(`/assignment/download`, {
+            params: { path: pathToFile },
+            responseType: 'blob',
+        });
+
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName = filename;
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+            if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
+        }
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    } catch (error) {
+        console.error("下載作業錯誤:", error);
+    }
+}
+
 // 上傳作業
 export const UploadAssignment = async (formData) => {
     try {
