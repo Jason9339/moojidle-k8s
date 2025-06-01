@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { DownloadFile } from "@/services/file_api/FileApi";
+import { DownloadMaterial } from "@/services/MaterialApi";
+import { DownloadAssignment } from "@/services/AssignmentApi";
 import styles from "./CourseTable.module.css";
 
 function CourseTable({
@@ -21,12 +22,21 @@ function CourseTable({
         }));
     };
 
-    const handleDownload = async (path, filename) => {
+    const handleMaterialDownload = async (path, filename) => {
         try {
-            await DownloadFile(path, filename);
+            await DownloadMaterial(path, filename);
         } catch (e) {
             alert(`下載失敗：${filename}`);
             console.error("Download error:", e);
+        }
+    };
+
+    const handleAssignmentDownload = async (path, filename) => {
+        try {
+            await DownloadAssignment(path, filename);
+        } catch (e) {
+            alert(`下載失敗：${filename}`);
+            console.error("Assignment download error:", e);
         }
     };
 
@@ -144,8 +154,8 @@ function CourseTable({
                     <tr>
                         <th>Week</th>
                         <th>Lecture</th>
-                        <th>Assignments/Exams</th>
-                        <th>Reference</th>
+                        <th>Assignments</th>
+                        <th>Exams</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -229,7 +239,7 @@ function CourseTable({
                                             <div
                                                 key={idx}
                                                 className={styles["clickable-material"]}
-                                                onClick={() => handleDownload(m.path_to_file, m.filename)}
+                                                onClick={() => handleMaterialDownload(m.path_to_file, m.filename)}
                                             >
                                                 <span className={styles["material-name"]} title={m.name}>
                                                     {m.name}
@@ -255,7 +265,9 @@ function CourseTable({
                                                     color: "#084298",
                                                 }}
                                             >
-                                                {a.name}
+                                                <span className={styles["assignment-name"]} title={a.name}>
+                                                    {a.name}
+                                                </span>
                                             </div>
                                             {expandedAssignments[a.id] && (
                                                 <div
@@ -277,7 +289,7 @@ function CourseTable({
                                                                         ]
                                                                     }
                                                                     onClick={() =>
-                                                                        handleDownload(
+                                                                        handleAssignmentDownload(
                                                                             f.path_to_file,
                                                                             f.filename
                                                                         )
