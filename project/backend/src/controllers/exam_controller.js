@@ -1,6 +1,6 @@
 import {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    GetExamsByCourseId,
+    FindExamsByCourseId,
     AddExamByCourseId,
     // getComingExams as getComingExamsService
 } from '#src/services/exam_service.js';
@@ -46,11 +46,11 @@ async function GetUpcomingExamsByUserId(req, res) {
 //     }
 // };
 
-async function CourseExams(req, res) {
+async function GetCourseExams(req, res) {
     try {
         const { courseId } = req.params;
 
-        let formattedExams = await GetExamsByCourseId(courseId);
+        let formattedExams = await FindExamsByCourseId(courseId);
         const course = await FindCourseById(courseId);
 
         // 使用 start_date 而非 create_date
@@ -184,7 +184,7 @@ async function DeleteExam(req, res) {
 
 export {
     GetUpcomingExamsByUserId,
-    CourseExams,
+    GetCourseExams,
     UploadExam,
     DownloadExam,
     DeleteExam

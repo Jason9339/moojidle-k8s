@@ -91,7 +91,7 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
 //     }
 // }
 
-async function GetExamsByCourseId(courseId) {
+async function FindExamsByCourseId(courseId) {
     try {
         const db = mongoose.connection.db;
         const parsedCourseId = parseInt(courseId, 10);
@@ -134,7 +134,7 @@ async function FindExamById(examId) {
 
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
-    GetExamsByCourseId,
+    FindExamsByCourseId,
     AddExamByCourseId,
     FindExamById
     // getComingExams

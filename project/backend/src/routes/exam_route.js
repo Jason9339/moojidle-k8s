@@ -1,7 +1,7 @@
 import express from 'express';
 import {
     GetUpcomingExamsByUserId,
-    CourseExams,
+    GetCourseExams,
     UploadExam,
     DownloadExam,
     DeleteExam
@@ -20,7 +20,7 @@ const router = express.Router();
 // 取得即將到來的考試/活動
 router.get('/coming', GetUpcomingExamsByUserId);
 // get all couses exams
-router.get('/:courseId', CourseExams);
+router.get('/:courseId', GetCourseExams);
 
 // POST /exams/course/:courseId/upload - 支援多檔案上傳
 router.post('/course/:courseId/upload', uploadMultipleWithMulter, UploadExam, MulterErrorHandling);
