@@ -60,7 +60,7 @@ async function DeleteSubmissionRecordService(subAssId) {
             s_ass_id: parseInt(subAssId)
         });
 
-        return deleteResult.acknowledged;
+        return deleteResult.deletedCount;
     } catch (error) {
         console.error("DeleteSubmissionRecordService 錯誤:", error);
         throw error;

@@ -71,8 +71,7 @@ async function DeleteSubmissionRecord(req, res) {
         }
 
         const result = await DeleteSubmissionRecordService(subAssId);
-        
-        if (result) {
+        if (result != 0) {
             res.status(200).json("delete sub ass successfully");
         } else {
             res.status(500).send("internal error when delete sub ass");
@@ -214,7 +213,7 @@ async function UpdateAssignmentSubmission(req, res) {
             description || "" // 確保不是 undefined
         );
 
-        if (result > 0) {
+        if (result != 0) {
             res.status(200).json("update sub ass successfully");
         } else {
             res.status(500).send("internal error when updating sub ass");
