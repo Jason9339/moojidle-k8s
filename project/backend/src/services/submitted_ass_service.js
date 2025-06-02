@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
 async function CreateAssignmentSubmissionService(submission) {
-    const db = mongoose.connection.db;
-    await db.collection("submitted_ass").insertOne(submission);
-    return submission;
+    try {
+        const db = mongoose.connection.db;
+        const result = await db.collection("submitted_ass").insertOne(submission);
+
+        return result.acknowledged;
+    } catch (error) {
+        throw error;
+    }
 }
 // 更新作業提交（以 assignmentId + userId 為條件）
 async function UpdateAssignmentSubmissionService(assignmentId, userId, updateData) {
@@ -26,16 +31,9 @@ async function GetAssignmentSubmissionService(assignmentId, userId) {
         const submission = await db.collection("submitted_ass").find({
             ass_id: parseInt(assignmentId),
             submit_by_user_id: parseInt(userId)
-        }).sort({ submit_date: -1 }).limit(1).toArray();
+        }).toArray();
 
-        if (submission.length === 0) return null;
-
-        const latest = submission[0];
-
-        return {
-            data: latest,
-            submitTime: latest.submit_date || null
-        };
+        return submission;
     } catch (error) {
         console.error("GetAssignmentSubmissionService 錯誤:", error);
         throw error;
@@ -115,7 +113,7 @@ async function DeleteSubmissionRecordService(assignmentId, submitByUserId) {
             submit_by_user_id: parseInt(submitByUserId)
         });
 
-        return deleteResult;
+        return deleteResult.acknowledged;
     } catch (error) {
         console.error("DeleteSubmissionRecordService 錯誤:", error);
         throw error;
