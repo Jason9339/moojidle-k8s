@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
-import {GetAssignmentSubmissions, GradeAssignment} from '@/services/AssignmentApi.js';
+import {GetAssignmentSubmissions, GradeAssignment} from '@/services/SubmitAssignmentApi.js';
 
 const TeacherAssignmentReview = ({ assignmentId }) => {
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
