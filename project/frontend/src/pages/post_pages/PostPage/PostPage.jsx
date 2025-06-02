@@ -22,6 +22,8 @@ function PostPage() {
     const [newComment, setNewComment] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [activeCommentId, setActiveCommentId] = useState(null);
+    const courseData = JSON.parse(localStorage.getItem("courseData")) || [];
+
 
     const storedUser = localStorage.getItem("user");
     const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
@@ -102,21 +104,7 @@ function PostPage() {
             alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
         }
     };
-    const handleEditPost = () => {
-        // 關閉下拉選單
-        setShowMenu(false);
-        // 使用 navigate 導向 /post-edit 頁面，並將貼文資料存入 state 中
-        navigate(`/post-edit/${post.post_id}`, {
-            state: {
-                current: {
-                    post,
-                    // 若有需要，也可以傳入預設的課程與討論版資料
-                    // course: { value: post.course_id, label: post.course_name },
-                    // board: { value: post.board_id, label: post.board_name },
-                },
-            },
-        });
-    };
+
 
 
     const reflash = () => {
@@ -167,9 +155,22 @@ function PostPage() {
                                     showMenu={showMenu}
                                     setShowMenu={setShowMenu}
                                     handleDeletePost={handleDeletePost}
-                                    handleEditPost={handleEditPost}
                                     description={description}
                                     textareaRef={textareaRef}
+                                    editLinkState={{
+                                        data: courseData,
+                                        current: {
+                                            post,
+                                            course: {
+                                                value: post.course_id,
+                                                label: post.course_name,
+                                            },
+                                            board: {
+                                                value: post.board_id,
+                                                label: post.board_name,
+                                            },
+                                        },
+                                    }}
                                 />
                             </div>
 

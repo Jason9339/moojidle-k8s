@@ -41,14 +41,13 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
         >
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <h2 className={styles.title}>編輯討論版</h2>
-
                 <div className={styles.body}>
                     <label htmlFor="boardName">討論版名稱</label>
                     <input
                         id="boardName"
                         type="text"
                         autoFocus
-                        // placeholder=
+                        placeholder={"請輸入討論版名稱"}
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
                     />

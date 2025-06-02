@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
+import { Link } from "react-router-dom";
+
 
 function PostContent({
     post,
@@ -8,7 +10,7 @@ function PostContent({
     showMenu,
     setShowMenu,
     handleDeletePost,
-    handleEditPost,
+    editLinkState,
     description,
     textareaRef,
 }) {
@@ -31,13 +33,18 @@ function PostContent({
                                 <li className={styles.dropdownItem} onClick={handleDeletePost}>
                                     刪除貼文
                                 </li>
-                                
+
                             )}
                             {currentUserId === post.post_by_user_id && (
-                                <li className={styles.dropdownItem} onClick={handleEditPost}>
-                                    編輯貼文
+                                <li className={styles.dropdownItem}>
+                                    <Link
+                                        to={`/post-edit/${post.post_id}`}
+                                        state={editLinkState}
+                                        className="block w-full h-full"
+                                    >
+                                        編輯貼文
+                                    </Link>
                                 </li>
-                                
                             )}
                             <li className={styles.dropdownItem}>檢舉</li>
                         </ul>
