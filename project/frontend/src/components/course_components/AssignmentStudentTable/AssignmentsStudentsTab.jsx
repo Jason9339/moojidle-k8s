@@ -80,7 +80,7 @@ export default function AssignmentsStudentsTab({
         setShowUploadModal(false);
     };
 
-    if (loading) return <div>載入中...</div>;
+    if (loading) return <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />;
     if (error) return <div style={{color:'red'}}>{error}</div>;
 
     return (
