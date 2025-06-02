@@ -15,7 +15,7 @@ function AssignmentsTab() {
 
 
     // 檢查是否為學生
-    const isStudent = !role.isTeacher && !role.isAssistant;
+    const isStudent = role.isStudent;
 
     // --- fetch function(學生) --- //
     // 獲取作業列表
