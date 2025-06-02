@@ -12,6 +12,14 @@ import {
     FindOneUserById
 } from '#src/services/user_service.js';
 
+import {
+    SendNotify
+} from '#src/services/notification_service.js'
+
+import { 
+    FindCourseById 
+} from '#src/services/course_service.js';
+
 async function GetCourseMembers(req, res) {
     try {
         const courseId = req.params.courseId;
@@ -76,6 +84,17 @@ async function InviteStudent(req, res) {
         }
 
         const result = await InsertStudyIn(userId, studentId, courseId);
+        const course = await FindCourseById(courseId);
+        const notification = {
+            event_id: course.course_id,
+            event_category: "course",
+            context: `您被加入了新課程 ${course.name}`,
+            notified_users:[{
+                user_id: userExists.user_id
+            }]
+        }
+        const notificationres = await SendNotify(notification);
+        result.notificationres = notificationres;
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);
