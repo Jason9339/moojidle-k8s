@@ -21,9 +21,12 @@ workflow:
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
   rules: 
-    - if: $CI_COMMIT_BRANCH == "main"  # for push to main
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
-      allow_failure: true
+      allow_failure: false  # Pipeline succeeds even if this job is not run
+    
+    - if: $CI_COMMIT_BRANCH == "main"  # for push to main
+      when: always
     # Manual execution for merge requests (except certain branches)
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^fix-db/ && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^style-/
       when: manual
