@@ -60,7 +60,8 @@ async function GetCourseAssignments(req, res) {
                 dueDate: assignment.end_date,
                 startDate: assignment.start_date,
                 attachments: assignment.attachments || [],
-                week: week
+                week: week,
+                maxScore: assignment.max_score
             };
         })
 
