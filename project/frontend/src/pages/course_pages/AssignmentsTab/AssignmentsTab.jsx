@@ -8,16 +8,16 @@ import TeacherAssignment from "@/components/course_components/TeacherAssignment/
 
 function AssignmentsTab() {
     const { role, course } = useOutletContext();
-    const [assignments, setAssignments] = useState([]);
+    const [TeacherAssignments, setTeacherAssignments] = useState([]);
 
-    // Get the assignment
+    // Get the Teacher assignment
     useEffect(() => {
-        async function fetchAssignments() {
+        async function fetchTeacherAssignments() {
             const data = await GetCourseAssignments(course.courseId);
-            setAssignments(data || []);
+            setTeacherAssignments(data || []);
         }
         if (role.isTeacher || role.isAssistant) {
-            fetchAssignments();
+            fetchTeacherAssignments();
         }
     }, [course.courseId, role]);
 
@@ -27,7 +27,7 @@ function AssignmentsTab() {
         <div>
             <div>
                 {(role.isTeacher || role.isAssistant)
-                    ? <TeacherAssignment assignments={assignments} />
+                    ? <TeacherAssignment assignments={TeacherAssignments} />
                     : "學生"}
             </div>
         </div>
