@@ -1,19 +1,8 @@
 import mongoose from "mongoose";
 
+import { GetAssignmentMaxScore } from "#src/services/assignment_service.js"
 
-async function GetCourseIdByAssignmentId(assignmentId) {
-    try {
-        const assignment = await mongoose.connection.db.collection("assignments").findOne(
-            { ass_id: assignmentId },
-            { projection: { in_course_id: 1 } }
-        );
-        return assignment ? assignment.in_course_id : null;
-    } catch (error) {
-        console.error("Error getting course ID by assignment ID:", error);
-        throw error;
-    }
 
-}
 
 /**
  * Get all submissions for a specific assignment with student details
@@ -77,15 +66,8 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
         
         const score_lb = 0;
         // 獲取作業的最大分數
-        const assignment = await db.collection("assignments").findOne(
-            { ass_id: existingSubmission.ass_id }
-        );
-
-        if (!assignment) {
-            throw new Error("Associated assignment not found");
-        }
-        const score_ub = assignment.max_score;
-
+        
+        const score_ub = await GetAssignmentMaxScore (existingSubmission.ass_id);
         if (score < score_lb || score > score_ub) {
             throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
         }
@@ -114,7 +96,6 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
 }
 
 export {
-    GetCourseIdByAssignmentId,
     GetSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
 

@@ -1,8 +1,9 @@
 import {
-    GetCourseIdByAssignmentId,
     GetSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
 } from '#src/services/submit_assignment_service.js';
+
+import { GetCourseIdByAssignmentId } from '#src/services/assignment_service.js';
 
 import { FindStudyInJoinUserByCourseId } from '#src/services/course_member_service.js';
 

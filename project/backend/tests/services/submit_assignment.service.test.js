@@ -3,7 +3,6 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { createMockReq, createMockRes } from '../test-utils.js';
 
 import {
-    GetCourseIdByAssignmentId,
     GetSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
 
@@ -16,22 +15,6 @@ describe('Assignment Service', () => {
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
 
-    describe("GetCourseIdByAssignmentId", () => {
-        it('應該成功獲取繳交作業所在的課程Id', async () => {
-            const assignmentId = 1;
-            const result = await GetCourseIdByAssignmentId(assignmentId);
-
-            expect(result).toBeDefined();
-            expect(result).toBe(1);
-        });
-
-        it('當作業不存在時應該返回null', async () => {
-            const assignmentId = 999;
-            const result = await GetCourseIdByAssignmentId(assignmentId);
-
-            expect(result).toBeNull();
-        });
-    });
 
     describe("GetSubmissionsByAssignmentId", () => {
         it('應該成功獲取繳交作業的資訊', async () => {
