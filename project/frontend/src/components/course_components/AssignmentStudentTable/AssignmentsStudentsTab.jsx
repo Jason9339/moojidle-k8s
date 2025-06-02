@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaCalendarAlt, FaPaperclip, FaUpload } from "react-icons/fa";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetAssignmentSubmission } from "@/services/SubmittedAssignmentApi";
-import UploadModal from "../UploadModal/UploadModal";
+import SubmittedAssUploadModal from "@/components/course_components/SubmittedAssUploadModal/SubmittedAssUploadModal";
 import "./AssignmentsStudentsTab.css";
 
 export default function AssignmentsStudentsTab({ courseId }) {
@@ -142,11 +142,11 @@ export default function AssignmentsStudentsTab({ courseId }) {
 
     return (
         <div className="assignments-container">
-            {showUploadModal && currentAssignment && (                <UploadModal
+            {showUploadModal && currentAssignment && (                <SubmittedAssUploadModal
                     onClose={() => setShowUploadModal(false)}
                     courseId={courseId}
                     assignmentId={currentAssignment.id}
-                    mode="student-assignment"                    onSuccess={async () => {
+                    onSuccess={async () => {
                         await refreshAssignments();
                         setShowUploadModal(false);
                     }}
