@@ -1,0 +1,77 @@
+.contactList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+.input {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+.removeBtn {
+    background: none;
+    color: #d32f2f;
+    border: none;
+    margin: 4px 0 16px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    transition: color 0.2s;
+}
+.removeBtn:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.addBtn {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+.addBtn:hover {
+    background: #1565c0;
+}
+
+.saveBtn {
+    background: #388e3c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+.saveBtn:hover {
+    background: #2e7031;
+}
+
+.cancelBtn {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+.cancelBtn:hover {
+    background: #bdbdbd;
+}
