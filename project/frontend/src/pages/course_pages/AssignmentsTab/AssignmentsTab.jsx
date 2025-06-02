@@ -25,7 +25,6 @@ function AssignmentsTab() {
 
     return (
         <div>
-            <h3>作業列表</h3>
             <div>
                 {(role.isTeacher || role.isAssistant)
                     ? <TeacherAssignment assignments={assignments} />

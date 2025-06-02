@@ -1,6 +1,6 @@
 /* black wrapper */
 .tabListBox {
-    border: 2px solid #222;
+    border: 2px solid #a39999;
     border-radius: 15px;
     padding: 8px 8px; 
     margin-bottom: 1.5%; 
@@ -39,7 +39,7 @@
 }
 
 .tabBtn {
-    width: 225px;
+    width: 200px;
     min-width: 0;
     max-width: 100%;
     padding: 6px 14px; 
@@ -58,7 +58,7 @@
 
 .tabBtnGroupLeft {
     justify-content: flex-start !important;
-    margin-left: 100px; 
+    margin-left: 15px; 
 }
 
 .tabBtnActive {
@@ -72,11 +72,12 @@
 }
 
 .descBox {
-    border: 2px solid #222;
+    border: 2px solid #a39999;
     border-radius: 10px;
     padding: 15px; 
     min-height: 70px; 
     background-color: white;
+    margin-bottom: 1.5%;
 }
 
 .descTitle {
