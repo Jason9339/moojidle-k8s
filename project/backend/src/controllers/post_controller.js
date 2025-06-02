@@ -237,10 +237,10 @@ async function EditPost(req, res) {
     try {
         const result = await UpdatePostById(postId, updateFields);
 
-        if (result.success && result.modifiedCount === 1) {
-            res.status(200).send({ message: result.message });
+        if (result.matchedCount !== 0) {
+            res.status(200).send({ message: "成功更新貼文" });
         } else {
-            res.status(404).send({ message: result.message });
+            res.status(404).send({ message: "貼文未找到或未進行任何更改" });
         }
     } catch (err) {
         res.status(500).send({ message: "An error occurred", error: err.message });
