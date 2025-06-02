@@ -150,8 +150,8 @@ function DownloadAssignment(req, res) {
 
     const sanitizedPath = filePathParam.replace(/^\/+/,''); // 去除開頭的 "/"
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ [DownloadAssignment] 參數 path:", filePathParam);
-    console.log("✅ [DownloadAssignment] 實際檔案路徑:", filePath);
+    // console.log("[DownloadAssignment] 參數 path:", filePathParam);
+    // console.log("[DownloadAssignment] 實際檔案路徑:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -166,7 +166,7 @@ function DownloadAssignment(req, res) {
 
         res.download(filePath, (err) => {
             if (err) {
-                console.error("❌ 下載錯誤:", err);
+                console.error("下載錯誤:", err);
                 res.status(500).json({ message: "Error downloading file", filePath });
             }
         });

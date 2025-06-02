@@ -80,12 +80,10 @@ const SubmittedAssUploadModal = ({
             for (const fileUrl of deletedFiles) {
                 try {
                     const deleteResult = await DeleteSubmittedFile(assignmentId, fileUrl);
-                    console.log(`檔案已刪除: ${fileUrl}`, deleteResult);
                     
                     // 檢查是否整個提交記錄被刪除
                     if (deleteResult.data && deleteResult.data.deleted === true) {
                         submissionDeleted = true;
-                        console.log(`提交記錄已完全刪除: ${deleteResult.data.reason}`);
                     }
                     deletedCount++;
                 } catch (error) {
@@ -105,7 +103,7 @@ const SubmittedAssUploadModal = ({
                 
                 // 如果有刪除操作或者只是更新描述，需要發送 keepFiles 參數
                 if (deletedFiles.length > 0 || (remainingFiles.length > 0 && files.length === 0)) {
-                    console.log(`[SubmittedAssUploadModal] 發送 keepFiles:`, remainingFiles);
+                    // console.log(`[SubmittedAssUploadModal] 發送 keepFiles:`, remainingFiles);
                     formData.append("keepFiles", JSON.stringify(remainingFiles));
                 }
                 
@@ -114,8 +112,6 @@ const SubmittedAssUploadModal = ({
                     
                     // 檢查後端是否因為內容為空而自動刪除了提交記錄
                     if (submitResult.data && submitResult.data.deleted === true) {
-                        console.log(`[SubmittedAssUploadModal] 後端自動刪除了提交記錄，原因: ${submitResult.data.reason}`);
-                        
                         // 清空檔案輸入
                         if (fileInputRef.current) {
                             fileInputRef.current.value = '';
@@ -173,12 +169,8 @@ const SubmittedAssUploadModal = ({
             if (!userId) {
                 alert("請先登入");
                 return;
-            }
-            
-            console.log(`[handleClearAll] 開始清空作業: assignmentId=${assignmentId}, userId=${userId}`);
-            
+            }            
             await DeleteSubmissionRecord(assignmentId);
-            console.log(`[handleClearAll] 刪除請求已完成`);
             
             // 立即清空前端狀態
             setFiles([]);
