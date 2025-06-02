@@ -102,7 +102,7 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
-async function GetAssignmentMaxScore(assignmentId) {
+async function FindAssignmentMaxScore(assignmentId) {
     try {
         // assignmentId = parseInt(assignmentId);
         const assignment = await mongoose.connection.db.collection("assignments").findOne(
@@ -116,7 +116,7 @@ async function GetAssignmentMaxScore(assignmentId) {
     }
 }
 
-async function GetCourseIdByAssignmentId(assignmentId) {
+async function FindCourseIdByAssignmentId(assignmentId) {
     try {
         const assignment = await mongoose.connection.db.collection("assignments").findOne(
             { ass_id: assignmentId },
@@ -157,6 +157,6 @@ export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
     InsertAssignmentToDB,
-    GetAssignmentMaxScore,
-    GetCourseIdByAssignmentId
+    FindAssignmentMaxScore,
+    FindCourseIdByAssignmentId
 };

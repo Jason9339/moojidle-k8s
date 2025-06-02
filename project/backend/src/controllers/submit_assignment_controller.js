@@ -1,9 +1,10 @@
 import {
-    GetSubmissionsByAssignmentId,
+    FindSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
+    FindSubmissionAssignmentBySubmitAssId
 } from '#src/services/submit_assignment_service.js';
 
-import { GetCourseIdByAssignmentId } from '#src/services/assignment_service.js';
+import { FindCourseIdByAssignmentId, FindAssignmentMaxScore } from '#src/services/assignment_service.js';
 
 import { FindStudyInJoinUserByCourseId } from '#src/services/course_member_service.js';
 
@@ -20,7 +21,7 @@ async function GetAssignmentSubmissions(req, res) {
         const assId = parseInt(assignmentId);
 
         // Get course ID from assignment ID
-        const courseId = await GetCourseIdByAssignmentId(assId); 
+        const courseId = await FindCourseIdByAssignmentId(assId); 
         // console.log("courseId", courseId)
         if (!courseId) {
             return res.status(404).json({ message: "找不到對應的課程" });
@@ -30,7 +31,7 @@ async function GetAssignmentSubmissions(req, res) {
 
         // console.log("學生列表:", studentInCourse);
         
-        const submissions = await GetSubmissionsByAssignmentId(assId);
+        const submissions = await FindSubmissionsByAssignmentId(assId);
 
         // Create a map of submissions by user ID for quick lookup
         const submissionByUserId = {};
@@ -91,6 +92,20 @@ async function ReviewAssignmentSubmission(req, res) {
             return res.status(400).json({ message: "缺少評分分數" });
         }
         
+        // 先檢查提交是否存在
+        const existingSubmission = await FindSubmissionAssignmentBySubmitAssId(submitAssignmentId);
+        if (!existingSubmission) {
+            return res.status(400).json({message: "沒有該繳交作業"})
+        }
+        
+
+
+        const score_lb = 0;
+        // 獲取作業的最大分數 
+        const score_ub = await FindAssignmentMaxScore (existingSubmission.ass_id);
+        if (score < score_lb || score > score_ub) {
+            return res.status(400).json({message: "分數不得超過上限或為負數"})
+        }
         
         // Call service function to update the submission
         const result = await ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId);

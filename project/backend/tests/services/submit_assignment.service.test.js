@@ -3,14 +3,14 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { createMockReq, createMockRes } from '../test-utils.js';
 
 import {
-    GetSubmissionsByAssignmentId,
+    FindSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
 
 } from "#src/services/submit_assignment_service.js";
 
 
 
-describe('Assignment Service', () => {
+describe('Submit Assignment Service', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
@@ -19,7 +19,7 @@ describe('Assignment Service', () => {
     describe("GetSubmissionsByAssignmentId", () => {
         it('應該成功獲取繳交作業的資訊', async () => {
             const assignmentId = 1;
-            const result = await GetSubmissionsByAssignmentId(assignmentId);
+            const result = await FindSubmissionsByAssignmentId(assignmentId);
 
             expect(result).toBeDefined();
             expect(Array.isArray(result)).toBe(true);
@@ -43,7 +43,7 @@ describe('Assignment Service', () => {
 
         it('當作業不存在時應該返回空陣列', async () => {
             const assignmentId = 999;
-            const result = await GetSubmissionsByAssignmentId(assignmentId);
+            const result = await FindSubmissionsByAssignmentId(assignmentId);
 
             expect(result).toBeDefined();
             expect(Array.isArray(result)).toBe(true);
@@ -63,38 +63,14 @@ describe('Assignment Service', () => {
             expect(result.updated).toBe(true);
 
             // 驗證分數確實被更新
-            const submissions = await GetSubmissionsByAssignmentId(1);
+            const submissions = await FindSubmissionsByAssignmentId(1);
             const updatedSubmission = submissions.find(sub => sub.s_ass_id === 1);
             expect(updatedSubmission.score).toBe(95);
             expect(updatedSubmission.graded_by_user_id).toBe(1);
         });
 
-        it('當提交不存在時應該返回錯誤', async () => {
-            const submitAssignmentId = 999;
-            const score = 85;
-            const graderId = 1;
 
-            await expect(ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId))
-            .rejects.toThrow();
-        });
 
-        it('應該驗證分數範圍', async () => {
-            const submitAssignmentId = 1;
-            const invalidScore = -10;
-            const graderId = 1;
-
-            await expect(ReviewAssignmentSubmissionService(submitAssignmentId, invalidScore, graderId))
-            .rejects.toThrow();
-        });
-
-        it('應該驗證分數上限', async () => {
-            const submitAssignmentId = 1;
-            const invalidScore = 150;
-            const graderId = 1;
-
-            await expect(ReviewAssignmentSubmissionService(submitAssignmentId, invalidScore, graderId))
-            .rejects.toThrow();
-        });
     });
 
 

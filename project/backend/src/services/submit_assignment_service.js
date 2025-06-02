@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-import { GetAssignmentMaxScore } from "#src/services/assignment_service.js"
-
 
 
 /**
@@ -9,7 +7,7 @@ import { GetAssignmentMaxScore } from "#src/services/assignment_service.js"
  * @param {number} assignmentId - The assignment ID
  * @returns {Promise<Array>} Array of submission details
  */
-async function GetSubmissionsByAssignmentId(assignmentId) {
+async function FindSubmissionsByAssignmentId(assignmentId) {
     try {
         const db = mongoose.connection.db;
         const submissions = await db.collection("submitted_ass").aggregate([
@@ -43,7 +41,19 @@ async function GetSubmissionsByAssignmentId(assignmentId) {
     }
 }
 
-
+async function FindSubmissionAssignmentBySubmitAssId(assignmentId) {
+    try {
+        const db = mongoose.connection.db;
+        const sAssId = parseInt(assignmentId);
+        const existingSubmission = await db.collection("submitted_ass").findOne(
+            { s_ass_id: sAssId }
+        ); 
+        return existingSubmission;
+    } catch(error) {
+        console.error("Error getting submissions by submitAssignment ID:", error);
+        throw error;
+    }
+}
 
 
 async function ReviewAssignmentSubmissionService(submissionId, score, graderId) {
@@ -56,23 +66,6 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
         
         const db = mongoose.connection.db;
         
-        // 先檢查提交是否存在
-        const existingSubmission = await db.collection("submitted_ass").findOne(
-            { s_ass_id: sAssId }
-        ); 
-        if (!existingSubmission) {
-            throw new Error("Submission not found");
-        }
-        
-        const score_lb = 0;
-        // 獲取作業的最大分數
-        
-        const score_ub = await GetAssignmentMaxScore (existingSubmission.ass_id);
-        if (score < score_lb || score > score_ub) {
-            throw new Error(`Score must be between ${score_lb} and ${score_ub}`);
-        }
-
-
 
         // Prepare update document
         const updateDoc = {
@@ -96,7 +89,8 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
 }
 
 export {
-    GetSubmissionsByAssignmentId,
+    FindSubmissionsByAssignmentId,
     ReviewAssignmentSubmissionService,
+    FindSubmissionAssignmentBySubmitAssId
 
 }
