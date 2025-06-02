@@ -334,7 +334,6 @@ def generate_taken_exams(exams, study_in, teach_in, assist_in):
                 for i in range(num_attachments)
             ]
 
-            # Add the submission to the list
             taken_exams.append({
                 "t_exam_id": t_exam_id,
                 "exam_id": exam_id,
@@ -511,7 +510,7 @@ def generate_submitted_assignments(assignments, study_in, teach_in, assist_in, m
         # end_date = datetime.strptime(assignment["end_date"].replace('ISODate("', '').replace('")', ''), "%Y-%m-%dT%H:%M:%S")
 
         # Each assignment can have 1 to max_submissions_per_assignment submissions
-        num_submissions = random.randint(1, max_submissions_per_assignment)
+        num_submissions = 1
         for sub_ass_index in range(num_submissions):
             # Select a random student for this course
             if course_id in eligible_students and eligible_students[course_id]:
