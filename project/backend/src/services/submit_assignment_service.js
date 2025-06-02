@@ -41,10 +41,10 @@ async function FindSubmissionsByAssignmentId(assignmentId) {
     }
 }
 
-async function FindSubmissionAssignmentBySubmitAssId(assignmentId) {
+async function FindSubmissionAssignmentBySubmitAssId(subassignmentId) {
     try {
         const db = mongoose.connection.db;
-        const sAssId = parseInt(assignmentId);
+        const sAssId = parseInt(subassignmentId);
         const existingSubmission = await db.collection("submitted_ass").findOne(
             { s_ass_id: sAssId }
         ); 
