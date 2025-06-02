@@ -128,6 +128,7 @@
     gap: 2px;                  
 }
 
+/* 標題和描述的距離 */
 .verticalSpacer {
     height: 8px; 
 }
