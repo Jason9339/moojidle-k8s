@@ -7,7 +7,8 @@ import {
     FindNotificationById,
     FindNotifiedByUserId,
     DeleteNotifiedById,
-    SendNotify
+    SendNotify,
+    NotificationReaded
 } from '#src/services/notification_service';
 
 describe('Notification Service', () => {
@@ -101,12 +102,26 @@ describe('Notification Service', () => {
             const user_id = 4001;
 
             await InsertNotified({ n_id, user_id });
-
+            
             const deleteResult = await DeleteNotifiedById({ n_id, user_id });
             expect(deleteResult.deletedCount).toBe(1);
 
             // 清除通知資料
             await mongoose.connection.db.collection('notification').deleteOne({ n_id });
+        });
+    });
+
+    describe('NotificationReaded', () => {
+        it('成功更改notification已讀狀態', async () => {
+            const notified1 = await FindNotifiedByUserId(2);
+            expect(notified1[0].is_read).toBe(false);
+            const notification = await NotificationReaded({
+                n_id: 1,
+                user_id: 2
+            });
+            
+            const notified2 = await FindNotifiedByUserId(2);
+            expect(notified2[0].is_read).toBe(true);
         });
     });
 });

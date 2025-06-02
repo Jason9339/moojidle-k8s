@@ -106,7 +106,6 @@ async function SendNotify(notificationData) {
     }
 }
 
-
 async function FindNotifiedByUserId(userID) {
     try {
         const notifieds = await mongoose.connection.db.collection('notified').find({ user_id: userID }).toArray();;
@@ -130,11 +129,33 @@ async function DeleteNotifiedById(notificationData) {
     }
 };
 
+async function NotificationReaded(notifiedData) {
+    try {
+        const notificationID = notifiedData.n_id;
+        const userID = notifiedData.user_id;
+        const result = await mongoose.connection.db.collection('notified').updateOne(
+            {
+                n_id: notificationID,
+                user_id: userID
+            },
+            {
+                $set: {
+                    is_read: true
+                }
+            }
+        );
+        return result;
+    } catch (error) {
+        console.error('Error deleting post:', error);
+    }
+};
+
 export {
     InsertNotification,
     InsertNotified,
     FindNotificationById,
     FindNotifiedByUserId,
     DeleteNotifiedById,
-    SendNotify
+    SendNotify,
+    NotificationReaded
 }
