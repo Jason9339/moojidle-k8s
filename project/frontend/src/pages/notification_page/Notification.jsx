@@ -83,6 +83,8 @@ function Notification() {
                     navigate(`/user/profile`);    
                 case "course":
                     navigate(`/course/${item.notification.event_id}`);  
+                case "course_status":
+                    navigate(`/course/${item.notification.event_id}/members`);  
             }
         } catch (err) {
             alert("刪除失敗，請稍後再試");

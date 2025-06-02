@@ -43,7 +43,7 @@ async function SwitchCharacter(req, res) {
     try {
         const userId = parseInt(req.params.userId);
         const courseId = parseInt(req.params.courseId);
-
+        const course = await FindCourseById(courseId);
         const students = await FindStudyInJoinUserByCourseId(courseId);
 
         // check if is student
@@ -51,6 +51,15 @@ async function SwitchCharacter(req, res) {
             if (userId == students[i].user_id) {
                 await DeleteStudyIn(userId, courseId);
                 await InsertAssistIn(userId, courseId);
+                const notification = {
+                    event_id: courseId,
+                    event_category: "course_status",
+                    context: `${course.name} 被移除助教`,
+                    notified_users:[{
+                        user_id: userId
+                    }]
+                }
+                await SendNotify(notification);
                 res.status(200).json({ message: "User added as an assistant" });
                 return;
             }
