@@ -152,10 +152,6 @@
   background-color: #3a76d8;
 }
 
-.review-button:active {
-  background-color: #2a66c8;
-}
-
 .reminder-button {
   padding: 6px 12px;
   background-color: #f0ad4e;
