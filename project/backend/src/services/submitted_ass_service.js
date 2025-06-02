@@ -32,7 +32,7 @@ async function UpdateSubAssById(subAssId, userTags, savedFiles, description) {
         { $set: {submit_user_course_tag: userTags, attachments: savedFiles, description: description} }
     );
 
-    return result.acknowledged;
+    return result.modifiedCount;
 }
 
 // 取得某學生針對某作業的繳交紀錄
@@ -60,7 +60,7 @@ async function DeleteSubAssById(subAssId) {
             s_ass_id: parseInt(subAssId)
         });
 
-        return deleteResult.acknowledged;
+        return deleteResult.deletedCount;
     } catch (error) {
         console.error("DeleteSubmissionRecordService 錯誤:", error);
         throw error;
