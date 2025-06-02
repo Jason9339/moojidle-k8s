@@ -1,6 +1,6 @@
 /* black wrapper */
 .tabListBox {
-    border: 2px solid #222;
+    border: 2px solid #a39999;
     border-radius: 15px;
     padding: 8px 8px; 
     margin-bottom: 1.5%; 
@@ -72,7 +72,7 @@
 }
 
 .descBox {
-    border: 2px solid #222;
+    border: 2px solid #a39999;
     border-radius: 10px;
     padding: 15px; 
     min-height: 70px; 
