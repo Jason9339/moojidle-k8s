@@ -64,10 +64,7 @@ async function EditDiscussionBoardService(boardID, boardName) {
             { board_id: boardID },
             { $set: { name: boardName } }
         );
-        
         return result.matchedCount;
-            
-        
     } catch (err) {
         throw new Error("更新討論版失敗：" + err.message);
     }
