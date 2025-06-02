@@ -2,7 +2,8 @@ import {
     FindNotifiedByUserId,
     FindNotificationById,
     DeleteNotifiedById,
-    SendNotify
+    SendNotify,
+    NotificationReaded
 } from '#src/services/notification_service.js'
 
 async function GetNotified(req, res, next) {
@@ -67,10 +68,23 @@ async function NotifiedDeleter(req, res){
 
 async function Notify(req, res) {
     try {
-        const { event_id, event_category, context, notified_userId} = req.body;
-        console.log(req.body)
-
         const result = await SendNotify(req.body);
+
+        if (result.error) {
+            return res.status(404).send({ error: result.error });
+        }
+
+        return res.status(200).send({ message: {result}});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ error: "An unexpected error occurred" });
+    }
+}
+
+async function NotifRead(req, res) {
+    try {
+        const result = await NotificationReaded(req.body);
 
         if (result.error) {
             return res.status(404).send({ error: result.error });
@@ -87,5 +101,6 @@ async function Notify(req, res) {
 export {
     GetNotified,
     NotifiedDeleter,
-    Notify
+    Notify,
+    NotifRead
 }

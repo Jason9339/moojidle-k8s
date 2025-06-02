@@ -115,7 +115,7 @@ describe('Notification Service', () => {
         it('成功更改notification已讀狀態', async () => {
             const notified1 = await FindNotifiedByUserId(2);
             expect(notified1[0].is_read).toBe(false);
-            const notification = await NotificationReaded({
+            await NotificationReaded({
                 n_id: 1,
                 user_id: 2
             });

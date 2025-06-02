@@ -20,5 +20,15 @@ async function DeleteNotification(notifiedData) {
     }
 }
 
-export { GetnotificationData, DeleteNotification };
+async function ReadNotification(notifiedData){
+    try {
+        const response = await api.post("notification/read", notifiedData);
+        return response;
+    } catch (error) {
+        console.error("Failed to fetch post content:", error.message);
+        throw error;
+    }
+}
+
+export { GetnotificationData, DeleteNotification, ReadNotification };
 

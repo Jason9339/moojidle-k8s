@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
-import { GetnotificationData, DeleteNotification } from "@/services/NotificationApi.js";
+import { useNavigate } from "react-router-dom";
+
+import { GetnotificationData, DeleteNotification, ReadNotification } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
 
 function Notification() {
@@ -9,6 +11,8 @@ function Notification() {
     const [error, setError] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterCategory, setFilterCategory] = useState("all");
+    const navigate = useNavigate();
+    
 
     const categoryMap = {
         all: "全部",
@@ -65,6 +69,22 @@ function Notification() {
         }
     };
 
+    const handleBatchClick = async (item) => {
+        console.log(item);
+        try {
+            ReadNotification({
+                n_id: item.n_id,
+                user_id: item.user_id
+            })
+            switch (item.notification.event_category) {
+                case "commend":
+                    navigate(`/post/${item.notification.event_id}`);
+            }
+        } catch (err) {
+            alert("刪除失敗，請稍後再試");
+        }
+    };
+
     const filteredNotifications = filterCategory === "all"
         ? notifications
         : notifications.filter((item) => item.notification.event_category === filterCategory);
@@ -110,6 +130,7 @@ function Notification() {
                                     isSelected={selectedIds.includes(item.n_id)}
                                     onSelectChange={handleSelectChange}
                                     categoryMap={categoryMap} // 把 categoryMap 傳下去
+                                    onClick={(item) => handleBatchClick(item)}
                                 />
                             ))
                         )}
