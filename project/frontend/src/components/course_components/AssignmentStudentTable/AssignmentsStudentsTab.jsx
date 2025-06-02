@@ -1,8 +1,8 @@
 // 學生作業列表元件
 import React, { useState } from "react";
 import { FaCalendarAlt, FaPaperclip, FaUpload } from "react-icons/fa";
-import UploadModal from "../UploadModal/UploadModal";
 import styles from "./AssignmentsStudentsTab.module.css";
+import SubmittedAssUploadModal from "@/components/course_components/SubmittedAssUploadModal/SubmittedAssUploadModal";
 
 export default function AssignmentsStudentsTab({ 
     courseId,
@@ -85,13 +85,15 @@ export default function AssignmentsStudentsTab({
 
     return (
         <div className={styles["assignments-container"]}>
-            {showUploadModal && currentAssignment && (
-                <UploadModal
+            {showUploadModal && currentAssignment && (                
+                <SubmittedAssUploadModal
                     onClose={() => setShowUploadModal(false)}
                     courseId={courseId}
                     assignmentId={currentAssignment.id}
-                    mode="student-assignment"
-                    onSuccess={handleUploadSuccessInternal}
+                    onSuccess={async () => {
+                        await refreshAssignments();
+                        setShowUploadModal(false);
+                    }}
                 />
             )}
             {sortedWeeks.length === 0 ? (
