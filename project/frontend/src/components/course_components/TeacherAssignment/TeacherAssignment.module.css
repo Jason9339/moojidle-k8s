@@ -39,7 +39,7 @@
 }
 
 .tabBtn {
-    width: 225px;
+    width: 200px;
     min-width: 0;
     max-width: 100%;
     padding: 6px 14px; 
@@ -58,7 +58,7 @@
 
 .tabBtnGroupLeft {
     justify-content: flex-start !important;
-    margin-left: 100px; 
+    margin-left: 15px; 
 }
 
 .tabBtnActive {
