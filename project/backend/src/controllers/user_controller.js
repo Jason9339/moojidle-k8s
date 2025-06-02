@@ -154,75 +154,98 @@ async function UpdateData(req, res) {
     const userId = req.params.id;
     const { contactWays } = req.body;
 
-    if (!Array.isArray(contactWays) || contactWays.length === 0) { // 確保 `contactWays` 為陣列
-        return res.status(400).send({ message: "Contact ways must be a non-empty array" });
+    if (!Array.isArray(contactWays) || contactWays.length === 0) {
+        return res.status(400).send({ 
+            message: "contactWays must be a non-empty array",
+            example: [{
+                approach: "email",
+                details: "example@email.com"
+            }]
+        });
+    }
+
+   
+    for (const contact of contactWays) {
+        if (!contact.approach || !contact.details) {
+            return res.status(400).send({
+                message: "Each contact way must have 'approach' and 'details' fields",
+                example: {
+                    approach: "email",
+                    details: "example@email.com"
+                }
+            });
+        }
     }
 
     try {
-        // 檢查用戶是否存在
-        const user = await FindOneUserById(userId);
-        if (!user) {
-            return res.status(404).send({ message: "User not found" });
-        }
+        
+        const result = await UpdateUserContactWay(userId, contactWays);
 
-        let updatedCount = 0;
-        for (const newContactWay of contactWays) { // 遍歷每個 contact way 進行更新
-            const result = await UpdateUserContactWay(userId, newContactWay);
-            if (result.modifiedCount > 0) {
-                updatedCount += result.modifiedCount;
-            }
-        }
-
-        if (updatedCount > 0) {
-            res.status(200).send({ message: "Contact ways updated successfully" });
+        if (result.modifiedCount > 0) {
+            return res.status(200).send({
+                message: "Contact ways updated successfully",
+                updatedContacts: contactWays
+            });
         } else {
-            res.status(500).send({ message: "Failed to update contact ways" });
+            
+            return res.status(200).send({
+                message: "No changes were made to contact ways",
+                note: "This might be because the contact ways are identical to existing ones"
+            });
         }
     } catch (err) {
-        console.error("Error processing request:", err);
-        res.status(500).send({ message: "An error occurred", error: err.message });
+        console.error("Error updating contact ways:", err);
+        return res.status(500).send({
+            message: "Failed to update contact ways",
+            error: err.message
+        });
     }
 }
-
 
 async function UpdateTags(req, res) {
-    const userId = parseInt(req.params.id, 10);
-    const { tags } = req.body;
+  const userId = parseInt(req.params.id, 10);
+  const { tags } = req.body;
 
-    if (!Array.isArray(tags) || tags.length === 0) { // 確保 `tags` 為陣列且非空
-        return res.status(400).send({ message: "Tags must be a non-empty array" });
+  // 驗證：tags 必須存在，且是字串陣列
+  if (!Array.isArray(tags)) {
+    return res.status(400).send({
+      message: "Tags must be an array of strings",
+      example: ["tagA", "tagB"],
+    });
+  }
+  for (const t of tags) {
+    if (typeof t !== "string" || t.trim() === "") {
+      return res.status(400).send({
+        message: "Each element in tags must be a non-empty string",
+      });
+    }
+  }
+
+  try {
+    // 確認 user 是否存在
+    const user = await FindOneUserById(userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
     }
 
-    try {
-        // 確保用戶存在
-        const user = await FindOneUserById(userId);
-        if (!user) {
-            return res.status(404).send({ message: "User not found" });
-        }
+    // 以新陣列覆寫整組 tags
+    const result = await UpdateUserTags(userId, tags);
 
-        let updatedCount = 0;
-        for (const { _id, user_tag } of tags) { // 遍歷 `tags` 陣列
-            if (!_id || !user_tag) {
-                console.warn(`Skipping tag update due to missing _id or user_tag:`, { _id, user_tag });
-                continue; // 跳過無效數據
-            }
-
-            const result = await UpdateUserTags(userId, _id, user_tag);
-            if (result.modifiedCount > 0) {
-                updatedCount += result.modifiedCount;
-            }
-        }
-
-        if (updatedCount > 0) {
-            res.status(200).send({ message: "Tags updated successfully" });
-        } else {
-            res.status(500).send({ message: "Failed to update tags" });
-        }
-    } catch (err) {
-        console.error("Error updating tags:", err);
-        res.status(500).send({ message: "An error occurred", error: err.message });
-    }
+    return res.status(200).send({
+      message: "Tags replaced successfully",
+      insertedCount: result.newIds ? result.newIds.length : 0,
+      newIds: result.newIds || [],
+    });
+  } catch (err) {
+    console.error("UpdateTags error:", err);
+    return res
+      .status(500)
+      .send({ message: "Failed to replace tags", error: err.message });
+  }
 }
+
+
+
 
 export {
     Register,

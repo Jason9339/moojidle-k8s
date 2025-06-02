@@ -31,9 +31,10 @@ async function UpdateUserPassword(userId, data) {
     }
 }
 
-async function UpdateUserData(userId, data) {
+async function EditUserData(userId, data) {
     try {
         const response = await api.put(`/user/update-user-data/${userId}`, data);
+        console.log("User data updated successfully:", response.data);
         return response.data;
     } catch (err) {
         console.error(err);
@@ -41,9 +42,10 @@ async function UpdateUserData(userId, data) {
     }
 }
 
-async function UpdateUserTags(userId, _id, data) {
+async function EditUserTags(userId, tags) {
     try {
-        const response = await api.put(`/user/update-user-tags/${userId}`, data);
+        const response = await api.put(`/user/update-user-tags/${userId}`, { user_tags: tags });
+        console.log("User tags updated successfully:", response.data);
         return response.data;
     } catch (err) {
         console.error(err);
@@ -55,6 +57,6 @@ export {
     GetUserDataById,
     UpdateUserPassword,
     GetUserTagsById,
-    UpdateUserData,
-    UpdateUserTags
+    EditUserData,
+    EditUserTags
 }

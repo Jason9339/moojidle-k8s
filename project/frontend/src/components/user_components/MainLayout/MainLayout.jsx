@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./MainLayout.module.css";
-
+import { Link } from "react-router-dom";
 function MainLayout({ pfp_path, name, email, contact_ways }) {
     const [imgSrc, setImgSrc] = useState(pfp_path || "/user_pfp/default.png");
 
@@ -8,11 +8,14 @@ function MainLayout({ pfp_path, name, email, contact_ways }) {
         <div className={styles.card}>
             <div className={styles.headerRow}>
                 <h3 className={styles.username}>{name}</h3>
-                <button className={styles.editButton}>
-                    <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
-                    編輯基本個人檔案
-                </button>
+                <Link to="/user/edit-profile" className={styles.editLink}>
+                    <button className={styles.editButton}>
+                        <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
+                        編輯基本個人檔案
+                    </button>
+                </Link>
             </div>
+
 
             <div className={styles.infoSection}>
                 <img
