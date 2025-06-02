@@ -21,6 +21,10 @@ workflow:
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
   rules: 
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: false  # Pipeline succeeds even if this job is not run
+    
     - if: $CI_COMMIT_BRANCH == "main"  # for push to main
       when: always
     # Manual execution for merge requests (except certain branches)
