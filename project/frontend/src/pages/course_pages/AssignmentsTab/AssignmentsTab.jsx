@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
-import { GetAssignmentSubmission } from "@/services/SubmittedAssignmentApi";
+import { GetSubAssign } from "@/services/SubmittedAssignmentApi";
 
 function AssignmentsTab() {
     const { role, course } = useOutletContext();
@@ -40,11 +40,19 @@ function AssignmentsTab() {
     const fetchSubmissionMapWithAssignments = async (assignmentsList) => {
         if (!course?.courseId || !assignmentsList || assignmentsList.length === 0) return;
         
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.user_id;
+        
         try {
             const results = await Promise.all(assignmentsList.map(a =>
-                GetAssignmentSubmission(a.id)
+                GetSubAssign(a.id, userId)
                     .then(data => ({ assId: a.id, submission: data }))
-                    .catch(() => ({ assId: a.id, submission: null }))
+                    .catch((err) => {
+                        if (!(err.response && err.response.status === 404)) {
+                            console.error(`獲取作業 ${a.id} 提交記錄失敗:`, err);
+                        }
+                        return { assId: a.id, submission: null };
+                    })
             ));
             const map = {};
             results.forEach(({ assId, submission }) => {

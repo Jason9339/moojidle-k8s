@@ -14,11 +14,7 @@ export const UploadAssignment = async (formData) => {
         const courseId = formData.get('courseId');
         const endpoint = `/assignment/course/${courseId}/upload`;
         
-        const response = await api.post(endpoint, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const response = await api.post(endpoint, formData);
         return response.data;
     } catch (err) {
         console.error("上傳作業失敗", err);

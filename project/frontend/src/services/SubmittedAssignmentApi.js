@@ -5,11 +5,17 @@ export const CreateSubAssign = async (assignmentId, data) => {
     try {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
+        
+        const url = `/submitted-assignment/submit-to/${assignmentId}/user/${userId}`;
+        
         // 後端路由: /submit-to/:assignmentId/user/:userId
-        const response = await api.post(`/submitted-assignment/submit-to/${assignmentId}/user/${userId}`, data);
+        const response = await api.post(url, data);
+        
         return response.data;
     } catch (err) {
         console.error("建立繳交紀錄失敗", err);
+        console.error("錯誤詳情:", err.response?.data);
+        console.error("錯誤狀態:", err.response?.status);
         throw new Error(err.response?.data?.message || "建立紀錄發生錯誤");
     }
 };
@@ -28,10 +34,15 @@ export const UpdateSubAssign = async (subAssId, data) => { // 參數改為 subAs
 // 後端路由: /sub-assign-id/:subAssId
 export const DeleteSubAssign = async (subAssId) => { // 參數改為 subAssId
     try {
-        const response = await api.delete(`/submitted-assignment/sub-assign-id/${subAssId}`);
+        const url = `/submitted-assignment/sub-assign-id/${subAssId}`;
+        
+        const response = await api.delete(url);
+        
         return response.data;
     } catch (err) {
         console.error("刪除繳交紀錄失敗", err);
+        console.error("錯誤詳情:", err.response?.data);
+        console.error("錯誤狀態:", err.response?.status);
         throw new Error(err.response?.data?.message || "刪除紀錄發生錯誤");
     }
 };
