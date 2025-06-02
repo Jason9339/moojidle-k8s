@@ -48,7 +48,7 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
                         id="boardName"
                         type="text"
                         autoFocus
-                        placeholder="TODO: 未來可修改名稱"
+                        // placeholder=
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
                     />
