@@ -64,15 +64,10 @@ async function EditDiscussionBoardService(boardID, boardName) {
             { board_id: boardID },
             { $set: { name: boardName } }
         );
-
-        if (result.matchedCount === 0) {
-            throw new Error(`找不到 board_id 為 ${boardID} 的討論版`);
-        }
-        return {
-            success: true,
-            modifiedCount: result.modifiedCount,
-            message: '討論版名稱更新成功',
-        };
+        
+        return result.matchedCount;
+            
+        
     } catch (err) {
         throw new Error("更新討論版失敗：" + err.message);
     }
