@@ -1,6 +1,6 @@
 import {
     FindSubmissionsByAssignmentId,
-    ReviewAssignmentSubmissionService,
+    UpdateReviewAssignmentSubmission,
     FindSubmissionAssignmentBySubmitAssId
 } from '#src/services/submit_assignment_service.js';
 
@@ -108,7 +108,7 @@ async function ReviewAssignmentSubmission(req, res) {
         }
         
         // Call service function to update the submission
-        const result = await ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId);
+        const result = await UpdateReviewAssignmentSubmission(submitAssignmentId, score, graderId);
         console.log("評分結果:", result);
         // Return success response
         return res.status(200).json({
@@ -132,6 +132,5 @@ async function ReviewAssignmentSubmission(req, res) {
 export {
     GetAssignmentSubmissions,
     ReviewAssignmentSubmission,
-
 }
 

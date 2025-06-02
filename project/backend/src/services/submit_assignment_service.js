@@ -56,7 +56,7 @@ async function FindSubmissionAssignmentBySubmitAssId(assignmentId) {
 }
 
 
-async function ReviewAssignmentSubmissionService(submissionId, score, graderId) {
+async function UpdateReviewAssignmentSubmission(submissionId, score, graderId) {
     try {
         
         // Convert submission ID and score to appropriate types
@@ -90,7 +90,6 @@ async function ReviewAssignmentSubmissionService(submissionId, score, graderId) 
 
 export {
     FindSubmissionsByAssignmentId,
-    ReviewAssignmentSubmissionService,
+    UpdateReviewAssignmentSubmission,
     FindSubmissionAssignmentBySubmitAssId
-
 }
