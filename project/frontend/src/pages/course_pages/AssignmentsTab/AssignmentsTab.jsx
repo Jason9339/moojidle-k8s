@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
-import { GetSubAssign } from "@/services/SubmittedAssignmentApi";
+import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignmentApi";
 
 function AssignmentsTab() {
     const { role, course } = useOutletContext();
@@ -45,7 +45,7 @@ function AssignmentsTab() {
         
         try {
             const results = await Promise.all(assignmentsList.map(a =>
-                GetSubAssign(a.id, userId)
+                GetTheAssignSubAssForOneStuednt(a.id, userId)
                     .then(data => ({ assId: a.id, submission: data }))
                     .catch((err) => {
                         if (!(err.response && err.response.status === 404)) {

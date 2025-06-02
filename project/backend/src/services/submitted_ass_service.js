@@ -12,7 +12,7 @@ async function FindSubAssById(subAssId) {
     }
 }
 
-async function CreateAssignmentSubmissionService(submission) {
+async function InsertSubAss(submission) {
     try {
         const db = mongoose.connection.db;
         const result = await db.collection("submitted_ass").insertOne(submission);
@@ -23,7 +23,7 @@ async function CreateAssignmentSubmissionService(submission) {
     }
 }
 // 更新作業提交（以 assignmentId + userId 為條件）
-async function UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles, description) {
+async function UpdateSubAssById(subAssId, userTags, savedFiles, description) {
     const db = mongoose.connection.db;
     const result = await db.collection("submitted_ass").updateOne(
         {
@@ -36,7 +36,7 @@ async function UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles,
 }
 
 // 取得某學生針對某作業的繳交紀錄
-async function GetAssignmentSubmissionService(assignmentId, userId) {
+async function FindSubAssByAssAndUser(assignmentId, userId) {
     try {
         const db = mongoose.connection.db;
 
@@ -52,7 +52,7 @@ async function GetAssignmentSubmissionService(assignmentId, userId) {
     }
 }
 
-async function DeleteSubmissionRecordService(subAssId) {
+async function DeleteSubAssById(subAssId) {
     try {
         const db = mongoose.connection.db;
 
@@ -69,9 +69,11 @@ async function DeleteSubmissionRecordService(subAssId) {
 
 export {
     FindSubAssById,
-    CreateAssignmentSubmissionService,
-    UpdateAssignmentSubmissionService,
-    GetAssignmentSubmissionService,
-    // DeleteSubmittedFileService,
-    DeleteSubmissionRecordService
+    FindSubAssByAssAndUser,
+
+    InsertSubAss,
+
+    UpdateSubAssById,
+
+    DeleteSubAssById
 };

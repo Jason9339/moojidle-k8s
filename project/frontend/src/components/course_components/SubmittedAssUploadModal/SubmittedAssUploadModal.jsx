@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CreateSubAssign, UpdateSubAssign, DeleteSubAssign } from "@/services/SubmittedAssignmentApi";
+import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignmentApi";
 import { checkFilesAndAlert } from "@/utils/fileValidation";
 import styles from "./SubmittedAssUploadModal.module.css";
 
@@ -67,7 +67,7 @@ const SubmittedAssUploadModal = ({
 
                 if (isEmptyDescription && hasNoNewFiles && remainingExistingFiles.length === 0) {
                     if (existingFiles.length > 0 || (existingSubmission?.description || "").trim()) {
-                        await DeleteSubAssign(submissionId);
+                        await DeleteSubAss(submissionId);
                         alert("作業提交記錄已因內容清空而被刪除！");
                     } else {
                         alert("沒有內容可更新。");
@@ -117,7 +117,7 @@ const SubmittedAssUploadModal = ({
                     setLoading(false);
                     return;
                 }
-                await CreateSubAssign(assignmentId, formData);
+                await CreateSubAssign(assignmentId, userId, formData);
                 alert("作業提交成功！");
             }
             
@@ -154,7 +154,7 @@ const SubmittedAssUploadModal = ({
             
             if (submissionId) {
                 // 有後端提交記錄，需要調用 API 刪除
-                await DeleteSubAssign(submissionId);
+                await DeleteSubAss(submissionId);
                 alert("作業提交記錄已完全清除！");
             } else {
                 // 沒有後端提交記錄，只清空本地狀態
