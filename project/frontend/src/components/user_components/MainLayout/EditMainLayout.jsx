@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
+import { EditUserData } from "@/services/UserApi";
 
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
+    const [loading, setLoading] = useState(false);
+    const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
 
     const handleChange = (index, field, value) => {
         setContacts(contacts.map((c, i) =>
@@ -16,6 +19,33 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
 
     const handleRemove = (index) => {
         setContacts(contacts.filter((_, i) => i !== index));
+    };
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            // 只送出有效資料
+            const validContacts = contacts
+                .filter(c =>
+                    c &&
+                    typeof c === "object" &&
+                    typeof c.approach === "string" &&
+                    typeof c.details === "string" &&
+                    c.approach.trim() !== "" &&
+                    c.details.trim() !== ""
+                )
+                .map(c => ({
+                    approach: c.approach.trim(),
+                    details: c.details.trim()
+                }));
+
+            await EditUserData(userId, { contactWays: validContacts });
+            onSave(validContacts);
+        } catch (err) {
+            alert("儲存失敗，請稍後再試");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -43,8 +73,10 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             </ul>
             <button onClick={handleAdd} className={styles.addBtn}>新增聯絡方式</button>
             <div style={{ marginTop: 16 }}>
-                <button onClick={() => onSave(contacts)} className={styles.saveBtn}>儲存</button>
-                <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
+                <button onClick={handleSave} className={styles.saveBtn} disabled={loading}>
+                    {loading ? "儲存中..." : "儲存"}
+                </button>
+                <button onClick={onCancel} className={styles.cancelBtn} disabled={loading}>取消</button>
             </div>
         </div>
     );
