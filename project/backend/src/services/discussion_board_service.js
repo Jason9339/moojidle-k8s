@@ -58,7 +58,7 @@ async function DeleteDiscussionBoardService(board_id) {
     return result.deletedCount > 0;
 }
 
-async function EditDiscussionBoardService(boardID, boardName) {
+async function UpdateDiscussionBoardService(boardID, boardName) {
     try {
         const result = await mongoose.connection.db.collection('discussion_board').updateOne(
             { board_id: boardID },
@@ -85,6 +85,6 @@ export {
     FindCourseBoardByCourseId,
     InsertDiscussionBoardService,
     DeleteDiscussionBoardService,
-    EditDiscussionBoardService,
+    UpdateDiscussionBoardService,
     FindBoardByID
 }

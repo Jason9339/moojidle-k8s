@@ -2,7 +2,7 @@ import {
     FindCourseBoardByCourseId,
     InsertDiscussionBoardService,
     DeleteDiscussionBoardService,
-    EditDiscussionBoardService,
+    UpdateDiscussionBoardService,
 } from "#src/services/discussion_board_service.js";
 
 import {
@@ -130,7 +130,7 @@ async function EditDiscussionBoard(req, res) {
     }
 
     try {
-        const result = await EditDiscussionBoardService(board_id, board_name);
+        const result = await UpdateDiscussionBoardService(board_id, board_name);
         if (result === 0) {
             return res.status(404).json({ success: false, message: "討論版不存在" });
         }
