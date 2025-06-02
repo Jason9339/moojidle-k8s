@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import { useNavigate } from 'react-router-dom';
 import Toolbar from '../Toolbar/Toolbar';
 import WeekView from '../WeekView/WeekView/WeekView';
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,7 +15,7 @@ const Calendar = ({ events, ...props }) => {
     const [view, setView] = useState('month')
     const handleNavigate = useCallback(newDate => setDate(newDate), [setDate]);
     const [monthEvents, setMonthEvents] = useState([]);
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const monthEvts = events.map(({ end, ...rest }) => (
@@ -30,6 +31,26 @@ const Calendar = ({ events, ...props }) => {
 
         setView(view);
     }, [])
+
+    const handleSelectEvent = useCallback(event => {
+
+        switch (view) {
+            case 'month':
+                setView('week');
+                setDate(event.end);
+                break;
+            case 'week':
+                setView('day');
+                setDate(event.end);
+                break;
+            case 'day':
+
+                navigate(`/course/${event.course.id}`);
+                break;
+        }
+
+        console.log("handleSelectEvent:", event);
+    }, [navigate, view])
     return (
 
         <BigCalendar
@@ -50,6 +71,7 @@ const Calendar = ({ events, ...props }) => {
             onNavigate={handleNavigate}
             view={view}
             onView={handleViewChange}
+            onSelectEvent={handleSelectEvent}
             components={{ toolbar: Toolbar }}
 
             dayLayoutAlgorithm="no-overlap"

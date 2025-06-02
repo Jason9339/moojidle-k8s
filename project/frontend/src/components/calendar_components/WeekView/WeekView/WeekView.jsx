@@ -1,22 +1,18 @@
 
-import React, { useState } from 'react'
+import React from 'react'
 import moment from 'moment'
 import styles from './WeekView.module.css'
 
 const EVENT_DEFAULT_COLOR = "#3174ad";
 const EVENT_HEIGHT = 30;
 const EVENT_GAP = 4;
-const TOOLTIP_OFFSET_LEFT = -20;
-const TOOLTIP_WIDTH = '200px';
-const TOOLTIP_HEIGHT = '100px';
 
 function WeekTimeView({
     date,
     events,
     accessors: { start: getStart, end: getEnd },
+    onSelectEvent,
 }) {
-    const [showTooltip, setShowTooltip] = useState(false);
-    const [tooltip, setTooltip] = useState({});
 
     const weekStartMoment = moment(date).startOf('week');
     const weekEndNextMoment = moment(weekStartMoment).add(7, 'days');
@@ -112,29 +108,12 @@ function WeekTimeView({
                                 height: EVENT_HEIGHT,
                                 backgroundColor: seg.evt.child.color
                             }}
-                            onMouseEnter={e => {
-                                setShowTooltip(true);
-                                setTooltip({ top: e.clientY, left: e.clientX, title: seg.evt.title });
-                            }}
-                            onMouseLeave={() => setShowTooltip(false)}
+                            onClick={() => onSelectEvent(seg.evt)}
                         >
                             <span className={styles.eventTitle}>
                                 {seg.evt.title}
                             </span>
 
-                            {showTooltip && (
-                                <div
-                                    className={styles.tooltip}
-                                    style={{
-                                        top: tooltip.top,
-                                        left: tooltip.left - TOOLTIP_OFFSET_LEFT,
-                                        width: TOOLTIP_WIDTH,
-                                        height: TOOLTIP_HEIGHT
-                                    }}
-                                >
-                                    <span>{tooltip.title}</span>
-                                </div>
-                            )}
                         </div>
                     );
                 })}
