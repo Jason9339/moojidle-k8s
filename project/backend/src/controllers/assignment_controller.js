@@ -1,7 +1,7 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    InsertAssignmentToDB,
-    FindAssignmentsByCourseId
+    FindAssignmentsByCourseId,
+    InsertAssignmentToDB
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -48,41 +48,23 @@ async function GetCourseAssignments(req, res) {
         formattedAssignments = formattedAssignments.map((assignment) => {
             const assignmentDate = assignment.start_date || assignment.create_date;
             const week = CalculateWeek(courseStartDate, assignmentDate, courseWeekNum);
-            // 處理 attachments，將 url 轉換為 path_to_file
-            const processedAttachments = (assignment.attachments || []).map(att => {
-                let path_to_file = att.path_to_file || att.url;
-                if (att.url && att.url.includes('/assignments/')) {
-                    const pathPart = att.url.split('/assignments/')[1];
-                    path_to_file = `uploads/assignment/${pathPart}`;
-                } else if (att.url && att.url.includes('/submit/')) {
-                    const pathPart = att.url.split('/submit/')[1];
-                    path_to_file = `uploads/submit/${pathPart}`;
-                } else if (att.url && !att.url.startsWith('http')) {
-                    path_to_file = att.url;
-                }
-                return {
-                    ...att,
-                    path_to_file
-                };
-            });
             return {
                 id: assignment.ass_id,
                 name: assignment.ass_name,
                 description: assignment.description,
                 dueDate: assignment.end_date,
                 startDate: assignment.start_date,
-                attachments: processedAttachments,
+                attachments: assignment.attachments || [],
                 week: week
             };
         })
+
         res.json(formattedAssignments);
     } catch (error) {
         console.error("取得課程作業錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 }
-
-
 
 // 上傳課程作業
 async function UploadAssignment(req, res) {
@@ -148,15 +130,15 @@ function DownloadAssignment(req, res) {
         return res.status(400).json({ message: "Missing path parameter" });
     }
 
-    const sanitizedPath = filePathParam.replace(/^\/+/,''); // 去除開頭的 "/"
+    const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
+    // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ [DownloadAssignment] 參數 path:", filePathParam);
-    console.log("✅ [DownloadAssignment] 實際檔案路徑:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
             console.error("❌ 檔案不存在:", filePath);
-            return res.status(404).json({ message: "File not found", filePath });
+            return res.status(404).json({ message: "File not found" });
         }
 
         res.setHeader(
@@ -167,7 +149,7 @@ function DownloadAssignment(req, res) {
         res.download(filePath, (err) => {
             if (err) {
                 console.error("❌ 下載錯誤:", err);
-                res.status(500).json({ message: "Error downloading file", filePath });
+                res.status(500).json({ message: "Error downloading file" });
             }
         });
     });

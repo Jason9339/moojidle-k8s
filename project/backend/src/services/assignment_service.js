@@ -102,8 +102,6 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
-
-
 const InsertAssignmentToDB = async (assignmentData) => {
     try {
         // 生成下一個 assignment ID
@@ -123,10 +121,8 @@ const InsertAssignmentToDB = async (assignmentData) => {
     }
 };
 
-
-
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
-    InsertAssignmentToDB,
+    InsertAssignmentToDB
 };
