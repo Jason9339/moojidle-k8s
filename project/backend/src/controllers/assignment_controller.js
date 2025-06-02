@@ -4,6 +4,10 @@ import {
     InsertAssignmentToDB
 } from '#src/services/assignment_service.js';
 
+import {
+    FindStudyInJoinUserByCourseId,
+} from '#src/services/course_member_service.js';
+
 import { 
     FindCourseById
 } from '#src/services/course_service.js';
@@ -18,6 +22,7 @@ import CalculateWeek from '#src/utils/calculate_week.js';
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { SendNotify } from '#src/services/notification_service.js';
 
 // 模擬 __dirname，因為使用的是 ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -109,6 +114,17 @@ async function UploadAssignment(req, res) {
         };
 
         const dbResult = await InsertAssignmentToDB(assignmentData);
+
+        //發送notification
+        const course = await FindCourseById(courseId);
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+        const notification = {
+            event_id: course.course_id,
+            event_category: "homework",
+            context: `${course.name} 新增作業 ${assName}`,
+            notified_users:students
+        }
+        await SendNotify(notification);
 
         res.status(200).json({
             message: savedFiles.length > 0 ? "作業上傳成功（包含附件）" : "作業上傳成功",
