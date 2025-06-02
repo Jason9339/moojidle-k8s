@@ -6,6 +6,15 @@ export const uploadWithMulter = multer({
     limits: { fileSize: 5 * 1024 * 1024 },
 }).single("uploadFile");
 
+// 設定 multer 支援多檔案上傳
+export const uploadMultipleWithMulter = multer({
+    storage: multer.memoryStorage(),
+    limits: { 
+        fileSize: 5 * 1024 * 1024, // 每個檔案限制 5MB
+        files: 10 // 最多10個檔案
+    },
+}).any(); // 接受任何檔案欄位名稱
+
 // Multer 錯誤處理 middleware
 export const MulterErrorHandling = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
