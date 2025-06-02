@@ -85,16 +85,20 @@ export default function AssignmentsStudentsTab({
 
     return (
         <div className={styles["assignments-container"]}>
-            {showUploadModal && currentAssignment && (                
-                <SubmittedAssUploadModal
-                    onClose={() => setShowUploadModal(false)}
-                    courseId={courseId}
-                    assignmentId={currentAssignment.id}
-                    onSuccess={async () => {
-                        await refreshAssignments();
-                        setShowUploadModal(false);
-                    }}
-                />
+            {showUploadModal && currentAssignment && (
+                <>
+                    <div
+                        className={styles["modal-overlay"]}
+                        onClick={() => setShowUploadModal(false)}
+                    />
+                    <SubmittedAssUploadModal
+                        onClose={() => setShowUploadModal(false)}
+                        courseId={courseId}
+                        assignmentId={currentAssignment.id}
+                        existingSubmission={submissionMap[currentAssignment.id] || null}
+                        onSuccess={handleUploadSuccessInternal}
+                    />
+                </>
             )}
             {sortedWeeks.length === 0 ? (
                 <div className={styles["empty-assignments-card"]}>

@@ -1,55 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
-import { SubmitAssignment, GetAssignmentSubmission, DeleteSubmittedFile, DeleteSubmissionRecord } from "@/services/SubmittedAssignmentApi";
+import React, { useState, useRef } from "react";
+import { SubmitAssignment, DeleteSubmittedFile, DeleteSubmissionRecord } from "@/services/SubmittedAssignmentApi";
+import { checkFilesAndAlert } from "@/utils/fileValidation";
 import styles from "./SubmittedAssUploadModal.module.css";
 
-const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess }) => {
+const SubmittedAssUploadModal = ({ 
+    onClose, 
+    courseId, 
+    assignmentId, 
+    existingSubmission,
+    onSuccess 
+}) => {
     const [files, setFiles] = useState([]);
-    const [existingFiles, setExistingFiles] = useState([]);
-    const [existingSubmission, setExistingSubmission] = useState(null);
     const [deletedFiles, setDeletedFiles] = useState([]);
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState(existingSubmission?.description || "");
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        loadExistingSubmission();
-    }, [assignmentId]);
-
-    // 載入已提交的作業
-    const loadExistingSubmission = async () => {
-        if (assignmentId) {
-            try {
-                console.log(`[loadExistingSubmission] 載入作業提交記錄: assignmentId=${assignmentId}`);
-                const submission = await GetAssignmentSubmission(assignmentId);
-                console.log(`[loadExistingSubmission] 取得的提交記錄:`, submission);
-                
-                if (submission) {
-                    setExistingSubmission(submission);
-                    setExistingFiles(submission.attachments || []);
-                    setDescription(submission.description || "");
-                    console.log(`[loadExistingSubmission] 設定已存在檔案數量: ${(submission.attachments || []).length}`);
-                } else {
-                    console.log(`[loadExistingSubmission] 沒有找到提交記錄，清空狀態`);
-                    setExistingSubmission(null);
-                    setExistingFiles([]);
-                    setDescription("");
-                }
-                
-                // 清空暫存的操作狀態
-                setDeletedFiles([]);
-                setFiles([]);
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
-            } catch (error) {
-                console.error("載入已提交作業失敗:", error);
-                setExistingSubmission(null);
-                setExistingFiles([]);
-                setDescription("");
-                setDeletedFiles([]);
-            }
-        }
-    };
+    // 從 props 中取得已存在的檔案
+    const existingFiles = existingSubmission?.attachments || [];
 
     const handleUpload = async () => {
         if (loading) return;
@@ -66,7 +34,7 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
         const formData = new FormData();
         
         // 添加所有選擇的檔案
-        files.forEach((file, index) => {
+        files.forEach((file) => {
             const renamedFile = new File([file], encodeURIComponent(file.name), { type: file.type });
             formData.append("uploadFile", renamedFile);
         });
@@ -75,14 +43,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
         formData.append("description", description);
         formData.append("assignmentId", assignmentId);
         formData.append("submitByUserId", userId);
-        
-        // 調試信息
-        console.log('[SubmittedAssUploadModal] 準備提交的描述:', {
-            description: description,
-            描述長度: description.length,
-            描述是否為空字串: description === "",
-            描述內容: JSON.stringify(description)
-        });
 
         try {
             // 檢查是否要完全清空所有內容的情況
@@ -96,10 +56,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
                 try {
                     await DeleteSubmissionRecord(assignmentId);
                     alert("作業提交記錄已完全清除！");
-                    
-                    // 重新載入以更新 UI 狀態
-                    await loadExistingSubmission();
-                    setDeletedFiles([]);
                     
                     // 清空檔案選擇
                     setFiles([]);
@@ -160,13 +116,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
                     if (submitResult.data && submitResult.data.deleted === true) {
                         console.log(`[SubmittedAssUploadModal] 後端自動刪除了提交記錄，原因: ${submitResult.data.reason}`);
                         
-                        // 清空前端狀態
-                        setFiles([]);
-                        setExistingFiles([]);
-                        setExistingSubmission(null);
-                        setDeletedFiles([]);
-                        setDescription("");
-                        
                         // 清空檔案輸入
                         if (fileInputRef.current) {
                             fileInputRef.current.value = '';
@@ -194,11 +143,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
                 // 只有刪除操作，沒有新內容，且提交記錄已被刪除
                 alert(`作業提交記錄已完全清除！刪除了 ${deletedCount} 個檔案`);
             }
-            
-            // 重新載入已提交的檔案
-            await loadExistingSubmission();
-            // 清空暫存的刪除列表
-            setDeletedFiles([]);
             
             // 清空檔案選擇
             setFiles([]);
@@ -238,8 +182,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
             
             // 立即清空前端狀態
             setFiles([]);
-            setExistingFiles([]);
-            setExistingSubmission(null);
             setDeletedFiles([]);
             setDescription("");
             
@@ -247,9 +189,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
-            
-            // 重新載入確認狀態
-            await loadExistingSubmission();
             
             alert("作業提交記錄已完全清除！");
             onSuccess && onSuccess();
@@ -272,61 +211,12 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
         fileInputRef.current?.click();
     };
 
-    // 檔案驗證函數
-    const validateFiles = (newFiles) => {
-        const maxFileSize = 10 * 1024 * 1024; // 10MB
-        const maxTotalFiles = 10; // 最多10個檔案
-        const allowedTypes = [
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'text/plain',
-            'image/jpeg',
-            'image/png',
-            'image/gif',
-            'application/zip',
-            'application/x-zip-compressed'
-        ];
-
-        for (const file of newFiles) {
-            // 檢查檔案大小
-            if (file.size > maxFileSize) {
-                alert(`檔案 "${file.name}" 超過 10MB 限制`);
-                return false;
-            }
-            
-            // 檢查檔案類型
-            if (!allowedTypes.includes(file.type) && file.type !== '') {
-                // 如果 MIME type 不在允許清單中，檢查副檔名
-                const extension = file.name.split('.').pop().toLowerCase();
-                const allowedExtensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'rar'];
-                if (!allowedExtensions.includes(extension)) {
-                    alert(`不支援的檔案類型: "${file.name}"`);
-                    return false;
-                }
-            }
-        }
-
-        // 檢查總檔案數量
-        const totalFiles = files.length + existingFiles.length + newFiles.length;
-        if (totalFiles > maxTotalFiles) {
-            alert(`檔案總數不能超過 ${maxTotalFiles} 個`);
-            return false;
-        }
-
-        return true;
-    };
-
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             const newFiles = Array.from(e.target.files);
             
-            // 驗證檔案
-            if (!validateFiles(newFiles)) {
+            // 檢查檔案大小
+            if (!checkFilesAndAlert(newFiles)) {
                 // 清空 input
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
@@ -423,7 +313,7 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
                     <label>
                         新增檔案
                         <span className={styles["file-limits"]}>
-                            (支援多檔案，單檔最大10MB，總數最多10個)
+                            (支援多檔案選擇)
                         </span>
                     </label>
                     <div className={styles["file-input-custom-area"]}>
@@ -437,7 +327,6 @@ const SubmittedAssUploadModal = ({ onClose, courseId, assignmentId, onSuccess })
                         <input
                             id="file"
                             type="file"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar"
                             onChange={handleFileChange}
                             ref={fileInputRef}
                             style={{ display: "none" }}
