@@ -1,9 +1,9 @@
 import express from 'express';
 import { 
-    GetAssignmentSubmissionTimeController,
-    SubmitAssignment,
     GetAssignmentSubmission,
-    DeleteSubmittedFile,
+    CreateAssignmentSubmission,
+    UpdateAssignmentSubmission,
+    //DeleteSubmittedFile,
     DeleteSubmissionRecord
 } from '#src/controllers/submitted_ass_controller.js';
 
@@ -16,19 +16,25 @@ const router = express.Router();
 
 // entry point http://localhost:PORT/submitted-assignment
 
-// 取得作業繳交時間
-router.get('/:assignmentId/submission-time', GetAssignmentSubmissionTimeController);
 
-// 取得單一作業的繳交紀錄
-router.get('/:assignmentId/submission', GetAssignmentSubmission);
+// 取得學生提交
+router.get('/:assignmentId/submissions/:userId', GetAssignmentSubmission);
 
-// 學生繳交作業 - 支援多檔案上傳
-router.post('/:assignmentId/submit', uploadMultipleWithMulter, SubmitAssignment, MulterErrorHandling);
+// 建立提交
+router.post('/:assignmentId/submissions/:userId', CreateAssignmentSubmission);
+
+// 更新提交
+router.put('/:assignmentId/submissions/:userId', UpdateAssignmentSubmission);
+
+// 刪除提交
+router.delete('/:assignmentId/submissions/:userId', DeleteSubmissionRecord);
 
 // 刪除學生提交的檔案
-router.delete('/:assignmentId/submit-file', DeleteSubmittedFile);
+//router.delete('/:assignmentId/submit-file', DeleteSubmittedFile);
 
-// 完全刪除學生的作業提交記錄
-router.delete('/:assignmentId/submission', DeleteSubmissionRecord);
+// 學生繳交作業 - 支援多檔案上傳
+//目前沒有處理檔案，先不使用multer
+//router.post('/:assignmentId/submit', uploadMultipleWithMulter, CreateAssignmentSubmission, MulterErrorHandling);
+//router.put('/:assignmentId/submit', uploadMultipleWithMulter, UpdateAssignmentSubmission, MulterErrorHandling);
 
 export default router;
