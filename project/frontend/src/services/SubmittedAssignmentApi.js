@@ -9,7 +9,11 @@ export const CreateSubAssign = async (assignmentId, data) => {
         const url = `/submitted-assignment/submit-to/${assignmentId}/user/${userId}`;
         
         // 後端路由: /submit-to/:assignmentId/user/:userId
-        const response = await api.post(url, data);
+        const response = await api.post(url, data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         
         return response.data;
     } catch (err) {
@@ -23,7 +27,11 @@ export const CreateSubAssign = async (assignmentId, data) => {
 // 後端路由: /sub-assign-id/:subAssId
 export const UpdateSubAssign = async (subAssId, data) => { // 參數改為 subAssId
     try {
-        const response = await api.put(`/submitted-assignment/sub-assign-id/${subAssId}`, data);
+        const response = await api.put(`/submitted-assignment/sub-assign-id/${subAssId}`, data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return response.data;
     } catch (err) {
         console.error("更新繳交紀錄失敗", err);
