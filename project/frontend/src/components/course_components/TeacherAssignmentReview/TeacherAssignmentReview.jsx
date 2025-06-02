@@ -56,7 +56,6 @@ const TeacherAssignmentReview = ({ assignmentId, assigmnentMaxScore }) => {
   const handleReviewClick = (submission) => {
     setReviewingSubmission(submission);
     setReviewScore(submission.grade !== '-' ? submission.grade : '');
-    setReviewComment('');
   };
 
   const handleSubmitReview = async (e)   => {
