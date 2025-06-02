@@ -31,8 +31,30 @@ async function UpdateUserPassword(userId, data) {
     }
 }
 
+async function UpdateUserData(userId, data) {
+    try {
+        const response = await api.put(`/user/update-user-data/${userId}`, data);
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        return { message: "An error occurred while updating the user data." };
+    }
+}
+
+async function UpdateUserTags(userId, _id, data) {
+    try {
+        const response = await api.put(`/user/update-user-tags/${userId}`, data);
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        return { message: "An error occurred while updating the user tags." };
+    }
+}
+
 export {
     GetUserDataById,
     UpdateUserPassword,
-    GetUserTagsById
+    GetUserTagsById,
+    UpdateUserData,
+    UpdateUserTags
 }
