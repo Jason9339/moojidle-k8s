@@ -125,74 +125,6 @@ async function UpdateUserPassword(userId, newPassword) {
     return result;
 }
 
-async function UpdateUserTags(userId, newTags) {
-    try {
-        const collection = mongoose.connection.db.collection("custom_tag");
-
-        const user = await FindOneUserById(userId);
-        if (!user) {
-            return { modifiedCount: 0, message: "User not found" };
-        }
-
-       
-        await collection.deleteMany({ user_id: parseInt(userId) });
-
-        
-        if (Array.isArray(newTags) && newTags.length > 0) {
-            
-            const toInsert = newTags.map((tagStr) => ({
-                user_id: parseInt(userId),
-                user_tag: tagStr,
-            }));
-            const insertResult = await collection.insertMany(toInsert);
-            return {
-                modifiedCount: insertResult.insertedCount,
-                newIds: Object.values(insertResult.insertedIds).map((id) => id.toString()),
-            };
-        }
-
-        // 如果 newTags 為空陣列或 null，就只做刪除、不插入
-        return { modifiedCount: 0, message: "All old tags deleted, no new tags to insert" };
-    } catch (err) {
-        console.error("ReplaceUserTags error:", err);
-        throw new Error(`替換 user tags 失敗: ${err.message}`);
-    }
-}
-
-
-
-async function UpdateUserContactWay(userId, newContactWays) {
-    let result;
-    try {
-        // 檢查使用者是否存在
-        const user = await FindOneUserById(parseInt(userId));
-        if (!user) {
-            return { modifiedCount: 0, message: "User not found" };
-        }
-
-        // 直接更新整個 contact_ways 陣列
-        result = await mongoose.connection.db.collection('user').updateOne(
-            { user_id: parseInt(userId) },
-            {
-                $set: {
-                    contact_ways: newContactWays.map(contact => ({
-                        approach: contact.approach,
-                        details: contact.details
-                    }))
-                }
-            }
-        );
-
-        if (!result.modifiedCount) {
-            console.log('No contact ways were updated');
-        }
-
-        return result;
-    } catch (err) {
-        console.error("Error updating contact ways:", err);
-        throw new Error(`更新聯絡方式失敗: ${err.message}`);
-    }
-}
 
 
 export {
@@ -202,6 +134,5 @@ export {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserTags,
-    UpdateUserContactWay
+    
 }

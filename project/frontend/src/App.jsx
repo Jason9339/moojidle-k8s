@@ -22,8 +22,6 @@ import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 import Register from "@/pages/login_register_pages/Register/Register.jsx";
 import Login from "@/pages/login_register_pages/Login/Login.jsx";
-import EditProfile from "./pages/user_pages/UserProfile/EditContact";
-import EditTags from "./pages/user_pages/UserProfile/EditTags.jsx";
 
 function App() {
     let login;
@@ -63,8 +61,6 @@ function App() {
                         {/* user pages related */}
                         <Route path="/user/update-password" element={<UpadatePassword />} />
                         <Route path="/user/profile" element={<UserProfile />} />
-                        <Route path="/user/edit-profile" element={<EditProfile />} />
-                        <Route path="/user/edit-tags" element={<EditTags />} />
 
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
