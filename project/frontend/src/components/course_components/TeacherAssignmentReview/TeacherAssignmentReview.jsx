@@ -11,7 +11,6 @@ const TeacherAssignmentReview = ({ assignmentId, assigmnentMaxScore }) => {
   const [expandedSubmissionId, setExpandedSubmissionId] = useState(null);
   const [reviewingSubmission, setReviewingSubmission] = useState(null);
   const [reviewScore, setReviewScore] = useState('');
-  const [reviewComment, setReviewComment] = useState('');
 
   const fetchSubmissions = async () => {
     try {
@@ -203,7 +202,8 @@ const TeacherAssignmentReview = ({ assignmentId, assigmnentMaxScore }) => {
                                     value={reviewScore} 
                                     onChange={(e) => setReviewScore(e.target.value)}
                                     min="0"
-                                    max="assigmnentMaxScore"
+                                    max={assigmnentMaxScore}
+                                    step="0.01"
                                     className={`${styles["score-input"]}`}
                                   />
                                 </div>
