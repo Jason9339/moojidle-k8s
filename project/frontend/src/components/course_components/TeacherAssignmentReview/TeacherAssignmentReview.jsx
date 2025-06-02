@@ -4,7 +4,7 @@ import styles from './TeacherAssignmentReview.module.css';
 import {GetAssignmentSubmissions, GradeAssignment} from '@/services/SubmitAssignmentApi.js';
 
 const TeacherAssignmentReview = ({ assignmentId }) => {
-    const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
   const [reviewData, setReviewData] = useState([]);
   const [nonSubmittingStudents, setNonSubmittingStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,41 +14,41 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
   const [reviewScore, setReviewScore] = useState('');
   const [reviewComment, setReviewComment] = useState('');
 
-    const fetchSubmissions = async () => {
-      try {
-        setLoading(true);
-        const response = await GetAssignmentSubmissions(assignmentId);
-        
-        if (response && response.submissions) {
-          // Transform API response data for submissions
-          const enhancedSubmissions = response.submissions.map(sub => ({
-            studentName: sub.student_name || "Unknown",
-            submissionDate: new Date(sub.submit_date).toLocaleString(),
-            status: sub.status || "Submitted",
-            grade: sub.score || "-",
-            description: sub.description || "-",
-            attachments: sub.attachments || [],
-            submissionId: sub.s_ass_id
-          }));
-          setReviewData(enhancedSubmissions);
-        } else {
-          setReviewData([]);
-        }
-        
-        // Set non-submitting students data
-        if (response && response.nonSubmittingStudents) {
-          setNonSubmittingStudents(response.nonSubmittingStudents);
-        } else {
-          setNonSubmittingStudents([]);
-        }
-      } catch (error) {
-        console.error("Error fetching submissions:", error);
+  const fetchSubmissions = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAssignmentSubmissions(assignmentId);
+
+      if (response && response.submissions) {
+        // Transform API response data for submissions
+        const enhancedSubmissions = response.submissions.map(sub => ({
+          studentName: sub.student_name || "Unknown",
+          submissionDate: new Date(sub.submit_date).toLocaleString(),
+          status: sub.status || "Submitted",
+          grade: sub.score || "-",
+          description: sub.description || "-",
+          attachments: sub.attachments || [],
+          submissionId: sub.s_ass_id
+        }));
+        setReviewData(enhancedSubmissions);
+      } else {
         setReviewData([]);
-        setNonSubmittingStudents([]);
-      } finally {
-        setLoading(false);
       }
-    };
+
+      // Set non-submitting students data
+      if (response && response.nonSubmittingStudents) {
+        setNonSubmittingStudents(response.nonSubmittingStudents);
+      } else {
+        setNonSubmittingStudents([]);
+      }
+    } catch (error) {
+      console.error("Error fetching submissions:", error);
+      setReviewData([]);
+      setNonSubmittingStudents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (assignmentId) {
       fetchSubmissions();
@@ -69,7 +69,7 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
 
     const response = await GradeAssignment(userId, reviewingSubmission.submissionId, reviewScore);
     console.log('Grade response:', response);
-    
+
     if (response.updated) {
       // Update the local data with the new score
       const updatedReviewData = reviewData.map(submission => {
@@ -82,11 +82,11 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
         }
         return submission;
       });
-      
+
       setReviewData(updatedReviewData);
     } 
 
-    
+
     // Here you would typically call an API to update the grade
     // For now, we'll just close the review form
     setReviewingSubmission(null);
@@ -145,7 +145,7 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
                   <tbody>
                     {reviewData.map((submission, index) => {
                       const isExpanded = expandedSubmissionId === (submission.submissionId || index);
-                      
+
                       return (
                         <tr key={submission.submissionId || index} className={`${styles["submission-row"]}`}>
                           <td>{submission.studentName}</td>
@@ -185,14 +185,15 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
                             </div>
                           </td>
                           <td>{submission.status}</td>
-                          <td className={`${styles["action-buttons"]}`}>
+                          <td>                           
                             <button 
-                              className={`${styles["review-button"]}`} 
-                              onClick={() => handleReviewClick(submission)}
-                            >
-                              Review
-                            </button>
+                            className={`${styles["review-button"]}`} 
+                            onClick={() => handleReviewClick(submission)}
+                          >
+                            Review
+                          </button>
                           </td>
+
                           <td>
                             {reviewingSubmission && reviewingSubmission.submissionId === submission.submissionId && (
                               <form onSubmit={handleSubmitReview} className={`${styles["review-form"]}`}>
