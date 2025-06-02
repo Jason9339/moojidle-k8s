@@ -12,6 +12,7 @@
   background: #fafafa;
   height: 100%;
   border: 1px solid #ddd;
+  overflow-y: scroll;
 }
 
 .sidebar {
@@ -43,7 +44,7 @@
 
 .legendItem {
   display: flex;
-  overflow: hidden;
+  overflow-x: hidden;
   white-space: nowrap;
   align-items: center;
   margin-bottom: 8px;

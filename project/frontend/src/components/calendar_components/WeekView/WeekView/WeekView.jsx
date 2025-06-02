@@ -99,7 +99,7 @@ function WeekTimeView({
                     return (
                         <div
                             key={idx}
-                            className={styles.weekEvent}
+                            className={`${styles.weekEvent} rbc-event`}
                             style={{
                                 position: 'absolute',
                                 left: `${seg.leftPct}%`,
@@ -110,7 +110,7 @@ function WeekTimeView({
                             }}
                             onClick={() => onSelectEvent(seg.evt)}
                         >
-                            <span className={styles.eventTitle}>
+                            <span className={`${styles.eventTitle} rbc-event-content`}>
                                 {seg.evt.title}
                             </span>
 

@@ -51,6 +51,7 @@ const Calendar = ({ events, ...props }) => {
 
         console.log("handleSelectEvent:", event);
     }, [navigate, view])
+
     return (
 
         <BigCalendar
@@ -60,7 +61,7 @@ const Calendar = ({ events, ...props }) => {
             localizer={localizer}
             startAccessor="start"
             endAccessor="end"
-
+            drilldownView={null}
             views={{
                 month: true,
                 week: WeekView,
@@ -72,7 +73,10 @@ const Calendar = ({ events, ...props }) => {
             view={view}
             onView={handleViewChange}
             onSelectEvent={handleSelectEvent}
-            components={{ toolbar: Toolbar }}
+            // onShowMore={handleShowMoreClick}
+            components={{
+                toolbar: Toolbar,
+            }}
 
             dayLayoutAlgorithm="no-overlap"
             eventPropGetter={event => {

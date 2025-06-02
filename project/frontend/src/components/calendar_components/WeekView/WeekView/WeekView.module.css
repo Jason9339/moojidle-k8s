@@ -69,11 +69,9 @@
     text-align: left;
     display: flex;
     align-items: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.weekEvent:hover {
-    box-shadow: 1px 1px 1px black;
-}
 .weekEvent.rbc-selected {
     background-color: #265985;
 }
