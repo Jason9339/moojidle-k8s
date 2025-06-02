@@ -79,6 +79,8 @@ function Notification() {
             switch (item.notification.event_category) {
                 case "commend":
                     navigate(`/post/${item.notification.event_id}`);
+                case "login":
+                    navigate(`/user/profile`);    
             }
         } catch (err) {
             alert("刪除失敗，請稍後再試");
