@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { DownloadMaterial } from "@/services/MaterialApi";
 import { DownloadAssignment } from "@/services/AssignmentApi";
+import { DownloadExam } from "@/services/ExamApi";
 import styles from "./CourseTable.module.css";
 
 function CourseTable({
@@ -8,11 +9,13 @@ function CourseTable({
     course,
     materials,
     assignments,
+    exams,
     isEditMode,
     onMaterialsChange,
 }) {
     const [editingMaterials, setEditingMaterials] = useState([]);
     const [expandedAssignments, setExpandedAssignments] = useState({});
+    const [expandedExams, setExpandedExams] = useState({});
 
     const toggleAssignment = (assignmentId) => {
         if (!assignmentId) return;
@@ -22,11 +25,17 @@ function CourseTable({
         }));
     };
 
-    const handleMaterialDownload = async (path, filename) => {
+    const handleMaterialDownload = async (material) => {
         try {
-            await DownloadMaterial(path, filename);
+            if (material.path_to_file) {
+                // 檔案類型：使用 DownloadMaterial API
+                await DownloadMaterial(material.path_to_file, material.filename || material.name);
+            } else if (material.url) {
+                // 連結類型：直接打開連結
+                window.open(material.url, '_blank');
+            }
         } catch (e) {
-            alert(`下載失敗：${filename}`);
+            alert(`下載失敗：${material.name}`);
             console.error("Download error:", e);
         }
     };
@@ -34,6 +43,15 @@ function CourseTable({
     const handleAssignmentDownload = async (path, filename) => {
         try {
             await DownloadAssignment(path, filename);
+        } catch (e) {
+            alert(`下載失敗：${filename}`);
+            console.error("Assignment download error:", e);
+        }
+    };
+
+    const handleExamDownload = async (path, filename) => {
+        try {
+            await DownloadExam(path, filename);
         } catch (e) {
             alert(`下載失敗：${filename}`);
             console.error("Assignment download error:", e);
@@ -147,6 +165,21 @@ function CourseTable({
             : "";
     }, []);
 
+    const toggleExam = (examId) => {
+        if (!examId) return;
+        setExpandedExams((prev) => ({
+            ...prev,
+            [examId]: !prev[examId],
+        }));
+    };
+    
+    const examsByWeek = useMemo(() => {
+        return Array.from({ length: weekNum }, (_, i) => {
+            const w = i + 1;
+            return exams.filter((e) => e.week === w || (!e.week && w === 1));
+        });
+    }, [exams, weekNum]);
+
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>
@@ -162,6 +195,7 @@ function CourseTable({
                     {Array.from({ length: weekNum }, (_, i) => {
                         const weekMaterials = getMaterialsForWeek(i);
                         const weekAssignments = assignmentsByWeek[i];
+                        const weekExams = examsByWeek[i];
                         const dateRange = weekDateRanges[i];
 
                         return (
@@ -239,7 +273,7 @@ function CourseTable({
                                             <div
                                                 key={idx}
                                                 className={styles["clickable-material"]}
-                                                onClick={() => handleMaterialDownload(m.path_to_file, m.filename)}
+                                                onClick={() => handleMaterialDownload(m)}
                                             >
                                                 <span className={styles["material-name"]} title={m.name}>
                                                     {m.name}
@@ -308,7 +342,44 @@ function CourseTable({
                                     ))}
                                 </td>
                                 <td>
-                                    <span style={{ color: "#999" }}>-</span>
+                                    {weekExams.map((exam, idx) => (
+                                        <div key={idx}>
+                                            <div
+                                                onClick={() => toggleExam(exam.exam_id ?? exam.id)}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    fontWeight: "bold",
+                                                    color: "#084298",
+                                                }}
+                                            >
+                                                <span className={styles["exam-name"]} title={exam.exam_name ?? exam.name}>
+                                                    {exam.exam_name ?? exam.name}
+                                                </span>
+                                            </div>
+                                            {expandedExams[exam.exam_id ?? exam.id] && (
+                                                <div className={styles["assignment-file-list"]}>
+                                                    {exam.attachments?.length > 0 ? (
+                                                        exam.attachments.map((f, i) => (
+                                                            <div
+                                                                key={i}
+                                                                className={styles["clickable-material"]}
+                                                                onClick={() =>
+                                                                    handleExamDownload(
+                                                                        f.path_to_file,
+                                                                        f.filename
+                                                                    )
+                                                                }
+                                                            >
+                                                                {f.filename}
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <span>（無附件）</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </td>
                             </tr>
                         );

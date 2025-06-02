@@ -197,7 +197,7 @@ async function DeleteCourseRelationships(courseIdInt) {
         results.forEach((result, index) => {
             const collectionName = relatedCollections[index];
             if (result.status === 'fulfilled') {
-                console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
+                // console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
             } else {
                 console.error(`[DeleteCourseRelationships] Error deleting documents from ${collectionName} for course_id: ${courseIdInt}:`, result.reason);
                 // Decide if you want to throw an error here or just log it
