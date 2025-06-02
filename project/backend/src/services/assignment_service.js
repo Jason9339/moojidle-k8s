@@ -87,6 +87,18 @@ async function GetToDoAssignmentsByUserId(user_id) {
     }
 }
 
+async function FindAssignmentById(assId) {
+    try {
+        const assign = await mongoose.connection.db.collection("assignments").findOne(
+            {ass_id: parseInt(assId)}
+        );
+
+        return assign;
+    } catch (error) {
+        throw error;        
+    }
+}
+
 async function FindAssignmentsByCourseId(courseId) {
     try {
         courseId = parseInt(courseId);
@@ -101,8 +113,6 @@ async function FindAssignmentsByCourseId(courseId) {
         throw new Error(`Failed to retrieve course assignments: ${error.message}`);
     }
 }
-
-
 
 const InsertAssignmentToDB = async (assignmentData) => {
     try {
@@ -123,10 +133,9 @@ const InsertAssignmentToDB = async (assignmentData) => {
     }
 };
 
-
-
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
-    InsertAssignmentToDB,
+    FindAssignmentById,
+    InsertAssignmentToDB
 };

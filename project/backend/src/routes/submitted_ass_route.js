@@ -1,9 +1,9 @@
 import express from 'express';
 import { 
-    GetAssignmentSubmissionTimeController,
-    SubmitAssignment,
     GetAssignmentSubmission,
-    DeleteSubmittedFile,
+    CreateAssignmentSubmission,
+    UpdateAssignmentSubmission,
+    //DeleteSubmittedFile,
     DeleteSubmissionRecord
 } from '#src/controllers/submitted_ass_controller.js';
 
@@ -16,19 +16,46 @@ const router = express.Router();
 
 // entry point http://localhost:PORT/submitted-assignment
 
-// 取得作業繳交時間
-router.get('/:assignmentId/submission-time', GetAssignmentSubmissionTimeController);
 
-// 取得單一作業的繳交紀錄
-router.get('/:assignmentId/submission', GetAssignmentSubmission);
+// getters:
+// frontend gives assId and userId
+// backend gives: null if nothing submitted
+// {
+//     "s_ass_id": 7,
+//     "ass_id": 2,
+//     "submit_by_user_id": 1,
+//     "submit_user_course_tag": "StudentTag_1",
+//     "submit_date": "2025-01-22T00:00:00.000Z",
+//     "score": 6,
+//     "graded_by_user_id": 3,
+//     "attachments": [
+//         {
+//             "filename": "submitted_assignment_7_file_1.pdf",
+//             "url": "http://example.com/assignments/course_1/assignment_7_file_1.pdf"
+//         },
+//     ],
+//     "description": "This is the submission for Assignment 2 by User 1."
+// }
+router.get('/assignment/:assignmentId/user/:userId', GetAssignmentSubmission);
 
-// 學生繳交作業 - 支援多檔案上傳
-router.post('/:assignmentId/submit', uploadMultipleWithMulter, SubmitAssignment, MulterErrorHandling);
+// posters:
+// frontend gives assId and userId
+// frontend gives form data of:
+// formData.append("userTags", userTags);
+// formData.append("description", description);
+// formData.append("uploadFile", files);
+router.post('/submit-to/:assignmentId/user/:userId', uploadMultipleWithMulter, CreateAssignmentSubmission, MulterErrorHandling);
 
-// 刪除學生提交的檔案
-router.delete('/:assignmentId/submit-file', DeleteSubmittedFile);
+// putters:
+// frontend gives subAssId
+// frontend gives form data of:
+// formData.append("userTags", userTags);
+// formData.append("description", description);
+// formData.append("uploadFile", files);
+router.put('/sub-assign-id/:subAssId', uploadMultipleWithMulter, UpdateAssignmentSubmission, MulterErrorHandling);
 
-// 完全刪除學生的作業提交記錄
-router.delete('/:assignmentId/submission', DeleteSubmissionRecord);
+// deleters:
+// frontend gives subAssId
+router.delete('/sub-assign-id/:subAssId', DeleteSubmissionRecord);
 
 export default router;

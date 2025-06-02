@@ -1,8 +1,10 @@
+import GetNextCounterId from '#src/utils/get_next_counter_id.js';
+
 import {
-    GetAssignmentSubmissionTime,
-    SubmitAssignmentService,
+    FindSubAssById,
     GetAssignmentSubmissionService,
-    DeleteSubmittedFileService,
+    CreateAssignmentSubmissionService,
+    UpdateAssignmentSubmissionService,
     DeleteSubmissionRecordService
 } from '#src/services/submitted_ass_service.js';
 
@@ -11,193 +13,194 @@ import {
     DeleteFile
 } from '#src/services/file_services/file_storage_service.js';
 
-// 取得作業繳交時間
-async function GetAssignmentSubmissionTimeController(req, res) {
-    try {
-        const { assignmentId } = req.params;
-        const { userId } = req.query;
-        if (!userId) return res.status(400).json({ message: "缺少 userId" });
+import { FindOneUserById } from '#src/services/user_service.js';
+import { FindAssignmentById } from '#src/services/assignment_service.js';
 
-        const submitTime = await GetAssignmentSubmissionTime(assignmentId, userId);
-        res.json({ submitTime });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-// 學生繳交作業 - 支援多檔案上傳和修改
-async function SubmitAssignment(req, res) {
-    try {
-        const { assignmentId } = req.params;
-        const { submitByUserId, description, keepFiles } = req.body;
-        const files = req.files || [];
-        
-        console.log(`[SubmitAssignment] 開始處理學生作業提交: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, 檔案數量=${files.length}, keepFiles=${keepFiles ? 'true' : 'false'}`);
-        
-        if (!assignmentId || !submitByUserId) {
-            return res.status(400).json({ message: "缺少必要參數" });
-        }
-        
-        let savedFiles = [];
-        let parsedKeepFiles = null;
-        
-        // 解析 keepFiles 參數（如果前端以JSON字串形式傳送）
-        if (keepFiles) {
-            try {
-                parsedKeepFiles = typeof keepFiles === 'string' ? JSON.parse(keepFiles) : keepFiles;
-                console.log(`[SubmitAssignment] 解析 keepFiles:`, parsedKeepFiles);
-            } catch (error) {
-                console.warn(`[SubmitAssignment] keepFiles 解析失敗:`, error);
-                parsedKeepFiles = null;
-            }
-        }
-        
-        // 如果有新檔案要上傳，先儲存到硬碟
-        if (files.length > 0) {
-            console.log(`[SubmitAssignment] 開始儲存 ${files.length} 個檔案`);
-            for (const file of files) {
-                const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submit");
-                savedFiles.push({
-                    filename: savedFile.originalName,
-                    url: savedFile.relativeUrl,
-                    path_to_file: savedFile.relativeUrl,
-                    fileId: savedFile.fileId
-                });
-                console.log(`[SubmitAssignment] 檔案已儲存: ${savedFile.originalName}`);
-            }
-        }
-        
-        // 調用 service 層處理業務邏輯
-        const result = await SubmitAssignmentService(assignmentId, submitByUserId, description, savedFiles, parsedKeepFiles);
-        
-        if (result.deleted) {
-            res.status(200).json({ 
-                message: "作業提交記錄已完全清除",
-                data: result
-            });
-        } else {
-            res.status(200).json({ 
-                message: files.length > 0 ? "檔案上傳成功" : "作業更新成功", 
-                data: result 
-            });
-        }
-        
-    } catch (error) {
-        console.error("學生繳交作業錯誤:", error);
-        res.status(500).json({ message: error.message });
-    }
-}
-
-// 取得某學生針對某作業的繳交紀錄
 async function GetAssignmentSubmission(req, res) {
     try {
-        const { assignmentId } = req.params;
-        const { user_id } = req.query;
-        console.log(`[GetAssignmentSubmission] 查詢參數: assignmentId=${assignmentId}, user_id=${user_id}`);
-        
-        if (!user_id) return res.status(400).json({ message: "缺少 user_id" });
-        
-        const submission = await GetAssignmentSubmissionService(assignmentId, user_id);
-        
-        console.log(`[GetAssignmentSubmission] 查詢結果:`, submission);
-        res.json({ data: submission });
+        const userId = parseInt(req.params.userId);
+        const assId = parseInt(req.params.assignmentId);
+
+        // check if user exist
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            res.status(404).send("user not find while finding sub ass for a user");
+            return;
+        }
+
+        // check if ass exist
+        const ass = await FindAssignmentById(assId);
+        if (!ass) {
+            res.status(404).send("assignment not find while finding sub ass for a user");
+            return;
+        }
+
+        const submission = await GetAssignmentSubmissionService(assId, userId);
+
+        if (submission.length == 0) {
+            res.status(200).send(null);
+            return;
+        }
+
+        // send back the newest one if have muiltiple
+        res.status(200).json(submission.at(-1));
     } catch (error) {
         console.error(`[GetAssignmentSubmission] 錯誤:`, error);
         res.status(500).json({ message: error.message });
     }
 }
 
-// 刪除學生提交的單個檔案
-async function DeleteSubmittedFile(req, res) {
+async function DeleteSubmissionRecord(req, res) {
     try {
-        const { assignmentId } = req.params;
-        const { submitByUserId, fileUrl } = req.body;
-        
-        console.log(`[DeleteSubmittedFile] 刪除檔案: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}, fileUrl=${fileUrl}`);
-        
-        if (!assignmentId || !submitByUserId || !fileUrl) {
-            return res.status(400).json({ message: "缺少必要參數" });
+        const subAssId = parseInt(req.params.subAssId);
+
+        // check if this sub ass exist
+        const subAss = await FindSubAssById(subAssId);
+        if (!subAss) {
+            res.status(404).send("sub ass not found while deleting");
+            return;
         }
-        
-        // 調用 service 層處理業務邏輯
-        const result = await DeleteSubmittedFileService(assignmentId, submitByUserId, fileUrl);
-        
-        // 刪除硬碟上的檔案
-        try {
-            await DeleteFile(result.deleteFilePath);
-            console.log(`[DeleteSubmittedFile] 硬碟檔案已刪除: ${result.deleteFilePath}`);
-        } catch (deleteError) {
-            console.warn(`[DeleteSubmittedFile] 刪除硬碟檔案失敗: ${deleteError.message}`);
-            // 繼續執行，不要因為檔案刪除失敗而中斷整個操作
+
+        // handle file deletion
+        for (let attachment of subAss.attachments) {
+            const result = await DeleteFile(attachment.path_to_file);
+
+            // since seed has a lot of invalid path, i dont do error handle here,
+            // just assume everything is deleted
         }
-        
-        if (result.deleted) {
-            res.status(200).json({ 
-                message: "檔案刪除成功，提交記錄已完全清除",
-                data: { 
-                    deleted: true,
-                    reason: result.reason
-                }
-            });
+
+        const result = await DeleteSubmissionRecordService(subAssId);
+        if (result) {
+            res.status(200).json("delete sub ass successfully");
         } else {
-            res.status(200).json({ 
-                message: "檔案刪除成功",
-                data: { 
-                    attachments: result.attachments,
-                    deleted: false 
-                }
-            });
+            res.status(500).send("internal error when delete sub ass");
         }
-        
     } catch (error) {
-        console.error("刪除提交檔案錯誤:", error);
+        console.error("DeleteSubmissionRecord 錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 }
 
-// 完全刪除學生的作業提交記錄
-async function DeleteSubmissionRecord(req, res) {
+async function CreateAssignmentSubmission(req, res) {
     try {
-        const { assignmentId } = req.params;
-        const { submitByUserId } = req.body;
-        
-        console.log(`[DeleteSubmissionRecord] 刪除提交記錄: assignmentId=${assignmentId}, submitByUserId=${submitByUserId}`);
-        
-        if (!assignmentId || !submitByUserId) {
-            return res.status(400).json({ message: "缺少必要參數" });
+        const userId = parseInt(req.params.userId);
+        const assId = parseInt(req.params.assignmentId);
+        const { userTags, description } = req.body;
+
+        // since using multer to parse the nody we have req.files to use
+        const files = req.files || [];
+
+        // check if user exist
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            res.status(404).send("user not find while creating sub ass for a user");
+            return;
         }
-        
-        // 調用 service 層處理業務邏輯
-        const result = await DeleteSubmissionRecordService(assignmentId, submitByUserId);
-        
-        // 刪除所有相關檔案
-        if (result.attachments && result.attachments.length > 0) {
-            for (const attachment of result.attachments) {
-                const deleteFilePath = attachment.path_to_file || attachment.url;
-                try {
-                    await DeleteFile(deleteFilePath);
-                    console.log(`[DeleteSubmissionRecord] 硬碟檔案已刪除: ${deleteFilePath}`);
-                } catch (deleteError) {
-                    console.warn(`[DeleteSubmissionRecord] 刪除硬碟檔案失敗: ${deleteError.message}`);
-                }
-            }
+
+        // check if ass exist
+        const ass = await FindAssignmentById(assId);
+        if (!ass) {
+            res.status(404).send("assignment not find while creating sub ass for a user");
+            return;
         }
-        
-        res.status(200).json({ 
-            message: "作業提交記錄已完全刪除",
-            data: { deleted: true }
-        });
-        
+
+        // handle file storage
+        const savedFiles = [];
+        for (const file of files) {
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
+        }
+
+        const nextSAssId = await GetNextCounterId("submitted_ass");
+
+        const submission = {
+            s_ass_id: nextSAssId,
+            ass_id: assId,
+            submit_by_user_id: userId,
+            submit_user_course_tag: userTags || "",
+            submit_date: new Date(),
+            attachments: savedFiles,
+            description: description || ""
+        };
+
+        const result = await CreateAssignmentSubmissionService(submission);
+
+        if (result) {
+            res.status(200).json("create sub ass successfully");
+        } else {
+            res.status(500).send("internal error when creating sub ass");
+        }
     } catch (error) {
-        console.error("刪除提交記錄錯誤:", error);
+        console.error("[CreateAssignmentSubmission] 錯誤:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+async function UpdateAssignmentSubmission(req, res) {
+    try {
+        const subAssId = parseInt(req.params.subAssId);
+        const { userTags, description } = req.body;
+
+        // since using multer to parse the nody we have req.files to use
+        const files = req.files || [];
+
+        // check if this sub ass exist
+        const subAss = await FindSubAssById(subAssId);
+        if (!subAss) {
+            res.status(404).send("sub ass not found while updating");
+            return;
+        }
+
+        // handle file storage
+        const savedFiles = [];
+        const originalFiles = subAss.attachments;
+        for (const file of files) {
+            const exist = originalFiles.some(orig => orig.filename === decodeURIComponent(file.originalname));
+
+            if (exist) {
+                // dont need to add 
+                continue;
+            }
+
+            // new files that needs to be saved
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
+        }
+
+        for (const origFile of originalFiles) {
+            const exist = files.some(file => decodeURIComponent(file.originalname) === origFile.filename);
+
+            if (exist) {
+                // still need that file, dont delete
+                continue;
+            }
+
+            // odd files that need to be deleted
+            await DeleteFile(origFile.path_to_file);
+        }
+
+        const result = await UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles, description);
+
+        if (result) {
+            res.status(200).json("update sub ass successfully");
+        } else {
+            res.status(500).send("internal error when updating sub ass");
+        }
+    } catch (error) {
+        console.error("[UpdateAssignmentSubmission] 錯誤:", error);
         res.status(500).json({ message: error.message });
     }
 }
 
 export {
-    GetAssignmentSubmissionTimeController,
-    SubmitAssignment,
     GetAssignmentSubmission,
-    DeleteSubmittedFile,
+    CreateAssignmentSubmission,
+    UpdateAssignmentSubmission,
     DeleteSubmissionRecord
 };
