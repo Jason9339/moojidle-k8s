@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import styles from './teacherassignmentreview.module.css';
-import {GetAssignmentSubmissions, GradeAssignment} from '@/services/SubmitAssignmentApi.js';
+import styles from './TeacherAssignmentReview.module.css';
+import {GetAssignmentSubmissions, GradeAssignment} from '@/services/AssignmentApi.js';
 
 const TeacherAssignmentReview = ({ assignmentId }) => {
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
@@ -12,6 +12,7 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
   const [expandedSubmissionId, setExpandedSubmissionId] = useState(null);
   const [reviewingSubmission, setReviewingSubmission] = useState(null);
   const [reviewScore, setReviewScore] = useState('');
+  const [reviewComment, setReviewComment] = useState('');
 
     const fetchSubmissions = async () => {
       try {
@@ -59,8 +60,6 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
     setReviewScore(submission.grade !== '-' ? submission.grade : '');
     setReviewComment('');
   };
-
-
 
   const handleSubmitReview = async (e)   => {
     e.preventDefault();
