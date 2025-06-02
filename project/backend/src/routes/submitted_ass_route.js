@@ -39,6 +39,7 @@ const router = express.Router();
 router.get('/assignment/:assignmentId/user/:userId', GetAssignmentSubmission);
 
 // posters:
+// frontend gives assId and userId
 // frontend gives form data of:
 // formData.append("userTags", userTags);
 // formData.append("description", description);
@@ -46,13 +47,15 @@ router.get('/assignment/:assignmentId/user/:userId', GetAssignmentSubmission);
 router.post('/submit-to/:assignmentId/user/:userId', uploadMultipleWithMulter, CreateAssignmentSubmission, MulterErrorHandling);
 
 // putters:
-router.put('/:assignmentId/submissions/:userId', UpdateAssignmentSubmission);
+// frontend gives subAssId
+// frontend gives form data of:
+// formData.append("userTags", userTags);
+// formData.append("description", description);
+// formData.append("uploadFile", files);
+router.put('/sub-assign-id/:subAssId', uploadMultipleWithMulter, UpdateAssignmentSubmission, MulterErrorHandling);
 
 // deleters:
-// frontend gives assId and userId
-// TODO right now the seed is not in the same pace of real case,
-// in seed, we can have 1 person submit 2 times, and keep the record
-// but in application, we only want 1
-router.delete('/assignment/:assignmentId/submissions/:userId', DeleteSubmissionRecord);
+// frontend gives subAssId
+router.delete('/sub-assign-id/:subAssId', DeleteSubmissionRecord);
 
 export default router;
