@@ -114,7 +114,7 @@
 
 .submissions-table th:nth-child(7), /* Review Form */
 .submissions-table td:nth-child(7) {
-  width: 14%;
+  width: 20%;
 }
 
 .submission-row {
@@ -256,12 +256,13 @@
 
 /* Review form styles */
 .review-form {
-  padding: 10px;
+  padding: 8px;
   background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   width: 100%;
-  min-width: 200px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group {
@@ -277,11 +278,13 @@
 }
 
 .score-input {
-  width: 60px;
-  padding: 4px 8px;
+  width: 50px;
+  max-width: 100%;
+  padding: 4px 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 0.85rem;
+  box-sizing: border-box;
 }
 
 
@@ -292,14 +295,15 @@
 }
 
 .submit-button {
-  padding: 5px 10px;
+  padding: 4px 8px;
   background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .submit-button:hover {
@@ -307,14 +311,15 @@
 }
 
 .cancel-button {
-  padding: 5px 10px;
+  padding: 4px 8px;
   background-color: #f44336;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .cancel-button:hover {
