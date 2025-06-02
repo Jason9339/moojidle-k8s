@@ -239,7 +239,7 @@ const TeacherAssignmentReview = ({ assignmentId, assigmnentMaxScore }) => {
                           <td>{student.name}</td>
                           <td>{student.email}</td>
                           <td>{student.student_id}</td>
-                          <td className={`${styles["action-buttons"]}`}>
+                          <td >
                             <button className={`${styles["reminder-button"]}`}>Send Reminder</button>
                           </td>
                         </tr>
