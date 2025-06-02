@@ -14,6 +14,14 @@ import {
     DeleteFile 
 } from '#src/services/file_services/file_storage_service.js';
 
+import {
+    SendNotify
+} from '#src/services/notification_service.js'
+
+import {
+    FindStudyInJoinUserByCourseId
+} from '#src/services/course_member_service.js'
+
 import CalculateWeek from '#src/utils/calculate_week.js';
 
 import path from "path";
@@ -119,6 +127,19 @@ async function UploadExam(req, res) {
         };
 
         const dbResult = await AddExamByCourseId(examData);
+        console.log(dbResult);
+
+        //發送通知給學生
+        const course = await FindCourseById(courseId);
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+        const notification = {
+            event_id: parseInt(courseId),
+            event_category: "test",
+            context: `${course.name} 新增了考試 ${examName}`,
+            notified_users: students
+        }
+        const notificationres = await SendNotify(notification);
+        console.log(notificationres);
 
         res.status(200).json({
             message: savedFiles.length > 0 ? "考試上傳成功（包含附件）" : "考試上傳成功",
