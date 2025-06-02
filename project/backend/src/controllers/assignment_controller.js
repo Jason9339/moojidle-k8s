@@ -1,7 +1,7 @@
 import {
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
-    CreateAssignmentService,
-    GetCourseAssignmentsService
+    InsertAssignmentToDB,
+    FindAssignmentsByCourseId
 } from '#src/services/assignment_service.js';
 
 import { 
@@ -38,7 +38,7 @@ async function GetCourseAssignments(req, res) {
     try {
         const { courseId } = req.params;
 
-        let formattedAssignments = await GetCourseAssignmentsService(courseId);
+        let formattedAssignments = await FindAssignmentsByCourseId(courseId);
         const course = await FindCourseById(courseId);
 
         // 使用 start_date 而非 create_date
@@ -129,7 +129,7 @@ async function UploadAssignment(req, res) {
             attachments: savedFiles // 多檔案附件
         };
 
-        const dbResult = await CreateAssignmentService(assignmentData);
+        const dbResult = await InsertAssignmentToDB(assignmentData);
 
         res.status(200).json({
             message: "上傳作業成功",

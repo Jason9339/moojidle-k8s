@@ -125,40 +125,8 @@ const InsertAssignmentToDB = async (assignmentData) => {
 
 
 
-
-
-
-
-
-
-// 創建作業服務 - 用於老師創建新作業
-async function CreateAssignmentService(assignmentData) {
-    try {
-        const result = await InsertAssignmentToDB(assignmentData);
-        return result;
-    } catch (error) {
-        console.error(`[CreateAssignmentService] Error creating assignment:`, error);
-        throw error;
-    }
-}
-
-// 取得課程作業列表服務
-async function GetCourseAssignmentsService(courseId) {
-    try {
-        const assignments = await FindAssignmentsByCourseId(courseId);
-        return assignments;
-    } catch (error) {
-        console.error(`[GetCourseAssignmentsService] Error fetching course assignments:`, error);
-        throw error;
-    }
-}
-
-
-
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
     InsertAssignmentToDB,
-    CreateAssignmentService,
-    GetCourseAssignmentsService
 };
