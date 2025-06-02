@@ -32,7 +32,7 @@ async function UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles,
         { $set: {submit_user_course_tag: userTags, attachments: savedFiles, description: description} }
     );
 
-    return result.acknowledged;
+    return result.modifiedCount;
 }
 
 // 取得某學生針對某作業的繳交紀錄
