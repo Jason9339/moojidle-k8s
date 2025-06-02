@@ -4,7 +4,11 @@ import {
     ResetBackendDatabase,
 } from './setup.js'
 
-import { GetnotificationData,DeleteNotification } from '@/services/NotificationApi.js'
+import { 
+    GetnotificationData,
+    DeleteNotification,
+    ReadNotification 
+} from '@/services/NotificationApi.js'
 
 describe('前端 Notification 整合測試', () => {
     beforeAll(async () => {
@@ -36,6 +40,26 @@ describe('前端 Notification 整合測試', () => {
             expect(notificationData[0].notification.event_id).toBe(1)
             expect(notificationData[0].notification.event_category).toBe("course")
             expect(notificationData[0].notification.context).toBe("Successfully enrolled in a course")
+        })
+    })
+
+    describe('ReadNotification 整合測試', () => {
+        it('應該成功從後端已讀notified', async () => {
+            const notifiedData = {
+                n_id : 1,
+                user_id : 2
+            }
+
+            const response = await ReadNotification(notifiedData)
+
+
+            expect(response).toBeDefined()
+
+            //確認刪除已讀
+            const userId = 2
+            const notificationData = await GetnotificationData(userId)
+            console.log(notificationData)
+            expect(notificationData[0].is_read).toBe(true)
         })
     })
 
