@@ -2,10 +2,10 @@ import GetNextCounterId from '#src/utils/get_next_counter_id.js';
 
 import {
     FindSubAssById,
-    GetAssignmentSubmissionService,
-    CreateAssignmentSubmissionService,
-    UpdateAssignmentSubmissionService,
-    DeleteSubmissionRecordService
+    FindSubAssByAssAndUser,
+    InsertSubAss,
+    UpdateSubAssById,
+    DeleteSubAssById
 } from '#src/services/submitted_ass_service.js';
 
 import {
@@ -16,7 +16,7 @@ import {
 import { FindOneUserById } from '#src/services/user_service.js';
 import { FindAssignmentById } from '#src/services/assignment_service.js';
 
-async function GetAssignmentSubmission(req, res) {
+async function GetOneSubAss(req, res) {
     try {
         const userId = parseInt(req.params.userId);
         const assId = parseInt(req.params.assignmentId);
@@ -35,7 +35,7 @@ async function GetAssignmentSubmission(req, res) {
             return;
         }
 
-        const submission = await GetAssignmentSubmissionService(assId, userId);
+        const submission = await FindSubAssByAssAndUser(assId, userId);
 
         if (submission.length == 0) {
             res.status(200).send(null);
@@ -69,7 +69,7 @@ async function DeleteSubmissionRecord(req, res) {
             // just assume everything is deleted
         }
 
-        const result = await DeleteSubmissionRecordService(subAssId);
+        const result = await DeleteSubAssById(subAssId);
         if (result) {
             res.status(200).json("delete sub ass successfully");
         } else {
@@ -126,7 +126,7 @@ async function CreateAssignmentSubmission(req, res) {
             description: description || ""
         };
 
-        const result = await CreateAssignmentSubmissionService(submission);
+        const result = await InsertSubAss(submission);
 
         if (result) {
             res.status(200).json("create sub ass successfully");
@@ -185,7 +185,7 @@ async function UpdateAssignmentSubmission(req, res) {
             await DeleteFile(origFile.path_to_file);
         }
 
-        const result = await UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles, description);
+        const result = await UpdateSubAssById(subAssId, userTags, savedFiles, description);
 
         if (result) {
             res.status(200).json("update sub ass successfully");
@@ -199,7 +199,7 @@ async function UpdateAssignmentSubmission(req, res) {
 }
 
 export {
-    GetAssignmentSubmission,
+    GetOneSubAss,
     CreateAssignmentSubmission,
     UpdateAssignmentSubmission,
     DeleteSubmissionRecord

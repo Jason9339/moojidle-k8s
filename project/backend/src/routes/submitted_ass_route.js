@@ -1,9 +1,8 @@
 import express from 'express';
 import { 
-    GetAssignmentSubmission,
+    GetOneSubAss,
     CreateAssignmentSubmission,
     UpdateAssignmentSubmission,
-    //DeleteSubmittedFile,
     DeleteSubmissionRecord
 } from '#src/controllers/submitted_ass_controller.js';
 
@@ -15,7 +14,6 @@ import {
 const router = express.Router();
 
 // entry point http://localhost:PORT/submitted-assignment
-
 
 // getters:
 // frontend gives assId and userId
@@ -36,7 +34,7 @@ const router = express.Router();
 //     ],
 //     "description": "This is the submission for Assignment 2 by User 1."
 // }
-router.get('/assignment/:assignmentId/user/:userId', GetAssignmentSubmission);
+router.get('/assignment/:assignmentId/user/:userId', GetOneSubAss);
 
 // posters:
 // frontend gives assId and userId
