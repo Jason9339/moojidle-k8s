@@ -4,8 +4,8 @@ import { createMockReq, createMockRes } from '../test-utils.js';
 
 import {
     FindAssignmentsByCourseId,
-    GetAssignmentMaxScore,
-    GetCourseIdByAssignmentId
+    FindAssignmentMaxScore,
+    FindCourseIdByAssignmentId
 
 } from "#src/services/assignment_service.js";
 
@@ -19,7 +19,7 @@ describe('Assignment Service', () => {
     describe("GetCourseIdByAssignmentId", () => {
         it('應該成功獲取繳交作業所在的課程Id', async () => {
             const assignmentId = 1;
-            const result = await GetCourseIdByAssignmentId(assignmentId);
+            const result = await FindCourseIdByAssignmentId(assignmentId);
 
             expect(result).toBeDefined();
             expect(result).toBe(1);
@@ -27,7 +27,7 @@ describe('Assignment Service', () => {
 
         it('當作業不存在時應該返回null', async () => {
             const assignmentId = 999;
-            const result = await GetCourseIdByAssignmentId(assignmentId);
+            const result = await FindCourseIdByAssignmentId(assignmentId);
 
             expect(result).toBeNull();
         });
@@ -61,7 +61,7 @@ describe('Assignment Service', () => {
     describe('GetAssignmentMaxScore', () => {
         it('應該要取得作業最大分數'), async () => {
             const assignmentId = 1;
-            const maxScore = GetAssignmentMaxScore(assignmentId);
+            const maxScore = FindAssignmentMaxScore(assignmentId);
             expect(maxScore).toBe(100)
         }
     })
