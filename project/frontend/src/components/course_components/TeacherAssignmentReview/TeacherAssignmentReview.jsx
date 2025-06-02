@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
 import {GetAssignmentSubmissions, GradeAssignment} from '@/services/SubmitAssignmentApi.js';
 
-const TeacherAssignmentReview = ({ assignmentId }) => {
+const TeacherAssignmentReview = ({ assignmentId, assigmnentMaxScore }) => {
   const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
   const [reviewData, setReviewData] = useState([]);
   const [nonSubmittingStudents, setNonSubmittingStudents] = useState([]);
@@ -134,7 +134,7 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
                     <tr>
                       <th>Student Name</th>
                       <th>Submission Date</th>
-                      <th>Grade (0-100)</th>
+                      <th>Grade (0-{assigmnentMaxScore})</th>
                       <th>Submissions</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -203,7 +203,7 @@ const TeacherAssignmentReview = ({ assignmentId }) => {
                                     value={reviewScore} 
                                     onChange={(e) => setReviewScore(e.target.value)}
                                     min="0"
-                                    max="100"
+                                    max="assigmnentMaxScore"
                                     className={`${styles["score-input"]}`}
                                   />
                                 </div>

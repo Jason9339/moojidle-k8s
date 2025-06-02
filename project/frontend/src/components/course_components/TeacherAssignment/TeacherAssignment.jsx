@@ -45,6 +45,7 @@ function TeacherAssignment({ assignments }) {
     const itemsToDisplay = assignments.slice(tabStartIdx, tabStartIdx + groupSize);
 
     const assignmentId = assignments[selectedIdx]?.id || 0;
+    const assigmnentMaxScore = assignments[selectedIdx]?.maxScore || 100;
 
     return (
         <div>
@@ -116,7 +117,7 @@ function TeacherAssignment({ assignments }) {
                     </div>
                 )}
             </div>
-            <TeacherAssignmentReview assignmentId={assignmentId} />
+            <TeacherAssignmentReview assignmentId={assignmentId} assigmnentMaxScore={assigmnentMaxScore} />
         </div>
     );
 }
