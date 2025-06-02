@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { SubmitAssignment, DeleteSubmittedFile, DeleteSubmissionRecord } from "@/services/SubmittedAssignmentApi";
+import React, { useState, useRef, useEffect } from "react";
+import { CreateSubAssign, UpdateSubAssign, DeleteSubAssign } from "@/services/SubmittedAssignmentApi";
 import { checkFilesAndAlert } from "@/utils/fileValidation";
 import styles from "./SubmittedAssUploadModal.module.css";
 
@@ -16,177 +16,157 @@ const SubmittedAssUploadModal = ({
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
 
-    // 從 props 中取得已存在的檔案
+    // 從 props 中取得已存在的檔案和提交ID
     const existingFiles = existingSubmission?.attachments || [];
+    const submissionId = existingSubmission?.s_ass_id;
+
+    // 監聽 existingSubmission 變化，更新本地狀態
+    useEffect(() => {
+        setDescription(existingSubmission?.description || "");
+        setFiles([]);
+        setDeletedFiles([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }, [existingSubmission]);
 
     const handleUpload = async () => {
         if (loading) return;
         
+        // 獲取用戶 ID
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
             alert("請先登入");
+            setLoading(false);
             return;
         }
-
+        
         setLoading(true);
 
         const formData = new FormData();
         
-        // 添加所有選擇的檔案
-        files.forEach((file) => {
+        files.forEach((file, index) => {
             const renamedFile = new File([file], encodeURIComponent(file.name), { type: file.type });
             formData.append("uploadFile", renamedFile);
         });
 
-        formData.append("courseId", courseId);
         formData.append("description", description);
-        formData.append("assignmentId", assignmentId);
-        formData.append("submitByUserId", userId);
-
+        formData.append("courseId", courseId);
+        // 添加 userId（雖然後端應該從 token 獲取，但為了兼容性保留）
+        formData.append("userId", userId);
+        
         try {
-            // 檢查是否要完全清空所有內容的情況
             const isEmptyDescription = !description.trim();
             const hasNoNewFiles = files.length === 0;
-            const willDeleteAllExistingFiles = existingFiles.length > 0 && 
-                deletedFiles.length === existingFiles.length;
-            
-            // 只有一種情況才刪除整個提交記錄：用戶想要完全清空所有內容
-            if (isEmptyDescription && hasNoNewFiles && willDeleteAllExistingFiles) {
-                try {
-                    await DeleteSubmissionRecord(assignmentId);
-                    alert("作業提交記錄已完全清除！");
-                    
-                    // 清空檔案選擇
-                    setFiles([]);
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = '';
-                    }
-                    
-                    // 通知父組件更新狀態
-                    onSuccess && onSuccess();
-                    return;
-                } catch (error) {
-                    console.error("清除作業提交記錄失敗:", error);
-                    alert("清除失敗：" + error.message);
-                    return;
-                }
-            }
-            
-            let submissionDeleted = false;
-            let deletedCount = 0;
-            
-            // 先處理要刪除的檔案
-            for (const fileUrl of deletedFiles) {
-                try {
-                    const deleteResult = await DeleteSubmittedFile(assignmentId, fileUrl);
-                    
-                    // 檢查是否整個提交記錄被刪除
-                    if (deleteResult.data && deleteResult.data.deleted === true) {
-                        submissionDeleted = true;
-                    }
-                    deletedCount++;
-                } catch (error) {
-                    console.error(`刪除檔案失敗: ${fileUrl}`, error);
-                    // 繼續處理其他檔案，不中斷整個流程
-                }
-            }
 
-            // 處理剩餘的檔案操作和提交
-            if (files.length > 0 || deletedCount === 0 || description !== (existingSubmission?.description || "")) {
-                // 有新檔案、沒有刪除操作、或描述有變更，需要調用 SubmitAssignment
-                
-                // 計算要保留的檔案（排除被刪除的檔案）
-                const remainingFiles = existingFiles.filter(file => 
-                    !deletedFiles.includes(file.url || file.filename)
+            if (submissionId) {
+                const remainingExistingFiles = existingFiles.filter(
+                    (file) => !(deletedFiles.includes(file.path_to_file) || deletedFiles.includes(file.filename))
                 );
-                
-                // 如果有刪除操作或者只是更新描述，需要發送 keepFiles 參數
-                if (deletedFiles.length > 0 || (remainingFiles.length > 0 && files.length === 0)) {
-                    // console.log(`[SubmittedAssUploadModal] 發送 keepFiles:`, remainingFiles);
-                    formData.append("keepFiles", JSON.stringify(remainingFiles));
-                }
-                
-                try {
-                    const submitResult = await SubmitAssignment(assignmentId, formData);
-                    
-                    // 檢查後端是否因為內容為空而自動刪除了提交記錄
-                    if (submitResult.data && submitResult.data.deleted === true) {
-                        // 清空檔案輸入
-                        if (fileInputRef.current) {
-                            fileInputRef.current.value = '';
-                        }
-                        
-                        alert(`作業提交記錄已完全清除（${submitResult.data.reason}）${submitResult.data.deletedCount ? `，共刪除 ${submitResult.data.deletedCount} 個記錄` : ''}`);
+
+                if (isEmptyDescription && hasNoNewFiles && remainingExistingFiles.length === 0) {
+                    if (existingFiles.length > 0 || (existingSubmission?.description || "").trim()) {
+                        await DeleteSubAssign(submissionId);
+                        alert("作業提交記錄已因內容清空而被刪除！");
                     } else {
-                        // 正常的更新或提交
-                        if (submissionDeleted && files.length > 0) {
-                            alert(`作業已重新提交！原提交記錄已清除，新增了 ${files.length} 個檔案`);
-                        } else if (files.length > 0) {
-                            alert(`作業更新成功！新增了 ${files.length} 個檔案${deletedCount > 0 ? `，刪除了 ${deletedCount} 個檔案` : ''}`);
-                        } else if (deletedCount > 0) {
-                            alert(`作業更新成功！刪除了 ${deletedCount} 個檔案`);
-                        } else {
-                            alert("作業描述更新成功！");
-                        }
+                        alert("沒有內容可更新。");
+                        setLoading(false);
+                        return;
                     }
-                } catch (error) {
-                    console.error("提交作業失敗:", error);
-                    alert("提交失敗：" + error.message);
+                } else {
+                    const originalDescription = existingSubmission?.description || "";
+                    const noChangeInDescription = description === originalDescription;
+                    const noFilesMarkedForDeletion = deletedFiles.length === 0;
+
+                    if (noChangeInDescription && hasNoNewFiles && noFilesMarkedForDeletion) {
+                        alert("內容未作修改。");
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (existingFiles.length > 0) {
+                        const keepFilesData = remainingExistingFiles.map(f => ({
+                            path_to_file: f.path_to_file,
+                            filename: f.filename,
+                            size: f.size 
+                        }));
+                        formData.append("keepFiles", JSON.stringify(keepFilesData));
+                    }
+                    
+                    await UpdateSubAssign(submissionId, formData);
+                    
+                    let message = "作業更新成功！";
+                    const numNewFiles = files.length;
+                    const numActuallyDeleted = existingFiles.length - remainingExistingFiles.length;
+
+                    if (numNewFiles > 0 && numActuallyDeleted > 0) {
+                        message += ` 新增 ${numNewFiles} 個檔案，刪除 ${numActuallyDeleted} 個檔案。`;
+                    } else if (numNewFiles > 0) {
+                        message += ` 新增 ${numNewFiles} 個檔案。`;
+                    } else if (numActuallyDeleted > 0) {
+                        message += ` 刪除 ${numActuallyDeleted} 個檔案。`;
+                    } else if (description !== originalDescription) {
+                         message = "作業描述更新成功！";
+                    }
+                    alert(message);
+                }
+            } else {
+                if (isEmptyDescription && hasNoNewFiles) {
+                    alert("沒有內容可以提交。");
+                    setLoading(false);
                     return;
                 }
-            } else if (submissionDeleted && files.length === 0) {
-                // 只有刪除操作，沒有新內容，且提交記錄已被刪除
-                alert(`作業提交記錄已完全清除！刪除了 ${deletedCount} 個檔案`);
+                await CreateSubAssign(assignmentId, formData);
+                alert("作業提交成功！");
             }
             
-            // 清空檔案選擇
             setFiles([]);
+            setDeletedFiles([]);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
             
             onSuccess && onSuccess();
         } catch (error) {
-            console.error("上傳時發生錯誤", error);
-            alert("上傳失敗：" + error.message);
+            console.error("處理作業提交失敗:", error);
+            alert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
         } finally {
             setLoading(false);
         }
     };
 
-    // 清空所有內容的處理函數
     const handleClearAll = async () => {
         if (!window.confirm("確定要清空所有作業內容嗎？此操作將刪除所有已提交的檔案和描述，且無法復原。")) {
             return;
         }
         
         setLoading(true);
+        
         try {
-            // 確保有用戶 ID
-            const user = JSON.parse(localStorage.getItem('user'));
-            const userId = user?.user_id;
-            if (!userId) {
-                alert("請先登入");
-                return;
-            }            
-            await DeleteSubmissionRecord(assignmentId);
-            
-            // 立即清空前端狀態
+            // 先清空本地狀態
             setFiles([]);
             setDeletedFiles([]);
             setDescription("");
-            
-            // 清空檔案輸入
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
             
-            alert("作業提交記錄已完全清除！");
+            if (submissionId) {
+                // 有後端提交記錄，需要調用 API 刪除
+                await DeleteSubAssign(submissionId);
+                alert("作業提交記錄已完全清除！");
+            } else {
+                // 沒有後端提交記錄，只清空本地狀態
+                alert("本地內容已清空！");
+            }
+            
+            // 通知父組件更新並關閉 modal
             onSuccess && onSuccess();
+            onClose(); // 直接關閉 modal
         } catch (error) {
             console.error("清空作業內容失敗:", error);
-            alert("清空失敗：" + error.message);
+            alert("清空失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
         } finally {
             setLoading(false);
         }
@@ -194,7 +174,6 @@ const SubmittedAssUploadModal = ({
 
     // 標記檔案為刪除（暫存操作）
     const handleDeleteExistingFile = (fileUrl) => {
-        // 將檔案加入刪除列表
         setDeletedFiles(prev => [...prev, fileUrl]);
     };
 
@@ -207,16 +186,13 @@ const SubmittedAssUploadModal = ({
         if (e.target.files && e.target.files.length > 0) {
             const newFiles = Array.from(e.target.files);
             
-            // 檢查檔案大小
             if (!checkFilesAndAlert(newFiles)) {
-                // 清空 input
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
                 }
                 return;
             }
             
-            // 支援多檔案累加
             setFiles(prevFiles => [...prevFiles, ...newFiles]);
         }
     };
@@ -255,12 +231,12 @@ const SubmittedAssUploadModal = ({
                 {/* 顯示已提交的檔案 */}
                 {existingFiles.length > 0 && (
                     <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-                        <label>已提交的檔案 ({existingFiles.filter(f => !deletedFiles.includes(f.url || f.filename)).length} 個)</label>
+                        <label>已提交的檔案 ({existingFiles.filter(f => !deletedFiles.includes(f.path_to_file)).length} 個)</label>
                         <div className={styles["existing-files-list"]}>
                             {existingFiles.map((attachment, index) => {
-                                const fileName = attachment.filename || attachment.url?.split('/').pop() || `檔案${index + 1}`;
+                                const fileName = attachment.filename || attachment.path_to_file?.split('/').pop() || `檔案${index + 1}`;
                                 const fileSize = attachment.size ? `(${(attachment.size / 1024).toFixed(1)} KB)` : '';
-                                const fileIdentifier = attachment.url || attachment.filename;
+                                const fileIdentifier = attachment.path_to_file || attachment.filename;
                                 const isMarkedForDeletion = deletedFiles.includes(fileIdentifier);
                                 
                                 return (
@@ -279,7 +255,7 @@ const SubmittedAssUploadModal = ({
                                             {isMarkedForDeletion ? (
                                                 <button
                                                     type="button"
-                                                    onClick={() => setDeletedFiles(prev => prev.filter(url => url !== fileIdentifier))}
+                                                    onClick={() => setDeletedFiles(prev => prev.filter(path => path !== fileIdentifier))}
                                                     className={styles["restore-file-button"]}
                                                 >
                                                     取消刪除
@@ -370,7 +346,7 @@ const SubmittedAssUploadModal = ({
                         <strong>目前狀態：</strong>
                         {existingFiles.length > 0 ? (
                             <span className={styles["status-submitted"]}>
-                                已提交 {existingFiles.filter(f => !deletedFiles.includes(f.url || f.filename)).length} 個檔案
+                                已提交 {existingFiles.filter(f => !deletedFiles.includes(f.path_to_file)).length} 個檔案
                             </span>
                         ) : (
                             <span className={styles["status-not-submitted"]}>尚未提交</span>

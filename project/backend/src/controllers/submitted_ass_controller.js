@@ -63,13 +63,15 @@ async function DeleteSubmissionRecord(req, res) {
 
         // handle file deletion
         for (let attachment of subAss.attachments) {
-            const result = await DeleteFile(attachment.path_to_file);
+            const filePath = attachment.path_to_file; // Use path_to_file field
+            const result = await DeleteFile(filePath);
 
             // since seed has a lot of invalid path, i dont do error handle here,
             // just assume everything is deleted
         }
 
         const result = await DeleteSubmissionRecordService(subAssId);
+        
         if (result) {
             res.status(200).json("delete sub ass successfully");
         } else {
@@ -87,7 +89,7 @@ async function CreateAssignmentSubmission(req, res) {
         const assId = parseInt(req.params.assignmentId);
         const { userTags, description } = req.body;
 
-        // since using multer to parse the nody we have req.files to use
+        // since using multer to parse the body we have req.files to use
         const files = req.files || [];
 
         // check if user exist
@@ -110,7 +112,8 @@ async function CreateAssignmentSubmission(req, res) {
             const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
             savedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl
+                path_to_file: savedFile.relativeUrl,
+                size: file.size || 0 // 添加檔案大小資訊
             });
         }
 
@@ -142,9 +145,9 @@ async function CreateAssignmentSubmission(req, res) {
 async function UpdateAssignmentSubmission(req, res) {
     try {
         const subAssId = parseInt(req.params.subAssId);
-        const { userTags, description } = req.body;
+        const { userTags, description, keepFiles } = req.body;
 
-        // since using multer to parse the nody we have req.files to use
+        // since using multer to parse the body we have req.files to use
         const files = req.files || [];
 
         // check if this sub ass exist
@@ -154,38 +157,62 @@ async function UpdateAssignmentSubmission(req, res) {
             return;
         }
 
-        // handle file storage
-        const savedFiles = [];
-        const originalFiles = subAss.attachments;
-        for (const file of files) {
-            const exist = originalFiles.some(orig => orig.filename === decodeURIComponent(file.originalname));
-
-            if (exist) {
-                // dont need to add 
-                continue;
+        // 處理要保留的檔案
+        let filesToKeep = [];
+        if (keepFiles) {
+            try {
+                filesToKeep = JSON.parse(keepFiles);
+            } catch (e) {
+                console.error("解析 keepFiles 失敗:", e);
+                filesToKeep = [];
             }
+        }
 
-            // new files that needs to be saved
+        // handle file storage - 保存新上傳的檔案
+        const newSavedFiles = [];
+        for (const file of files) {
             const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
-            savedFiles.push({
+            newSavedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl
+                path_to_file: savedFile.relativeUrl,
+                size: file.size || 0 // 添加檔案大小資訊
             });
         }
 
+        // 刪除不在 keepFiles 中的原有檔案
+        const originalFiles = subAss.attachments || [];
         for (const origFile of originalFiles) {
-            const exist = files.some(file => decodeURIComponent(file.originalname) === origFile.filename);
+            const shouldKeep = filesToKeep.some(keepFile => 
+                keepFile.filename === origFile.filename || 
+                keepFile.path_to_file === origFile.path_to_file
+            );
 
-            if (exist) {
-                // still need that file, dont delete
-                continue;
+            if (!shouldKeep) {
+                // 檔案不在保留列表中，需要刪除
+                const filePath = origFile.path_to_file;
+                
+                // 呼叫刪除函數，但不因為刪除失敗而中斷整個流程
+                const deleteResult = await DeleteFile(filePath);
             }
-
-            // odd files that need to be deleted
-            await DeleteFile(origFile.path_to_file);
         }
 
-        const result = await UpdateAssignmentSubmissionService(subAssId, userTags, savedFiles, description);
+        // 組合最終的檔案列表：保留的檔案 + 新上傳的檔案
+        const finalAttachments = [
+            ...filesToKeep.map(keepFile => ({
+                filename: keepFile.filename,
+                path_to_file: keepFile.path_to_file,
+                // 如果有 size 欄位就保留，否則設為 0
+                ...(keepFile.size !== undefined && { size: keepFile.size })
+            })),
+            ...newSavedFiles
+        ];
+
+        const result = await UpdateAssignmentSubmissionService(
+            subAssId, 
+            userTags || "", // 確保不是 undefined
+            finalAttachments, 
+            description || "" // 確保不是 undefined
+        );
 
         if (result) {
             res.status(200).json("update sub ass successfully");
