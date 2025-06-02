@@ -19,6 +19,10 @@ import {
     FindCourseById
 } from '#src/services/course_service.js';
 
+import {
+    SendNotify
+} from '#src/services/notification_service.js';
+
 async function GetPostContent(req, res, next) {
     try {
         const postId = parseInt(req.params.id);
@@ -88,6 +92,23 @@ async function LeaveComment(req, res) {
         });
 
         if (result.modifiedCount === 1) {
+            const postdata = await FindPostByID(post_id);
+            const board = await FindBoardByID(postdata.in_b_id);
+            const course = await FindCourseById(board.course_id);
+            console.log(course);
+
+            
+            const notificationData = {
+                event_id: post_id,
+                event_category: "commend",
+                context: `課程 - ${course.title} 討論版 - ${board.name} 貼文 - ${postdata.title} 有新留言 - ${description}`,
+                notified_users:[
+                    {
+                        user_id:postdata.post_by_user_id
+                    }
+                ]
+            }
+            const notifyres = await SendNotify(notificationData);
             res.status(201).send({ message: "Comment added successfully" });
         } else {
             res.status(404).send({ message: "Post not found or comment not added" });
