@@ -81,6 +81,7 @@
 }
 
 
+
 /* Fixed width columns */
 .submissions-table th:nth-child(1), /* Student Name */
 .submissions-table td:nth-child(1) {
@@ -170,12 +171,12 @@
   position: relative;
   cursor: pointer;
   padding: 10px;
-  background-color: #fcfcfc;
+  background-color: #f4f6f8;
   border-radius: 4px;
 }
 
-.submission-content:hover {
-  background-color: #f5f5f5;
+.submission-row:hover .submission-content {
+  background-color: #f9f9f9;
 }
 
 .content-container {
