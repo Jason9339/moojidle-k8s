@@ -5,7 +5,8 @@ export const CreateSubAssign = async (assignmentId, data) => {
     try {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
-        const response = await api.post(`/submitted-assignment/${assignmentId}/submissions/${userId}`, data);
+        // 後端路由: /submit-to/:assignmentId/user/:userId
+        const response = await api.post(`/submitted-assignment/submit-to/${assignmentId}/user/${userId}`, data);
         return response.data;
     } catch (err) {
         console.error("建立繳交紀錄失敗", err);
@@ -13,11 +14,10 @@ export const CreateSubAssign = async (assignmentId, data) => {
     }
 };
 // 更新作業繳交（Update）
-export const UpdateSubAssign = async (assignmentId, data) => {
+// 後端路由: /sub-assign-id/:subAssId
+export const UpdateSubAssign = async (subAssId, data) => { // 參數改為 subAssId
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const userId = user?.user_id;
-        const response = await api.put(`/submitted-assignment/${assignmentId}/submissions/${userId}`, data);
+        const response = await api.put(`/submitted-assignment/sub-assign-id/${subAssId}`, data);
         return response.data;
     } catch (err) {
         console.error("更新繳交紀錄失敗", err);
@@ -25,11 +25,10 @@ export const UpdateSubAssign = async (assignmentId, data) => {
     }
 };
 // 刪除作業繳交（Delete）
-export const DeleteSubAssign = async (assignmentId) => {
+// 後端路由: /sub-assign-id/:subAssId
+export const DeleteSubAssign = async (subAssId) => { // 參數改為 subAssId
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const userId = user?.user_id;
-        const response = await api.delete(`/submitted-assignment/${assignmentId}/submissions/${userId}`);
+        const response = await api.delete(`/submitted-assignment/sub-assign-id/${subAssId}`);
         return response.data;
     } catch (err) {
         console.error("刪除繳交紀錄失敗", err);
@@ -37,22 +36,18 @@ export const DeleteSubAssign = async (assignmentId) => {
     }
 };
 
-// 取得所有該課程作業的使用者繳交紀錄
-export const GetCourseSubAssignments = async (assignmentList) => {
+// 取得特定作業的特定用戶繳交紀錄
+// 後端路由: /submitted-assignment/assignment/:assignmentId/user/:userId
+export const GetSubAssign = async (assignmentId, userId) => {
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const userId = user?.user_id;
-        if (!userId) return [];
-
-        // 將 assignmentList 傳給後端來比對（理想情況）
-        const response = await api.post("/submitted-assignment/submissions/batch", {
-            userId,
-            assignmentList,
-        });
-        return response.data?.submissions || [];
+        const response = await api.get(`/submitted-assignment/assignment/${assignmentId}/user/${userId}`);
+        return response.data;
     } catch (err) {
-        console.error("取得課程繳交紀錄失敗", err);
-        return [];
+        console.error("取得單一繳交紀錄失敗", err);
+        if (err.response && err.response.status === 404) {
+            return null; 
+        }
+        throw new Error(err.response?.data?.message || "取得紀錄發生錯誤");
     }
 };
 
