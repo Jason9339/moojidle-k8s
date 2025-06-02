@@ -15,6 +15,7 @@ function EditTags() {
         async function fetchData() {
             try {
                 const data = await GetUserTagsById(userId);
+                console.log("API 回傳:", data);
                 setUserTags(data.user_tags || []);
             } catch (e) {
                 setError("無法載入使用者標籤。");
@@ -22,7 +23,6 @@ function EditTags() {
         }
         fetchData();
     }, [userId]);
-
     const handleAddTag = () => {
         if (newTag.trim() === "") {
             setError("標籤不能為空。");
@@ -75,7 +75,7 @@ function EditTags() {
             </div>
         </div>
     );
-  
+
 }
 
 export default EditTags;
