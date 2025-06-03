@@ -47,6 +47,4 @@ router.delete("/delete/:id", Delete);
 
 router.put("/update-password/:id", UpdatePassword)
 
-
-
 export default router;

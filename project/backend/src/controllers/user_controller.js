@@ -4,7 +4,7 @@ import {
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword,
+    UpdateUserPassword
 } from "#src/services/user_service.js";
 
 // Register a new user in the database
@@ -84,7 +84,7 @@ async function GetUserData(req, res) {
 
     try {
         let resultMain = await FindOneUserById(userId);
-        
+
         if (!resultMain) {
             return res.status(404).send({ message: "User not found" });
         }
@@ -146,12 +146,6 @@ async function UpdatePassword(req, res) {
         res.status(500).send({ message: "An error occurred", error: err.message });
     }
 }
-
-
-
-
-
-
 
 export {
     Register,
