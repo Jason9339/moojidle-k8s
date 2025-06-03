@@ -67,8 +67,9 @@ function App() {
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
-                        {/* post pages relayed */}
-                        <Route path="/post-edit/:param" element={<PostEdit />} />
+                        {/* post pages related */}
+                        <Route path="/post-edit/:post_id" element={<PostEdit />} />
+                       
                         <Route path="/post/:id" element={<PostPage />} />
 
                         {/* calendar pages related */}

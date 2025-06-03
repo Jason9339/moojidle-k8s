@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeleteDiscussionBoard } from "@/services/DiscussionBoardApi.js";
+import { DeleteDiscussionBoard, EditDiscussionBoard} from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
 
@@ -20,9 +20,16 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
         }
     };
 
-    const handleSave = () => {
-        // 未來用來送出更新討論版名稱
-        alert(`功能尚未實作：將名稱更新為「${boardName}」`);
+    const handleSave = async () => {
+        try{
+            await EditDiscussionBoard(boardId, boardName);
+            alert("討論版名稱已成功更新");
+            onClose();
+            navigate("/discussion/" + boardId);
+        } catch (err) {
+            console.error(err);
+            setError("更新失敗，請稍後再試");
+        }
     };
 
     return (
@@ -34,14 +41,13 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
         >
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <h2 className={styles.title}>編輯討論版</h2>
-
                 <div className={styles.body}>
                     <label htmlFor="boardName">討論版名稱</label>
                     <input
                         id="boardName"
                         type="text"
                         autoFocus
-                        placeholder="TODO: 未來可修改名稱"
+                        placeholder={"請輸入討論版名稱"}
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
                     />
