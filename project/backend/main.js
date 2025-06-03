@@ -41,6 +41,7 @@ app.use("/discussion-board", discussionBoardRoute);
 app.use("/post", postRoute);
 app.use("/assignment", assignmentRoute);
 app.use("/submitted-assignment", submittedAssRoute);
+app.use("/submitted-assignment", submitAssignmentRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);

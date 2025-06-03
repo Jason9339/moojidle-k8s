@@ -78,7 +78,7 @@ async function startTestServer() {
         app.use("/material", materialRoute);
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
-        app.use("/submit-assignment", submitAssignmentRoute);
+        app.use("/submitted-assignment", submitAssignmentRoute);
         app.use("/submitted-assignment", submittedAssRoute);
 
         // 測試專用端點
