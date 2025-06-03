@@ -111,12 +111,6 @@ async function GetUserTags(req, res) {
 
     res.status(200).send(tags);
 }
-// Update user password by user ID
-// In Postman send this json format in the body
-// {
-//     "currentPassword": "old_password",
-//     "newPassword": "new_secure_password"
-// }
 async function UpdatePassword(req, res) {
     const userId = req.params.id;
     const { currentPassword, newPassword } = req.body;
