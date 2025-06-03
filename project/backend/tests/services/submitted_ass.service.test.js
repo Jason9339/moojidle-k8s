@@ -146,12 +146,14 @@ describe('Submitted Assignments Service Test', () => {
                     size: 2048
                 }
             ];
+            const updateTime = new Date();
 
             const result = await UpdateSubAssById(
                 1,
                 "Updated Tag",
                 newAttachments,
-                "Updated description"
+                "Updated description",
+                updateTime
             );
 
             expect(result).toBe(1); // modifiedCount 應該是 1
@@ -162,15 +164,19 @@ describe('Submitted Assignments Service Test', () => {
             expect(updatedSubmission.submit_user_course_tag).toBe("Updated Tag");
             expect(updatedSubmission.description).toBe("Updated description");
             expect(updatedSubmission.attachments).toEqual(newAttachments);
+            expect(updatedSubmission.submit_date).toEqual(updateTime);
         });
 
         // 存在的 ID，沒有附件
         it('should successfully update submission with empty attachments', async () => {
+            const updateTime = new Date();
+            
             const result = await UpdateSubAssById(
                 1,
                 "Updated Tag 2",
                 [],
-                "No attachments"
+                "No attachments",
+                updateTime
             );
 
             expect(result).toBe(1);
@@ -181,15 +187,19 @@ describe('Submitted Assignments Service Test', () => {
             expect(updatedSubmission.submit_user_course_tag).toBe("Updated Tag 2");
             expect(updatedSubmission.attachments).toEqual([]);
             expect(updatedSubmission.description).toBe("No attachments");
+            expect(updatedSubmission.submit_date).toEqual(updateTime);
         });
 
         // 不存在的 ID
         it('should return 0 when submission does not exist', async () => {
+            const updateTime = new Date();
+            
             const result = await UpdateSubAssById(
                 999,
                 "Nonexistent Tag",
                 [],
-                "This should not update"
+                "This should not update",
+                updateTime
             );
 
             expect(result).toBe(0); // modifiedCount 應該是 0
@@ -197,11 +207,14 @@ describe('Submitted Assignments Service Test', () => {
 
         // 可以處理字串參數
         it('should handle string ID parameter', async () => {
+            const updateTime = new Date();
+            
             const result = await UpdateSubAssById(
                 '1',
                 "String ID Tag",
                 [],
-                "Testing string ID"
+                "Testing string ID",
+                updateTime
             );
 
             expect(result).toBe(1);
@@ -209,6 +222,7 @@ describe('Submitted Assignments Service Test', () => {
             // 驗證更新是否成功
             const updatedSubmission = await FindSubAssById(1);
             expect(updatedSubmission.submit_user_course_tag).toBe("String ID Tag");
+            expect(updatedSubmission.submit_date).toEqual(updateTime);
         });
     });
 

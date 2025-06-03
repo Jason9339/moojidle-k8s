@@ -23,13 +23,13 @@ async function InsertSubAss(submission) {
     }
 }
 // 更新作業提交（以 assignmentId + userId 為條件）
-async function UpdateSubAssById(subAssId, userTags, savedFiles, description) {
+async function UpdateSubAssById(subAssId, userTags, savedFiles, description, updateTime) {
     const db = mongoose.connection.db;
     const result = await db.collection("submitted_ass").updateOne(
         {
             s_ass_id: parseInt(subAssId)
         },
-        { $set: {submit_user_course_tag: userTags, attachments: savedFiles, description: description} }
+        { $set: {submit_user_course_tag: userTags, attachments: savedFiles, description: description, submit_date: updateTime} }
     );
 
     return result.modifiedCount;

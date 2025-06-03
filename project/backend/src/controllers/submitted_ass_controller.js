@@ -210,7 +210,8 @@ async function UpdateAssignmentSubmission(req, res) {
             subAssId, 
             userTags || "", // 確保不是 undefined
             finalAttachments, 
-            description || "" // 確保不是 undefined
+            description || "", // 確保不是 undefined
+            new Date() // 添加當前時間
         );
 
         if (result != 0) {
