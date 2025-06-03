@@ -88,7 +88,9 @@ function Notification() {
                 case "test":
                     navigate(`/course/${item.notification.event_id}`);  
                 case "homework":
-                    navigate(`/course/${item.notification.event_id}`);  
+                    navigate(`/course/${item.notification.event_id}`);
+                case "course_announcement":
+                    navigate(`/course/${item.notification.event_id}/announcement`);    
             }
         } catch (err) {
             alert("刪除失敗，請稍後再試");
