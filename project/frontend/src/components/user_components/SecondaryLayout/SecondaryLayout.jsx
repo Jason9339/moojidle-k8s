@@ -1,5 +1,4 @@
 import React from 'react';
-
 import styles from "./SecondaryLayout.module.css";
 
 function SecondaryLayout({ user_tags }) {
@@ -11,7 +10,6 @@ function SecondaryLayout({ user_tags }) {
                     <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
                     編輯個人 TAGS
                 </button>
-
             </div>
 
             <div className={styles.body}>
