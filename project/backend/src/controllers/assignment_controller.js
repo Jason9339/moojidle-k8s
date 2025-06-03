@@ -30,6 +30,7 @@ import CalculateWeek from '#src/utils/calculate_week.js';
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { SendNotification, SendNotified } from '#src/services/notification_service.js';
 
 // 模擬 __dirname，因為使用的是 ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -170,6 +171,18 @@ async function UploadAssignment(req, res) {
         };
 
         const dbResult = await InsertAssignmentToDB(assignmentData);
+
+        //發送notification
+        const course = await FindCourseById(courseId);
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+        const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
+        const notification = {
+            event_id: course.course_id,
+            event_category: "assignment",
+            context: `${course.name} 新增作業 ${assName}`,
+        }
+        const notificationres = await SendNotification(notification);
+        await SendNotified(notificationres.notification.n_id,userIdsOnly)
 
         res.status(200).json({
             message: savedFiles.length > 0 ? "作業上傳成功（包含附件）" : "作業上傳成功",

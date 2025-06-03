@@ -7,6 +7,14 @@ const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, set
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
+
+        // Validate that a score has been entered
+        if (!reviewScore || reviewScore.trim() === '') {
+            console.error('Review score is required.');
+            alert('Please enter a score before submitting.');
+            return;
+        }
+
         const response = await GradeAssignment(userId, reviewingSubmission.submissionId, reviewScore);
         if (response.updated) {
             const updatedReviewData = reviewData.map(sub =>
@@ -30,7 +38,10 @@ const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, set
                         <input
                             type="number"
                             value={reviewScore}
-                            onChange={(e) => setReviewScore(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setReviewScore(value);
+                            }}
                             min="0"
                             max={assignmentMaxScore}
                             className={styles["score-input"]}
@@ -38,7 +49,7 @@ const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, set
                         />
                     </div>
                     <div className={styles["form-actions"]}>
-                        <button type="submit" className={styles["submit-button"]}>Submit</button>
+                        <button type="submit" className={styles["submit-button"]} >Submit</button>
                         <button type="button" onClick={handleCancelReview} className={styles["cancel-button"]}>Cancel</button>
                     </div>
                 </form>
@@ -60,12 +71,21 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
     return (
         reviewData.length > 0 ? (
             <table className={styles["submissions-table"]}>
+                <colgroup>
+                    <col style={{ width: "10%" }} />
+                    <col style={{ width: "14%" }} />
+                    <col style={{ width: "24%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "16%" }} />
+                </colgroup>
                 <thead>
                     <tr>
                         <th>Student Name</th>
                         <th>Submission Date</th>
-                        <th>Grade (0-{assignmentMaxScore})</th>
                         <th>Submissions</th>
+                        <th>Grade (0-{assignmentMaxScore})</th>
                         <th>Status</th>
                         <th>Actions</th>
                         <th>Review Form</th>
@@ -78,7 +98,6 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
                             <tr key={submission.submissionId || index} className={styles["submission-row"]}>
                                 <td>{submission.studentName}</td>
                                 <td>{submission.submissionDate}</td>
-                                <td>{submission.grade}</td>
                                 <td
                                     className={`${styles["submission-content"]} ${isExpanded ? styles["expanded"] : ""}`}
                                     onClick={() => setExpandedSubmissionId(isExpanded ? null : (submission.submissionId || index))}
@@ -110,6 +129,7 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
                                         {isExpanded ? "▲ 收起" : "▼ 展開"}
                                     </div>
                                 </td>
+                                <td>{submission.grade}</td>
                                 <td>{submission.status}</td>
                                 <td>
                                     <button

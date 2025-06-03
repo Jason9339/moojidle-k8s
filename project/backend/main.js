@@ -33,7 +33,7 @@ import discussionBoardRoute from "#src/routes/discussion_board_route.js"
 import postRoute from "#src/routes/post_routes.js"
 import takenExamRoute from "#src/routes/taken_exams_route.js"
 import calendarRoute from "#src/routes/calendar_route.js"
-
+import notificationRout from "#src/routes/notification_route.js"
 app.use("/user", userRoute);
 app.use("/course", courseRoute);
 app.use("/course/member", courseMemberRoute);
@@ -46,7 +46,7 @@ app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);
 app.use("/taken-exam", takenExamRoute);
 app.use("/calendar", calendarRoute);
-
+app.use("/notification", notificationRout);
 // Routes ends --------------------------------------------------------------------------
 
 // Global error handler
