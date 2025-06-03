@@ -5,7 +5,6 @@ import { createMockReq, createMockRes } from '../test-utils.js';
 import {
     FindAssignmentsByCourseId,
     FindAssignmentMaxScore,
-    FindAssByAssId
 
 } from "#src/services/assignment_service.js";
 
@@ -16,22 +15,6 @@ describe('Assignment Service', () => {
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
 
-    describe("FindAssByAssId", () => {
-        it('應該成功獲取繳交作業所在的課程Id', async () => {
-            const assignmentId = 1;
-            const result = await FindAssByAssId(assignmentId);
-
-            expect(result).toBeDefined();
-            expect(result.in_course_id).toBe(1);
-        });
-
-        it('當作業不存在時應該返回null', async () => {
-            const assignmentId = 999;
-            const result = await FindAssByAssId(assignmentId);
-
-            expect(result).toBeNull();
-        });
-    });
 
     describe('FindAssignmentsByCourseId', () => {
         it('應該要根據CourseId找到其之下的作業', async () => {

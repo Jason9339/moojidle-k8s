@@ -133,22 +133,10 @@ const InsertAssignmentToDB = async (assignmentData) => {
     }
 };
 
-async function FindAssByAssId(assId){
-    try {
-        const assignment = await mongoose.connection.db.collection("assignments").findOne(
-            { ass_id: assId }
-        );
-        return assignment;
-    } catch (error) {
-        console.error("Error getting course ID by assignment ID:", error);
-        throw error;
-    }
-}
 
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
     InsertAssignmentToDB,
-    FindAssByAssId,
     FindAssignmentById,
 };
