@@ -197,41 +197,47 @@ async function UpdateTags(req, res) {
     const userId = parseInt(req.params.id, 10);
     const { tags } = req.body;
 
-    // 驗證：tags 必須存在，且是字串陣列
+    // 驗證 tags 是否為陣列
     if (!Array.isArray(tags)) {
         return res.status(400).send({
-            message: "Tags must be an array of strings",
-            example: ["tagA", "tagB"],
+            message: "標籤必須是陣列格式",
+            example: ["標籤1", "標籤2"],
         });
     }
-    for (const t of tags) {
-        if (typeof t !== "string" || t.trim() === "") {
-            return res.status(400).send({
-                message: "Each element in tags must be a non-empty string",
-            });
+
+    // 如果陣列不為空，驗證每個標籤
+    if (tags.length > 0) {
+        for (const tag of tags) {
+            if (typeof tag !== "string" || tag.trim() === "") {
+                return res.status(400).send({
+                    message: "每個標籤都必須是非空的字串",
+                    example: ["標籤1", "標籤2"],
+                });
+            }
         }
     }
 
     try {
-        // 確認 user 是否存在
+        // 確認使用者是否存在
         const user = await FindOneUserById(userId);
         if (!user) {
-            return res.status(404).send({ message: "User not found" });
+            return res.status(404).send({ message: "找不到使用者" });
         }
 
-        // 以新陣列覆寫整組 tags
+        // 更新標籤
         const result = await UpdateUserTags(userId, tags);
 
         return res.status(200).send({
-            message: "Tags replaced successfully",
+            message: result.message,
             insertedCount: result.newIds ? result.newIds.length : 0,
             newIds: result.newIds || [],
         });
     } catch (err) {
         console.error("UpdateTags error:", err);
-        return res
-            .status(500)
-            .send({ message: "Failed to replace tags", error: err.message });
+        return res.status(500).send({
+            message: "更新標籤失敗",
+            error: err.message
+        });
     }
 }
 

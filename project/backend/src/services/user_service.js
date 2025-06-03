@@ -131,15 +131,14 @@ async function UpdateUserTags(userId, newTags) {
 
         const user = await FindOneUserById(userId);
         if (!user) {
-            return { modifiedCount: 0, message: "User not found" };
+            return { modifiedCount: 0, message: "使用者不存在" };
         }
 
-       
+        // 刪除現有標籤
         await collection.deleteMany({ user_id: parseInt(userId) });
 
-        
+        // 如果有新標籤才新增
         if (Array.isArray(newTags) && newTags.length > 0) {
-            
             const toInsert = newTags.map((tagStr) => ({
                 user_id: parseInt(userId),
                 user_tag: tagStr,
@@ -147,14 +146,20 @@ async function UpdateUserTags(userId, newTags) {
             const insertResult = await collection.insertMany(toInsert);
             return {
                 modifiedCount: insertResult.insertedCount,
+                message: "標籤更新成功",
                 newIds: Object.values(insertResult.insertedIds).map((id) => id.toString()),
             };
         }
 
-        return { modifiedCount: 0, message: "All old tags deleted, no new tags to insert" };
+        // 回傳清空標籤的訊息
+        return { 
+            modifiedCount: 0, 
+            message: "已清空所有標籤",
+            newIds: []
+        };
     } catch (err) {
-        console.error("ReplaceUserTags error:", err);
-        throw new Error(`替換 user tags 失敗: ${err.message}`);
+        console.error("UpdateUserTags error:", err);
+        throw new Error(`更新使用者標籤失敗: ${err.message}`);
     }
 }
 
