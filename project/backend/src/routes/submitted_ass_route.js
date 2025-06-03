@@ -4,7 +4,11 @@ import {
     CreateAssignmentSubmission,
     UpdateAssignmentSubmission,
     DeleteSubmissionRecord,
-    DownloadSubmittedAss
+    DownloadSubmittedAss,
+
+    GetAssignmentSubmissions,
+    ReviewAssignmentSubmission
+
 } from '#src/controllers/submitted_ass_controller.js';
 
 import { 
@@ -59,5 +63,10 @@ router.delete('/sub-assign-id/:subAssId', DeleteSubmissionRecord);
 
 
 router.get('/download', DownloadSubmittedAss);
+
+router.get("/:assignmentId/submissions", GetAssignmentSubmissions);
+
+router.patch("/review/:submitAssignmentId", ReviewAssignmentSubmission);
+
 
 export default router;
