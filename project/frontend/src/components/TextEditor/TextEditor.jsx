@@ -5,6 +5,8 @@ import remarkGfm from "remark-gfm"
 import { Bold, Italic, Code as CodeIcon, List as ListIcon, ListOrdered, Quote, Heading } from "lucide-react"
 import Button from "@/components/Button/Button"
 import TextArea from "@/components/TextArea/TextArea"
+
+import styles from "./TextEditor.module.css"
 /* Basic UI components */
 const Card = ({ className = "", ...props }) => (
     <div {...props} className={`border rounded-2xl shadow ${className}`} />
@@ -61,7 +63,7 @@ export default function TextEditor({ className = "", height, onChange }) {
 
             // console.log("line", line)
             // capture > , #, or 1. prefixes (with trailing space)
-            const regex = /^(\s*(?:>#{1,3}|\#{1,6}|\d+\.|-|)\s+)/
+            const regex = /^(\s*(?:>#{1,3}|#{1,6}|\d+\.|-|)\s+)/
             const m = line.match(regex)
 
             // console.log("m=", m)
@@ -100,7 +102,7 @@ export default function TextEditor({ className = "", height, onChange }) {
 
                 <motion.div
                     layout
-                    className="flex gap-1 px-2 py-2 border-b sticky top-0 z-10"
+                    className={styles.toolbar}
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
@@ -124,7 +126,7 @@ export default function TextEditor({ className = "", height, onChange }) {
 
 
                 {preview ? (
-                    <div className="flex-2 markdown-body prose prose-blue mx-auto p-4">
+                    <div className={`markdown-body ${styles['markdown-body']}`}>
                         <ReactMarkdown remarkPlugins={[remarkGfm]} >
                             {text}
                         </ReactMarkdown>
