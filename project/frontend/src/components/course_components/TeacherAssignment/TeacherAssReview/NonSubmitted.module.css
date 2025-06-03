@@ -1,4 +1,3 @@
-/* TeacherAssignmentReview styles */
 .teacher-assignment-review {
     padding: 20px;
     background-color: #ffffff;
@@ -53,7 +52,7 @@
 
 .submissions-table {
     width: 100%;
-    table-layout: fixed; /* Important for fixed column widths */
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 0.9rem;
 }
@@ -63,7 +62,7 @@
     color: #333;
     font-weight: 600;
     padding: 12px 15px;
-    text-align: center; /* Center align header text */
+    text-align: center;
     border-bottom: 2px solid #e0e0e0;
 }
 
@@ -72,83 +71,36 @@
     border-bottom: 1px solid #e0e0e0;
     color: #444;
     vertical-align: top;
-    text-align: center; /* Center align cell text by default */
-}
-
-/* Exception for the submissions column which should remain left-aligned */
-.submission-content {
-    text-align: left !important; /* Override the center alignment */
+    text-align: center;
 }
 
 /* Fixed width columns */
-.submissions-table th:nth-child(1), /* Student Name */
+.submissions-table th:nth-child(1),
 .submissions-table td:nth-child(1) {
     width: 10%;
 }
 
-.submissions-table th:nth-child(2), /* Submission Date */
+.submissions-table th:nth-child(2),
 .submissions-table td:nth-child(2) {
     width: 15%;
 }
 
-.submissions-table th:nth-child(3), /* Grade */
+.submissions-table th:nth-child(3),
 .submissions-table td:nth-child(3) {
-    width: 8%;
+    width: 15%;
 }
 
-.submissions-table th:nth-child(4), /* Submissions */
+.submissions-table th:nth-child(4),
 .submissions-table td:nth-child(4) {
-    width: 40%;
+    width: 15%;
 }
 
-.submissions-table th:nth-child(5), /* Status */
-.submissions-table td:nth-child(5) {
-    width: 8%;
-}
-
-.submissions-table th:nth-child(6), /* Actions */
-.submissions-table td:nth-child(6) {
-    width: 8%;
-}
-
-.submissions-table th:nth-child(7), /* Review Form */
-.submissions-table td:nth-child(7) {
-    width: 20%;
-}
-
-.submission-row {
-    transition: background-color;
-}
-
+/* Row hover */
 .submission-row:hover {
     background-color: #f9f9f9;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-}
-
 /* Button styles */
-.review-button {
-    padding: 6px 12px;
-    background-color: #4a86e8;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background-color 0.2s ease;
-    margin: 0;
-    box-sizing: border-box;
-}
-
-.review-button:hover {
-    background-color: #3a76d8;
-}
-
 .reminder-button {
     padding: 6px 12px;
     background-color: #f0ad4e;
@@ -162,172 +114,6 @@
 
 .reminder-button:hover {
     background-color: #ec971f;
-}
-
-/* Combined Submission content styles */
-.submission-content {
-    position: relative;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.submission-row:hover .submission-content {
-    background-color: #f9f9f9;
-}
-
-.content-container {
-    max-height: 80px;
-    overflow: hidden;
-    transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
-}
-
-.submission-content.expanded .content-container {
-    max-height: 1000px; /* Much larger to avoid constraints */
-    transition: max-height 0.5s ease-in-out;
-}
-
-.description-section {
-    margin-bottom: 8px;
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-.attachment-section {
-    border-top: 1px dashed #ddd;
-    padding-top: 8px;
-}
-
-.expand-indicator {
-    color: #888;
-    font-size: 0.7rem;
-    text-align: center;
-    margin-top: 5px;
-    font-style: italic;
-    padding-top: 5px;
-}
-
-.submission-content:not(.expanded) .expand-indicator {
-    position: relative;
-}
-
-.submission-content:not(.expanded) .expand-indicator::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: linear-gradient(to bottom, rgba(252, 252, 252, 0), rgba(252, 252, 252, 1));
-    pointer-events: none;
-}
-
-/* Attachment styles */
-.attachment-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.attachment-item {
-    font-size: 0.85rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.attachment-link {
-    color: #1a73e8;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
-
-.attachment-link::before {
-    content: "📎";
-    margin-right: 4px;
-}
-
-.attachment-link:hover {
-    text-decoration: underline;
-}
-
-/* Review form styles */
-.review-form {
-    padding: 8px;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-.form-group {
-    margin-bottom: 10px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.85rem;
-    margin-bottom: 4px;
-    color: #555;
-    font-weight: 500;
-}
-
-.score-input {
-    width: 50px;
-    max-width: 100%;
-    padding: 4px 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    box-sizing: border-box;
-}
-
-.form-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    justify-content: flex-end;
-}
-
-.submit-button {
-    padding: 4px 8px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-}
-
-.submit-button:hover {
-    background-color: #43a047;
-}
-
-.cancel-button {
-    padding: 4px 8px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-}
-
-.cancel-button:hover {
-    background-color: #e53935;
-}
-
-/* Loading state */
-.teacher-assignment-review p {
-    color: #666;
-    font-style: italic;
 }
 
 /* Responsive design */
@@ -345,7 +131,6 @@
         padding: 8px 10px;
     }
 
-    .review-button,
     .reminder-button {
         padding: 5px 8px;
         font-size: 0.8rem;
