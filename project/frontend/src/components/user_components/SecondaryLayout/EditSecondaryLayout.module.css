@@ -9,7 +9,6 @@
     margin: 0;
     width: 100%;
     /* 佔滿容器寬度 */
-    /* max-width: 800px;        限制最大寬度 */
 }
 
 .tagItem {
@@ -34,7 +33,7 @@
 .input {
     background: transparent;
     border: none;
-    color: #ffffff;
+    color: #000000;
     font-size: 1rem;
     text-align: center;
     height: 24px;
@@ -148,9 +147,18 @@
     transform: scale(0.95);
 }
 
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding: 0;
+
+}
+
 .saveBtn,
 .cancelBtn {
-    margin: 0 8px;
+    margin: 0;
+    /* 避免產生左右不一致 */
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;

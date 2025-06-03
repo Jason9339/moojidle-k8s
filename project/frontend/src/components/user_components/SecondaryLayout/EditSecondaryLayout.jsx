@@ -66,11 +66,11 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                     +
                 </button>
             </div>
-            <div style={{ marginTop: 16 }}>
+            <div className={styles.buttonGroup} >
                 <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
                 <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
             </div>
-        </div>
+        </div >
     );
 }
 

@@ -19,8 +19,10 @@
     padding-top: 8px;
     display: flex;
     gap: 12px;
+    color:#000000;
     align-items: flex-start;
     max-width: 500px;
+
 }
 
 .input {
@@ -32,9 +34,18 @@
     box-sizing: border-box;
 }
 
+.input::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* 半透明白色背景 */
+    color: #000000;
+    /* 選取時的文字顏色 */
+}
+
 /* approach 輸入框 */
 .input[placeholder="Type (e.g. email, phone)"] {
     width: 50%;
+    background-color: rgba(14, 165, 233, 0.5);
+    text-align: center;
     /* 固定寬度 */
     /* flex-shrink: 0; */
     /* 防止壓縮 */
@@ -43,9 +54,15 @@
 /* details 輸入框 */
 .input[placeholder="Details"] {
     width: 50%;
+    text-align: center;
     /* 固定寬度 */
     /* flex-shrink: 0; */
     /* 防止壓縮 */
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    /* 改變預設提示文字顏色 */
 }
 
 .removeIcon {
@@ -132,7 +149,7 @@
     /* 固定寬度 */
     height: 32px;
     /* 固定高度 */
-    background: #1976d2;
+    background-color: rgba(14, 165, 233, 0.5);
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -152,7 +169,7 @@
 }
 
 .addBtn:hover {
-    background: #115293;
+    background-color: rgba(14, 165, 233, 0.7);
     transform: translateX(-50%) scale(1.1);
     /* 保持水平置中並添加放大效果 */
 }

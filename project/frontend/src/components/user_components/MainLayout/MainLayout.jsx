@@ -17,10 +17,11 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
         <div className={styles.card}>
             <div className={styles.headerRow}>
                 <h3 className={styles.username}>{name}</h3>
-                <button className={styles.editButton} onClick={() => setIsEditing(!isEditing)}>
+                {isEditing ? null : <button className={styles.editButton} onClick={() => setIsEditing(!isEditing)}>
                     <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
-                    {isEditing ? "完成" : "編輯基本個人檔案"}
-                </button>
+                    {"編輯基本個人檔案"}
+                </button>}
+
             </div>
 
             <div className={styles.infoSection}>

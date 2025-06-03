@@ -16,10 +16,11 @@ function SecondaryLayout({ user_tags: initialTags }) {
         <div className={styles.card}>
             <div className={styles.headerRow}>
                 <h3 className={styles.heading}>Your tags</h3>
-                <button className={styles.editButton} onClick={() => setIsEditing(!isEditing)}>
+                {isEditing ? null : <button className={styles.editButton} onClick={() => setIsEditing(!isEditing)}>
                     <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
-                    {isEditing ? "完成" : "編輯個人 TAGS"}
-                </button>
+                    {"編輯個人 TAGS"}
+                </button>}
+
             </div>
 
             <div className={styles.body}>

@@ -93,6 +93,7 @@
     flex-wrap: nowrap; 
     flex-direction: column;
     gap: 8px;
+    
 }
 
 .contactItem {
@@ -102,7 +103,7 @@
 }
 
 .approach {
-    background-color: rgba(14,165,233,0.1);
+    background-color: rgba(14, 165, 233, 0.5);
     padding: 4px 12px;
     border-radius: 6px;
     font-size: 14px;
