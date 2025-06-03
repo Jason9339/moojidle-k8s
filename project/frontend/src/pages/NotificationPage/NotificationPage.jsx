@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Notification.module.css";
+import styles from "./NotificationPage.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
@@ -11,7 +11,7 @@ import {
 } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
 
-function Notification() {
+function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -102,7 +102,7 @@ function Notification() {
                     navigate(`/course/${item.notification.event_id}/members`);
                     break;
                 case "exam":
-                    navigate(`/course/${item.notification.event_id}/exams`);
+                    navigate(`/course/${item.notification.event_id}`);
                     break;
                 case "assignment":
                     navigate(`/course/${item.notification.event_id}/assignment`);
@@ -122,9 +122,9 @@ function Notification() {
         filterCategory === "all"
             ? notifications
             : notifications.filter(
-                  (item) =>
-                      item.notification.event_category === filterCategory
-              );
+                (item) =>
+                    item.notification.event_category === filterCategory
+            );
 
     return (
         <div className={styles["app-layout"]}>
@@ -153,9 +153,8 @@ function Notification() {
                                 )}
                             </select>
                             <button
-                                className={`${styles["delete-button"]} ${
-                                    selectedIds.length > 0 ? styles["active"] : ""
-                                }`}
+                                className={`${styles["delete-button"]} ${selectedIds.length > 0 ? styles["active"] : ""
+                                    }`}
                                 onClick={handleBatchDelete}
                                 title="刪除選取項目"
                             >
@@ -191,4 +190,4 @@ function Notification() {
     );
 }
 
-export default Notification;
+export default NotificationPage;
