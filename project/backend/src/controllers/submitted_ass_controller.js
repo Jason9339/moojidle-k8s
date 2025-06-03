@@ -225,9 +225,42 @@ async function UpdateAssignmentSubmission(req, res) {
     }
 }
 
+function DownloadSubmittedAss(req, res) {
+    const { path: filePathParam } = req.query;
+
+    if (!filePathParam) {
+        return res.status(400).json({ message: "Missing path parameter" });
+    }
+
+    const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
+    // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
+    const filePath = path.join(__dirname, "../../", sanitizedPath);
+    // console.log("Resolved file path:", filePath);
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error("❌ 檔案不存在:", filePath);
+            return res.status(404).json({ message: "File not found" });
+        }
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${path.basename(filePath)}"`
+        );
+
+        res.download(filePath, (err) => {
+            if (err) {
+                console.error("❌ 下載錯誤:", err);
+                res.status(500).json({ message: "Error downloading file" });
+            }
+        });
+    });
+}
+
 export {
     GetOneSubAss,
     CreateAssignmentSubmission,
     UpdateAssignmentSubmission,
-    DeleteSubmissionRecord
+    DeleteSubmissionRecord,
+    DownloadSubmittedAss
 };

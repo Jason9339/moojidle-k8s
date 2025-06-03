@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
-import { GetAssignmentSubmissions, GradeAssignment } from '@/services/SubmitAssignmentApi.js';
+import { GetAssignmentSubmissions, GradeAssignment, DownloadSubmissions } from '@/services/SubmitAssignmentApi.js';
 
 const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore}) => {
     const [reviewScore, setReviewScore] = useState('');
@@ -70,7 +70,9 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
 
     const handleAttachmentClick = (file, event) => {
         event.stopPropagation();
-        console.log(`Attachment link clicked: ${file.filename}, URL: ${file.url}`);
+        console.log(`Attachment link clicked: ${file.filename}, P2F: ${file.path_to_file}`);
+
+        DownloadSubmissions(file.path_to_file, file.filename);
         // Future download/preview logic can be added here
     };
 

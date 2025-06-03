@@ -3,7 +3,8 @@ import {
     GetOneSubAss,
     CreateAssignmentSubmission,
     UpdateAssignmentSubmission,
-    DeleteSubmissionRecord
+    DeleteSubmissionRecord,
+    DownloadSubmittedAss
 } from '#src/controllers/submitted_ass_controller.js';
 
 import { 
@@ -55,5 +56,8 @@ router.put('/sub-assign-id/:subAssId', uploadMultipleWithMulter, UpdateAssignmen
 // deleters:
 // frontend gives subAssId
 router.delete('/sub-assign-id/:subAssId', DeleteSubmissionRecord);
+
+
+router.get('/download', DownloadSubmittedAss);
 
 export default router;
