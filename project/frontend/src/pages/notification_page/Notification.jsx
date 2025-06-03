@@ -3,7 +3,11 @@ import styles from "./Notification.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
 import { useNavigate } from "react-router-dom";
 
-import { GetnotificationData, DeleteNotification, ReadNotification } from "@/services/NotificationApi.js";
+import {
+    GetnotificationData,
+    DeleteNotification,
+    ReadNotification,
+} from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
 
 function Notification() {
@@ -12,7 +16,6 @@ function Notification() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterCategory, setFilterCategory] = useState("all");
     const navigate = useNavigate();
-    
 
     const categoryMap = {
         all: "全部",
@@ -31,7 +34,15 @@ function Notification() {
         try {
             const uid = JSON.parse(localStorage.getItem("user")).user_id;
             const data = await GetnotificationData(uid);
-            setNotifications(data);
+
+            // 將通知根據 notified_date 從新到舊排序
+            const sortedData = data.sort(
+                (a, b) =>
+                    new Date(b.notification.notified_date) -
+                    new Date(a.notification.notified_date)
+            );
+
+            setNotifications(sortedData);
             setError(null);
         } catch (err) {
             setError("無法載入通知資料");
@@ -70,36 +81,49 @@ function Notification() {
     };
 
     const handleBatchClick = async (item) => {
-        console.log(item);
         try {
-            ReadNotification({
+            await ReadNotification({
                 n_id: item.n_id,
-                user_id: item.user_id
-            })
+                user_id: item.user_id,
+            });
+
             switch (item.notification.event_category) {
                 case "commend":
                     navigate(`/post/${item.notification.event_id}`);
+                    break;
                 case "login":
-                    navigate(`/user/profile`);    
+                    navigate(`/user/profile`);
+                    break;
                 case "course":
-                    navigate(`/course/${item.notification.event_id}`);  
-                case "course_status":
-                    navigate(`/course/${item.notification.event_id}/members`);  
-                case "test":
-                    navigate(`/course/${item.notification.event_id}`);  
-                case "homework":
                     navigate(`/course/${item.notification.event_id}`);
+                    break;
+                case "course_status":
+                    navigate(`/course/${item.notification.event_id}/members`);
+                    break;
+                case "test":
+                    navigate(`/course/${item.notification.event_id}/exams`);
+                    break;
+                case "homework":
+                    navigate(`/course/${item.notification.event_id}/assignment`);
+                    break;
                 case "course_announcement":
-                    navigate(`/course/${item.notification.event_id}/announcement`);    
+                    navigate(`/course/${item.notification.event_id}/announcement`);
+                    break;
+                default:
+                    break;
             }
         } catch (err) {
-            alert("刪除失敗，請稍後再試");
+            alert("操作失敗，請稍後再試");
         }
     };
 
-    const filteredNotifications = filterCategory === "all"
-        ? notifications
-        : notifications.filter((item) => item.notification.event_category === filterCategory);
+    const filteredNotifications =
+        filterCategory === "all"
+            ? notifications
+            : notifications.filter(
+                  (item) =>
+                      item.notification.event_category === filterCategory
+              );
 
     return (
         <div className={styles["app-layout"]}>
@@ -107,22 +131,31 @@ function Notification() {
             <div className={styles["page-container"]}>
                 <div className={styles["notification-left"]}>
                     <div className={styles["notification-heading-row"]}>
-                        <h2 className={styles["notification-heading"]}>Notifications</h2>
+                        <h2 className={styles["notification-heading"]}>
+                            Notifications
+                        </h2>
 
                         <div className={styles["filter-row"]}>
                             <select
                                 className={styles["category-select"]}
                                 value={filterCategory}
-                                onChange={(e) => setFilterCategory(e.target.value)}
+                                onChange={(e) =>
+                                    setFilterCategory(e.target.value)
+                                }
                             >
-                                {Object.entries(categoryMap).map(([key, label]) => (
-                                    <option key={key} value={key}>
-                                        {label}
-                                    </option>
-                                ))}
+                                {Object.entries(categoryMap).map(
+                                    ([key, label]) => (
+                                        <option key={key} value={key}>
+                                            {label}
+                                        </option>
+                                    )
+                                )}
                             </select>
 
-                            <button className={styles["delete-button"]} onClick={handleBatchDelete}>
+                            <button
+                                className={styles["delete-button"]}
+                                onClick={handleBatchDelete}
+                            >
                                 刪除選取項目
                             </button>
                         </div>
@@ -139,10 +172,12 @@ function Notification() {
                                 <NotificationCard
                                     key={item._id}
                                     item={item}
-                                    isSelected={selectedIds.includes(item.n_id)}
+                                    isSelected={selectedIds.includes(
+                                        item.n_id
+                                    )}
                                     onSelectChange={handleSelectChange}
-                                    categoryMap={categoryMap} // 把 categoryMap 傳下去
-                                    onClick={(item) => handleBatchClick(item)}
+                                    categoryMap={categoryMap}
+                                    onClick={handleBatchClick}
                                 />
                             ))
                         )}
