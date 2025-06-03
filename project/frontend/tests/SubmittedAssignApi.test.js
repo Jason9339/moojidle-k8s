@@ -6,8 +6,8 @@ import {
 
 import {
     GetTheAssignSubAssForOneStuednt,
-    GetSubAssInCourse,
-    GetOneStudentSubAssInCourse,
+    GetSimpleSubAssInCourse,
+    GetOneStudentSimpleSubAssInCourse,
     GetAssignmentSubmissions,
     GradeAssignment,
     CreateSubAssign,
@@ -93,10 +93,10 @@ describe('Submitted Assignment Test', () => {
         });
     });
 
-    // testing GetSubAssInCourse
-    describe("GetSubAssInCourse integration test", async () => {
+    // testing GetSimpleSubAssInCourse
+    describe("GetSimpleSubAssInCourse integration test", async () => {
         it("given a courseId, get each students' name and their submitted assigns(with percentage)", async () => {
-            const data = await GetSubAssInCourse(1);
+            const data = await GetSimpleSubAssInCourse(1);
 
             expect(data).toBeDefined();
             expect(data.length).toBeGreaterThanOrEqual(1);
@@ -110,10 +110,10 @@ describe('Submitted Assignment Test', () => {
         });
     });
 
-    // testing GetOneStudentSubAssInCourse
-    describe("GetOneStudentSubAssInCourse integration test", async () => {
+    // testing GetOneStudentSimpleSubAssInCourse
+    describe("GetOneStudentSimpleSubAssInCourse integration test", async () => {
         it("given a courseId and a userId, get student's name and their submitted assigns(with percentage)", async () => {
-            const data = await GetOneStudentSubAssInCourse(1, 3);
+            const data = await GetOneStudentSimpleSubAssInCourse(1, 3);
 
             expect(data).toBeDefined();
             expect(data.name).toBe("User 3");

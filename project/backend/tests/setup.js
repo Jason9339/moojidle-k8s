@@ -168,6 +168,6 @@ async function SetupTestData() {
 global.console = {
     ...console,
     log: vi.fn(),
-    // error: vi.fn(),
-    // warn: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
 }; 

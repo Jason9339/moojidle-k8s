@@ -1,6 +1,6 @@
 import api from "@/ApiClient";
 
-export const GetSubAssInCourse = async (courseId) => {
+export const GetSimpleSubAssInCourse = async (courseId) => {
     try {
         const response = await api.get(`/submitted-assignment/in-course/${courseId}`);
 
@@ -15,7 +15,7 @@ export const GetAssignmentSubmissions = async (assignmentId) => {
     return (await api.get(`/submitted-assignment/${assignmentId}/submissions`)).data;
 };
 
-export const GetOneStudentSubAssInCourse = async (courseId, userId) => {
+export const GetOneStudentSimpleSubAssInCourse = async (courseId, userId) => {
     try {
         const response = await api.get(`/submitted-assignment/in-course/${courseId}/user/${userId}`);
 

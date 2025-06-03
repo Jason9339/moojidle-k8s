@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 // api call
 import { GetSimpleExams, UpdateExamScore } from "@/services/ExamApi";
 import { GetSimpleCourseAssignments, UpdateAssignmentScore } from "@/services/AssignmentApi";
-import { GetSubAssInCourse, GetOneStudentSubAssInCourse } from "@/services/SubmittedAssignApi";
+import { GetSimpleSubAssInCourse, GetOneStudentSimpleSubAssInCourse } from "@/services/SubmittedAssignApi";
 import { GetTakenExamsInCourse, GetOneStudentTakenExamsInCourse } from "@/services/TakenExamApi";
 
 // components
@@ -52,7 +52,7 @@ function GradesTab() {
     // teachers & assistants
     async function FetchSubAssigns(courseId) {
         try {
-            const result = await GetSubAssInCourse(courseId);
+            const result = await GetSimpleSubAssInCourse(courseId);
             setSubAssignsData(result);
         } catch (err) {
             console.error(err);
@@ -73,7 +73,7 @@ function GradesTab() {
     // students
     async function FetchOneSubAssigns(courseId) {
         try {
-            const result = await GetOneStudentSubAssInCourse(courseId, userId);
+            const result = await GetOneStudentSimpleSubAssInCourse(courseId, userId);
             setSubAssignsData(result);
         } catch (err) {
             console.error(err);
