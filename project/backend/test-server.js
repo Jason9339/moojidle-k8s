@@ -38,6 +38,7 @@ import discussionBoardRoute from '#src/routes/discussion_board_route.js';
 import postRoute from '#src/routes/post_routes.js';
 import examRoute from '#src/routes/exam_route.js';
 import submitAssignmentRoute from '#src/routes/submit_assignment_route.js';
+import submittedAssRoute from '#src/routes/submitted_ass_route.js';
 
 let mongoServer;
 let server;
@@ -78,6 +79,7 @@ async function startTestServer() {
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
         app.use("/submit-assignment", submitAssignmentRoute);
+        app.use("/submitted-assignment", submittedAssRoute);
 
         // 測試專用端點
         app.post('/test/reset-database', async (req, res) => {

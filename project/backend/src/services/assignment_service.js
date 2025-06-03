@@ -87,6 +87,18 @@ async function GetToDoAssignmentsByUserId(user_id) {
     }
 }
 
+async function FindAssignmentById(assId) {
+    try {
+        const assign = await mongoose.connection.db.collection("assignments").findOne(
+            {ass_id: parseInt(assId)}
+        );
+
+        return assign;
+    } catch (error) {
+        throw error;        
+    }
+}
+
 async function FindAssignmentsByCourseId(courseId) {
     try {
         courseId = parseInt(courseId);
@@ -137,5 +149,7 @@ export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
     InsertAssignmentToDB,
-    FindAssByAssId
+    FindAssByAssId,
+    FindAssignmentById,
+    InsertAssignmentToDB
 };
