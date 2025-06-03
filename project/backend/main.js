@@ -22,6 +22,7 @@ app.use(cors({
 
 // Routes are here ----------------------------------------------------------------------
 import assignmentRoute from "#src/routes/assignment_route.js"
+import submittedAssRoute from "#src/routes/submitted_ass_route.js"
 import examRoute from "#src/routes/exam_route.js"
 import courseRoute from "#src/routes/course_router.js"
 import courseMemberRoute from "#src/routes/course_member_route.js"
@@ -38,6 +39,7 @@ app.use("/course/member", courseMemberRoute);
 app.use("/discussion-board", discussionBoardRoute);
 app.use("/post", postRoute);
 app.use("/assignment", assignmentRoute);
+app.use("/submitted-assignment", submittedAssRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);
