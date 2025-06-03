@@ -31,7 +31,6 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
             week: parseInt(weeks, 10),
         };
 
-        console.log("課程資料:", coursePayload);
 
         try {
             setIsSubmitting(true); // 顯示 loading 狀態

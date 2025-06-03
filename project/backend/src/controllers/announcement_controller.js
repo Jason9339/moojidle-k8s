@@ -5,6 +5,19 @@ import {
     DeleteAnnouncementByAnnouncementID
 } from '#src/services/announcement_service.js';
 
+import {
+    SendNotification,
+    SendNotified
+} from '#src/services/notification_service.js'
+
+import { 
+    FindCourseById 
+} from '#src/services/course_service.js';
+
+import {
+    FindStudyInJoinUserByCourseId,
+} from '#src/services/course_member_service.js';
+
 // 取得特定課程的公告
 async function GetCourseAnnouncements(req, res) {
     try {
@@ -22,6 +35,18 @@ const CreateAnnouncement = async (req, res) => {
         const { courseId } = req.params;
         const { context, userId, announceDate } = req.body;
         const announcement = await InsertAnnouncement(courseId, context, userId, announceDate);
+        const course = await FindCourseById(courseId);
+        const students = await FindStudyInJoinUserByCourseId(course.course_id);
+        const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
+
+        const notificationData = {
+            event_id: course.course_id,
+            event_category: "course_announcement",
+            context:`${course.title} 有新公告: ${context}`
+        }
+        const notificationres = await SendNotification(notificationData);
+        await SendNotified(notificationres.notification.n_id, userIdsOnly)
+
         res.json(announcement);
     } catch (error) {
         console.error("新增課程公告錯誤:", error);

@@ -1,23 +1,28 @@
 import { FindBoardByID } from '#src/services/discussion_board_service.js';
-import { 
+import {
     FindPostByID,
     DeletePostById,
     FindProjectedPostsByBId,
-    InsertPosts
+    InsertPosts,
+    UpdatePostById
 } from '#src/services/post_services.js';
 
-import { 
+import {
     UpdateComment,
     DeleteComment
 } from '#src/services/comment_service.js';
 
-import { 
+import {
     FindOneUserById
 } from "#src/services/user_service.js";
 
 import {
     FindCourseById
 } from '#src/services/course_service.js';
+
+import {
+    SendNotification,SendNotified
+} from '#src/services/notification_service.js';
 
 async function GetPostContent(req, res, next) {
     try {
@@ -88,6 +93,24 @@ async function LeaveComment(req, res) {
         });
 
         if (result.modifiedCount === 1) {
+            const postdata = await FindPostByID(post_id);
+            const board = await FindBoardByID(postdata.in_b_id);
+            const course = await FindCourseById(board.course_id);
+            console.log(course);
+
+            
+            const notificationData = {
+                event_id: post_id,
+                event_category: "comment",
+                context: `課程 - ${course.title} 討論版 - ${board.name} 貼文 - ${postdata.title} 有新留言 - ${description}`,
+            }
+            const notificationres = await SendNotification(notificationData);
+            const res1 = await SendNotified(notificationres.notification.n_id, [
+                    {
+                        user_id:postdata.post_by_user_id
+                    }
+                ])
+            console.log(res1);
             res.status(201).send({ message: "Comment added successfully" });
         } else {
             res.status(404).send({ message: "Post not found or comment not added" });
@@ -216,11 +239,42 @@ async function AddPosts(req, res) {
     }
 }
 
+async function EditPost(req, res) {
+    const postId = parseInt(req.params.id);
+    const { title, description, public: isPublic } = req.body;
+
+    if (isNaN(postId)) {
+        return res.status(400).send({ error: "Invalid post_id" });
+    }
+
+    if (typeof title !== 'string' || title.trim() === '' || typeof description !== 'string' || description.trim() === '') {
+        return res.status(400).send({ error: "Title and description are required and cannot be empty." });
+    }
+
+    const updateFields = { title, description };
+    if (typeof isPublic === 'boolean') {
+        updateFields.public = isPublic;
+    }
+
+    try {
+        const result = await UpdatePostById(postId, updateFields);
+
+        if (result.matchedCount !== 0) {
+            res.status(200).send({ message: "成功更新貼文" });
+        } else {
+            res.status(404).send({ message: "貼文未找到或未進行任何更改" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
 export {
     AddPosts,
     GetPostContent,
     LeaveComment,
     PostDeleter,
     CommendDeleter,
-    GetOverviewPosts
+    GetOverviewPosts,
+    EditPost
 } 

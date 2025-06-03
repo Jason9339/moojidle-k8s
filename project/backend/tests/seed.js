@@ -8,7 +8,7 @@ async function CounterSeed() {
         announcement: 1,
         assignments: 1,
         assist_in: 1,
-        course: 1,
+        course: 2,
         course_tag: 3,
         custom_tag: 3,
         discussion_board: 1,
@@ -19,7 +19,9 @@ async function CounterSeed() {
         study_in: 1,
         submitted_ass: 1,
         teach_in: 1,
-        user: 3
+        user: 4,
+        notification: 1,
+        notified : 2
     });
 }
 
@@ -79,7 +81,24 @@ async function UserSeed() {
             email: "user3@example.com",
             pw: "hashed_password_3",
             create_date: new Date("2025-01-01T00:00:00.000Z")
+        },
+
+        {
+            user_id: 4,
+            name: "Calendar User",
+            contact_ways: [
+                {
+                    approach: "email",
+                    details: "calendaruser@example.com"
+                }
+            ],
+            path_to_profile_pic: "/profiles/4.jpg",
+            email: "calendaruser@example.com",
+            pw: "hashed_password_4",
+            create_date: new Date("2025-01-01T00:00:00.000Z")
         }
+
+
     ]);
 }
 
@@ -117,6 +136,18 @@ async function CourseSeed() {
             "week_num": 18,
             "color": "#4A90E2"
         },
+        {
+
+            "course_id": 2,
+            "name": "Calendar Course",
+            "description": "This is the description for course 2.",
+            "create_date": new Date("2025-01-01T00:00:00.000Z"),
+            "start_date": new Date("2025-01-01T00:00:00.000Z"),
+            "syllabus": "Syllabus for course 2",
+            "invite_link": "http://example.com/course_2/invite",
+            "week_num": 16,
+            "color": "#00FF00"
+        }
     ]);
 }
 
@@ -126,6 +157,13 @@ async function Teach_inSeed() {
             "user_id": 1,
             "course_id": 1
         },
+
+        // Calendar
+        {
+            "user_id": 4,
+            "course_id": 2,
+            "student_id": 1
+        }
     ]);
 }
 
@@ -145,6 +183,8 @@ async function Study_inSeed() {
             "course_id": 1,
             "student_id": 1
         },
+
+
     ]);
 }
 

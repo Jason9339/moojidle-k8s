@@ -38,7 +38,7 @@ export const DownloadAssignment = async (pathToFile, filename) => {
         let fileName = filename;
         if (contentDisposition) {
             const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-            if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
+            if (fileNameMatch && fileNameMatch.length === 2) fileName = fileNameMatch[1];
         }
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -54,14 +54,14 @@ export const DownloadAssignment = async (pathToFile, filename) => {
 };
 
 // 刪除作業檔案
-export const DeleteAssignmentFile = async (pathToFile) => {
-    try {
-        const response = await api.delete('/assignment/delete', {
-            params: { path: pathToFile }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("刪除作業失敗", error);
-        throw new Error(error.response?.data?.message || "刪除作業時發生錯誤");
-    }
-};
+// export const DeleteAssignmentFile = async (pathToFile) => {
+//     try {
+//         const response = await api.delete('/assignment/delete', {
+//             params: { path: pathToFile }
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error("刪除作業失敗", error);
+//         throw new Error(error.response?.data?.message || "刪除作業時發生錯誤");
+//     }
+// };

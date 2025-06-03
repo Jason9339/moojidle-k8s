@@ -12,6 +12,14 @@ import {
     FindOneUserById
 } from '#src/services/user_service.js';
 
+import {
+    SendNotification,SendNotified
+} from '#src/services/notification_service.js'
+
+import { 
+    FindCourseById 
+} from '#src/services/course_service.js';
+
 async function GetCourseMembers(req, res) {
     try {
         const courseId = req.params.courseId;
@@ -35,7 +43,7 @@ async function SwitchCharacter(req, res) {
     try {
         const userId = parseInt(req.params.userId);
         const courseId = parseInt(req.params.courseId);
-
+        const course = await FindCourseById(courseId);
         const students = await FindStudyInJoinUserByCourseId(courseId);
 
         // check if is student
@@ -43,6 +51,17 @@ async function SwitchCharacter(req, res) {
             if (userId == students[i].user_id) {
                 await DeleteStudyIn(userId, courseId);
                 await InsertAssistIn(userId, courseId);
+
+                const notification = {
+                    event_id: courseId,
+                    event_category: "course_status",
+                    context: `${course.name} 被設為助教`,
+                }
+                const notificationres = await SendNotification(notification);
+                await SendNotified(notificationres.notification.n_id, [{
+                        user_id: userId
+                    }])
+                    
                 res.status(200).json({ message: "User added as an assistant" });
                 return;
             }
@@ -76,6 +95,20 @@ async function InviteStudent(req, res) {
         }
 
         const result = await InsertStudyIn(userId, studentId, courseId);
+        const course = await FindCourseById(courseId);
+        const notification = {
+            event_id: course.course_id,
+            event_category: "course",
+            context: `您被加入了新課程 ${course.name}`,
+            notified_users:[{
+                user_id: userExists.user_id
+            }]
+        }
+        const notificationres = await SendNotification(notification);
+        await SendNotified(notificationres.notification.n_id, [{
+            user_id: userExists.user_id
+        }])
+        
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);

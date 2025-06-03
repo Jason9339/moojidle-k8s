@@ -51,7 +51,7 @@ async function InsertCourse(courseData) {
         
         // 驗證其他字段...
         */
-        
+
         // 1. Generate the next course_id
         const nextCourseId = await GetNextCounterId("course");
         const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
@@ -107,7 +107,7 @@ async function UpdateCourseName(courseId, newName) {
             throw new Error('Course name is too long');
         }
         */
-        
+
         const result = await mongoose.connection.db.collection('course').updateOne(
             { course_id: courseId }, // Filter by course_id
             { $set: { name: newName } } // Update the name field
@@ -138,7 +138,7 @@ async function DeleteCourse(id) {
             throw new Error('Course ID is required');
         }
         */
-        
+
         // 1. Convert the incoming id (expected to be course_id) to an integer
         const courseIdInt = parseInt(id, 10);
         if (isNaN(courseIdInt)) {
@@ -180,10 +180,10 @@ async function DeleteCourseRelationships(courseIdInt) {
 
         const deletionPromises = relatedCollections.map((collectionName) => {
             let promise = mongoose.connection.db.collection(collectionName).deleteMany({ course_id: courseIdInt })
-            if(collectionName == "discussion_board"){
+            if (collectionName == "discussion_board") {
                 // delete post in that discussion board
                 // TODO
-            }else if (collectionName == "assignments"){
+            } else if (collectionName == "assignments") {
                 // delete submitted assigns
                 // TODO
             }
@@ -197,7 +197,7 @@ async function DeleteCourseRelationships(courseIdInt) {
         results.forEach((result, index) => {
             const collectionName = relatedCollections[index];
             if (result.status === 'fulfilled') {
-                console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
+                // console.log(`[DeleteCourseRelationships] Successfully deleted ${result.value.deletedCount} documents from ${collectionName} for course_id: ${courseIdInt}`);
             } else {
                 console.error(`[DeleteCourseRelationships] Error deleting documents from ${collectionName} for course_id: ${courseIdInt}:`, result.reason);
                 // Decide if you want to throw an error here or just log it
@@ -230,7 +230,7 @@ async function FindCourseById(courseId) {
             throw new Error('Invalid course ID format');
         }
         */
-        
+
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
 
@@ -258,6 +258,7 @@ async function FindCourseById(courseId) {
             course_id: course.course_id,
             name: course.name,
             invite_link: course.invite_link || "",
+            color: course.color
         };
     } catch (error) {
         console.error(`[getCourseDetails] Error fetching details for course ID ${courseId}:`, error);
@@ -269,7 +270,7 @@ async function FindCourseById(courseId) {
 
 async function FindCourseIdByInviteCode(code) {
     // console.log(code);
-    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection:{course_id : 1} });
+    return await mongoose.connection.db.collection('course').findOne({ invite_link: code }, { projection: { course_id: 1 } });
 }
 
 export {

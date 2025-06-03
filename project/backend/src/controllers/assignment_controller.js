@@ -4,6 +4,10 @@ import {
     InsertAssignmentToDB
 } from '#src/services/assignment_service.js';
 
+import {
+    FindStudyInJoinUserByCourseId,
+} from '#src/services/course_member_service.js';
+
 import { 
     FindCourseById
 } from '#src/services/course_service.js';
@@ -18,6 +22,7 @@ import CalculateWeek from '#src/utils/calculate_week.js';
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { SendNotification, SendNotified } from '#src/services/notification_service.js';
 
 // 模擬 __dirname，因為使用的是 ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -75,16 +80,24 @@ async function UploadAssignment(req, res) {
             assName,
             startDate,
             endDate,
-            description
+            description,
+            maxScore,
+            percentage
         } = req.body;
 
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({ message: "No file uploaded" });
+        // 支援多檔案上傳
+        const files = req.files || [];
+
+        // 儲存所有檔案到硬碟
+        const savedFiles = [];
+        for (const file of files) {
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+            savedFiles.push({
+                filename: savedFile.originalName,
+                path_to_file: savedFile.relativeUrl
+            });
         }
 
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
         const now = new Date();
 
         const assignmentData = {
@@ -95,22 +108,29 @@ async function UploadAssignment(req, res) {
             end_date: new Date(endDate),
             description,
             create_date: now,
-            max_score: 100, // 預設最高分數
-            percentage: 0, // 預設佔總成績的百分比
-            attachments: [
-                {
-                    filename: savedFile.originalName,
-                    path_to_file: savedFile.relativeUrl
-                }
-            ]
+            max_score: parseFloat(maxScore) || 100, // 使用傳入的值或預設100
+            percentage: parseFloat(percentage) || 0, // 使用傳入的值或預設0
+            attachments: savedFiles // 多檔案附件
         };
 
         const dbResult = await InsertAssignmentToDB(assignmentData);
 
+        //發送notification
+        const course = await FindCourseById(courseId);
+        const students = await FindStudyInJoinUserByCourseId(courseId);
+        const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
+        const notification = {
+            event_id: course.course_id,
+            event_category: "assignment",
+            context: `${course.name} 新增作業 ${assName}`,
+        }
+        const notificationres = await SendNotification(notification);
+        await SendNotified(notificationres.notification.n_id,userIdsOnly)
+
         res.status(200).json({
-            message: "上傳作業成功",
-            fileId: savedFile.fileId,
-            fileName: savedFile.originalName,
+            message: savedFiles.length > 0 ? "作業上傳成功（包含附件）" : "作業上傳成功",
+            filesCount: savedFiles.length,
+            fileNames: savedFiles.map(f => f.filename),
             data: dbResult
         });
     } catch (error) {
@@ -130,7 +150,7 @@ function DownloadAssignment(req, res) {
     const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
     // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
     const filePath = path.join(__dirname, "../../", sanitizedPath);
-    console.log("✅ Resolved file path:", filePath);
+    // console.log("Resolved file path:", filePath);
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err) {
@@ -153,31 +173,31 @@ function DownloadAssignment(req, res) {
 }
 
 // 刪除作業檔案
-async function DeleteAssignment(req, res) {
-    try {
-        const { path: filePath } = req.query;
+// async function DeleteAssignment(req, res) {
+//     try {
+//         const { path: filePath } = req.query;
         
-        if (!filePath) {
-            return res.status(400).json({ message: "缺少檔案路徑參數" });
-        }
+//         if (!filePath) {
+//             return res.status(400).json({ message: "缺少檔案路徑參數" });
+//         }
         
-        const result = await DeleteFile(filePath);
+//         const result = await DeleteFile(filePath);
         
-        if (result) {
-            return res.status(200).json({ message: "作業檔案刪除成功" });
-        } else {
-            return res.status(404).json({ message: "作業檔案不存在或刪除失敗" });
-        }
-    } catch (error) {
-        console.error("刪除作業檔案時發生錯誤:", error);
-        res.status(500).json({ message: "刪除作業檔案時發生錯誤", error: error.message });
-    }
-}
+//         if (result) {
+//             return res.status(200).json({ message: "作業檔案刪除成功" });
+//         } else {
+//             return res.status(404).json({ message: "作業檔案不存在或刪除失敗" });
+//         }
+//     } catch (error) {
+//         console.error("刪除作業檔案時發生錯誤:", error);
+//         res.status(500).json({ message: "刪除作業檔案時發生錯誤", error: error.message });
+//     }
+// }
 
 export {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
     UploadAssignment,
     DownloadAssignment,
-    DeleteAssignment
+    // DeleteAssignment
 };
