@@ -9,7 +9,7 @@ import {
     UpdatePassword,
     GetUserTags,
     UpdateData,
-    UpdateTags,
+    UpdateTags
 } from '#src/controllers/user_controller.js';
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
@@ -49,9 +49,7 @@ router.delete("/delete/:id", Delete);
 
 router.put("/update-password/:id", UpdatePassword)
 
-// router.put("/update-user-data/:id", UpdateUserData)
-
-router.put("/update-user-tags/:id", UpdateTags)
-router.put("/update-user-data/:id", UpdateData)
+router.put("/update-user-data/:id", UpdateData);
+router.put("/update-user-tags/:id", UpdateTags);
 
 export default router;

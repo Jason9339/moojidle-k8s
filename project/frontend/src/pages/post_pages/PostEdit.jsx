@@ -4,20 +4,22 @@ import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
 import PostEditCustomTag from "@/components/post_components/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
-import { CreatePost } from "@/services/PostApi";
+import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 const PostEdit = () => {
+    const { post_id } = useParams();
     const { state } = useLocation();
     const initialCourse = state?.selectedCourse || null;
     const initialBoard = state?.selectedBoard || null;
-    const isEditing = !!state?.current?.post;
-
+    const [post, setPost] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [selectedCourse, setSelectedCourse] = useState(initialCourse);
     const [selectedBoard, setSelectedBoard] = useState(initialBoard);
-    const { param } = useParams();
+
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [userTags, setUserTags] = useState([]);
@@ -25,7 +27,7 @@ const PostEdit = () => {
     const [error, setError] = useState(null);
     const [isDisabled, setIsDisabled] = useState(true);
     const navigate = useNavigate();
-
+    const isModified = title !== post?.title || description !== post?.description
     const handleCourseChange = useCallback((option) => {
         setSelectedCourse(option);
         setSelectedBoard(null);
@@ -55,6 +57,26 @@ const PostEdit = () => {
         }
     }, [state]);
 
+    useEffect(() => {
+        const fetchPost = async () => {
+            console.log("post_id", post_id);
+            if (post_id !== "new") {  
+                try {
+                    const data = await GetPostContent(post_id);
+                    setPost(data);
+                    setTitle(data.title);
+                    setDescription(data.description);
+                    // console.log("Edit");
+                } catch (err) {
+                    setError("載入貼文失敗：" + (err.message || "未知錯誤"));
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+        fetchPost();
+    }, [post_id, refreshTrigger]);
+
     if (!state?.data) {
         return (
             <>
@@ -81,37 +103,57 @@ const PostEdit = () => {
     const handleSubmit = useCallback(async () => {
         const userId = JSON.parse(localStorage.getItem("user")).user_id;
 
-        if (!selectedBoard) {
-            alert("請選擇討論版");
-            return;
+        if (post_id === "new") {
+            if (!selectedBoard) {
+                alert("請選擇討論版");
+                return;
+            }
+
+            if (title.length === 0) {
+                alert("請輸入貼文標題");
+                return;
+            }
+
+            if (description.length === 0) {
+                alert("請輸入貼文內容");
+                return;
+            }
+
+            const data = {
+                post_by_user_id: userId,
+                post_user_custom_tags: userTags,
+                description,
+                title,
+                in_b_id: selectedBoard.value,
+            };
+
+            const resData = await CreatePost(data);
+            const post = resData.post;
+
+            navigate(`/discussion/${selectedBoard.value}`, {
+                state: {
+                    newPostId: post.post_id,
+                },
+            });
+        } else {
+            if (!isModified) {
+                alert("內容沒有變更。")
+                return
+            }
+            const data = {
+                post_by_user_id: userId,
+                post_user_custom_tags: userTags,
+                description,
+                title,
+                in_b_id: selectedBoard.value,
+                post_id: post_id, // 別忘了傳入要編輯哪篇貼文
+            };
+
+            const resData = await EditPost(post_id, data);
+            const post = resData.post;
+
+            navigate(`/post/${post_id}`);
         }
-
-        if (title.length === 0) {
-            alert("請輸入貼文標題");
-            return;
-        }
-
-        if (description.length === 0) {
-            alert("請輸入貼文內容");
-            return;
-        }
-
-        const data = {
-            post_by_user_id: userId,
-            post_user_custom_tags: userTags,
-            description,
-            title,
-            in_b_id: selectedBoard.value,
-        };
-
-        const resData = await CreatePost(data);
-        const post = resData.post;
-
-        navigate(`/discussion/${selectedBoard.value}`, {
-            state: {
-                newPostId: post.post_id,
-            },
-        });
     }, [navigate, description, title, userTags, selectedBoard]);
 
     // 移除沒有討論版的課程
@@ -153,7 +195,7 @@ const PostEdit = () => {
                             maxLength="20"
                             value={title}
                             onChange={(e) => handleTitleChange(e.target.value)}
-                            placeholder="輸入貼文標題..."
+                            placeholder={post?.title}
                             rows={1}
                             wrap="off"
                             className="w-full border p-3 rounded-xl resize-none overflow-hidden bg-white text-base"
@@ -170,6 +212,7 @@ const PostEdit = () => {
                         <TextEditor
                             className="mt-2"
                             height="50vh"
+                            value={description}
                             rows={19}
                             onChange={handleDescriptionChange}
                         />

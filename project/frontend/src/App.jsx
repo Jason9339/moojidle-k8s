@@ -11,7 +11,6 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
-import PostEdit2 from "@/pages/post_pages/PostEdit2";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
@@ -22,8 +21,11 @@ import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 import Register from "@/pages/login_register_pages/Register/Register.jsx";
 import Login from "@/pages/login_register_pages/Login/Login.jsx";
-import EditMainLayout from "./components/user_components/MainLayout/EditMainLayout.jsx";
-import EditTags from "./pages/user_pages/UserProfile/EditTags.jsx";
+import EditMainLayout from "@/components/user_components/MainLayout/EditMainLayout.jsx";
+import EditSecondaryLayout from "@/components/user_components/SecondaryLayout/EditSecondaryLayout.jsx";
+
+// pages for calendar
+import CalendarPage from "@/pages/calendar_pages/CalendarPage/CalendarPage";
 
 function App() {
     let login;
@@ -45,7 +47,7 @@ function App() {
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="*" element={<NotFoundPage />} />
-                        
+
                         {/* course page related */}
                         <Route path="/course" element={<CoursePage />} />
 
@@ -64,16 +66,19 @@ function App() {
                         <Route path="/user/update-password" element={<UpadatePassword />} />
                         <Route path="/user/profile" element={<UserProfile />} />
                         <Route path="/user/edit-profile" element={<EditMainLayout />} />
-                        <Route path="/user/edit-tags" element={<EditTags />} />
+                        <Route path="/user/edit-tags" element={<EditSecondaryLayout />} />
 
                         {/* discussion board pages related */}
                         <Route path="/discussion/" element={<DiscussionBoard />} />
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
                         {/* post pages related */}
-                        <Route path="/post-edit/new" element={<PostEdit />} />
-                        <Route path="/post-edit/:post_id" element={<PostEdit2 />} />
+                        <Route path="/post-edit/:post_id" element={<PostEdit />} />
+
                         <Route path="/post/:id" element={<PostPage />} />
+
+                        {/* calendar pages related */}
+                        <Route path="/calendar" element={<CalendarPage />} />
                     </Route>
                 </Routes>
             </Router>

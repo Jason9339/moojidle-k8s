@@ -5,8 +5,8 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserTags,
-    UpdateUserContactWay
+    UpdateUserContactWay,
+    UpdateUserTags
 } from "#src/services/user_service.js";
 
 // Register a new user in the database
@@ -251,8 +251,8 @@ export {
     GetUserData,
     GetUserTags,
     UpdatePassword,
-    UpdateTags,
-    UpdateData
+    UpdateData,
+    UpdateTags
 }
 
 
