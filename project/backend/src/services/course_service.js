@@ -20,23 +20,14 @@ async function FindAllCourses() {
     }
 }
 
-async function FindStudyInCourseIdsByUserId(userId) {
-    try {
-        return await mongoose.connection.db.collection('study_in')
-            .find(
-                { user_id: userId },
-                {
-                    projection: {
-                        course_id: 1,
-                        _id: 0
-                    }
-                }
 
-            )
-            .toArray();
-    }
-    catch (e) {
-        console.error(e);
+async function FindCourseInCourseId(courseIds) {
+    try {
+        return await mongoose.connection.db.collection('course').find(
+            { course_id: { $in: courseIds } }
+        ).toArray();
+    } catch (error) {
+        console.error("[getAllCourses] Error fetching all courses:", error);
         throw new Error(`Failed to retrieve all courses: ${error.message}`);
     }
 }
