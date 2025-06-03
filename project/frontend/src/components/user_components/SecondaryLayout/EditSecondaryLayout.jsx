@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
+import { UpdateUserTags } from "@/services/UserApi";
+
 
 function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);
+    const [loading, setLoading] = useState(false);
+    const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
 
     const handleChange = (index, value) => {
         setTags(tags.map((tag, i) =>
@@ -16,6 +20,24 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
 
     const handleRemove = (index) => {
         setTags(tags.filter((_, i) => i !== index));
+    };
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const validTags = tags
+            .filter(tag => tag && tag.user_tag && tag.user_tag.trim() !== "")
+            .map(tag => tag.user_tag.trim());
+
+            console.log('準備儲存的標籤:', validTags);
+
+            await UpdateUserTags(userId, validTags);
+            onSave(validTags.map(tag => ({ user_tag: tag })));
+        } catch (err) {
+            console.error('儲存失敗:', err);
+            alert(err.message || "儲存失敗，請稍後再試");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -36,7 +58,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
             </ul>
             <button onClick={handleAdd} className={styles.addBtn}>新增 TAG</button>
             <div style={{ marginTop: 16 }}>
-                <button onClick={() => onSave(tags)} className={styles.saveBtn}>儲存</button>
+                <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
                 <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
             </div>
         </div>

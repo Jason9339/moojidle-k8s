@@ -31,7 +31,7 @@ async function UpdateUserPassword(userId, data) {
     }
 }
 
-async function EditUserData(userId, data) {
+async function UpdateUserData(userId, data) {
     try {
         const response = await api.put(`/user/update-user-data/${userId}`, data);
         console.log("User data updated successfully:", response.data);
@@ -42,14 +42,18 @@ async function EditUserData(userId, data) {
     }
 }
 
-async function EditUserTags(userId, tags) {
+async function UpdateUserTags(userId, tags) {
     try {
-        const response = await api.put(`/user/update-user-tags/${userId}`, { user_tags: tags });
-        console.log("User tags updated successfully:", response.data);
+        // 直接傳送標籤陣列
+        const response = await api.put(`/user/update-user-tags/${userId}`, {
+            tags: tags  // 確保這裡傳送的是字串陣列
+        });
+        
+        console.log("標籤更新回應:", response.data);
         return response.data;
     } catch (err) {
-        console.error(err);
-        return { message: "An error occurred while updating the user tags." };
+        console.error('更新標籤錯誤:', err);
+        throw new Error(err.response?.data?.message || "更新標籤時發生錯誤");
     }
 }
 
@@ -57,6 +61,6 @@ export {
     GetUserDataById,
     UpdateUserPassword,
     GetUserTagsById,
-    EditUserData,
-    EditUserTags
+    UpdateUserData,
+    UpdateUserTags
 }

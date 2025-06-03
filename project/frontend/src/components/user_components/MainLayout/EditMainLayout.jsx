@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
-import { EditUserData } from "@/services/UserApi";
+import { UpdateUserData } from "@/services/UserApi";
 
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
@@ -39,7 +39,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                     details: c.details.trim()
                 }));
 
-            await EditUserData(userId, { contactWays: validContacts });
+            await UpdateUserData(userId, { contactWays: validContacts });
             onSave(validContacts);
         } catch (err) {
             alert("儲存失敗，請稍後再試");

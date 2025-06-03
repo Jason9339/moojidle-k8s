@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetUserTagsById, EditUserTags } from "@/services/UserApi";
+import { GetUserTagsById, UpdateUserTags } from "@/services/UserApi";
 import Button from "@/components/Button/Button";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
@@ -41,7 +41,7 @@ function EditTags() {
 
     const handleSave = async () => {
         try {
-            await EditUserTags(userId, userTags);
+            await UpdateUserTags(userId, userTags);
             navigate("/user/profile");
         } catch (e) {
             setError("無法儲存標籤。");
