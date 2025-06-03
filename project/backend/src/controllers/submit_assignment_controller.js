@@ -1,10 +1,12 @@
 import {
     FindSubmissionsByAssignmentId,
-    ReviewAssignmentSubmissionService,
+    UpdateReviewAssignmentSubmission,
     FindSubmissionAssignmentBySubmitAssId
 } from '#src/services/submit_assignment_service.js';
 
-import { FindCourseIdByAssignmentId, FindAssignmentMaxScore } from '#src/services/assignment_service.js';
+import { 
+    FindAssByAssId 
+} from '#src/services/assignment_service.js';
 
 import { FindStudyInJoinUserByCourseId } from '#src/services/course_member_service.js';
 
@@ -12,16 +14,15 @@ async function GetAssignmentSubmissions(req, res) {
     try {
         const { assignmentId } = req.params;
 
-        console.log(assignmentId)
-
         // Validate input
         if (!assignmentId) {
             return res.status(400).json({ message: "缺少作業ID" });
         }
         const assId = parseInt(assignmentId);
 
+        const ass = await FindAssByAssId(assId); 
         // Get course ID from assignment ID
-        const courseId = await FindCourseIdByAssignmentId(assId); 
+        const courseId = ass.in_course_id; 
         // console.log("courseId", courseId)
         if (!courseId) {
             return res.status(404).json({ message: "找不到對應的課程" });
@@ -98,17 +99,18 @@ async function ReviewAssignmentSubmission(req, res) {
             return res.status(400).json({message: "沒有該繳交作業"})
         }
         
+        const ass = await FindAssByAssId(existingSubmission.ass_id);
 
 
         const score_lb = 0;
         // 獲取作業的最大分數 
-        const score_ub = await FindAssignmentMaxScore (existingSubmission.ass_id);
+        const score_ub = ass.max_score;
         if (score < score_lb || score > score_ub) {
             return res.status(400).json({message: "分數不得超過上限或為負數"})
         }
         
         // Call service function to update the submission
-        const result = await ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId);
+        const result = await UpdateReviewAssignmentSubmission(submitAssignmentId, score, graderId);
         console.log("評分結果:", result);
         // Return success response
         return res.status(200).json({
@@ -132,6 +134,5 @@ async function ReviewAssignmentSubmission(req, res) {
 export {
     GetAssignmentSubmissions,
     ReviewAssignmentSubmission,
-
 }
 
