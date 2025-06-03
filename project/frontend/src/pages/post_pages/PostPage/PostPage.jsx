@@ -142,7 +142,7 @@ function PostPage() {
             ) : (
                 <div className={styles.pageWrapper}>
                     <div className={styles.postContainer} ref={menuRef}>
-                        <button className={styles.backButton} onClick={() => navigate(-1)}>
+                        <button className={styles.backButton} onClick={() => navigate(`/discussion/${post.in_b_id}`)}>
                             <FiChevronLeft size={24} />
                             返回
                         </button>

@@ -11,7 +11,6 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
 import PostEdit from "@/pages/post_pages/PostEdit";
-import PostEdit2 from "@/pages/post_pages/PostEdit2";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
@@ -67,8 +66,8 @@ function App() {
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
                         {/* post pages related */}
-                        <Route path="/post-edit/new" element={<PostEdit />} />
-                        <Route path="/post-edit/:post_id" element={<PostEdit2 />} />
+                        <Route path="/post-edit/:post_id" element={<PostEdit />} />
+                       
                         <Route path="/post/:id" element={<PostPage />} />
                     </Route>
                 </Routes>
