@@ -45,7 +45,13 @@ const Calendar = ({ events, ...props }) => {
                 break;
             case 'day':
 
-                navigate(`/course/${event.course.id}`);
+                if (event.type == 'exam') {
+
+                    navigate(`/course/${event.course.id}`);
+                }
+                else if (event.type == 'assignment') {
+                    navigate(`/course/${event.course.id}/assignment`)
+                }
                 break;
         }
 
