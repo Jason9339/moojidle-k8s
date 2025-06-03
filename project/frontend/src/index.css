@@ -117,12 +117,12 @@ body {
 /* Calendar */
 
 .rbc-row {
-     margin-top : 1vh;
+     margin-top : 0.25vh;
 }
 .rbc-row-content{
 
     height: 100%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
   
 }
 .rbc-event:hover {
