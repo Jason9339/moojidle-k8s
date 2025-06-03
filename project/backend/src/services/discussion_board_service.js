@@ -58,6 +58,19 @@ async function DeleteDiscussionBoardService(board_id) {
     return result.deletedCount > 0;
 }
 
+async function UpdateDiscussionBoardService(boardID, boardName) {
+    try {
+        const result = await mongoose.connection.db.collection('discussion_board').updateOne(
+            { board_id: boardID },
+            { $set: { name: boardName } }
+        );
+        return result.matchedCount;
+    } catch (err) {
+        throw new Error("更新討論版失敗：" + err.message);
+    }
+}
+
+
 
 async function FindBoardByID(boardID) {
     try {
@@ -72,5 +85,6 @@ export {
     FindCourseBoardByCourseId,
     InsertDiscussionBoardService,
     DeleteDiscussionBoardService,
+    UpdateDiscussionBoardService,
     FindBoardByID
 }
