@@ -63,10 +63,22 @@ async function InsertPosts(post) {
         throw new Error("Failed to create post: " + err.message);
     }
 }
+async function UpdatePostById(postID, post) {
+    try {
+        const result = await mongoose.connection.db.collection('post').updateOne(
+            { post_id: postID },
+            { $set: post }
+        );
+        return result.matchedCount;
+    } catch (err) {
+        throw new Error("Failed to update post: " + err.message);
+    }
+}
 
 export {
     FindProjectedPostsByBId,
     InsertPosts,
     FindPostByID,
     DeletePostById,
+    UpdatePostById
 }
