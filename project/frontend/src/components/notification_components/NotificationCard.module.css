@@ -17,7 +17,7 @@
     font-weight: 500;
     color: #333;
     flex-shrink: 0;
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .content {
@@ -25,7 +25,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 20px;
+    font-size: 14px;
     padding-right: 50px;
 }
 
@@ -37,7 +37,7 @@
     width: 150px;
     text-align: right;
     color: black;
-    font-size: 16px;
+    font-size: 14px;
     flex-shrink: 0;
 }
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
 import { useNavigate } from "react-router-dom";
+import { FaTrash } from "react-icons/fa";
 
 import {
     GetnotificationData,
@@ -151,12 +152,14 @@ function Notification() {
                                     )
                                 )}
                             </select>
-
                             <button
-                                className={styles["delete-button"]}
+                                className={`${styles["delete-button"]} ${
+                                    selectedIds.length > 0 ? styles["active"] : ""
+                                }`}
                                 onClick={handleBatchDelete}
+                                title="刪除選取項目"
                             >
-                                刪除選取項目
+                                <FaTrash />
                             </button>
                         </div>
                     </div>

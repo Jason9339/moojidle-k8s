@@ -45,17 +45,28 @@
 }
 
 .delete-button {
-    padding: 8px 16px;
-    background-color: #e63946;
-    color: white;
+    padding: 8px;
+    background-color: #ddd;
+    color: #333;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-button.active {
+    background-color: #e63946;
+    color: white;
 }
 
 .delete-button:hover {
+    background-color: #ccc;
+}
+
+.delete-button.active:hover {
     background-color: #c53030;
 }
 
