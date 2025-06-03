@@ -151,5 +151,4 @@ export {
     InsertAssignmentToDB,
     FindAssByAssId,
     FindAssignmentById,
-    InsertAssignmentToDB
 };
