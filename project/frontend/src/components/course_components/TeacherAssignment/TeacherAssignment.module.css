@@ -36,12 +36,16 @@
     display: flex;
     justify-content: center;  
     gap: 15px; 
+        overflow-x: auto;   /* 允許橫向滾動 */
+    min-width: 0;  
 }
 
 .tabBtn {
+    flex: 1 1 0;  
     width: 200px;
     min-width: 0;
-    max-width: 100%;
+    max-width: 18%;
+    width: auto; 
     padding: 6px 14px; 
     border-radius: 8px; 
     border: 2px solid #ccc;
@@ -58,7 +62,7 @@
 
 .tabBtnGroupLeft {
     justify-content: flex-start !important;
-    margin-left: 15px; 
+    margin-left: 17px; 
 }
 
 .tabBtnActive {
