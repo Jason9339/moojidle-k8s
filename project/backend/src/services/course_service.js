@@ -41,58 +41,6 @@ async function FindStudyInCourseIdsByUserId(userId) {
     }
 }
 
-async function FindTeachInCourseIdsByUserId(userId) {
-    try {
-        return await mongoose.connection.db.collection('teach_in')
-            .find(
-                { user_id: userId },
-                {
-                    projection: {
-                        course_id: 1,
-                        _id: 0
-                    }
-                }
-
-            ).toArray();
-    }
-    catch (e) {
-        console.error(e);
-        throw new Error(`Failed to retrieve all courses: ${error.message}`);
-    }
-}
-
-async function FindAssistInCourseIdsByUserId(userId) {
-    try {
-        return await mongoose.connection.db.collection('assist_in')
-            .find(
-                { user_id: userId },
-                {
-                    projection: {
-                        course_id: 1,
-                        _id: 0
-                    }
-                }
-
-            )
-            .toArray();
-    }
-    catch (e) {
-        console.error(e);
-        throw new Error(`Failed to retrieve all courses: ${error.message}`);
-    }
-}
-
-async function FindCourseInCourseId(courseIds) {
-    try {
-        return await mongoose.connection.db.collection('course').find(
-            { course_id: { $in: courseIds } }
-        ).toArray();
-    } catch (error) {
-        console.error("[getAllCourses] Error fetching all courses:", error);
-        throw new Error(`Failed to retrieve all courses: ${error.message}`);
-    }
-}
-
 // Service to add a new course
 async function InsertCourse(courseData) {
     try {
@@ -113,7 +61,7 @@ async function InsertCourse(courseData) {
         
         // 驗證其他字段...
         */
-        
+
         // 1. Generate the next course_id
         const nextCourseId = await GetNextCounterId("course");
         const inviteLink = await GenerateInviteCode(); //generateInviteLink(nextCourseId);
@@ -169,7 +117,7 @@ async function UpdateCourseName(courseId, newName) {
             throw new Error('Course name is too long');
         }
         */
-        
+
         const result = await mongoose.connection.db.collection('course').updateOne(
             { course_id: courseId }, // Filter by course_id
             { $set: { name: newName } } // Update the name field
@@ -200,7 +148,7 @@ async function DeleteCourse(id) {
             throw new Error('Course ID is required');
         }
         */
-        
+
         // 1. Convert the incoming id (expected to be course_id) to an integer
         const courseIdInt = parseInt(id, 10);
         if (isNaN(courseIdInt)) {
@@ -292,7 +240,7 @@ async function FindCourseById(courseId) {
             throw new Error('Invalid course ID format');
         }
         */
-        
+
         const course = await mongoose.connection.db.collection('course')
             .findOne({ course_id: parseInt(courseId) });
 
@@ -340,9 +288,6 @@ export {
     FindAllCourses,
     FindCourseInCourseId,
     FindCourseIdByInviteCode,
-    FindStudyInCourseIdsByUserId,
-    FindTeachInCourseIdsByUserId,
-    FindAssistInCourseIdsByUserId,
     InsertCourse,
     UpdateCourseName,
     DeleteCourse
