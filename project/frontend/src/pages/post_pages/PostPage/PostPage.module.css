@@ -5,7 +5,6 @@
     justify-content: center;
     align-items: flex-start;
     background: #f9f9fb;
-    overflow: hidden; /* 關閉整頁滾動 */
 }
 
 .postContainer {
@@ -18,7 +17,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* 保持內部滾動控制 */
 }
 
 .contentWrapper {
@@ -26,24 +24,12 @@
     gap: 24px;
     align-items: flex-start;
     flex: 1;
-    overflow: hidden; /* 防止整個 wrapper 滾動 */
+    height: 90%;
 }
 
-.postContentSection {
-    flex: 2;
-    overflow-y: auto;
-    max-height: 100%;
-    padding-right: 8px;
-}
-
-.commentSection {
-    flex: 1;
-    min-width: 300px;
-    overflow-y: auto;
-    max-height: 100%;
-}
 
 .backButton {
+    height: 10%;
     display: flex;
     align-items: center;
     gap: 4px; /* 圖示和文字之間的間距 */

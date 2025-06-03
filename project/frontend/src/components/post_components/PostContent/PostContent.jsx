@@ -3,7 +3,9 @@ import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
-
+// markdown
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 function PostContent({
     post,
     currentUserId,
@@ -12,8 +14,8 @@ function PostContent({
     handleDeletePost,
     editLinkState,
     description,
-    textareaRef,
 }) {
+
     const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
 
     return (
@@ -74,13 +76,14 @@ function PostContent({
 
             <h2 className={styles.postTitle}>{post.title}</h2>
 
-            <textarea
-                ref={textareaRef}
-                className={styles.description}
-                value={description}
-                readOnly
-                rows={1}
-            />
+
+            <div className={`markdown-body ${styles.description}`}>
+
+                <ReactMarkdown remarkPlugins={[remarkGfm]} >
+
+                    {description}
+                </ReactMarkdown>
+            </div>
         </div>
     );
 }
