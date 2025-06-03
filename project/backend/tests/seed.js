@@ -254,7 +254,7 @@ async function Submitted_assSeed() {
             "attachments": [
                 {
                     "filename": "submitted_assignment_1_file_1.pdf",
-                    "path_to_file": "/uploads/seed/submitted_assignment_1_file_1.pdf"
+                    "url": "http://example.com/assignments/course_1/assignment_1_file_1.pdf"
                 }
             ],
             "description": "This is the submission for Assignment 1 by User 3."

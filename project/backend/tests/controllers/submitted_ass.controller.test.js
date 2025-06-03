@@ -305,7 +305,7 @@ describe('Submitted Assignments Controller Test', () => {
             vi.clearAllMocks();
         });
 
-        it('should delete the submission record and its attachments if the data is valid', async () => {
+        it('should delete the submission record and its attachments', async () => {
             DeleteFile.mockResolvedValue(true);
 
             const req = createMockReq({}, { 
@@ -330,6 +330,25 @@ describe('Submitted Assignments Controller Test', () => {
 
             expect(res.status).toHaveBeenCalledWith(404);
             expect(res.send).toHaveBeenCalledWith("sub ass not found while deleting");
+        });
+
+        it('當檔案刪除失敗時應該繼續刪除記錄', async () => {
+            DeleteFile.mockRejectedValue(new Error('File deletion failed'));
+
+            const req = createMockReq({}, { 
+                subAssId: '1' 
+            });
+            const res = createMockRes();
+
+            await DeleteSubmissionRecord(req, res);
+
+            // 當 DeleteFile 拋出異常時，會被 catch 區塊捕獲並返回 500 錯誤
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'File deletion failed'
+                })
+            );
         });
     });
 });
