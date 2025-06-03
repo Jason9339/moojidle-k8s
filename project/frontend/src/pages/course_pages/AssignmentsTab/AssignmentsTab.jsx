@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
-import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignmentApi";
+import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
 
 function AssignmentsTab() {
     const { role, course } = useOutletContext();
