@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./TeacherAssignment.module.css";
-import AssDetail from "@/components/course_components/TeacherAssignment/AssDetail.jsx";
-import TeacherAssignmentReview from "@/components/course_components/TeacherAssignmentReview/TeacherAssignmentReview.jsx";
+import AssDetail from "@/components/course_components/TeacherAssignment/ControlWhichAss/AssDetail.jsx";
+import TeacherAssignmentReview from "@/components/course_components/TeacherAssignment/TeacherAssReview/TeacherAssignmentReview.jsx";
 
 function TeacherAssignment({ assignments }) {
     const [selectedIdx, setSelectedIdx] = useState(0);

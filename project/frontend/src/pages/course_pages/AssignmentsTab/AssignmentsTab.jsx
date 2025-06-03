@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import TeacherAssignment from "@/components/course_components/TeacherAssignment/TeacherAssignment";
+import TeacherAssignment from "@/components/course_components/TeacherAssignment/ControlWhichAss/TeacherAssignment";
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
