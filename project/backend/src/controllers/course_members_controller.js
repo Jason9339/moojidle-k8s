@@ -5,7 +5,7 @@ import {
     InsertStudyIn,
     InsertAssistIn,
     DeleteStudyIn,
-    // DeleteAssistIn,
+    DeleteAssistIn,
 } from '#src/services/course_member_service.js';
 
 import { 
