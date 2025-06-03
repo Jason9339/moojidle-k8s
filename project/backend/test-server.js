@@ -38,7 +38,6 @@ import announcementRoute from '#src/routes/announcement_route.js';
 import discussionBoardRoute from '#src/routes/discussion_board_route.js';
 import postRoute from '#src/routes/post_routes.js';
 import examRoute from '#src/routes/exam_route.js';
-import submitAssignmentRoute from '#src/routes/submit_assignment_route.js';
 import submittedAssRoute from '#src/routes/submitted_ass_route.js';
 
 let mongoServer;
@@ -80,7 +79,6 @@ async function startTestServer() {
         app.use("/material", materialRoute);
         app.use("/announcement", announcementRoute);
         app.use("/exams", examRoute);
-        app.use("/submitted-assignment", submitAssignmentRoute);
         app.use("/submitted-assignment", submittedAssRoute);
 
         // 測試專用端點
