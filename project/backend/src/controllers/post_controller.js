@@ -1,17 +1,18 @@
 import { FindBoardByID } from '#src/services/discussion_board_service.js';
-import { 
+import {
     FindPostByID,
     DeletePostById,
     FindProjectedPostsByBId,
-    InsertPosts
+    InsertPosts,
+    UpdatePostById
 } from '#src/services/post_services.js';
 
-import { 
+import {
     UpdateComment,
     DeleteComment
 } from '#src/services/comment_service.js';
 
-import { 
+import {
     FindOneUserById
 } from "#src/services/user_service.js";
 
@@ -237,11 +238,42 @@ async function AddPosts(req, res) {
     }
 }
 
+async function EditPost(req, res) {
+    const postId = parseInt(req.params.id);
+    const { title, description, public: isPublic } = req.body;
+
+    if (isNaN(postId)) {
+        return res.status(400).send({ error: "Invalid post_id" });
+    }
+
+    if (typeof title !== 'string' || title.trim() === '' || typeof description !== 'string' || description.trim() === '') {
+        return res.status(400).send({ error: "Title and description are required and cannot be empty." });
+    }
+
+    const updateFields = { title, description };
+    if (typeof isPublic === 'boolean') {
+        updateFields.public = isPublic;
+    }
+
+    try {
+        const result = await UpdatePostById(postId, updateFields);
+
+        if (result.matchedCount !== 0) {
+            res.status(200).send({ message: "成功更新貼文" });
+        } else {
+            res.status(404).send({ message: "貼文未找到或未進行任何更改" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: "An error occurred", error: err.message });
+    }
+}
+
 export {
     AddPosts,
     GetPostContent,
     LeaveComment,
     PostDeleter,
     CommendDeleter,
-    GetOverviewPosts
+    GetOverviewPosts,
+    EditPost
 } 

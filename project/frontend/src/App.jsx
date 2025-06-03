@@ -22,6 +22,8 @@ import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePas
 import Register from "@/pages/login_register_pages/Register/Register.jsx";
 import Login from "@/pages/login_register_pages/Login/Login.jsx";
 
+// pages for calendar
+import CalendarPage from "@/pages/calendar_pages/CalendarPage/CalendarPage";
 function App() {
     let login;
 
@@ -42,7 +44,7 @@ function App() {
                     <Route element={<ProtectedRoutes login={login} />} >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="*" element={<NotFoundPage />} />
-                        
+
                         {/* course page related */}
                         <Route path="/course" element={<CoursePage />} />
 
@@ -66,8 +68,12 @@ function App() {
                         <Route path="/discussion/:param" element={<DiscussionBoard />} />
 
                         {/* post pages related */}
-                        <Route path="/post-edit/:param" element={<PostEdit />} />
+                        <Route path="/post-edit/:post_id" element={<PostEdit />} />
+                       
                         <Route path="/post/:id" element={<PostPage />} />
+
+                        {/* calendar pages related */}
+                        <Route path="/calendar" element={<CalendarPage />} />
 
                         {/* notification page related */}
                         <Route path="/inbox" element={<Notification />} />
