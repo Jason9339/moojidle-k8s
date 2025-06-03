@@ -8,7 +8,7 @@ import {
 } from "#src/services/user_service.js";
 
 import{
-    SendNotify
+    SendNotification, SendNotified
 } from "#src/services/notification_service.js"
 
 // Register a new user in the database
@@ -53,14 +53,18 @@ async function Login(req, res) {
         const user = await LoginUser(req.body.email, req.body.pw);
 
         if (user) {
-            SendNotify({
+            const notificationData = {
                 event_id : 0,
                 event_category : "login",
-                context: `您有新的登入 ${new Date().toLocaleString('zh-TW', { hour12: false })}`,
-                notified_users: [{
-                    user_id: user.user_id
-                }]
-            })
+                context: `您有新的登入 ${new Date().toLocaleString('zh-TW', { hour12: false })}`
+            };
+            const notificationres = await SendNotification(notificationData);
+            await SendNotified(notificationres.notification.n_id, [
+                    {
+                        user_id: user.user_id
+                    }
+                ])
+            
             res.status(200).send({
                 user_id: user.user_id,
                 name: user.name,

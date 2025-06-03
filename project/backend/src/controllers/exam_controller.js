@@ -15,7 +15,7 @@ import {
 } from '#src/services/file_services/file_storage_service.js';
 
 import {
-    SendNotify
+    SendNotification, SendNotified
 } from '#src/services/notification_service.js'
 
 import {
@@ -132,14 +132,14 @@ async function UploadExam(req, res) {
         //發送通知給學生
         const course = await FindCourseById(courseId);
         const students = await FindStudyInJoinUserByCourseId(courseId);
+        const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
         const notification = {
             event_id: parseInt(courseId),
             event_category: "test",
             context: `${course.name} 新增了考試 ${examName}`,
-            notified_users: students
         }
-        const notificationres = await SendNotify(notification);
-        console.log(notificationres);
+        const notificationres = await SendNotification(notification);
+        await SendNotified(notificationres.notification.n_id,userIdsOnly)
 
         res.status(200).json({
             message: savedFiles.length > 0 ? "考試上傳成功（包含附件）" : "考試上傳成功",

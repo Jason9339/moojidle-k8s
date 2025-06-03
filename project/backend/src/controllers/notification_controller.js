@@ -2,7 +2,8 @@ import {
     FindNotifiedByUserId,
     FindNotificationById,
     DeleteNotifiedById,
-    SendNotify,
+    SendNotification,
+    SendNotified,
     NotificationReaded
 } from '#src/services/notification_service.js'
 
@@ -68,7 +69,8 @@ async function NotifiedDeleter(req, res){
 
 async function Notify(req, res) {
     try {
-        const result = await SendNotify(req.body);
+        const result = await SendNotification(req.body);
+        await SendNotified(result.notification.n_id, req.body.notified_users);
 
         if (result.error) {
             return res.status(404).send({ error: result.error });

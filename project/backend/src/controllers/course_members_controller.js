@@ -13,7 +13,7 @@ import {
 } from '#src/services/user_service.js';
 
 import {
-    SendNotify
+    SendNotification,SendNotified
 } from '#src/services/notification_service.js'
 
 import { 
@@ -51,15 +51,17 @@ async function SwitchCharacter(req, res) {
             if (userId == students[i].user_id) {
                 await DeleteStudyIn(userId, courseId);
                 await InsertAssistIn(userId, courseId);
+
                 const notification = {
                     event_id: courseId,
                     event_category: "course_status",
-                    context: `${course.name} 被移除助教`,
-                    notified_users:[{
-                        user_id: userId
-                    }]
+                    context: `${course.name} 被設為助教`,
                 }
-                await SendNotify(notification);
+                const notificationres = await SendNotification(notification);
+                await SendNotified(notificationres.notification.n_id, [{
+                        user_id: userId
+                    }])
+                    
                 res.status(200).json({ message: "User added as an assistant" });
                 return;
             }
@@ -102,8 +104,11 @@ async function InviteStudent(req, res) {
                 user_id: userExists.user_id
             }]
         }
-        const notificationres = await SendNotify(notification);
-        result.notificationres = notificationres;
+        const notificationres = await SendNotification(notification);
+        await SendNotified(notificationres.notification.n_id, [{
+            user_id: userExists.user_id
+        }])
+        
         res.status(200).json(result);
     } catch (error) {
         console.error("Error inviting student:", error);

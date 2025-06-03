@@ -8,7 +8,8 @@ import {
     FindNotifiedByUserId,
     FindNotificationById,
     DeleteNotifiedById,
-    SendNotify
+    SendNotification,
+    SendNotified
 } from '#src/services/notification_service.js';
 import { createMockReq, createMockRes } from '../test-utils.js';
 
@@ -17,7 +18,8 @@ vi.mock('#src/services/notification_service.js', () => ({
     FindNotifiedByUserId: vi.fn(),
     FindNotificationById: vi.fn(),
     DeleteNotifiedById: vi.fn(),
-    SendNotify: vi.fn()
+    SendNotification: vi.fn(),
+    SendNotified: vi.fn()
 }));
 
 describe('Notification Controller', () => {
@@ -133,42 +135,45 @@ describe('Notification Controller', () => {
     });
 
     describe('Notify', () => {
-        it('應該成功發送通知', async () => {
+        it('應該成功發送通知並記錄被通知者', async () => {
             const body = {
                 event_id: 1,
                 event_category: 'reply',
                 context: 'You got a reply',
-                notified_userId: [2]
+                notified_users: [2, 3]
             };
             const req = createMockReq(body);
             const res = createMockRes();
 
-            SendNotify.mockResolvedValue({ success: true });
+            const fakeNotification = { n_id: 99 };
+            SendNotification.mockResolvedValue({ notification: fakeNotification });
+            SendNotified.mockResolvedValue(true);
 
             await Notify(req, res);
 
-            expect(SendNotify).toHaveBeenCalledWith(body);
+            expect(SendNotification).toHaveBeenCalledWith(body);
+            expect(SendNotified).toHaveBeenCalledWith(fakeNotification.n_id, body.notified_users);
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.send).toHaveBeenCalledWith({
-                message: { result: { success: true } }
-            });
+            expect(res.send).toHaveBeenCalledWith({ message: { result: { notification: fakeNotification } } });
         });
 
-        it('應該回傳 404 當服務返回錯誤訊息', async () => {
-            const req = createMockReq({
-                event_id: 1,
-                event_category: 'like',
-                context: 'Someone liked your post',
-                notified_userId: [3]
-            });
+        it('應該回傳 500 當發生例外錯誤', async () => {
+            const body = {
+                event_id: 2,
+                event_category: 'mention',
+                context: 'You were mentioned',
+                notified_users: [5]
+            };
+            const req = createMockReq(body);
             const res = createMockRes();
 
-            SendNotify.mockResolvedValue({ error: 'User not found' });
+            SendNotification.mockRejectedValue(new Error('Unexpected error'));
 
             await Notify(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.send).toHaveBeenCalledWith({ error: 'User not found' });
+            expect(SendNotification).toHaveBeenCalledWith(body);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.send).toHaveBeenCalledWith({ error: "An unexpected error occurred" });
         });
     });
 });

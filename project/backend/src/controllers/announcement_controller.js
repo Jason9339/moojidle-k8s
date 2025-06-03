@@ -5,7 +5,8 @@ import {
 } from '#src/services/announcement_service.js';
 
 import {
-    SendNotify
+    SendNotification,
+    SendNotified
 } from '#src/services/notification_service.js'
 
 import { 
@@ -36,13 +37,15 @@ const CreateAnnouncement = async (req, res) => {
         const course = await FindCourseById(courseId);
         const students = await FindStudyInJoinUserByCourseId(course.course_id);
         const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
+
         const notificationData = {
             event_id: course.course_id,
             event_category: "course_announcement",
-            context:`${course.title} 有新公告: ${context}`,
-            notified_users: userIdsOnly
+            context:`${course.title} 有新公告: ${context}`
         }
-        await SendNotify(notificationData);
+        const notificationres = await SendNotification(notificationData);
+        await SendNotified(notificationres.notification.n_id, userIdsOnly)
+
         res.json(announcement);
     } catch (error) {
         console.error("新增課程公告錯誤:", error);

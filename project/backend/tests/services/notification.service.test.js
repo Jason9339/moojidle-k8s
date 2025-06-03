@@ -7,7 +7,8 @@ import {
     FindNotificationById,
     FindNotifiedByUserId,
     DeleteNotifiedById,
-    SendNotify,
+    SendNotification,
+    SendNotified,
     NotificationReaded
 } from '#src/services/notification_service';
 
@@ -25,16 +26,16 @@ describe('Notification Service', () => {
                 notified_users: [{ user_id: 1001 }]
             };
 
-            const result = await SendNotify(notificationData);
+            const result = await SendNotification(notificationData);
+            const notifiedres = await SendNotified(result.notification.n_id, notificationData.notified_users);
 
             expect(result).toBeDefined();
-            expect(result.insertedNotification.event_id).toBe(100);
-            expect(result.insertedNotification.event_category).toBe("course");
-            expect(result.insertedNotification.context).toBe("CI test for SendNotify");
+            expect(result.notification.event_id).toBe(100);
+            expect(result.notification.event_category).toBe("course");
+            expect(result.notification.context).toBe("CI test for SendNotify");
 
-            const notified = result.notifiedUsers[0];
-            expect(notified.user_id).toBe(1001);
-            expect(notified.result.acknowledged).toBe(true);
+            const notified = notifiedres[0];
+            expect(notified.acknowledged).toBe(true);
 
             // 清理測試資料
             await mongoose.connection.db.collection('notification').deleteOne({ n_id: result.notification_id });

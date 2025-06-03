@@ -50,7 +50,7 @@ async function FindNotificationById(notificationID) {
     }
 }
 
-async function SendNotify(notificationData) {
+async function SendNotification(notificationData) {
     try {
         const nextNotificationId = await GetNextCounterId("notification");
         const date = new Date();
@@ -62,11 +62,20 @@ async function SendNotify(notificationData) {
             notified_date: date
         };
 
-        await mongoose.connection.db.collection('notification').insertOne(notification);
+        const result = await mongoose.connection.db.collection('notification').insertOne(notification);
+        notification.result = result;
+        return {notification};
 
-        const notifiedInsertions = notificationData.notified_users.map(user => {
+    } catch (err) {
+        throw new Error("Failed to create notification: " + err.message);
+    }
+}
+
+async function SendNotified(notification_id, users) {
+    try {
+        const notifiedInsertions = users.map(user => {
             const notifiedData = {
-                n_id: nextNotificationId,
+                n_id: notification_id,
                 user_id: user.user_id,
                 is_read: false
             };
@@ -75,14 +84,7 @@ async function SendNotify(notificationData) {
 
         const notifiedResults = await Promise.all(notifiedInsertions);
 
-        return {
-            notification_id: nextNotificationId,
-            insertedNotification: notification,
-            notifiedUsers: notifiedResults.map((res, i) => ({
-                ...notificationData.notified_users[i],
-                result: res
-            }))
-        };
+        return notifiedResults;
 
     } catch (err) {
         throw new Error("Failed to create notification: " + err.message);
@@ -139,6 +141,7 @@ export {
     FindNotificationById,
     FindNotifiedByUserId,
     DeleteNotifiedById,
-    SendNotify,
+    SendNotification,
+    SendNotified,
     NotificationReaded
 }

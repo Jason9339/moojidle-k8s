@@ -21,7 +21,7 @@ import {
 } from '#src/services/course_service.js';
 
 import {
-    SendNotify
+    SendNotification,SendNotified
 } from '#src/services/notification_service.js';
 
 async function GetPostContent(req, res, next) {
@@ -103,13 +103,14 @@ async function LeaveComment(req, res) {
                 event_id: post_id,
                 event_category: "commend",
                 context: `課程 - ${course.title} 討論版 - ${board.name} 貼文 - ${postdata.title} 有新留言 - ${description}`,
-                notified_users:[
+            }
+            const notificationres = await SendNotification(notificationData);
+            const res1 = await SendNotified(notificationres.notification.n_id, [
                     {
                         user_id:postdata.post_by_user_id
                     }
-                ]
-            }
-            const notifyres = await SendNotify(notificationData);
+                ])
+            console.log(res1);
             res.status(201).send({ message: "Comment added successfully" });
         } else {
             res.status(404).send({ message: "Post not found or comment not added" });
