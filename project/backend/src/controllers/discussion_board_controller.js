@@ -1,14 +1,15 @@
 import {
     FindCourseBoardByCourseId,
     InsertDiscussionBoardService,
-    DeleteDiscussionBoardService
+    DeleteDiscussionBoardService,
+    UpdateDiscussionBoardService,
 } from "#src/services/discussion_board_service.js";
 
-import { 
+import {
     FindCourseInCourseId,
 } from "#src/services/course_service.js";
 
-import { 
+import {
     FindTeachInByCourseID,
     FindAssistInByCourseID,
 } from "#src/services/course_member_service.js";
@@ -60,10 +61,10 @@ async function GetAllCourseDiscussionBoard(req, res) {
 
     if (uniqueCourseIds.length === 0) {
         userCourses = [];
-    }else{
+    } else {
         // query course information, only return course_id and name
         const courses = await FindCourseInCourseId(uniqueCourseIds);
-    
+
         // change name to course_name
         userCourses = courses.map(c => ({
             course_id: c.course_id,
@@ -117,6 +118,28 @@ async function AddDiscussionBoard(req, res) {
 }
 
 
+async function EditDiscussionBoard(req, res) {
+    const board_id = parseInt(req.params.boardId, 10);
+    const { board_name } = req.body;
+    if (isNaN(board_id)) {
+        return res.status(400).json({ success: false, message: "無效的 board_id" });
+    }
+
+    if (!board_name || board_name.trim() === "") {
+        return res.status(400).json({ success: false, message: "請提供新的討論版名稱" });
+    }
+
+    try {
+        const result = await UpdateDiscussionBoardService(board_id, board_name);
+        if (result === 0) {
+            return res.status(404).json({ success: false, message: "討論版不存在" });
+        }
+        res.status(200).json({ success: true, message: "討論版名稱已更新" });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+}
+
 async function DeleteDiscussionBoard(req, res) {
     const board_id = parseInt(req.params.boardId, 10);
     const broadPosts = await FindProjectedPostsByBId(board_id);
@@ -139,9 +162,11 @@ async function DeleteDiscussionBoard(req, res) {
     res.status(200).send({ message: "Board deleted" });
 }
 
+
 export {
     GetCourseDiscussionBoard,
     GetAllCourseDiscussionBoard,
     AddDiscussionBoard,
+    EditDiscussionBoard,
     DeleteDiscussionBoard
 }

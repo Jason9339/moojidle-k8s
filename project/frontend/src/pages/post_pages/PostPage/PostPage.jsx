@@ -22,6 +22,8 @@ function PostPage() {
     const [newComment, setNewComment] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [activeCommentId, setActiveCommentId] = useState(null);
+    const courseData = JSON.parse(localStorage.getItem("courseData")) || [];
+
 
     const storedUser = localStorage.getItem("user");
     const currentUserId = storedUser ? JSON.parse(storedUser).user_id : null;
@@ -103,6 +105,8 @@ function PostPage() {
         }
     };
 
+
+
     const reflash = () => {
         setRefreshTrigger((prev) => prev + 1);
     };
@@ -138,7 +142,7 @@ function PostPage() {
             ) : (
                 <div className={styles.pageWrapper}>
                     <div className={styles.postContainer} ref={menuRef}>
-                        <button className={styles.backButton} onClick={() => navigate(-1)}>
+                        <button className={styles.backButton} onClick={() => navigate(`/discussion/${post.in_b_id}`)}>
                             <FiChevronLeft size={24} />
                             返回
                         </button>
@@ -153,6 +157,20 @@ function PostPage() {
                                     handleDeletePost={handleDeletePost}
                                     description={description}
                                     textareaRef={textareaRef}
+                                    editLinkState={{
+                                        data: courseData,
+                                        current: {
+                                            post,
+                                            course: {
+                                                value: post.course_id,
+                                                label: post.course_name,
+                                            },
+                                            board: {
+                                                value: post.board_id,
+                                                label: post.board_name,
+                                            },
+                                        },
+                                    }}
                                 />
                             </div>
 
