@@ -151,7 +151,6 @@ async function UpdateUserTags(userId, newTags) {
             };
         }
 
-        // 如果 newTags 為空陣列或 null，就只做刪除、不插入
         return { modifiedCount: 0, message: "All old tags deleted, no new tags to insert" };
     } catch (err) {
         console.error("ReplaceUserTags error:", err);
@@ -167,27 +166,39 @@ async function UpdateUserContactWay(userId, newContactWays) {
         // 檢查使用者是否存在
         const user = await FindOneUserById(parseInt(userId));
         if (!user) {
-            return { modifiedCount: 0, message: "User not found" };
+            return { modifiedCount: 0, message: "使用者不存在" };
         }
 
-        // 直接更新整個 contact_ways 陣列
+        // 驗證 newContactWays 是否為陣列
+        if (!Array.isArray(newContactWays)) {
+            throw new Error("聯絡方式必須是陣列格式");
+        }
+
+        // 如果有聯絡方式，驗證每個聯絡方式的格式
+        const validContactWays = newContactWays.map(contact => ({
+            approach: (contact.approach || "").trim(),
+            details: (contact.details || "").trim()
+        })).filter(contact => 
+            contact.approach !== "" && 
+            contact.details !== ""
+        );
+
+        // 更新聯絡方式
         result = await mongoose.connection.db.collection('user').updateOne(
             { user_id: parseInt(userId) },
             {
                 $set: {
-                    contact_ways: newContactWays.map(contact => ({
-                        approach: contact.approach,
-                        details: contact.details
-                    }))
+                    contact_ways: validContactWays
                 }
             }
         );
 
-        if (!result.modifiedCount) {
-            console.log('No contact ways were updated');
-        }
+        return {
+            modifiedCount: result.modifiedCount,
+            message: result.modifiedCount ? "聯絡方式更新成功" : "沒有更新任何聯絡方式",
+            updatedContactWays: validContactWays
+        };
 
-        return result;
     } catch (err) {
         console.error("Error updating contact ways:", err);
         throw new Error(`更新聯絡方式失敗: ${err.message}`);
