@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react"; 
 import styles from "./TeacherAssignment.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
-
 import TeacherAssignmentReview from "@/components/course_components/TeacherAssignmentReview/TeacherAssignmentReview";
 import { DownloadAssignment } from "@/services/AssignmentApi";
 
@@ -10,12 +9,15 @@ function TeacherAssignment({ assignments }) {
     const [tabStartIdx, setTabStartIdx] = useState(0);
     const [descExpanded, setDescExpanded] = useState(false);
     const [descOverflow, setDescOverflow] = useState(false);
+
+    const titleRef = useRef(null);
     const descRef = useRef(null);
+    const attachmentsRef = useRef(null);
+    const contentWrapperRef = useRef(null);
 
     // only show 5 assignments at a time
     const groupSize = 5;
 
-    // 當 assignments 或 selectedIdx 變動時，確保 selectedIdx 在顯示範圍內
     useEffect(() => {
         if (selectedIdx < tabStartIdx) {
             setTabStartIdx(Math.floor(selectedIdx / groupSize) * groupSize);
@@ -24,14 +26,20 @@ function TeacherAssignment({ assignments }) {
         }
     }, [selectedIdx, assignments.length, groupSize]);
 
-    // 監控 description 是否超過 5 行
+    // 監控 標題+描述+附件 是否超過 7 行
     useEffect(() => {
         setDescExpanded(false); // 切換 assignment 時自動收合
-        if (descRef.current) {
+        if (descRef.current && titleRef.current && attachmentsRef.current) {
+            // 取 description 的 lineHeight
             const lineHeight = parseFloat(getComputedStyle(descRef.current).lineHeight);
-            const maxLines = 5;
+            const maxLines = 7;
             const maxHeight = lineHeight * maxLines;
-            setDescOverflow(descRef.current.scrollHeight > maxHeight + 1);
+            // 計算三個區塊的高度總和
+            const totalHeight =
+                titleRef.current.offsetHeight +
+                descRef.current.scrollHeight +
+                attachmentsRef.current.offsetHeight;
+            setDescOverflow(totalHeight > maxHeight + 1);
         }
     }, [selectedIdx, assignments]);
 
@@ -54,6 +62,21 @@ function TeacherAssignment({ assignments }) {
             alert(`下載失敗：${attachment.filename}`);
         }
     };
+
+    const getContentWrapperStyle = () => {
+        if (!descOverflow || descExpanded) return {};
+        if (descRef.current) {
+            const lineHeight = parseFloat(getComputedStyle(descRef.current).lineHeight);
+            const maxLines = 7;
+            const maxHeight = lineHeight * maxLines;
+            return {
+                maxHeight: maxHeight,
+                overflow: "hidden",
+            };
+        }
+        return {};
+    };
+
     return (
         <div>
             <div className={styles.tabListBox}>
@@ -95,40 +118,47 @@ function TeacherAssignment({ assignments }) {
                 </div>
             </div>
             <div className={styles.descBox}>
-                <div className={styles.descTitle}>
-                    {assignments[selectedIdx]?.name}
-                </div>
-                <div className={styles.verticalSpacer} /> 
                 <div
-                    ref={descRef}
-                    className={`${styles.descContent} ${!descExpanded && descOverflow ? styles.descContentCollapsed : ""}`}
+                    ref={contentWrapperRef}
+                    style={getContentWrapperStyle()}
                 >
-                    {assignments[selectedIdx]?.description}
-                </div>
-                {assignments[selectedIdx]?.attachments && assignments[selectedIdx].attachments.length > 0 && (
-                    <div className={styles.attachmentsBox}>
-                        <span className={styles.attachmentsLabel}>附件：</span>
-                        <div className={styles.attachmentsList}>
-                            {assignments[selectedIdx].attachments.map((file, idx) => (
-                                <div key={idx} className={styles.attachmentItem}>
-                                    <span className={styles.attachmentIcon}>📎</span>
-                                    <a
-                                        href="#"
-                                        className={styles.attachmentLink}
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            handleDownload(file);
-                                        }}
-                                        title={file.filename}
-                                    >
-                                        {file.filename}
-                                    </a>
-                                </div>
-                            ))}
-                        </div>
+                    <div ref={titleRef} className={styles.descTitle}>
+                        {assignments[selectedIdx]?.name}
                     </div>
-                )}
-                {descOverflow && assignments[selectedIdx] && (
+                    <div className={styles.verticalSpacer} /> 
+                    <div
+                        ref={descRef}
+                        className={styles.descContent}
+                    >
+                        {assignments[selectedIdx]?.description}
+                    </div>
+                    <div ref={attachmentsRef}>
+                        {assignments[selectedIdx]?.attachments && assignments[selectedIdx].attachments.length > 0 && (
+                            <div className={styles.attachmentsBox}>
+                                <span className={styles.attachmentsLabel}>附件：</span>
+                                <div className={styles.attachmentsList}>
+                                    {assignments[selectedIdx].attachments.map((file, idx) => (
+                                        <div key={idx} className={styles.attachmentItem}>
+                                            <span className={styles.attachmentIcon}>📎</span>
+                                            <a
+                                                href="#"
+                                                className={styles.attachmentLink}
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    handleDownload(file);
+                                                }}
+                                                title={file.filename}
+                                            >
+                                                {file.filename}
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                {descOverflow && (
                     <div className={styles.descToggleWrapper}>
                         <button
                             className={styles.descToggle}
