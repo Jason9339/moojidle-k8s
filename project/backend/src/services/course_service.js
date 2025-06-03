@@ -20,7 +20,6 @@ async function FindAllCourses() {
     }
 }
 
-
 async function FindCourseInCourseId(courseIds) {
     try {
         return await mongoose.connection.db.collection('course').find(
