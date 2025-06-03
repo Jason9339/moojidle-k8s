@@ -84,7 +84,7 @@ async function GetUserData(req, res) {
 
     try {
         let resultMain = await FindOneUserById(userId);
-
+        
         if (!resultMain) {
             return res.status(404).send({ message: "User not found" });
         }
