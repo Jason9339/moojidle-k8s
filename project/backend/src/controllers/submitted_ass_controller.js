@@ -9,7 +9,7 @@ import {
 
     FindSubmissionsByAssignmentId,
     UpdateReviewAssignmentSubmission,
-    FindSubmissionAssignmentBySubmitAssId
+    // FindSubmissionAssignmentBySubmitAssId
 
 } from '#src/services/submitted_ass_service.js';
 
@@ -346,7 +346,7 @@ async function ReviewAssignmentSubmission(req, res) {
         }
         
         // 先檢查提交是否存在
-        const existingSubmission = await FindSubmissionAssignmentBySubmitAssId(submitAssignmentId);
+        const existingSubmission = await FindSubAssById(submitAssignmentId);
         if (!existingSubmission) {
             return res.status(400).json({message: "沒有該繳交作業"})
         }

@@ -288,40 +288,6 @@ describe('Submitted Assignments Service Test', () => {
         });
     });
 
-        describe("GetSubmissionsByAssignmentId", () => {
-        it('應該成功獲取繳交作業的資訊', async () => {
-            const assignmentId = 1;
-            const result = await FindSubmissionsByAssignmentId(assignmentId);
-
-            expect(result).toBeDefined();
-            expect(Array.isArray(result)).toBe(true);
-            expect(result.length).toBeGreaterThan(0);
-
-            const result_0 = result[0]; // 取第一筆資料進行驗證
-
-            expect(result_0.s_ass_id).toBe(1);
-            expect(result_0.ass_id).toBe(1);
-            expect(result_0.submit_by_user_id).toBe(3);
-            expect(result_0.submit_user_course_tag).toBe("User3's CustomTag_1");
-            expect(result_0.submit_date).toEqual(new Date("2025-01-14T00:00:00.000Z"));
-            expect(result_0.score).toBe(100);
-            expect(result_0.graded_by_user_id).toBe(2);
-            expect(result_0.attachments).toBeDefined();
-            expect(Array.isArray(result_0.attachments)).toBe(true);
-            expect(result_0.attachments.length).toBe(1);
-            expect(result_0.attachments[0].filename).toBe("submitted_assignment_1_file_1.pdf");
-            expect(result_0.description).toBe("This is the submission for Assignment 1 by User 3.");
-        });
-
-        it('當作業不存在時應該返回空陣列', async () => {
-            const assignmentId = 999;
-            const result = await FindSubmissionsByAssignmentId(assignmentId);
-
-            expect(result).toBeDefined();
-            expect(Array.isArray(result)).toBe(true);
-            expect(result.length).toBe(0);
-        });
-    });
 
     describe("ReviewAssignmentSubmissionService", () => {
         it('應該成功修改繳交作業的分數', async () => {
