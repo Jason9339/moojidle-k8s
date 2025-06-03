@@ -25,8 +25,8 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
         setLoading(true);
         try {
             const validTags = tags
-            .filter(tag => tag && tag.user_tag && tag.user_tag.trim() !== "")
-            .map(tag => tag.user_tag.trim());
+                .filter(tag => tag && tag.user_tag && tag.user_tag.trim() !== "")
+                .map(tag => tag.user_tag.trim());
 
             console.log('準備儲存的標籤:', validTags);
 
@@ -52,11 +52,20 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                             placeholder="Tag"
                             className={styles.input}
                         />
-                        <button onClick={() => handleRemove(idx)} className={styles.removeBtn}>刪除</button>
+                        <span
+                            onClick={() => handleRemove(idx)}
+                            className={styles.removeIcon}
+                            role="button"
+                            aria-label="移除標籤"
+                        >
+                            ×
+                        </span>
                     </li>
                 ))}
             </ul>
-            <button onClick={handleAdd} className={styles.addBtn}>新增 TAG</button>
+            <button onClick={handleAdd} className={styles.addBtn} aria-label="新增標籤">
+                +
+            </button>
             <div style={{ marginTop: 16 }}>
                 <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
                 <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
