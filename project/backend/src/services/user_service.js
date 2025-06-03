@@ -129,12 +129,7 @@ async function UpdateUserTags(userId, newTags) {
     try {
         const collection = mongoose.connection.db.collection("custom_tag");
 
-        const user = await FindOneUserById(userId);
-        if (!user) {
-            return { modifiedCount: 0, message: "使用者不存在" };
-        }
 
-        // 刪除現有標籤
         await collection.deleteMany({ user_id: parseInt(userId) });
 
         // 如果有新標籤才新增
@@ -168,11 +163,7 @@ async function UpdateUserTags(userId, newTags) {
 async function UpdateUserContactWay(userId, newContactWays) {
     let result;
     try {
-        // 檢查使用者是否存在
-        const user = await FindOneUserById(parseInt(userId));
-        if (!user) {
-            return { modifiedCount: 0, message: "使用者不存在" };
-        }
+       
 
         // 驗證 newContactWays 是否為陣列
         if (!Array.isArray(newContactWays)) {
