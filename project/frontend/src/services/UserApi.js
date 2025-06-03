@@ -31,9 +31,8 @@ async function UpdateUserPassword(userId, data) {
     }
 }
 
-
 export {
     GetUserDataById,
     UpdateUserPassword,
-    GetUserTagsById,
+    GetUserTagsById
 }
