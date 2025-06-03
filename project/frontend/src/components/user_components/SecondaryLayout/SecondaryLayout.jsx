@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./SecondaryLayout.module.css";
-import EditSecondaryLayout from "./EditSecondaryLayout";
+import EditSecondaryLayout from "../EditSecondaryLayout/EditSecondaryLayout";
 
 function SecondaryLayout({ user_tags: initialTags }) {
     const [isEditing, setIsEditing] = useState(false);

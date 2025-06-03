@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./MainLayout.module.css";
-import EditMainLayout from "./EditMainLayout";
+import EditMainLayout from "../EditMainLayout/EditMainLayout";
 
 function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
     const [imgSrc, setImgSrc] = useState(pfp_path || "/user_pfp/default.png");

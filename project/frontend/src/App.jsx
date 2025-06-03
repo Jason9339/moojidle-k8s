@@ -21,8 +21,8 @@ import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
 import Register from "@/pages/login_register_pages/Register/Register.jsx";
 import Login from "@/pages/login_register_pages/Login/Login.jsx";
-import EditMainLayout from "@/components/user_components/MainLayout/EditMainLayout.jsx";
-import EditSecondaryLayout from "@/components/user_components/SecondaryLayout/EditSecondaryLayout.jsx";
+import EditMainLayout from "@/components/user_components/EditMainLayout/EditMainLayout.jsx";
+import EditSecondaryLayout from "@/components/user_components/EditSecondaryLayout/EditSecondaryLayout.jsx";
 
 // pages for calendar
 import CalendarPage from "@/pages/calendar_pages/CalendarPage/CalendarPage";
