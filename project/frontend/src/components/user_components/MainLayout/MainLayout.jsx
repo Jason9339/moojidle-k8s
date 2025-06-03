@@ -8,12 +8,10 @@ function MainLayout({ pfp_path, name, email, contact_ways }) {
         <div className={styles.card}>
             <div className={styles.headerRow}>
                 <h3 className={styles.username}>{name}</h3>
-                <Link to="/user/edit-profile" className={styles.editLink}>
                     <button className={styles.editButton}>
                         <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
                         編輯基本個人檔案
                     </button>
-                </Link>
             </div>
 
 
