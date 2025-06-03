@@ -42,7 +42,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
 
     return (
         <div>
-            <ul className={styles.tagList}>
+            <div className={styles.tagList}>
                 {tags.map((tag, idx) => (
                     <li key={idx} className={styles.tagItem}>
                         <input
@@ -62,10 +62,10 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                         </span>
                     </li>
                 ))}
-            </ul>
-            <button onClick={handleAdd} className={styles.addBtn} aria-label="新增標籤">
-                +
-            </button>
+                <button onClick={handleAdd} className={styles.addBtn} aria-label="新增標籤">
+                    +
+                </button>
+            </div>
             <div style={{ marginTop: 16 }}>
                 <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
                 <button onClick={handleSave} className={styles.saveBtn}>儲存</button>

@@ -126,13 +126,14 @@
     height: 32px;
     margin: auto 0 auto 4px;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 1;
     user-select: none;
-    padding-top: none;
     background-color: rgba(14, 165, 233, 0.5);
     border-radius: 50%;
     transition: all 0.2s ease;
 }
+
 
 .addBtn::before {
     content: none;
