@@ -38,7 +38,7 @@ async function GetOneSubAss(req, res) {
         const submission = await FindSubAssByAssAndUser(assId, userId);
 
         if (submission.length == 0) {
-            res.status(200).send(null);
+            res.status(200).json(null);
             return;
         }
 
