@@ -74,9 +74,6 @@ export default function AssignmentStudentCard({
                             <FaCalendarAlt className={styles["tag-icon"]} />
                             截止日期: {formatDate(assignment.dueDate)}
                         </div>
-                        <div className={`${styles["tag"]} ${styles["tag-green"]}`}>
-                            作業 ID: {assignment.id}
-                        </div>
                     </div>
                     <div className={styles["assignment-description"]}>
                         <p className={styles["description-label"]}>作業說明：</p>
