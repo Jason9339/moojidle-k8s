@@ -24,7 +24,6 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const handleSave = async () => {
         setLoading(true);
         try {
-            // 只送出有效資料
             const validContacts = contacts
                 .filter(c =>
                     c &&
@@ -39,6 +38,14 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                     details: c.details.trim()
                 }));
 
+            // 檢查資料是否有變更
+            const isDataChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
+
+            if (!isDataChanged) {
+                alert("資料未更改或有空缺欄位");
+                return;
+            }
+
             await UpdateUserData(userId, { contactWays: validContacts });
             onSave(validContacts);
         } catch (err) {
@@ -52,31 +59,44 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
         <div>
             <ul className={styles.contactList}>
                 {contacts.map((contact, idx) => (
-                    <li key={idx}>
-                        <input
-                            type="text"
-                            value={contact.approach}
-                            onChange={e => handleChange(idx, 'approach', e.target.value)}
-                            placeholder="Type (e.g. email, phone)"
-                            className={styles.input}
-                        />
-                        <input
-                            type="text"
-                            value={contact.details}
-                            onChange={e => handleChange(idx, 'details', e.target.value)}
-                            placeholder="Details"
-                            className={styles.input}
-                        />
-                        <button onClick={() => handleRemove(idx)} className={styles.removeBtn}>刪除</button>
+                    <li key={idx} className={styles.contactItem}>
+                        <div className={styles.inputGroup}>
+                            <span
+                                onClick={() => handleRemove(idx)}
+                                className={styles.removeIcon}
+                                role="button"
+                                aria-label="移除聯絡方式"
+                            >
+                                ×
+                            </span>
+                            <input
+                                type="text"
+                                value={contact.approach}
+                                onChange={e => handleChange(idx, 'approach', e.target.value)}
+                                placeholder="Type (e.g. email, phone)"
+                                className={styles.input}
+                            />
+                            <input
+                                type="text"
+                                value={contact.details}
+                                onChange={e => handleChange(idx, 'details', e.target.value)}
+                                placeholder="Details"
+                                className={styles.input}
+                            />
+                        </div>
                     </li>
                 ))}
             </ul>
-            <button onClick={handleAdd} className={styles.addBtn}>新增聯絡方式</button>
+            <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
+                +
+            </button>
             <div style={{ marginTop: 16 }}>
-                <button onClick={handleSave} className={styles.saveBtn} disabled={loading}>
-                    {loading ? "儲存中..." : "儲存"}
+                <button onClick={onCancel} className={styles.cancelBtn} disabled={loading}>
+                    取消
                 </button>
-                <button onClick={onCancel} className={styles.cancelBtn} disabled={loading}>取消</button>
+                <button onClick={handleSave} className={styles.saveBtn} disabled={loading}>
+                    儲存
+                </button>
             </div>
         </div>
     );

@@ -4,11 +4,21 @@
     margin: 0 0 16px 0;
 }
 
+.contactItem {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.inputGroup {
+    position: relative;
+    padding-top: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    max-width: 500px;
+}
+
 .input {
-    display: block;
-    width: 100%;
-    max-width: 400px;
-    margin: 8px 0;
     padding: 8px 12px;
     border: 1px solid #bfc9d1;
     border-radius: 8px;
@@ -17,34 +27,62 @@
     box-sizing: border-box;
 }
 
-.removeBtn {
-    background: none;
-    color: #d32f2f;
-    border: none;
-    margin: 4px 0 16px 0;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0;
-    transition: color 0.2s;
+/* approach 輸入框 */
+.input[placeholder="Type (e.g. email, phone)"] {
+    width: 40%;  /* 固定寬度 */
+    flex-shrink: 0;  /* 防止壓縮 */
 }
-.removeBtn:hover {
-    color: #b71c1c;
-    text-decoration: underline;
+
+/* details 輸入框 */
+.input[placeholder="Details"] {
+    width: 50%;  /* 固定寬度 */
+    flex-shrink: 0;  /* 防止壓縮 */
+}
+
+.removeIcon {
+    position: absolute;
+    top: 18px;
+    right: 0px;  
+    color: white;
+    background-color: rgba(239, 68, 68, 0.6);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    user-select: none;
+    z-index: 1;
+}
+
+.removeIcon:hover {
+    background-color: rgba(239, 68, 68, 0.8);
+    transform: scale(1.1);
 }
 
 .addBtn {
-    background: #1976d2;
-    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(14, 165, 233, 0.5);
+    color: white;
     border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    margin-top: 8px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.2s ease;
 }
+
 .addBtn:hover {
-    background: #1565c0;
+    background-color: rgba(14, 165, 233, 0.7);
+    transform: scale(1.1);
 }
 
 .saveBtn {

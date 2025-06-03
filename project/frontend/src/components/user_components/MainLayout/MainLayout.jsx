@@ -49,8 +49,9 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                             contactWays?.length > 0 ? (
                                 <ul className={styles.contactList}>
                                     {contactWays.map((contact, index) => (
-                                        <li key={index}>
-                                            <strong>{contact.approach}:</strong> {contact.details}
+                                        <li key={index} className={styles.contactItem}>
+                                            <span className={styles.approach}>{contact.approach}</span>
+                                            <span className={styles.details}>{contact.details}</span>
                                         </li>
                                     ))}
                                 </ul>
