@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+
 import styles from "./SecondaryLayout.module.css";
 
 function SecondaryLayout({ user_tags }) {

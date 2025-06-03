@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styles from "./MainLayout.module.css";
-import { Link } from "react-router-dom";
 function MainLayout({ pfp_path, name, email, contact_ways }) {
     const [imgSrc, setImgSrc] = useState(pfp_path || "/user_pfp/default.png");
 
