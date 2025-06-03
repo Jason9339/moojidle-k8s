@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignmentApi";
+import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
 import { checkFilesAndAlert } from "@/utils/fileValidation";
 import styles from "./SubmittedAssUploadModal.module.css";
 
