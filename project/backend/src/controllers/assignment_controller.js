@@ -13,7 +13,12 @@ import {
 
 import {
     FindCourseById
+
 } from '#src/services/course_service.js';
+
+import {
+    FindStudyInJoinUserByCourseId
+} from '#src/services/course_member_service.js'
 
 import {
     SaveFile,
@@ -62,7 +67,8 @@ async function GetCourseAssignments(req, res) {
                 dueDate: assignment.end_date,
                 startDate: assignment.start_date,
                 attachments: assignment.attachments || [],
-                week: week
+                week: week,
+                maxScore: assignment.max_score
             };
         })
 
@@ -176,6 +182,9 @@ async function UploadAssignment(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+
+
 
 // 下載作業檔案
 function DownloadAssignment(req, res) {

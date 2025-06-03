@@ -12,10 +12,12 @@ node_modules
 # for Redis
 dump.rdb
 
-# Ignore all files in uploads
+# Ignore all files under uploads
 project/backend/uploads/**
 
-# But keep the folder structure by keeping .gitkeep files
+# But allow subfolders and .gitkeep
+!project/backend/uploads/
+!project/backend/uploads/**/
 !project/backend/uploads/**/.gitkeep
 
 # for custom
