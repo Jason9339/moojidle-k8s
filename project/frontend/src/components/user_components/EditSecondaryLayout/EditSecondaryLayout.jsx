@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
 import { UpdateUserTags } from "@/services/UserApi";
 
@@ -7,8 +7,25 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
+    const [errorIndexes, setErrorIndexes] = useState([]);
+    const spanRefs = useRef([]);
+    useEffect(() => {
+        tags.forEach((tag, idx) => {
+            const span = spanRefs.current[idx];
+            const input = document.getElementById(`tag-input-${idx}`);
+            if (span && input) {
+                input.style.width = `${span.offsetWidth + 20}px`; // + padding buffer
+            }
+        });
+    }, [tags]);
 
     const handleChange = (index, value) => {
+        // if (value.length > 30) {
+        //     setErrorIndexes([...new Set([...errorIndexes, index])]);
+        //     return;
+        // } else {
+        //     setErrorIndexes(errorIndexes.filter(i => i !== index));
+        // }
         setTags(tags.map((tag, i) =>
             i === index ? { ...tag, user_tag: value } : tag
         ));
@@ -46,12 +63,21 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                 {tags.map((tag, idx) => (
                     <li key={idx} className={styles.tagItem}>
                         <input
+                            id={`tag-input-${idx}`}
                             type="text"
                             value={tag.user_tag}
                             onChange={e => handleChange(idx, e.target.value)}
                             placeholder="Tag"
                             className={styles.input}
                         />
+                        {/* 隱藏的 span，用於測量寬度 */}
+                        <span
+                            ref={el => spanRefs.current[idx] = el}
+                            className={styles.hiddenSpan}
+                        >
+                            {tag.user_tag || "Tag"}
+                        </span>
+
                         <span
                             onClick={() => handleRemove(idx)}
                             className={styles.removeIcon}

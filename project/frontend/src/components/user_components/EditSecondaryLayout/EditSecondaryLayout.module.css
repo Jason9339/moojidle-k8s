@@ -1,71 +1,52 @@
 .tagList {
-    display: flex;
-    flex-wrap: wrap;
-    /* 改為允許換行 */
-    overflow-x: auto;
-    /* 添加水平捲動 */
-    gap: 8px;
-    /* 標籤之間的間距 */
     list-style: none;
     padding: 0;
     margin: 0;
-    width: 100%;
-    /* 佔滿容器寬度 */
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    gap: 8px;
 }
 
 .tagItem {
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 0 8px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    /* 內容兩端對齊 */
-    /* background-color: rgba(14, 165, 233, 0.5); */
-    border-radius: 8px;
-    border: 2px solid rgba(0, 0, 0, 0.5);
     color: rgba(0, 0, 0, 0.8);
-    padding: 0 8px;
-    margin: 2px;
     height: 32px;
-    box-sizing: border-box;
-    min-width: 120px;
-    max-width: none;
     flex: 0 0 auto;
-    /* 防止項目被壓縮 */
-    white-space: nowrap;
-    /* 防止文字換行 */
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
+    width: auto;
+    max-width: fit-content;
 }
+
+
+
 
 .input {
     background: transparent;
     border: none;
     color: #000000;
-    width: 100%;
-    font-size: 1rem;
+    font-size: 14px;
     text-align: center;
     height: 24px;
-    /* 調整輸入框高度 */
     line-height: 24px;
-    /* 配合輸入框高度 */
+    padding: 0;
+    margin: 0;
+    box-sizing: content-box;
+    font-family: inherit;
+    width: auto;
     min-width: 60px;
-    padding: 0 4px;
-    margin: auto 0;
-    /* 垂直置中 */
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+    max-width: none;
 }
 
 .input::placeholder {
-    background-color: rgba(14, 165, 233, 0.5);
+    /* background-color: rgba(14, 165, 233, 0.5); */
     color: rgba(255, 255, 255, 0.6);
-    /* 調整預設提示文字的顏色 */
-    font-weight: normal;
-    /* 預設提示文字不需要加粗 */
-    text-shadow: none;
-    /* 移除預設提示文字的陰影 */
+
 }
+
 
 .input::selection {
     background-color: rgba(255, 255, 255, 0.2);
@@ -73,42 +54,26 @@
     color: #000000;
 }
 
-.input::-moz-selection {
-    background-color: transparent;
-    /* Firefox 的選取樣式 */
-    color: #ffffff;
-}
 
-.input:focus {
-    outline: none;
-    background: transparent;
-    -webkit-touch-callout: text;
-    /* 允許選取文字 */
-    -webkit-user-select: text;
-    /* 允許選取文字 */
-    -khtml-user-select: text;
-    /* 允許選取文字 */
-    -moz-user-select: text;
-    /* 允許選取文字 */
-    -ms-user-select: text;
-    /* 允許選取文字 */
-    user-select: text;
-    /* 允許選取文字 */
+.errorText {
+    color: red;
+    font-size: 12px;
+    margin-left: 4px;
+    margin-top: 4px;
+    display: block;
+
 }
 
 .removeIcon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    width: 24px;
-    height: 24px;
-    margin: auto 0 auto 4px;
-    /* 使用 auto 實現垂直置中 */
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
     cursor: pointer;
     font-size: 18px;
     padding-bottom: 2px;
-    /* 微調符號位置 */
     user-select: none;
     /* background-color: rgba(239, 68, 68, 0.6); */
     border-radius: 50%;
@@ -193,4 +158,15 @@
 
 .cancelBtn:hover {
     background-color: #f5f5f5;
+}
+
+.hiddenSpan {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    font-size: 14px;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
 }
