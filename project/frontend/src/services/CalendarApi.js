@@ -7,14 +7,12 @@ export async function GetCalendarEventsByUserId(userId) {
         const data = response.data.map(({ start, end, ...rest }) => (
             {
                 ...rest,
-                // title: "test",
                 start: new Date(start),
                 end: new Date(end)
             }
 
         ))
 
-        console.log(data)
         // data = data.filter(evt => evt.end > currentDate);
         return data;
     }

@@ -26,7 +26,6 @@ async function GetCalendarEvents(req, res) {
             FindAssistInByUserId(user_id),
         ]);
 
-        console.log("study_in:", study_in, "teach_in:", teach_in, "assist_in:", assist_in)
         if (study_in.length + teach_in.length + assist_in.length == 0) {
             res.status(404).send({ message: "No event found" });
         }
