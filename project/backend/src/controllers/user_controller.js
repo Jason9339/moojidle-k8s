@@ -168,10 +168,10 @@ async function UpdateData(req, res) {
             if (!contact.approach || !contact.details) {
                 return res.status(400).send({
                     message: "Each contact way must have 'approach' and 'details' fields",
-                    example: {
+                    example: [{
                         approach: "email",
                         details: "example@email.com"
-                    }
+                    }]
                 });
             }
         }
@@ -179,11 +179,17 @@ async function UpdateData(req, res) {
     try {
         const result = await UpdateUserContactWay(userId, contactWays);
 
-        return res.status(200).send({
-            message: result.message,
-            updatedContacts: result.updatedContactWays
-        });
-
+        if (result.modifiedCount > 0) {
+            return res.status(200).send({
+                message: "成功更新聯絡方式",
+                updatedCount: result.modifiedCount
+            });
+        }
+        if (result.matchedCount === 0) {
+            return res.status(404).send({
+                message: "找不到使用者或聯絡方式未更改",
+            });
+        }
     } catch (err) {
         console.error("更新聯絡方式時發生錯誤:", err);
         return res.status(500).send({
@@ -228,9 +234,9 @@ async function UpdateTags(req, res) {
         const result = await UpdateUserTags(userId, tags);
 
         return res.status(200).send({
-            message: result.message,
+            message: "成功更新標籤",
             insertedCount: result.newIds ? result.newIds.length : 0,
-            newIds: result.newIds || [],
+            // newIds: result.newIds || [],
         });
     } catch (err) {
         console.error("UpdateTags error:", err);
