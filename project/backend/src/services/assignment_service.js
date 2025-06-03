@@ -103,9 +103,9 @@ async function FindAssignmentsByCourseId(courseId) {
     try {
         courseId = parseInt(courseId);
         const assignments = await mongoose.connection.db.collection('assignments')
-        .find({ in_course_id: parseInt(courseId) })
-        .sort({ end_date: 1 }) // 依截止日期升序排列
-        .toArray();
+            .find({ in_course_id: parseInt(courseId) })
+            .sort({ end_date: 1 }) // 依截止日期升序排列
+            .toArray();
 
         return assignments;
     } catch (error) {
@@ -118,13 +118,13 @@ const InsertAssignmentToDB = async (assignmentData) => {
     try {
         // 生成下一個 assignment ID
         const nextAssignmentId = await GetNextCounterId("assignments");
-        
+
         // 準備要插入的文檔
         const assignmentDoc = {
             ass_id: nextAssignmentId,
             ...assignmentData
         };
-        
+
         const result = await mongoose.connection.db.collection("assignments").insertOne(assignmentDoc);
         return result;
     } catch (error) {
@@ -151,4 +151,5 @@ export {
     InsertAssignmentToDB,
     FindAssByAssId,
     FindAssignmentById,
+    InsertAssignmentToDB
 };

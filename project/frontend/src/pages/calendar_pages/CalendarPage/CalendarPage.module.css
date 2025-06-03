@@ -1,0 +1,65 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  background: #eff2f5;
+  width: 100%;
+  height: 100vh;
+  gap: 24px;
+  padding: 24px;
+}
+
+.mainCalendar {
+  background: #fafafa;
+  height: 100%;
+  border: 1px solid #ddd;
+  overflow-y: scroll;
+}
+
+.sidebar {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 16px;
+}
+
+
+
+
+.legend {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.legendTitle {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.legendList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legendItem {
+  display: flex;
+  overflow-x: hidden;
+  white-space: nowrap;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 0.875rem;
+  color: #333;
+}
+
