@@ -168,7 +168,7 @@ export default function AssignmentStudentCard({
                             return (
                                 <div className={`${styles["assignment-submission-info"]} ${styles[statusInfo.cssClass]}`}>
                                     <div>
-                                        ⚠️ {statusInfo.label} - 已超過截止時間
+                                        {statusInfo.label} - 已超過截止時間
                                     </div>
                                     <div>截止時間：{formatDate(assignment.dueDate)}</div>
                                     <div className={styles["overdue-reminder"]}>

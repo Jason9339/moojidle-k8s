@@ -19,7 +19,7 @@
 }
 
 .assignment-header {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -128,7 +128,7 @@
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 400;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -179,9 +179,10 @@
 
 /* 繳交資訊區塊 */
 .assignment-submission-info {
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
+  margin-bottom: 6px;
 }
 
 .assignment-submission-info:hover {
@@ -190,7 +191,7 @@
 
 .assignment-submission-info div:first-child {
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .assignment-submission-info ul {
