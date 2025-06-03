@@ -1,7 +1,9 @@
 .tagList {
     display: flex;
     flex-wrap: wrap;
-    /* 允許換行 */
+    /* 改為允許換行 */
+    overflow-x: auto;
+    /* 添加水平捲動 */
     gap: 8px;
     /* 標籤之間的間距 */
     list-style: none;
@@ -16,18 +18,24 @@
     align-items: center;
     justify-content: space-between;
     /* 內容兩端對齊 */
-    background-color: rgba(14, 165, 233, 0.5);
+    /* background-color: rgba(14, 165, 233, 0.5); */
     border-radius: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.8);
     padding: 0 8px;
     margin: 2px;
     height: 32px;
     box-sizing: border-box;
     min-width: 120px;
-    /* 設定最小寬度 */
-    max-width: 1%;
-    /* 不超過容器寬度 */
-    flex: 1 1 auto;
-    /* 自動調整寬度 */
+    max-width: none;
+    flex: 0 0 auto;
+    /* 防止項目被壓縮 */
+    white-space: nowrap;
+    /* 防止文字換行 */
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
 }
 
 .input {
@@ -102,13 +110,15 @@
     padding-bottom: 2px;
     /* 微調符號位置 */
     user-select: none;
-    background-color: rgba(239, 68, 68, 0.6);
+    /* background-color: rgba(239, 68, 68, 0.6); */
     border-radius: 50%;
+    color: #ef4444;
     transition: all 0.2s ease;
 }
 
 .removeIcon:hover {
     background-color: rgba(239, 68, 68, 0.8);
+    color: #dc2626;
     transform: scale(1.1);
 }
 
