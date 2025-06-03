@@ -39,7 +39,7 @@ async function GetCalendarEvents(req, res) {
             const { name, course_id, color } = await FindCourseById(id);
 
             const assData = await FindAssignmentsByCourseId(id);
-            const assEvents = assData.map(ass => ({
+            const assEvents = assData?.map(ass => ({
 
                 course: {
                     id: course_id,
@@ -56,7 +56,7 @@ async function GetCalendarEvents(req, res) {
             }));
 
             const examData = await FindExamsByCourseId(id);
-            const examEvents = examData.map(exam => ({
+            const examEvents = examData?.map(exam => ({
                 course: {
                     id: course_id,
                     name: name,
@@ -71,10 +71,11 @@ async function GetCalendarEvents(req, res) {
                 }
             }));
 
-            if (assEvents.length !== 0 && examEvents.length !== 0) {
-
-
-                result.push(...assEvents, ...examEvents);
+            if (assEvents.length > 0) {
+                result.push(...assEvents);
+            }
+            if (examEvents.length > 0) {
+                result.push(...examEvents);
             }
         }
 
