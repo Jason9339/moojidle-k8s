@@ -5,7 +5,9 @@ import {
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword
+    UpdateUserPassword,
+    UpdateUserContactWay,
+    UpdateUserTags
 } from '#src/services/user_service.js';
 
 describe('User Service', () => {
@@ -157,6 +159,51 @@ describe('User Service', () => {
             const result = await UpdateUserPassword(999, 'newpassword123');
 
             expect(result.modifiedCount).toBe(0);
+        });
+    });
+    describe('UpdateUserContactWay', () => {
+        it('應該成功更新用戶聯絡方式', async () => {
+            const result = await UpdateUserContactWay(1, [
+                { approach: "phone", details: "555-1234" },
+                { approach: "email", details: "user1@example.com" }
+            ]);
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" },
+                { approach: "email", details: "user1@example.com" }
+            ]);
+        });
+        it('當用戶不存在時應該返回 modifiedCount 為 0', async () => {
+            const result = await UpdateUserContactWay(999, [
+                { approach: "phone", details: "555-1234" }
+            ]);
+
+            expect(result.modifiedCount).toBe(0);
+            expect(result.message).toBe("使用者不存在");
+        });
+        it('當聯絡方式格式不正確時應該拋出錯誤', async () => {
+            await expect(UpdateUserContactWay(1, "invalid format")).rejects.toThrow("聯絡方式必須是陣列格式");
+        });
+    });
+    describe('UpdateUserTags', () => {
+        it('應該成功更新用戶標籤', async () => {
+            const result = await UpdateUserTags(1, ["NewTag1", "NewTag2"]);
+
+            expect(result.modifiedCount).toBe(2);
+            expect(result.message).toEqual("標籤更新成功");
+        });
+        it('當用戶不存在時應該返回 modifiedCount 為 0', async () => {
+            const result = await UpdateUserTags(999, ["NonExistentTag"]);
+
+            expect(result.modifiedCount).toBe(0);
+            expect(result.message).toBe("使用者不存在");
+        });
+        it('當使用者刪除所有tags時modifiedCount 為 0', async () => {
+            const result = await UpdateUserTags(1, []);
+
+            expect(result.modifiedCount).toBe(0);
+            expect(result.message).toBe("已清空所有標籤");
         });
     });
 }); 
