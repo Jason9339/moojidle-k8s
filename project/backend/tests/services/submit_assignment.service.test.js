@@ -4,7 +4,7 @@ import { createMockReq, createMockRes } from '../test-utils.js';
 
 import {
     FindSubmissionsByAssignmentId,
-    ReviewAssignmentSubmissionService,
+    UpdateReviewAssignmentSubmission,
 
 } from "#src/services/submit_assignment_service.js";
 
@@ -57,7 +57,7 @@ describe('Submit Assignment Service', () => {
             const score = 95;
             const graderId = 1;
 
-            const result = await ReviewAssignmentSubmissionService(submitAssignmentId, score, graderId);
+            const result = await UpdateReviewAssignmentSubmission(submitAssignmentId, score, graderId);
 
             expect(result).toBeDefined();
             expect(result.updated).toBe(true);

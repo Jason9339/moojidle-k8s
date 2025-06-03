@@ -22,12 +22,11 @@ async function GetAssignmentSubmissions(req, res) {
 
         const ass = await FindAssByAssId(assId); 
         // Get course ID from assignment ID
-        const courseId = ass.in_course_id; 
-        // console.log("courseId", courseId)
-        if (!courseId) {
+        if (!ass) {
             return res.status(404).json({ message: "找不到對應的課程" });
         }
-        
+        const courseId = ass.in_course_id; 
+
         const studentInCourse = await FindStudyInJoinUserByCourseId(courseId);
 
         // console.log("學生列表:", studentInCourse);
