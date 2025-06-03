@@ -15,7 +15,7 @@ import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
 import ProtectedRoutes from "@/utils/ProtectedRoutes";
-
+import NotificationPage from "@/pages/NotificationPage/NotificationPage";
 // pages for user related
 import UserProfile from "@/pages/user_pages/UserProfile/UserProfile.jsx";
 import UpadatePassword from "@/pages/user_pages/UserUpdatePassword/UserUpdatePassword.jsx";
@@ -69,11 +69,14 @@ function App() {
 
                         {/* post pages related */}
                         <Route path="/post-edit/:post_id" element={<PostEdit />} />
-                       
+
                         <Route path="/post/:id" element={<PostPage />} />
 
                         {/* calendar pages related */}
                         <Route path="/calendar" element={<CalendarPage />} />
+
+                        {/* notification page related */}
+                        <Route path="/inbox" element={<NotificationPage />} />
                     </Route>
                 </Routes>
             </Router>

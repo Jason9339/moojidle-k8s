@@ -7,6 +7,10 @@ import {
     UpdateUserPassword
 } from "#src/services/user_service.js";
 
+import{
+    SendNotification, SendNotified
+} from "#src/services/notification_service.js"
+
 // Register a new user in the database
 // In Postman send this json format in the body
 // {
@@ -35,7 +39,7 @@ async function Register(req, res) {
     }
 }
 // If a matching user is found, return the user data
-//  {
+//  {   
 //     "user_id": 2,
 //     "name": "User 2",
 //     "email": "user2@example.com"
@@ -49,6 +53,18 @@ async function Login(req, res) {
         const user = await LoginUser(req.body.email, req.body.pw);
 
         if (user) {
+            const notificationData = {
+                event_id : 0,
+                event_category : "login",
+                context: `您有新的登入 ${new Date().toLocaleString('zh-TW', { hour12: false })}`
+            };
+            const notificationres = await SendNotification(notificationData);
+            await SendNotified(notificationres.notification.n_id, [
+                    {
+                        user_id: user.user_id
+                    }
+                ])
+            
             res.status(200).send({
                 user_id: user.user_id,
                 name: user.name,
