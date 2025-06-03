@@ -2,6 +2,9 @@
     list-style: none;
     padding: 0;
     margin: 0 0 16px 0;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
 }
 
 .contactItem {
@@ -29,20 +32,24 @@
 
 /* approach 輸入框 */
 .input[placeholder="Type (e.g. email, phone)"] {
-    width: 40%;  /* 固定寬度 */
-    flex-shrink: 0;  /* 防止壓縮 */
+    width: 50%;
+    /* 固定寬度 */
+    flex-shrink: 0;
+    /* 防止壓縮 */
 }
 
 /* details 輸入框 */
 .input[placeholder="Details"] {
-    width: 50%;  /* 固定寬度 */
-    flex-shrink: 0;  /* 防止壓縮 */
+    width: 50%;
+    /* 固定寬度 */
+    flex-shrink: 0;
+    /* 防止壓縮 */
 }
 
 .removeIcon {
     position: absolute;
     top: 18px;
-    right: 0px;  
+    right: 0px;
     color: white;
     background-color: rgba(239, 68, 68, 0.6);
     border-radius: 50%;
@@ -63,26 +70,13 @@
     transform: scale(1.1);
 }
 
-.addBtn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: rgba(14, 165, 233, 0.5);
-    color: white;
-    border: none;
-    cursor: pointer;
+.buttonGroup {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    transition: all 0.2s ease;
-}
+    justify-content: space-between;
+    /* 讓按鈕分散對齊 */
+    margin-top: 1%;
+    max-width: 50%;
 
-.addBtn:hover {
-    background-color: rgba(14, 165, 233, 0.7);
-    transform: scale(1.1);
 }
 
 .saveBtn {
@@ -91,11 +85,13 @@
     border: none;
     border-radius: 6px;
     padding: 8px 20px;
-    margin-right: 12px;
     cursor: pointer;
     font-size: 1rem;
     transition: background 0.2s;
+    width: 20%;
+    white-space: nowrap;
 }
+
 .saveBtn:hover {
     background: #2e7031;
 }
@@ -109,7 +105,34 @@
     cursor: pointer;
     font-size: 1rem;
     transition: background 0.2s;
+    width: 20%;
+    white-space: nowrap;
 }
+
 .cancelBtn:hover {
     background: #bdbdbd;
+}
+
+.addContact {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.addBtn {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: background 0.2s;
+    border-radius: 50%;
+    text-align: center;
+    /* vertical-align: middle; */
+}
+
+.addBtn:hover {
+    background: #115293;
 }

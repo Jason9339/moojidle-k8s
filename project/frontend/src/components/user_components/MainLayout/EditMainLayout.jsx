@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserData } from "@/services/UserApi";
-
+import { IoAddCircle } from "react-icons/io5";
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
 
     return (
         <div>
-            <ul className={styles.contactList}>
+            <div className={styles.contactList}>
                 {contacts.map((contact, idx) => (
                     <li key={idx} className={styles.contactItem}>
                         <div className={styles.inputGroup}>
@@ -86,17 +86,15 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                         </div>
                     </li>
                 ))}
-            </ul>
-            <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
-                +
-            </button>
-            <div style={{ marginTop: 16 }}>
-                <button onClick={onCancel} className={styles.cancelBtn} disabled={loading}>
-                    取消
-                </button>
-                <button onClick={handleSave} className={styles.saveBtn} disabled={loading}>
-                    儲存
-                </button>
+                <div className={styles.addContact}>
+                    <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
+                        +
+                    </button>
+                </div>
+            </div>
+            <div className={styles.buttonGroup}>
+                <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
+                <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
             </div>
         </div>
     );
