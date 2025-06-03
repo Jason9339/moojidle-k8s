@@ -7,7 +7,8 @@ import {
     PostDeleter,
     CommendDeleter,
     GetOverviewPosts,
-    AddPosts
+    AddPosts,
+    EditPost
 } from '#src/controllers/post_controller.js'
 
 postRouter.get("/content/:id", GetPostContent);
@@ -15,6 +16,7 @@ postRouter.post("/commend", LeaveComment);
 postRouter.delete("/delete/:id", PostDeleter);
 postRouter.post("/deletecommend", CommendDeleter);
 postRouter.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
+
 
 
 // frontend gives discussion board ID and backend sends an array of abjects
@@ -51,5 +53,6 @@ postRouter.get("/get-overview-posts/:inBoardId", GetOverviewPosts);
 //     "public": true
 // }
 postRouter.post("/create-post", AddPosts);
+postRouter.put("/:id", EditPost);
 
 export default postRouter;

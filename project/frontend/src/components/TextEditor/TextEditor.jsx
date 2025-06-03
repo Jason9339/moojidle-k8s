@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -16,10 +16,17 @@ const CardContent = ({ className = "", ...props }) => (
 )
 
 
-export default function TextEditor({ className = "", height, onChange }) {
+export default function TextEditor({ className = "", height, onChange, value }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
+
+    useEffect(() => {
+        if (value !== undefined && value !== text) {
+            setText(value)
+        }
+    }, [value])
+
     // Wrap selected text with markers
     const wrapSelection = (before, after = before) => {
         const ta = textareaRef.current
