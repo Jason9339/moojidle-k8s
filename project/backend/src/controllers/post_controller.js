@@ -101,7 +101,7 @@ async function LeaveComment(req, res) {
             
             const notificationData = {
                 event_id: post_id,
-                event_category: "commend",
+                event_category: "comment",
                 context: `課程 - ${course.title} 討論版 - ${board.name} 貼文 - ${postdata.title} 有新留言 - ${description}`,
             }
             const notificationres = await SendNotification(notificationData);

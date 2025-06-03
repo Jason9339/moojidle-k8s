@@ -135,7 +135,7 @@ async function UploadExam(req, res) {
         const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
         const notification = {
             event_id: parseInt(courseId),
-            event_category: "test",
+            event_category: "exam",
             context: `${course.name} 新增了考試 ${examName}`,
         }
         const notificationres = await SendNotification(notification);

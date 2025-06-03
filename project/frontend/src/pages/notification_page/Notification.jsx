@@ -24,10 +24,10 @@ function Notification() {
         course_status: "課程身分",
         course_announcement: "課程公告",
         login: "登入",
-        commend: "新留言",
-        homework: "作業",
+        comment: "新留言",
+        assignment: "作業",
         score: "成績",
-        test: "考試",
+        exam: "考試",
     };
 
     const fetchNotifications = async () => {
@@ -88,7 +88,7 @@ function Notification() {
             });
 
             switch (item.notification.event_category) {
-                case "commend":
+                case "comment":
                     navigate(`/post/${item.notification.event_id}`);
                     break;
                 case "login":
@@ -100,10 +100,10 @@ function Notification() {
                 case "course_status":
                     navigate(`/course/${item.notification.event_id}/members`);
                     break;
-                case "test":
+                case "exam":
                     navigate(`/course/${item.notification.event_id}/exams`);
                     break;
-                case "homework":
+                case "assignment":
                     navigate(`/course/${item.notification.event_id}/assignment`);
                     break;
                 case "course_announcement":

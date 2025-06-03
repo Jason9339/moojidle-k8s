@@ -121,7 +121,7 @@ async function UploadAssignment(req, res) {
         const userIdsOnly = students.map(user => ({ user_id: user.user_id }));
         const notification = {
             event_id: course.course_id,
-            event_category: "homework",
+            event_category: "assignment",
             context: `${course.name} 新增作業 ${assName}`,
         }
         const notificationres = await SendNotification(notification);
