@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
 
+import GetNextCounterId from '#src/utils/get_next_counter_id.js'
+
 async function InsertNotification(notificationData) {
     try {
-        const counter = await mongoose.connection.db.collection('counter').findOne();
-            if (!counter) {
-                throw new Error("Counter document not found. Please initialize your counter collection.");
-            }
-        const nextNotificationId = counter.notification + 1;
-        
+        const nextNotificationId = await GetNextCounterId("notification");
         const date = new Date();
-
         const notification = {
             n_id: nextNotificationId,
             event_id : notificationData.event_id,
@@ -18,14 +14,8 @@ async function InsertNotification(notificationData) {
             notified_date : date
         };
 
-
-        const result = await mongoose.connection.db.collection('notification').insertOne(notification)
+        const result = await mongoose.connection.db.collection('notification').insertOne(notification);
         result.n_id = nextNotificationId;
-
-        await mongoose.connection.db.collection('counter').updateOne(
-            {},
-            { $inc: { notification: 1 } }
-        );
 
         return result;
 
@@ -62,13 +52,7 @@ async function FindNotificationById(notificationID) {
 
 async function SendNotify(notificationData) {
     try {
-        const counter = await mongoose.connection.db.collection('counter').findOne();
-        if (!counter) {
-            throw new Error("Counter document not found. Please initialize your counter collection.");
-        }
-
-        const nextNotificationId = counter.notification + 1;
-
+        const nextNotificationId = await GetNextCounterId("notification");
         const date = new Date();
         const notification = {
             n_id: nextNotificationId,
@@ -79,7 +63,6 @@ async function SendNotify(notificationData) {
         };
 
         await mongoose.connection.db.collection('notification').insertOne(notification);
-        await mongoose.connection.db.collection('counter').updateOne({}, { $inc: { notification: 1 } });
 
         const notifiedInsertions = notificationData.notified_users.map(user => {
             const notifiedData = {
