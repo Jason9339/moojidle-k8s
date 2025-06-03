@@ -2,13 +2,11 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 
 import {
-    InsertNotification,
-    InsertNotified,
+    SendNotification,
+    SendNotified,
     FindNotificationById,
     FindNotifiedByUserId,
     DeleteNotifiedById,
-    SendNotification,
-    SendNotified,
     NotificationReaded
 } from '#src/services/notification_service';
 
@@ -38,47 +36,47 @@ describe('Notification Service', () => {
             expect(notified.acknowledged).toBe(true);
 
             // 清理測試資料
-            await mongoose.connection.db.collection('notification').deleteOne({ n_id: result.notification_id });
-            await mongoose.connection.db.collection('notified').deleteMany({ n_id: result.notification_id });
+            await mongoose.connection.db.collection('notification').deleteOne({ n_id: result.notification.n_id });
+            await mongoose.connection.db.collection('notified').deleteMany({ n_id: result.notification.n_id });
         });
     });
 
-    describe('InsertNotification + FindNotificationById', () => {
+    describe('SendNotification + FindNotificationById', () => {
         it('成功新增並查詢通知', async () => {
             const data = {
                 event_id: 200,
                 event_category: 'course',
-                context: 'insert then find',
-                notified_date: new Date()
+                context: 'send then find',
+                notified_users: []  // 不發送任何通知人
             };
 
-            const result = await InsertNotification(data);
+            const result = await SendNotification(data);
             expect(result).toBeDefined();
-            const insertedId = result.n_id;
+            const insertedId = result.notification.n_id;
 
             const found = await FindNotificationById(insertedId);
             expect(found).toBeDefined();
-            expect(found.context).toBe('insert then find');
+            expect(found.context).toBe('send then find');
 
             // 清除測試資料
             await mongoose.connection.db.collection('notification').deleteOne({ n_id: insertedId });
         });
     });
 
-    describe('InsertNotified + FindNotifiedByUserId', () => {
+    describe('SendNotified + FindNotifiedByUserId', () => {
         it('成功新增並查詢 Notified', async () => {
-            const notification = await InsertNotification({
+            const notificationResult = await SendNotification({
                 event_id: 300,
                 event_category: 'course',
-                context: 'InsertNotified test',
-                notified_date: new Date()
+                context: 'SendNotified test',
+                notified_users: []
             });
 
-            const n_id = notification.n_id;
+            const n_id = notificationResult.notification.n_id;
             const user_id = 3001;
 
-            const notifiedResult = await InsertNotified({ n_id, user_id });
-            expect(notifiedResult.insertedId).toBeDefined();
+            const notifiedResult = await SendNotified(n_id, [{ user_id }]);
+            expect(notifiedResult[0].acknowledged).toBe(true);
 
             const notifiedList = await FindNotifiedByUserId(user_id);
             const match = notifiedList.find(n => n.n_id === n_id);
@@ -92,18 +90,18 @@ describe('Notification Service', () => {
 
     describe('DeleteNotifiedById', () => {
         it('成功刪除 Notified', async () => {
-            const notification = await InsertNotification({
+            const notificationResult = await SendNotification({
                 event_id: 400,
                 event_category: 'course',
                 context: 'delete test',
-                notified_date: new Date()
+                notified_users: []
             });
 
-            const n_id = notification.n_id;
+            const n_id = notificationResult.notification.n_id;
             const user_id = 4001;
 
-            await InsertNotified({ n_id, user_id });
-            
+            await SendNotified(n_id, [{ user_id }]);
+
             const deleteResult = await DeleteNotifiedById({ n_id, user_id });
             expect(deleteResult.deletedCount).toBe(1);
 
@@ -114,15 +112,29 @@ describe('Notification Service', () => {
 
     describe('NotificationReaded', () => {
         it('成功更改notification已讀狀態', async () => {
-            const notified1 = await FindNotifiedByUserId(2);
-            expect(notified1[0].is_read).toBe(false);
-            await NotificationReaded({
-                n_id: 1,
-                user_id: 2
+            const notificationResult = await SendNotification({
+                event_id: 500,
+                event_category: 'course',
+                context: 'read test',
+                notified_users: []
             });
-            
-            const notified2 = await FindNotifiedByUserId(2);
-            expect(notified2[0].is_read).toBe(true);
+
+            const n_id = notificationResult.notification.n_id;
+            const user_id = 5002;
+
+            await SendNotified(n_id, [{ user_id }]);
+
+            const before = await FindNotifiedByUserId(user_id);
+            expect(before[0].is_read).toBe(false);
+
+            await NotificationReaded({ n_id, user_id });
+
+            const after = await FindNotifiedByUserId(user_id);
+            expect(after[0].is_read).toBe(true);
+
+            // 清理
+            await mongoose.connection.db.collection('notification').deleteOne({ n_id });
+            await mongoose.connection.db.collection('notified').deleteOne({ n_id, user_id });
         });
     });
 });
