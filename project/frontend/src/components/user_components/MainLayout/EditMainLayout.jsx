@@ -60,15 +60,15 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             <div className={styles.contactList}>
                 {contacts.map((contact, idx) => (
                     <li key={idx} className={styles.contactItem}>
+                        <span
+                            onClick={() => handleRemove(idx)}
+                            className={styles.removeIcon}
+                            role="button"
+                            aria-label="移除聯絡方式"
+                        >
+                            ×
+                        </span>
                         <div className={styles.inputGroup}>
-                            <span
-                                onClick={() => handleRemove(idx)}
-                                className={styles.removeIcon}
-                                role="button"
-                                aria-label="移除聯絡方式"
-                            >
-                                ×
-                            </span>
                             <input
                                 type="text"
                                 value={contact.approach}
@@ -86,15 +86,19 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                         </div>
                     </li>
                 ))}
-                <div className={styles.addContact}>
-                    <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
-                        +
-                    </button>
-                </div>
-            </div>
-            <div className={styles.buttonGroup}>
-                <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
-                <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
+                <li className={styles.contactItem}>
+                    <div className={styles.inputGroup}>
+                        <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
+                            +
+                        </button>
+                    </div>
+                </li>
+                <li className={styles.contactItem}>
+                    <div className={styles.buttonGroup}>
+                        <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
+                        <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
+                    </div>
+                </li>
             </div>
         </div>
     );

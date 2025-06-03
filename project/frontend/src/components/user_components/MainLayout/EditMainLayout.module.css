@@ -2,7 +2,7 @@
     list-style: none;
     padding: 0;
     margin: 0 0 16px 0;
-    display: flex;
+    display: flex-start;
     flex-direction: column;
     align-items: center;
     width: 50%;
@@ -11,7 +11,7 @@
 .contactItem {
     position: relative;
     margin-bottom: 16px;
-    width: 100%;
+    width: 50%;
 }
 
 .inputGroup {
@@ -36,7 +36,7 @@
 .input[placeholder="Type (e.g. email, phone)"] {
     width: 50%;
     /* 固定寬度 */
-    flex-shrink: 0;
+    /* flex-shrink: 0; */
     /* 防止壓縮 */
 }
 
@@ -44,7 +44,7 @@
 .input[placeholder="Details"] {
     width: 50%;
     /* 固定寬度 */
-    flex-shrink: 0;
+    /* flex-shrink: 0; */
     /* 防止壓縮 */
 }
 
@@ -80,44 +80,36 @@
 .buttonGroup {
     display: flex;
     justify-content: space-between;
-    /* 讓按鈕分散對齊 */
-    margin-top: 1%;
-    max-width: 33%;
-
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
+.cancelBtn,
 .saveBtn {
-    background: #388e3c;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 20px;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background 0.2s;
-    width: 20%;
-    white-space: nowrap;
-}
-
-.saveBtn:hover {
-    background: #2e7031;
 }
 
 .cancelBtn {
-    background: #e0e0e0;
-    color: #333;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 20px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-    width: 20%;
-    white-space: nowrap;
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #ddd;
 }
 
 .cancelBtn:hover {
-    background: #bdbdbd;
+    background-color: #f5f5f5;
+}
+
+.saveBtn {
+    background-color: rgba(14, 165, 233, 0.5);
+    color: white;
+    border: none;
+}
+
+.saveBtn:hover {
+    background-color: rgba(14, 165, 233, 0.7);
 }
 
 .addContact {
@@ -125,19 +117,20 @@
     align-items: center;
     position: relative;
     /* 新增相對定位 */
-    width: 50%;
+    /* width: 50%; */
     /* 與 contactList 相同寬度 */
     margin-top: 16px;
+    width: 100%;
 }
 
 .addBtn {
     position: absolute;
-    left: calc(15%);
+    left: calc(50%);
     /* 對齊第一個輸入框的結束位置 */
     transform: translateX(-50%);
     width: 32px;
     /* 固定寬度 */
-    height: 32px; 
+    height: 32px;
     /* 固定高度 */
     background: #1976d2;
     color: #fff;
@@ -155,6 +148,7 @@
     transition: all 0.2s ease;
     line-height: 1;
     /* 確保 + 符號置中 */
+    margin-bottom: 24px;
 }
 
 .addBtn:hover {
