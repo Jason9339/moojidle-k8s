@@ -25,7 +25,7 @@
     box-sizing: border-box;
     min-width: 120px;
     /* 設定最小寬度 */
-    max-width: 2%;
+    max-width: 1%;
     /* 不超過容器寬度 */
     flex: 1 1 auto;
     /* 自動調整寬度 */
@@ -34,7 +34,7 @@
 .input {
     background: transparent;
     border: none;
-    color: white;
+    color: #ffffff;
     font-size: 1rem;
     text-align: center;
     height: 24px;
@@ -46,32 +46,61 @@
     margin: auto 0;
     /* 垂直置中 */
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(14, 165, 233, 0.5);
+    color: rgba(255, 255, 255, 0.6);
+    /* 調整預設提示文字的顏色 */
+    font-weight: normal;
+    /* 預設提示文字不需要加粗 */
+    text-shadow: none;
+    /* 移除預設提示文字的陰影 */
+}
+
+.input::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* 半透明白色背景 */
+    color: #000000;
+}
+
+.input::-moz-selection {
+    background-color: transparent;
+    /* Firefox 的選取樣式 */
+    color: #ffffff;
 }
 
 .input:focus {
     outline: none;
+    background: transparent;
+    -webkit-touch-callout: text;
+    /* 允許選取文字 */
+    -webkit-user-select: text;
+    /* 允許選取文字 */
+    -khtml-user-select: text;
+    /* 允許選取文字 */
+    -moz-user-select: text;
+    /* 允許選取文字 */
+    -ms-user-select: text;
+    /* 允許選取文字 */
+    user-select: text;
+    /* 允許選取文字 */
 }
 
 .removeIcon {
     display: flex;
     align-items: center;
-    /* 垂直置中 */
     justify-content: center;
-    /* 水平置中 */
     color: white;
     width: 24px;
-    /* 固定寬度 */
     height: 24px;
-    /* 固定高度 */
-    margin: 6px 0 6px 4px;
-    margin-left: 4px;
+    margin: auto 0 auto 4px;
+    /* 使用 auto 實現垂直置中 */
     cursor: pointer;
     font-size: 18px;
-    line-height: 1;
+    padding-bottom: 2px;
+    /* 微調符號位置 */
     user-select: none;
     background-color: rgba(239, 68, 68, 0.6);
     border-radius: 50%;
@@ -89,21 +118,24 @@
 }
 
 .addBtn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: rgba(14, 165, 233, 0.5);
-    color: white;
-    border: none;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
+    width: 32px;
+    height: 32px;
+    margin: auto 0 auto 4px;
+    cursor: pointer;
     font-size: 24px;
-    line-height: 1;
-    padding: 0;
-    margin-top: 8px;
+    user-select: none;
+    padding-top: none;
+    background-color: rgba(14, 165, 233, 0.5);
+    border-radius: 50%;
     transition: all 0.2s ease;
+}
+
+.addBtn::before {
+    content: none;
 }
 
 .addBtn:hover {
