@@ -3,7 +3,7 @@ import styles from "./TeacherAssignment.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 
 import TeacherAssignmentReview from "@/components/course_components/TeacherAssignmentReview/TeacherAssignmentReview";
-
+import { DownloadAssignment } from "@/services/AssignmentApi";
 
 function TeacherAssignment({ assignments }) {
     const [selectedIdx, setSelectedIdx] = useState(0);
@@ -47,6 +47,13 @@ function TeacherAssignment({ assignments }) {
     const assignmentId = assignments[selectedIdx]?.id || 0;
     const assignmentMaxScore = assignments[selectedIdx]?.maxScore || 100;
 
+    const handleDownload = async (attachment) => {
+        try {
+            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+        } catch (error) {
+            alert(`下載失敗：${attachment.filename}`);
+        }
+    };
     return (
         <div>
             <div className={styles.tabListBox}>
@@ -98,6 +105,29 @@ function TeacherAssignment({ assignments }) {
                 >
                     {assignments[selectedIdx]?.description}
                 </div>
+                {assignments[selectedIdx]?.attachments && assignments[selectedIdx].attachments.length > 0 && (
+                    <div className={styles.attachmentsBox}>
+                        <span className={styles.attachmentsLabel}>附件：</span>
+                        <div className={styles.attachmentsList}>
+                            {assignments[selectedIdx].attachments.map((file, idx) => (
+                                <div key={idx} className={styles.attachmentItem}>
+                                    <span className={styles.attachmentIcon}>📎</span>
+                                    <a
+                                        href="#"
+                                        className={styles.attachmentLink}
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            handleDownload(file);
+                                        }}
+                                        title={file.filename}
+                                    >
+                                        {file.filename}
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
                 {descOverflow && assignments[selectedIdx] && (
                     <div className={styles.descToggleWrapper}>
                         <button

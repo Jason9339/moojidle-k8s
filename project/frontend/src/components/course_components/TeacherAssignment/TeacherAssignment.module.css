@@ -137,3 +137,39 @@
     height: 8px; 
 }
 
+.attachmentsBox {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+}
+.attachmentsLabel {
+    font-weight: bold;
+    margin-right: 6px;
+    margin-top: 2px;
+}
+.attachmentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.attachmentItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+}
+.attachmentIcon {
+    margin-right: 6px;
+    color: #1976d2;
+    font-size: 1.1em;
+}
+.attachmentLink {
+    color: #1976d2;
+    text-decoration: underline;
+    margin-right: 12px;
+    cursor: pointer;
+    word-break: break-all;
+}
+.attachmentLink:hover {
+    color: #125299;
+}
