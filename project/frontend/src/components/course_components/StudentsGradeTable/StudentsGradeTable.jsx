@@ -14,6 +14,12 @@ function StudentsGradeTable({ studentGrades }) {
 
     const [tableData, setTableData] = useState(null);
 
+    // 截斷文字函數，可自由調整允許字數
+    const truncateText = (text, maxLength = 45) => {
+        if (!text) return text;
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    };
+
     // initialize tableData when component loads
     useEffect(() => {
         // deep copy of the data
@@ -79,11 +85,11 @@ function StudentsGradeTable({ studentGrades }) {
     let assignExamNames = [null];
     // add assignment names
     for (let i = 0; i < tableData[0].sub_ass.length; i++) {
-        assignExamNames.push(tableData[0].sub_ass[i].ass_name);
+        assignExamNames.push(truncateText(tableData[0].sub_ass[i].ass_name));
     }
     // add exam names
     for (let i = 0; i < tableData[0].taken_exams.length; i++) {
-        assignExamNames.push(tableData[0].taken_exams[i].exam_name);
+        assignExamNames.push(truncateText(tableData[0].taken_exams[i].exam_name));
     }
     assignExamNames.push("Total");
 
@@ -94,7 +100,10 @@ function StudentsGradeTable({ studentGrades }) {
                     <thead>
                         <tr>
                             {assignExamNames.map((name, index) => (
-                                <th key={index} className={styles["header-row"]}>
+                                <th 
+                                    key={index} 
+                                    className={styles["header-row"]}
+                                >
                                     {name}
                                 </th>
                             ))}
@@ -104,7 +113,7 @@ function StudentsGradeTable({ studentGrades }) {
                         {tableData.map((row, rowIndex) => (
                             <tr key={rowIndex} className={styles["content-row"]}>
                                 <th className={styles["header-row"]}>
-                                    {row.name}
+                                    {truncateText(row.name)}
                                 </th>
                                 {row.sub_ass.map((cell, colIndex) =>
                                     <td key={colIndex} className={styles["value"]}>
