@@ -72,19 +72,6 @@
     font-size: 14px;
 }
 
-.edit-announcement-button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    align-self: flex-end;
-    margin-top: 0px;
-    /* change the margin to 0 */
-    white-space: nowrap; /* Prevent text from wrapping */
-}
-
 .modal {
     position: fixed;
     top: 0;
@@ -179,4 +166,39 @@
 
 .announcement-left {
     flex-grow: 1;
+}
+
+.edit-announcement-button {
+    padding: 8px 12px;
+    background-color: #83B1C9;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-end;
+    margin-top: 0px;
+    /* change the margin to 0 */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.edit-announcement-button:hover {
+    background-color: #3d87b2;
+    transform: scale(1.08);
+}
+
+.delete-announcement-button {
+    padding: 8px 12px;
+    background-color: #ef7575;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-end;
+    margin-left: 8px;
+    white-space: nowrap;
+}
+
+.delete-announcement-button:hover {
+    background-color: #e53935;
+    transform: scale(1.08);
 }

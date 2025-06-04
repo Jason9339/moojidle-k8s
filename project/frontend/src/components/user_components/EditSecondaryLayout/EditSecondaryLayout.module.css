@@ -1,0 +1,189 @@
+.tagList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    gap: 8px;
+}
+
+.tagItem {
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.8);
+    height: 32px;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: fit-content;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.tagItem:hover {
+    background: #e0f2ff;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+
+.tagItem:hover .input,
+.tagItem:hover .removeIcon {
+    color: #1e40af;
+}
+
+.input {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 14px;
+    text-align: center;
+    height: 24px;
+    line-height: 24px;
+    padding: 0;
+    margin: 0;
+    box-sizing: content-box;
+    font-family: inherit;
+    width: auto;
+    min-width: 60px;
+    max-width: none;
+}
+
+.input:focus {
+    color: #1e40af;
+}
+
+.input::placeholder {
+    /* background-color: rgba(14, 165, 233, 0.5); */
+    color: rgba(255, 255, 255, 0.6);
+
+}
+
+
+.input::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* 半透明白色背景 */
+    color: #000000;
+}
+
+
+.errorText {
+    color: red;
+    font-size: 12px;
+    margin-left: 4px;
+    margin-top: 4px;
+    display: block;
+
+}
+
+.removeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+    border-radius: 50%;
+    color: #dc2626;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.removeIcon:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+    transform: scale(1.1);
+}
+
+.removeIcon:active {
+    transform: scale(0.95);
+    background: #fee2e2;
+}
+
+.addBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 20px;
+    background-color: rgba(14, 165, 233, 0.5);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+
+.addBtn::before {
+    content: none;
+}
+
+.addBtn:hover {
+    background-color: rgba(14, 165, 233, 0.7);
+    /* transform: scale(1.1); */
+}
+
+.addBtn:active {
+    transform: scale(0.95);
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 16px 0 0 0;
+    border-top: 1px solid #e8eaed;
+}
+
+.saveBtn,
+.cancelBtn {
+    margin: 0;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    text-align: center;
+}
+
+.saveBtn {
+    background: #1967d2;
+    color: white;
+    border: 1px solid #1967d2;
+}
+
+.saveBtn:hover {
+    background: #1557b0;
+    border-color: #1557b0;
+}
+
+.cancelBtn {
+    background: #ffffff;
+    color: #5f6368;
+    border: 1px solid #dadce0;
+}
+
+.cancelBtn:hover {
+    background: #f8f9fa;
+    border-color: #dadce0;
+}
+
+.hiddenSpan {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    font-size: 14px;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+}

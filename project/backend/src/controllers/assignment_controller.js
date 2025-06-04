@@ -1,15 +1,22 @@
 import {
+    // not usint
     GetToDoAssignmentsByUserId as GetToDoAssignmentsByUserIdService,
+
+    // using
     FindAssignmentsByCourseId,
-    InsertAssignmentToDB
+    FindProjectedAssignmentsByCourseId,
+
+    InsertAssignmentToDB,
+
+    UpdateOneAssignScoreById,
 } from '#src/services/assignment_service.js';
 
-
-import { 
+import {
     FindCourseById
 
 } from '#src/services/course_service.js';
 
+import { FindStudyInJoinUserByCourseId } from '#src/services/course_member_service.js';
 
 import {
     SaveFile,
@@ -71,10 +78,53 @@ async function GetCourseAssignments(req, res) {
     }
 }
 
+async function GetProjectedAssignmentsInCourse(req, res) {
+    try {
+        const courseId = parseInt(req.params.courseId);
 
+        // check if course exist
+        if ((await FindCourseById(courseId)) == null) {
+            res.status(404).send("course not found while finding simple assignments");
+            return;
+        }
 
+        // get the exmas in the course
+        let assigns = await FindProjectedAssignmentsByCourseId(courseId);
 
+        // can only be [] or [.....]
+        if (assigns === undefined) {
+            res.status(500).send("error on finding assigns in the course");
+        }
 
+        res.status(200).send(assigns);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+async function UpdateAssignmentScore(req, res) {
+    try {
+        const assId = parseInt(req.params.assId);
+        const payload = req.body;
+
+        if (!payload || !payload.max_score || !payload.percentage ||
+            typeof payload.max_score != "number" || typeof payload.percentage != "number"
+        ) {
+            return res.status(400).send("invalid assignment Data");
+        }
+
+        // get the exmas in the course
+        let result = await UpdateOneAssignScoreById(assId, payload.max_score, payload.percentage);
+
+        if (result == null) {
+            res.status(404).send("assignment not found");
+        }
+
+        res.status(200).send("Update successful!");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
 
 // 上傳課程作業
 async function UploadAssignment(req, res) {
@@ -205,7 +255,12 @@ function DownloadAssignment(req, res) {
 export {
     GetToDoAssignmentsByUserId,
     GetCourseAssignments,
-    UploadAssignment,
+    GetProjectedAssignmentsInCourse,
     DownloadAssignment,
+
+    UploadAssignment,
+
+    UpdateAssignmentScore,
+    
     // DeleteAssignment
 };

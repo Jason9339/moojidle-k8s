@@ -61,6 +61,43 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
     }
 }
 
+async function FindProjectedExamsByCourseId(courseId) {
+    try {
+        courseId = parseInt(courseId);
+
+        const result = await mongoose.connection.db.collection("exams").find(
+            { in_course_id: courseId }
+        ).project(
+            { attachments: 0, description: 0, _id: 0 }
+        ).toArray();
+
+        if (result == null || result.length == 0) {
+            return [];
+        } else {
+            return result;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+async function UpdateOneExamScoreById(examId, max_score, percentage) {
+    try {           
+            const result = await mongoose.connection.db.collection('exams').updateOne(
+                { exam_id: examId },
+                { $set: { max_score: max_score, percentage: percentage } }
+            );
+
+            if (result.matchedCount === 0) {
+                return null;
+            }
+    
+            return result.matchedCount;
+        } catch (err) {
+            throw err;
+        }
+}
+
 // Service function to retrieve all upcoming exams
 // async function getComingExams() {
 //     try {
@@ -134,8 +171,13 @@ async function FindExamById(examId) {
 
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
+    FindProjectedExamsByCourseId,
     FindExamsByCourseId,
+    FindExamById,
+
     AddExamByCourseId,
-    FindExamById
+    
+    UpdateOneExamScoreById,
+    
     // getComingExams
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
-import { DownloadSubmissions, GradeAssignment } from '@/services/SubmitAssignmentApi.js';
+import { DownloadSubmissions, GradeAssignment } from '@/services/SubmittedAssignApi.js';
 
 const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore}) => {
     const [reviewScore, setReviewScore] = useState('');

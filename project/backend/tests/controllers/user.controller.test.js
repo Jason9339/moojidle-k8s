@@ -5,7 +5,9 @@ import {
     Delete,
     GetUserData,
     GetUserTags,
-    UpdatePassword
+    UpdatePassword,
+    UpdateData,
+    UpdateTags
 } from '#src/controllers/user_controller.js';
 import { createMockReq, createMockRes } from '../test-utils.js';
 
@@ -246,4 +248,95 @@ describe('User Controller', () => {
             });
         });
     });
-}); 
+    describe('UpdateData', () => {
+        it('應該成功更新使用者contact way', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: [
+                        { approach: 'email', details: 'updated_email@example.com' },
+                        { approach: 'phone', details: '1234567890' }
+                    ]
+                },
+                {
+                    id: 1
+
+                });
+            const res = createMockRes();
+
+            await UpdateData(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "成功更新聯絡方式",
+                updatedCount: 1
+            });
+        });
+        it('當傳入資料格式錯誤時', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: [
+                        { approach: 'email' } // 缺少 details 欄位
+                    ]
+                },
+                {
+                    id: 1
+                });
+            const res = createMockRes();
+
+            await UpdateData(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "Each contact way must have 'approach' and 'details' fields",
+                example: [{
+                    approach: "email",
+                    details: "example@email.com"
+                }]
+            });
+        });
+
+    });
+    describe('UpdateTags', () => {
+        it('應該成功更新用戶標籤', async () => {
+            const req = createMockReq({
+                tags: ["tag1", "tag2", "tag3"]
+            }, { id: 1 });
+            const res = createMockRes();
+
+            await UpdateTags(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "成功更新標籤",
+                insertedCount: 3,
+            });
+        });
+        it('當用戶不存在時應該返回 404 錯誤', async () => {
+            const req = createMockReq({
+                tags: ["tag1", "tag2", "tag3"]
+            }, { id: 999 });
+            const res = createMockRes();
+
+            await UpdateTags(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "找不到使用者"
+            });
+        });
+        it('當標籤格式錯誤時應該返回 400 錯誤', async () => {
+            const req = createMockReq({
+                tags: "not an array" // 傳入非陣列格式
+            }, { id: 1 });
+            const res = createMockRes();
+
+            await UpdateTags(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "標籤必須是陣列格式",
+                example: ["標籤1", "標籤2"]
+            });
+        });
+    });
+});

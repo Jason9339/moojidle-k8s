@@ -8,7 +8,26 @@ export const GetTodoList = async (userId) => {
     return (await api.get(`/assignment/todo?user_id=${userId}`)).data;
 };
 
+export const GetSimpleCourseAssignments = async (courseId) => {
+    try {
+        const response = await api.get(`/assignment/simple-assigns/in-course/${courseId}`);
 
+        return response.data;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export const UpdateAssignmentScore = async (assId, payload) => {
+    try {
+        const response = await api.put(`/assignment/update-score/${assId}`, payload);
+        return response.data;
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+}
 
 export const DownloadAssignmentSubmissionFile = async (submissionId, filename) => {
 

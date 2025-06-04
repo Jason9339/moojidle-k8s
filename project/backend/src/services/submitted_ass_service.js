@@ -12,6 +12,40 @@ async function FindSubAssById(subAssId) {
     }
 }
 
+async function FindSubAssByAssAndUser(assignmentId, userId) {
+    try {
+        const db = mongoose.connection.db;
+
+        const submission = await db.collection("submitted_ass").find({
+            ass_id: parseInt(assignmentId),
+            submit_by_user_id: parseInt(userId)
+        }).toArray();
+
+        return submission;
+    } catch (error) {
+        console.error("GetAssignmentSubmissionService 錯誤:", error);
+        throw error;
+    }
+}
+
+async function FindProjectSubAssignByUserIdAssId(userId, assId) {
+    try {
+        userId = parseInt(userId);
+        assId = parseInt(assId);
+
+        const result = await mongoose.connection.db.collection('submitted_ass').find(
+            {submit_by_user_id: userId, ass_id: assId}
+        ).project(
+            { attachments: 0, description: 0, _id: 0 }
+        ).toArray();
+
+        // will return an empty array if params are invalid
+        return result;
+    } catch (err) {
+        throw err;
+    }
+}
+
 async function InsertSubAss(submission) {
     try {
         const db = mongoose.connection.db;
@@ -33,23 +67,6 @@ async function UpdateSubAssById(subAssId, userTags, savedFiles, description, upd
     );
 
     return result.modifiedCount;
-}
-
-// 取得某學生針對某作業的繳交紀錄
-async function FindSubAssByAssAndUser(assignmentId, userId) {
-    try {
-        const db = mongoose.connection.db;
-
-        const submission = await db.collection("submitted_ass").find({
-            ass_id: parseInt(assignmentId),
-            submit_by_user_id: parseInt(userId)
-        }).toArray();
-
-        return submission;
-    } catch (error) {
-        console.error("GetAssignmentSubmissionService 錯誤:", error);
-        throw error;
-    }
 }
 
 async function DeleteSubAssById(subAssId) {
@@ -110,8 +127,6 @@ async function FindSubmissionsByAssignmentId(assignmentId) {
     }
 }
 
-
-
 async function UpdateReviewAssignmentSubmission(submissionId, score, graderId) {
     try {
         
@@ -148,6 +163,7 @@ async function UpdateReviewAssignmentSubmission(submissionId, score, graderId) {
 export {
     FindSubAssById,
     FindSubAssByAssAndUser,
+    FindProjectSubAssignByUserIdAssId,
     InsertSubAss,
     UpdateSubAssById,
     DeleteSubAssById,

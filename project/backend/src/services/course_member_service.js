@@ -3,11 +3,8 @@ import mongoose from "mongoose";
 async function FindStudyInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
-        const client = mongoose.connection.client;
-        const db = client.db("moojidle");
-        const studyInCollection = db.collection("study_in");
 
-        const studentsWithDetails = await studyInCollection.aggregate([
+        const studentsWithDetails = await mongoose.connection.db.collection('study_in').aggregate([
             {
                 $match: { course_id: parsedCourseId }
             },
@@ -53,11 +50,8 @@ async function FindStudyInJoinUserByCourseId(courseId) {
 async function FindAssistInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
-        const client = mongoose.connection.client;
-        const db = client.db("moojidle");
-        const assistInCollection = db.collection("assist_in");
 
-        const assistantsWithDetails = await assistInCollection.aggregate([
+        const assistantsWithDetails = await mongoose.connection.db.collection('assist_in').aggregate([
             {
                 $match: {
                     course_id: parsedCourseId
@@ -105,11 +99,8 @@ async function FindAssistInJoinUserByCourseId(courseId) {
 async function FindTeachInJoinUserByCourseId(courseId) {
     try {
         const parsedCourseId = parseInt(courseId);
-        const client = mongoose.connection.client;
-        const db = client.db("moojidle");
-        const teachInCollection = db.collection("teach_in");
 
-        const teachersWithDetails = await teachInCollection.aggregate([
+        const teachersWithDetails = await mongoose.connection.db.collection('teach_in').aggregate([
             {
                 $match: {
                     course_id: parsedCourseId
