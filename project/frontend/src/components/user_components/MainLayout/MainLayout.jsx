@@ -57,7 +57,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                                     ))}
                                 </ul>
                             ) : (
-                                <span className={styles.value}>No contact information provided.</span>
+                                <span className={styles.value}>尚未提供聯絡資訊</span>
                             )
                         )}
                     </div>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserData } from "@/services/UserApi";
-// import { IoAddCircle } from "react-icons/io5";
+import { HiXMark } from "react-icons/hi2";
+
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
     const [loading, setLoading] = useState(false);
@@ -41,14 +42,20 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             // 檢查資料是否有變更
             const isDataChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
 
+            if (!isDataChanged && validContacts.length === 0) {
+                alert("請至少添加一個聯絡方式");
+                return;
+            }
+
             if (!isDataChanged) {
-                alert("資料未更改或有空缺欄位");
+                alert("資料未更改");
                 return;
             }
 
             await UpdateUserData(userId, { contactWays: validContacts });
             onSave(validContacts);
         } catch (err) {
+            console.error("儲存失敗:", err);
             alert("儲存失敗，請稍後再試");
         } finally {
             setLoading(false);
@@ -56,18 +63,10 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     };
 
     return (
-        <div>
+        <div className={loading ? styles.loading : ''}>
             <div className={styles.contactList}>
                 {contacts.map((contact, idx) => (
-                    <li key={idx} className={styles.contactItem}>
-                        <span
-                            onClick={() => handleRemove(idx)}
-                            className={styles.removeIcon}
-                            role="button"
-                            aria-label="移除聯絡方式"
-                        >
-                            ×
-                        </span>
+                    <div key={idx} className={styles.contactItem}>
                         <div className={styles.inputGroup}>
                             <input
                                 type="text"
@@ -75,6 +74,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                                 onChange={e => handleChange(idx, 'approach', e.target.value)}
                                 placeholder="Type (e.g. email, phone)"
                                 className={styles.input}
+                                disabled={loading}
                             />
                             <input
                                 type="text"
@@ -82,23 +82,48 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                                 onChange={e => handleChange(idx, 'details', e.target.value)}
                                 placeholder="Details"
                                 className={styles.input}
+                                disabled={loading}
                             />
                         </div>
-                    </li>
+                        <span
+                            onClick={() => !loading && handleRemove(idx)}
+                            className={styles.removeIcon}
+                            role="button"
+                            aria-label="移除聯絡方式"
+                            tabIndex={0}
+                        >
+                            <HiXMark />
+                        </span>
+                    </div>
                 ))}
-                <li className={styles.contactItem}>
-                    <div className={styles.inputGroup}>
-                        <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
-                            +
-                        </button>
-                    </div>
-                </li>
-                <li className={styles.contactItem}>
-                    <div className={styles.buttonGroup}>
-                        <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
-                        <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
-                    </div>
-                </li>
+                
+                <div className={styles.addButtonContainer}>
+                    <button 
+                        onClick={handleAdd} 
+                        className={styles.addBtn} 
+                        aria-label="新增聯絡方式"
+                        disabled={loading}
+                    >
+                        新增聯絡方式
+                    </button>
+                </div>
+                
+                <div className={styles.buttonGroup}>
+                    <button 
+                        onClick={onCancel} 
+                        className={styles.cancelBtn}
+                        disabled={loading}
+                    >
+                        取消
+                    </button>
+                    <button 
+                        onClick={handleSave} 
+                        className={styles.saveBtn}
+                        disabled={loading}
+                    >
+                        {loading ? "儲存中..." : "儲存"}
+                    </button>
+                </div>
             </div>
         </div>
     );
