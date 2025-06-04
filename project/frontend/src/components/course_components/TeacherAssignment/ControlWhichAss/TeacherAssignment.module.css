@@ -60,14 +60,27 @@
     box-sizing: border-box;
 }
 
+.tabBtn:hover {
+    background: #bae6fd;
+    border-color: #3b82f6;
+    cursor: pointer;
+}
+
 .tabBtnGroupLeft {
     justify-content: flex-start !important;
     margin-left: 17px; 
 }
 
 .tabBtnActive {
-    border: 2px solid #ffb380;
-    background: #ffb380;
+    border: 2px solid #60a5fa;
+    background: #e0f2fe;
+    color: #1e3a8a;
+}
+
+.tabBtnActive:hover {
+    background: #bae6fd;
+    border-color: #3b82f6;
+    cursor: pointer;
 }
 
 .arrowBtnDisabled {
