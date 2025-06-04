@@ -3,14 +3,8 @@ import { useState, useEffect, useRef } from "react";
 // css style
 import styles from "./SimpleGradeTable.module.css";
 
-function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, SaveNewExam }) {
+function SimpleGradeTable({ simpleGrades, isCanceling, isEditing, SaveNewAssign, SaveNewExam }) {
     const [tableData, setTableData] = useState(null);
-
-    // 截斷文字函數，可自由調整允許字數
-    const truncateText = (text, maxLength = 45) => {
-        if (!text) return text;
-        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    };
 
     if (simpleGrades.length == 0) {
         return (
@@ -20,10 +14,6 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
         );
     }
 
-    useEffect(() => {
-        console.log("SimpleGradeTable mounted");
-    }, []);
-
     // initialize tableData when component loads
     useEffect(() => {
         // deep copy of the data
@@ -32,13 +22,16 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
 
     // 監聽 isEditing 變化，當從 true 變為 false 時保存數據
     const prevIsEditingRef = useRef();
-    
+
     useEffect(() => {
-        if (prevIsEditingRef.current === true && isEditing === false && tableData) {
+        console.error(isCanceling);
+        if (prevIsEditingRef.current === true && isEditing === false && tableData && !isCanceling) {
             Done();
+        } else if (prevIsEditingRef.current === true && isEditing === false && tableData && isCanceling) {
+            Cancel();
         }
         prevIsEditingRef.current = isEditing;
-    }, [isEditing, tableData]);
+    }, [isEditing, isCanceling, tableData]);
 
     if (!tableData) {
         return (
@@ -94,7 +87,7 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
         // 確保 colIndex 在有效範圍內
         if (colIndex >= 0 && colIndex < newData.length) {
             const numValue = value === "" ? 0 : Number(value);
-            
+
             if (rowIndex === 0) {
                 newData[colIndex].max_score = numValue;
             } else if (rowIndex === 1) {
@@ -102,6 +95,12 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
             }
             setTableData(newData);
         }
+    };
+
+    // 截斷文字函數，可自由調整允許字數
+    const truncateText = (text, maxLength = 45) => {
+        if (!text) return text;
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     };
 
     // simpleGrades is:
@@ -159,8 +158,8 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
                     <thead>
                         <tr>
                             {names.map((name, index) => (
-                                <th 
-                                    key={index} 
+                                <th
+                                    key={index}
                                     className={styles["header-row"]}
                                 >
                                     {name}
