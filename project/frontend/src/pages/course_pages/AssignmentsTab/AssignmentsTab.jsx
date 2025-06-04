@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import TeacherAssignment from "@/components/course_components/TeacherAssignment/ControlWhichAss/TeacherAssignment";
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
 
+
+
 function AssignmentsTab() {
     const { role, course } = useOutletContext();
-    
+    const [TeacherAssignments, setTeacherAssignments] = useState([]);
+
     // 學生相關的狀態
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submissionMap, setSubmissionMap] = useState({});
 
-
     // 檢查是否為學生
     const isStudent = role.isStudent;
+
+    // Get the Teacher assignment
+    useEffect(() => {
+        async function fetchTeacherAssignments() {
+            const data = await GetCourseAssignments(course.courseId);
+            setTeacherAssignments(data || []);
+        }
+        if (role.isTeacher || role.isAssistant) {
+            fetchTeacherAssignments();
+        }
+    }, [course.courseId, role]);
+
 
     // --- fetch function(學生) --- //
     // 獲取作業列表
@@ -117,12 +132,14 @@ function AssignmentsTab() {
             </div>
         );
     }
-    // 其他身分暫不顯示內容
-    return (
-        <div>
-            <h3>作業列表（教師/助教）</h3>
-            <p>身分: {role.isTeacher ? "教師" : "助教"}</p>
-        </div>
-    );
+    else {
+        return (
+            <div>
+
+            <TeacherAssignment assignments={TeacherAssignments} />
+            </div>
+        )
+    }
+
 }
 export default AssignmentsTab;
