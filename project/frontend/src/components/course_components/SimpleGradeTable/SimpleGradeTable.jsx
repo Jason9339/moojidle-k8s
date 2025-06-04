@@ -6,6 +6,12 @@ import styles from "./SimpleGradeTable.module.css";
 function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, SaveNewExam }) {
     const [tableData, setTableData] = useState(null);
 
+    // 截斷文字函數，可自由調整允許字數
+    const truncateText = (text, maxLength = 45) => {
+        if (!text) return text;
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    };
+
     if (simpleGrades.length == 0) {
         return (
             <div>
@@ -128,7 +134,7 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
     let maxScores = ["Max Score"];
     let percentages = ["Percentage"];
     for (let i = 0; i < tableData.length; i++) {
-        names.push(tableData[i].ass_name || tableData[i].exam_name);
+        names.push(truncateText(tableData[i].ass_name || tableData[i].exam_name));
         maxScores.push(tableData[i].max_score);
         percentages.push(tableData[i].percentage);
     }
@@ -153,7 +159,10 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
                     <thead>
                         <tr>
                             {names.map((name, index) => (
-                                <th key={index} className={styles["header-row"]}>
+                                <th 
+                                    key={index} 
+                                    className={styles["header-row"]}
+                                >
                                     {name}
                                 </th>
                             ))}
