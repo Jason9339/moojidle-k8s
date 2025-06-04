@@ -21,7 +21,7 @@ workflow:
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
   rules: 
-    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/ || || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/  || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
 
       when: never
 
