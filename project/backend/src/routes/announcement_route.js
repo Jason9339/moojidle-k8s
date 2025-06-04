@@ -4,8 +4,10 @@ const router = express.Router();
 import {
     GetCourseAnnouncements,
     CreateAnnouncement,
-    EditAnnouncement
+    EditAnnouncement,
+    DeleteAnnouncement
 } from '#src/controllers/announcement_controller.js';
+
 
 // ----- Announcement Routes -----
 // entry point http://localhost:PORT/announcement
@@ -18,6 +20,9 @@ router.post("/course/:courseId", CreateAnnouncement);
 
 // POST /announcement/:announcementId/edit
 router.post("/:announcementId/edit", EditAnnouncement);
+
+// DELETE /announcement/:announcementId
+router.delete("/:announcementId/delete", DeleteAnnouncement);
 
 
 export default router; 
