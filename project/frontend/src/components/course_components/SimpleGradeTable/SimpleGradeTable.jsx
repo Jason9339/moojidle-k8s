@@ -14,6 +14,10 @@ function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, Sav
         );
     }
 
+    useEffect(() => {
+        console.log("SimpleGradeTable mounted");
+    }, []);
+
     // initialize tableData when component loads
     useEffect(() => {
         // deep copy of the data

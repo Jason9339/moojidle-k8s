@@ -230,41 +230,36 @@ function GradesTab() {
     
     if (role.isStudent) {
         return (
-            <>
-                <div className={styles["grade-tab-container"]}>
-                    <button 
-                        className={styles["toggle-button"]} 
-                        onClick={ToggleShowSimpleGradeTable}
-                    >
-                        <span className={styles["toggle-icon"]}>
-                            {showSimpleGradeTable ? "−" : "+"}
-                        </span>
-                        <span className={styles["toggle-text"]}>
-                            {showSimpleGradeTable ? "隱藏成績分配" : "顯示成績分配"}
-                        </span>
-                    </button>
-
-                    {showSimpleGradeTable ? (
-                        <div className={styles["section-block"]}>
-                            <div className={styles["section-header"]}>
-                                <div className={styles["section-title"]}>課程成績分配總覽</div>
-                            </div>
-                            <SimpleGradeTable
-                                simpleGrades={simpleGrades}
-                            />
-                        </div>
-                    ) : null}
-
-                    <div className={styles["section-block"]}>
-                        <div className={styles["section-header"]}>
-                            <div className={styles["section-title"]}>學生成績詳情</div>
-                        </div>
-                        <StudentsGradeTable
-                            studentGrades={studentGrades}
-                        />
+            <div className={styles["grade-tab-container"]}>
+                <button 
+                    className={styles["toggle-button"]} 
+                    onClick={ToggleShowSimpleGradeTable}
+                >
+                    <span className={styles["toggle-icon"]}>
+                        {showSimpleGradeTable ? "−" : "+"}
+                    </span>
+                    <span className={styles["toggle-text"]}>
+                        {showSimpleGradeTable ? "隱藏成績分配" : "顯示成績分配"}
+                    </span>
+                </button>
+    
+                <div
+                    className={styles["section-block"]}
+                    style={{ display: showSimpleGradeTable ? "block" : "none" }}
+                >
+                    <div className={styles["section-header"]}>
+                        <div className={styles["section-title"]}>課程成績分配總覽</div>
                     </div>
+                    <SimpleGradeTable simpleGrades={simpleGrades} />
                 </div>
-            </>
+    
+                <div className={styles["section-block"]}>
+                    <div className={styles["section-header"]}>
+                        <div className={styles["section-title"]}>學生成績詳情</div>
+                    </div>
+                    <StudentsGradeTable studentGrades={studentGrades} />
+                </div>
+            </div>
         );
     }
 
@@ -293,53 +288,50 @@ function GradesTab() {
                     {isEditing ? "編輯模式中..." : showSimpleGradeTable ? "隱藏評分設定" : "顯示評分設定"}
                 </span>
             </button>
-
-            {showSimpleGradeTable ? (
-                <div className={styles["section-block"]}>
-                    <div className={styles["section-header"]}>
-                        <div className={styles["section-title"]}>⚙️ 課程評分設定</div>
-                        {!role.isStudent && (
-                            <div className={styles["edit-controls"]}>
-                                {isEditing ? (
-                                    <>
-                                        <button className={styles["cancel-button"]} onClick={handleEditCancel}>
-                                            取消
-                                        </button>
-                                        <button className={styles["edit-button"]} onClick={handleEditDone}>
-                                            完成
-                                        </button>
-                                    </>
-                                ) : (
-                                    <button className={styles["edit-button"]} onClick={() => setIsEditing(true)}>
-                                        <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
-                                        編輯
+    
+            <div
+                className={styles["section-block"]}
+                style={{ display: showSimpleGradeTable ? "block" : "none" }}
+            >
+                <div className={styles["section-header"]}>
+                    <div className={styles["section-title"]}>⚙️ 課程評分設定</div>
+                    {!role.isStudent && (
+                        <div className={styles["edit-controls"]}>
+                            {isEditing ? (
+                                <>
+                                    <button className={styles["cancel-button"]} onClick={handleEditCancel}>
+                                        取消
                                     </button>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                    <SimpleGradeTable
-                        simpleGrades={simpleGrades}
-                        canEdit={!role.isStudent}
-                        isEditing={isEditing}
-
-                        // call backs
-                        SaveNewAssign={SaveNewAssign}
-                        SaveNewExam={SaveNewExam}
-                    />
+                                    <button className={styles["edit-button"]} onClick={handleEditDone}>
+                                        完成
+                                    </button>
+                                </>
+                            ) : (
+                                <button className={styles["edit-button"]} onClick={() => setIsEditing(true)}>
+                                    <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
+                                    編輯
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
-            ) : null}
-
+                <SimpleGradeTable
+                    simpleGrades={simpleGrades}
+                    canEdit={!role.isStudent}
+                    isEditing={isEditing}
+                    SaveNewAssign={SaveNewAssign}
+                    SaveNewExam={SaveNewExam}
+                />
+            </div>
+    
             <div className={styles["section-block"]}>
                 <div className={styles["section-header"]}>
                     <div className={styles["section-title"]}>👥 學生成績總覽</div>
                 </div>
-                <StudentsGradeTable
-                    studentGrades={studentGrades}
-                />
+                <StudentsGradeTable studentGrades={studentGrades} />
             </div>
         </div>
-    );
+    );    
 }
 
 export default GradesTab;
