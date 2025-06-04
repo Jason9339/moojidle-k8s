@@ -24,7 +24,6 @@ function SimpleGradeTable({ simpleGrades, isCanceling, isEditing, SaveNewAssign,
     const prevIsEditingRef = useRef();
 
     useEffect(() => {
-        console.error(isCanceling);
         if (prevIsEditingRef.current === true && isEditing === false && tableData && !isCanceling) {
             Done();
         } else if (prevIsEditingRef.current === true && isEditing === false && tableData && isCanceling) {
