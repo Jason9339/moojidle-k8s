@@ -44,7 +44,8 @@ noop:
   stage: test
   script: echo "Skipping test for fix-db/* or style-*"
   rules:
-    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
+
       when: always
 
 # 真正的 backend test
