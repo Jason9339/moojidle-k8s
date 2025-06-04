@@ -98,7 +98,8 @@
 .removeIcon {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-80%);
+    /* flex-direction:column; */
     right: 12px;
     color: white;
     background: #ea4335;
