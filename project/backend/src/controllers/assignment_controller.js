@@ -16,6 +16,7 @@ import {
 
 } from '#src/services/course_service.js';
 
+import { FindStudyInJoinUserByCourseId } from '#src/services/course_member_service.js';
 
 import {
     SaveFile,
