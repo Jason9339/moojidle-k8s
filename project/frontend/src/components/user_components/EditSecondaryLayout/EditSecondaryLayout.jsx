@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
 import { UpdateUserTags } from "@/services/UserApi";
-
+import { LuPlus } from "react-icons/lu";
 
 function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);
@@ -89,7 +89,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                     </li>
                 ))}
                 <button onClick={handleAdd} className={styles.addBtn} aria-label="新增標籤">
-                    +
+                    <LuPlus />
                 </button>
             </div>
             <div className={styles.buttonGroup} >
