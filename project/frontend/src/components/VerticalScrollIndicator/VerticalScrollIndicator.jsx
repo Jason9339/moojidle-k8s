@@ -42,7 +42,6 @@ export default function VerticalOverflowIndicator({
         }
     }, []);
 
-    console.log("show shadow:", showBottomShadow);
     useEffect(() => {
         checkShadows();
     }, [checkShadows]);
