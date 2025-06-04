@@ -4,7 +4,9 @@ import {
     DeleteUser,
     FindOneUserById,
     FindOnesTagById,
-    UpdateUserPassword
+    UpdateUserPassword,
+    UpdateUserContactWay,
+    UpdateUserTags
 } from "#src/services/user_service.js";
 
 import{
@@ -100,7 +102,7 @@ async function GetUserData(req, res) {
 
     try {
         let resultMain = await FindOneUserById(userId);
-        
+
         if (!resultMain) {
             return res.status(404).send({ message: "User not found" });
         }
@@ -125,12 +127,6 @@ async function GetUserTags(req, res) {
 
     res.status(200).send(tags);
 }
-// Update user password by user ID
-// In Postman send this json format in the body
-// {
-//     "currentPassword": "old_password",
-//     "newPassword": "new_secure_password"
-// }
 async function UpdatePassword(req, res) {
     const userId = req.params.id;
     const { currentPassword, newPassword } = req.body;
@@ -163,6 +159,107 @@ async function UpdatePassword(req, res) {
     }
 }
 
+
+async function UpdateData(req, res) {
+    const userId = req.params.id;
+    const { contactWays } = req.body;
+
+    if (!Array.isArray(contactWays)) {
+        return res.status(400).send({
+            message: "contactWays must be a non-empty array",
+            example: [{
+                approach: "email",
+                details: "example@email.com"
+            }]
+        });
+    }
+    if (contactWays.length > 0) {
+        for (const contact of contactWays) {
+            if (!contact.approach || !contact.details) {
+                return res.status(400).send({
+                    message: "Each contact way must have 'approach' and 'details' fields",
+                    example: [{
+                        approach: "email",
+                        details: "example@email.com"
+                    }]
+                });
+            }
+        }
+    }
+    try {
+        const result = await UpdateUserContactWay(userId, contactWays);
+
+        if (result.modifiedCount > 0) {
+            return res.status(200).send({
+                message: "成功更新聯絡方式",
+                updatedCount: result.modifiedCount
+            });
+        }
+        if (result.matchedCount === 0) {
+            return res.status(404).send({
+                message: "找不到使用者或聯絡方式未更改",
+            });
+        }
+    } catch (err) {
+        console.error("更新聯絡方式時發生錯誤:", err);
+        return res.status(500).send({
+            message: "更新聯絡方式失敗",
+            error: err.message
+        });
+    }
+}
+
+async function UpdateTags(req, res) {
+    const userId = parseInt(req.params.id, 10);
+    const { tags } = req.body;
+
+    // 驗證 tags 是否為陣列
+    if (!Array.isArray(tags)) {
+        return res.status(400).send({
+            message: "標籤必須是陣列格式",
+            example: ["標籤1", "標籤2"],
+        });
+    }
+
+    // 如果陣列不為空，驗證每個標籤
+    if (tags.length > 0) {
+        for (const tag of tags) {
+            if (typeof tag !== "string" || tag.trim() === "") {
+                return res.status(400).send({
+                    message: "每個標籤都必須是非空的字串",
+                    example: ["標籤1", "標籤2"],
+                });
+            }
+        }
+    }
+
+    try {
+        // 確認使用者是否存在
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "找不到使用者" });
+        }
+
+        // 更新標籤
+        const result = await UpdateUserTags(userId, tags);
+
+        return res.status(200).send({
+            message: "成功更新標籤",
+            insertedCount: result.newIds ? result.newIds.length : 0,
+            // newIds: result.newIds || [],
+        });
+    } catch (err) {
+        console.error("UpdateTags error:", err);
+        return res.status(500).send({
+            message: "更新標籤失敗",
+            error: err.message
+        });
+    }
+}
+
+
+
+
 export {
     Register,
     Login,
@@ -170,6 +267,8 @@ export {
     GetUserData,
     GetUserTags,
     UpdatePassword,
+    UpdateData,
+    UpdateTags
 }
 
 
