@@ -17,7 +17,7 @@ const PORT = process.env.PORT;
 // Middle Ware
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173"]
 }));
 
 // Routes are here ----------------------------------------------------------------------
@@ -31,6 +31,7 @@ import materialRoute from "#src/routes/material_route.js";
 import announcementRoute from "#src/routes/announcement_route.js";
 import discussionBoardRoute from "#src/routes/discussion_board_route.js"
 import postRoute from "#src/routes/post_routes.js"
+import takenExamRoute from "#src/routes/taken_exams_route.js"
 import calendarRoute from "#src/routes/calendar_route.js"
 import notificationRout from "#src/routes/notification_route.js"
 app.use("/user", userRoute);
@@ -43,6 +44,7 @@ app.use("/submitted-assignment", submittedAssRoute);
 app.use("/material", materialRoute);
 app.use("/announcement", announcementRoute);
 app.use("/exams", examRoute);
+app.use("/taken-exam", takenExamRoute);
 app.use("/calendar", calendarRoute);
 app.use("/notification", notificationRout);
 // Routes ends --------------------------------------------------------------------------

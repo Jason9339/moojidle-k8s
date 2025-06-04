@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
-import { GetAssignmentSubmissions } from '@/services/SubmitAssignmentApi.js';
+import { GetAssignmentSubmissions } from '@/services/SubmittedAssignApi.js';
 import SubmittedTab from './SubmittedTab';
 import NonSubmittedTab from './NonSubmittedTab';
 

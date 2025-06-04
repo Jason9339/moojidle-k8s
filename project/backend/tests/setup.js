@@ -168,9 +168,6 @@ async function SetupTestData() {
 global.console = {
     ...console,
     log: vi.fn(),
-    // log: console.log,  // 開啟 console.log
     error: vi.fn(),
-    // error: console.error,  // 開啟 console.error
     warn: vi.fn(),
-    // warn: console.warn,  // 開啟 console.warn
 }; 

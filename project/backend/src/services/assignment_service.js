@@ -114,6 +114,43 @@ async function FindAssignmentsByCourseId(courseId) {
     }
 }
 
+async function FindProjectedAssignmentsByCourseId(courseId) {
+    try {
+        courseId = parseInt(courseId);
+
+        const result = await mongoose.connection.db.collection('assignments').find(
+            { in_course_id: courseId }
+        ).project(
+            { attachments: 0, description: 0, _id: 0 }
+        ).toArray();
+
+        if (result == null || result.length == 0) {
+            return [];
+        } else {
+            return result;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function UpdateOneAssignScoreById(assId, max_score, percentage) {
+    try {           
+            const result = await mongoose.connection.db.collection('assignments').updateOne(
+                { ass_id: assId },
+                { $set: { max_score: max_score, percentage: percentage } }
+            );
+
+            if (result.matchedCount === 0) {
+                return null;
+            }
+    
+            return result.matchedCount;
+        } catch (err) {
+            throw err;
+        }
+}
+
 const InsertAssignmentToDB = async (assignmentData) => {
     try {
         // 生成下一個 assignment ID
@@ -133,10 +170,13 @@ const InsertAssignmentToDB = async (assignmentData) => {
     }
 };
 
-
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
-    InsertAssignmentToDB,
+    FindProjectedAssignmentsByCourseId,
     FindAssignmentById,
+
+    InsertAssignmentToDB,
+
+    UpdateOneAssignScoreById,
 };
