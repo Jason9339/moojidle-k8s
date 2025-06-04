@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import styles from "./BoardSideBar.module.css";
+import VerticalOverflowIndicator from "@/components/VerticalScrollIndicator/VerticalScrollIndicator";
 const NO_SELECTED = -1;
 
 const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
@@ -24,7 +25,7 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     }
 
     return (
-        <div className={styles.container}>
+        <VerticalOverflowIndicator className={styles.container}>
             <StyledSidebar breakPoint="md">
                 <Menu
                     renderExpandIcon={({ open }) => (
@@ -136,7 +137,8 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                     )}
                 </Menu>
             </StyledSidebar>
-        </div>
+        </VerticalOverflowIndicator>
+
     );
 };
 
@@ -144,13 +146,11 @@ export default BoardSideBar;
 
 const StyledSidebar = styled(Sidebar)`
     width: 100% !important;
-    height: 100%;
-    max-height: inherit;
     background-color: #f9fafb !important;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-
+    z-index: 1;
     .ps-sidebar-container {
         background-color: transparent !important;
         height: 100%;
@@ -160,8 +160,7 @@ const StyledSidebar = styled(Sidebar)`
 
     .ps-menu-root {
         flex-grow: 1;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        overflow: hidden;
 
         &::-webkit-scrollbar {
             width: 8px;
