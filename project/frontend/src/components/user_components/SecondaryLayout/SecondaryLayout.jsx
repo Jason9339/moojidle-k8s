@@ -34,8 +34,10 @@ function SecondaryLayout({ user_tags: initialTags }) {
                     user_tags && user_tags.length > 0 ? (
                         <ul className={styles.tagList}>
                             {user_tags.map((tag, index) => (
-                                <li className={styles.tagItem} key={index}>
-                                    {tag.user_tag}
+                                <li className={styles.tagItem} key={index} title={tag.user_tag}>
+                                    {tag.user_tag.length > 30
+                                        ? `${tag.user_tag.slice(0, 30)}...`
+                                        : tag.user_tag}
                                 </li>
                             ))}
                         </ul>
