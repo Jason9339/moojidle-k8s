@@ -71,6 +71,15 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
     return (
         reviewData.length > 0 ? (
             <table className={styles["submissions-table"]}>
+                <colgroup>
+                    <col style={{ width: "10%" }} />
+                    <col style={{ width: "14%" }} />
+                    <col style={{ width: "24%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "16%" }} />
+                </colgroup>
                 <thead>
                     <tr>
                         <th>Student Name</th>
