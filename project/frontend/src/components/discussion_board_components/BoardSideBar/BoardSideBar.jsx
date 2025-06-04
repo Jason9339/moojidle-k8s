@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import styles from "./BoardSideBar.module.css";
-
 const NO_SELECTED = -1;
 
 const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
@@ -26,7 +25,7 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
 
     return (
         <div className={styles.container}>
-            <Sidebar className={styles.sidebar} breakPoint="md">
+            <StyledSidebar breakPoint="md">
                 <Menu
                     renderExpandIcon={({ open }) => (
                         <span>{open ? "−" : "+"}</span>
@@ -136,7 +135,7 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                         )
                     )}
                 </Menu>
-            </Sidebar>
+            </StyledSidebar>
         </div>
     );
 };
@@ -161,7 +160,7 @@ const StyledSidebar = styled(Sidebar)`
 
     .ps-menu-root {
         flex-grow: 1;
-        overflow-y: auto;
+        overflow-y: scroll;
         overflow-x: hidden;
 
         &::-webkit-scrollbar {
