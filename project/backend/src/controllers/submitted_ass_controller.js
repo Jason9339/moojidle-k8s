@@ -522,7 +522,7 @@ async function ReviewAssignmentSubmission(req, res) {
         
         // Call service function to update the submission
         const result = await UpdateReviewAssignmentSubmission(submitAssignmentId, score, graderId);
-        console.log("評分結果:", result);
+        // console.log("評分結果:", result);
         // Return success response
         return res.status(200).json({
             message: "作業評分成功",
