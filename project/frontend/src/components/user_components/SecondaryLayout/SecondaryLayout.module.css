@@ -60,25 +60,13 @@
 }
 
 .tagItem {
-    /* 添加外框樣式 */
     border: 1px solid #e0e0e0;
     border-radius: 16px;
     padding: 4px 12px;
-    background-color: rgba(14, 165, 233, 0.5);
-
-    /* 文字樣式 */
+    background: #bfdbfe;
     font-size: 14px;
-    color: #333;
-
-    /* hover 效果 */
-    transition: all 0.2s ease;
-}
-
-.tagItem:hover {
-    /* 懸停時的效果 */
-    background-color: #e8e8e8;
-    border-color: #d0d0d0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #1e40af;
+    font-weight: 400;
 }
 
 .body {

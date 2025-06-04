@@ -19,15 +19,25 @@
     flex: 0 0 auto;
     width: auto;
     max-width: fit-content;
+    background: #ffffff;
+    transition: all 0.2s ease;
 }
 
+.tagItem:hover {
+    background: #e0f2ff;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
 
-
+.tagItem:hover .input,
+.tagItem:hover .removeIcon {
+    color: #1e40af;
+}
 
 .input {
     background: transparent;
     border: none;
-    color: #000000;
+    color: inherit;
     font-size: 14px;
     text-align: center;
     height: 24px;
@@ -39,6 +49,10 @@
     width: auto;
     min-width: 60px;
     max-width: none;
+}
+
+.input:focus {
+    color: #1e40af;
 }
 
 .input::placeholder {
@@ -72,24 +86,23 @@
     height: 20px;
     margin-left: 4px;
     cursor: pointer;
-    font-size: 18px;
-    padding-bottom: 2px;
+    font-size: 16px;
     user-select: none;
-    /* background-color: rgba(239, 68, 68, 0.6); */
     border-radius: 50%;
-    color: #ef4444;
+    color: #dc2626;
+    background: transparent;
     transition: all 0.2s ease;
 }
 
 .removeIcon:hover {
-    background-color: rgba(239, 68, 68, 0.8);
-    color: #dc2626;
+    background: #fef2f2;
+    color: #b91c1c;
     transform: scale(1.1);
 }
 
 .removeIcon:active {
     transform: scale(0.95);
-
+    background: #fee2e2;
 }
 
 .addBtn {
@@ -125,39 +138,46 @@
 
 .buttonGroup {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 12px;
     margin-top: 16px;
-    padding: 0;
-
+    padding: 16px 0 0 0;
+    border-top: 1px solid #e8eaed;
 }
 
 .saveBtn,
 .cancelBtn {
     margin: 0;
-    /* 避免產生左右不一致 */
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 8px 20px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    text-align: center;
 }
 
 .saveBtn {
-    background-color: rgba(14, 165, 233, 0.5);
+    background: #1967d2;
     color: white;
-    border: none;
+    border: 1px solid #1967d2;
 }
 
 .saveBtn:hover {
-    background-color: rgba(14, 165, 233, 0.7);
+    background: #1557b0;
+    border-color: #1557b0;
 }
 
 .cancelBtn {
-    background-color: transparent;
-    color: #666;
-    border: 1px solid #ddd;
+    background: #ffffff;
+    color: #5f6368;
+    border: 1px solid #dadce0;
 }
 
 .cancelBtn:hover {
-    background-color: #f5f5f5;
+    background: #f8f9fa;
+    border-color: #dadce0;
 }
 
 .hiddenSpan {
