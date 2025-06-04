@@ -125,6 +125,82 @@ async function UpdateUserPassword(userId, newPassword) {
     return result;
 }
 
+async function UpdateUserTags(userId, newTags) {
+    try {
+        const collection = mongoose.connection.db.collection("custom_tag");
+
+
+        await collection.deleteMany({ user_id: parseInt(userId) });
+
+        // 如果有新標籤才新增
+        if (Array.isArray(newTags) && newTags.length > 0) {
+            const toInsert = newTags.map((tagStr) => ({
+                user_id: parseInt(userId),
+                user_tag: tagStr,
+            }));
+            const insertResult = await collection.insertMany(toInsert);
+            return {
+                modifiedCount: insertResult.insertedCount,
+                message: "標籤更新成功",
+                newIds: Object.values(insertResult.insertedIds).map((id) => id.toString()),
+            };
+        }
+
+        // 回傳清空標籤的訊息
+        return { 
+            modifiedCount: 0, 
+            message: "已清空所有標籤",
+            newIds: []
+        };
+    } catch (err) {
+        console.error("UpdateUserTags error:", err);
+        throw new Error(`更新使用者標籤失敗: ${err.message}`);
+    }
+}
+
+
+
+async function UpdateUserContactWay(userId, newContactWays) {
+    let result;
+    try {
+       
+
+        // 驗證 newContactWays 是否為陣列
+        if (!Array.isArray(newContactWays)) {
+            throw new Error("聯絡方式必須是陣列格式");
+        }
+
+        // 如果有聯絡方式，驗證每個聯絡方式的格式
+        const validContactWays = newContactWays.map(contact => ({
+            approach: (contact.approach || "").trim(),
+            details: (contact.details || "").trim()
+        })).filter(contact => 
+            contact.approach !== "" && 
+            contact.details !== ""
+        );
+
+        // 更新聯絡方式
+        result = await mongoose.connection.db.collection('user').updateOne(
+            { user_id: parseInt(userId) },
+            {
+                $set: {
+                    contact_ways: validContactWays
+                }
+            }
+        );
+
+        return {
+            modifiedCount: result.modifiedCount,
+            message: result.modifiedCount ? "聯絡方式更新成功" : "沒有更新任何聯絡方式",
+            updatedContactWays: validContactWays
+        };
+
+    } catch (err) {
+        console.error("Error updating contact ways:", err);
+        throw new Error(`更新聯絡方式失敗: ${err.message}`);
+    }
+}
+
 
 export {
     RegisterUser,
@@ -133,4 +209,6 @@ export {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
+    UpdateUserTags,
+    UpdateUserContactWay
 }

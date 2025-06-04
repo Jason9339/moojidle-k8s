@@ -8,6 +8,8 @@ import {
     Delete,
     UpdatePassword,
     GetUserTags,
+    UpdateData,
+    UpdateTags
 } from '#src/controllers/user_controller.js';
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
@@ -46,5 +48,8 @@ router.post("/login", Login);
 router.delete("/delete/:id", Delete);
 
 router.put("/update-password/:id", UpdatePassword)
+
+router.put("/update-user-data/:id", UpdateData);
+router.put("/update-user-tags/:id", UpdateTags);
 
 export default router;
