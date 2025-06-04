@@ -93,7 +93,7 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         formData.append("startDate", startDateTime.toISOString());
         formData.append("endDate", endDateTime.toISOString());
         formData.append("maxScore", parseFloat(maxScore));
-        formData.append("percentage", parseFloat(percentage));
+        formData.append("percentage", parseFloat(percentage) / 100);
 
         try {
             await UploadExam(formData);

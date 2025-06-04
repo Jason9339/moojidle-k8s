@@ -1,0 +1,91 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #eff2f5;
+    color: #222;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: row;
+    padding: 24px;
+    width: calc(100% - 180px);
+    gap: 24px;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.notification-left {
+    flex: 2;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.notification-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 4px;
+}
+
+.notification-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.heading-divider {
+    border-top: 2px solid #ccc;
+    /* margin-bottom: 20px; */
+}
+
+.delete-button {
+    padding: 8px;
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-button.active {
+    background-color: #e63946;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #ccc;
+}
+
+.delete-button.active:hover {
+    background-color: #c53030;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-select {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+}

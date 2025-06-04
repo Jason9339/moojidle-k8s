@@ -21,16 +21,16 @@ workflow:
 # Define conditions for automated and manual pipelines
 .ci_conditions: &ci_conditions
   rules: 
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/  || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
+
+      when: never
+
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
       allow_failure: false  # Pipeline succeeds even if this job is not run
     
     - if: $CI_COMMIT_BRANCH == "main"  # for push to main
       when: always
-    # Manual execution for merge requests (except certain branches)
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^fix-db/ && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^style-/
-      when: manual
-      allow_failure: false  # Pipeline succeeds even if this job is not run
 
     # Always allow manual triggering from web interface
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -44,7 +44,8 @@ noop:
   stage: test
   script: echo "Skipping test for fix-db/* or style-*"
   rules:
-    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
+
       when: always
 
 # 真正的 backend test
