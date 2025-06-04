@@ -133,9 +133,10 @@ const InsertAssignmentToDB = async (assignmentData) => {
     }
 };
 
+
 export {
     GetToDoAssignmentsByUserId,
     FindAssignmentsByCourseId,
+    InsertAssignmentToDB,
     FindAssignmentById,
-    InsertAssignmentToDB
 };
