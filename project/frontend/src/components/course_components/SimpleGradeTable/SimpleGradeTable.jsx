@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // css style
 import styles from "./SimpleGradeTable.module.css";
 
-function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam }) {
-    const [isEditing, setIsEditing] = useState(false);
+function SimpleGradeTable({ simpleGrades, canEdit, isEditing, SaveNewAssign, SaveNewExam }) {
     const [tableData, setTableData] = useState(null);
 
     if (simpleGrades.length == 0) {
@@ -21,24 +20,28 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
         setTableData(simpleGrades.map(item => ({ ...item })));
     }, [simpleGrades]);
 
+    // 監聽 isEditing 變化，當從 true 變為 false 時保存數據
+    const prevIsEditingRef = useRef();
+    
+    useEffect(() => {
+        if (prevIsEditingRef.current === true && isEditing === false && tableData) {
+            Done();
+        }
+        prevIsEditingRef.current = isEditing;
+    }, [isEditing, tableData]);
+
     if (!tableData) {
         return (
             <></>
         )
     }
 
-    function ToggleEdit() {
-        setIsEditing(prev => !prev);
-    }
-
     function Cancel() {
-        setIsEditing(prev => !prev);
         // revert back
         setTableData(simpleGrades.map(item => ({ ...item })));
     }
 
     function Done() {
-        setIsEditing(prev => !prev);
         let updatedAssigns = [];
         let updatedExams = [];
         // save changes by calling cb from parent page
@@ -78,12 +81,17 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
         // minus 1 b/c the 1st column is header
         colIndex = colIndex - 1;
 
-        if (rowIndex === 0) {
-            newData[colIndex].max_score = Number(value);
-        } else if (rowIndex === 1) {
-            newData[colIndex].percentage = Number(value);
+        // 確保 colIndex 在有效範圍內
+        if (colIndex >= 0 && colIndex < newData.length) {
+            const numValue = value === "" ? 0 : Number(value);
+            
+            if (rowIndex === 0) {
+                newData[colIndex].max_score = numValue;
+            } else if (rowIndex === 1) {
+                newData[colIndex].percentage = numValue;
+            }
+            setTableData(newData);
         }
-        setTableData(newData);
     };
 
     // simpleGrades is:
@@ -120,33 +128,22 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
         maxScores.push(tableData[i].max_score);
         percentages.push(tableData[i].percentage);
     }
+
+    names.push("-");
+    maxScores.push("-");
+    percentages.push("-");
+
     let content = [maxScores, percentages];
 
     // calculate  summary
     let maxGrade = 0;
-    for (let i = 1; i < percentages.length; i++) {
+    for (let i = 1; i < percentages.length - 1; i++) {
         // start from the 2nd element since the first one is the title on the left of that row
         maxGrade += percentages[i];
     }
 
     return (
         <div className={styles["simple-grade-container"]}>
-            {canEdit && isEditing ? (
-                <>
-                    <button className={styles["edit-button"]} onClick={Done}>
-                        完成
-                    </button>
-                    <button className={styles["cancel-button"]} onClick={Cancel}>
-                        取消
-                    </button>
-                </>
-            ) : canEdit ? (
-                <button className={styles["edit-button"]} onClick={ToggleEdit}>
-                    <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
-                    編輯
-                </button>
-            ) : null}
-
             <div className={styles["table-wrapper"]}>
                 <table className={styles["grade-table"]}>
                     <thead>
@@ -168,11 +165,11 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
                                         </th>
                                     ) : (
                                         <td key={colIndex} className={styles["value"]}>
-                                            {isEditing ? (
+                                            {isEditing && colIndex < row.length - 1 ? (
                                                 <input
                                                     className={styles["input-field"]}
                                                     type="number"
-                                                    value={cell}
+                                                    value={cell === "-" ? "" : cell}
                                                     onChange={(e) =>
                                                         HandleInputChange(rowIndex, colIndex, e.target.value)
                                                     }
@@ -191,14 +188,14 @@ function SimpleGradeTable({ simpleGrades, canEdit, SaveNewAssign, SaveNewExam })
 
             <div className={styles["summary-box"]}>
                 <div className={styles["summary"]}>
-                    課程總站比: {maxGrade.toFixed(2)}
+                    <div className={styles["summary-label"]}>課程總佔比</div>
+                    <div className={styles["summary-value"]}>{maxGrade.toFixed(2)}</div>
                 </div>
                 <div className={styles["summary"]}>
-                    課程最高分數: {(maxGrade * 100).toFixed(2)}
+                    <div className={styles["summary-label"]}>課程最高分數</div>
+                    <div className={styles["summary-value"]}>{(maxGrade * 100).toFixed(2)}</div>
                 </div>
             </div>
-
-            <hr className={styles["separate-line"]} />
         </div>
     );
 }

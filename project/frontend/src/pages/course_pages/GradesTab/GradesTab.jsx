@@ -27,6 +27,7 @@ function GradesTab() {
     const [takenExamsData, setTakenExamsData] = useState(null);
 
     const [showSimpleGradeTable, setShowSimpleGradeTable] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
 
     // fetching async functions
     async function FetchSimpleAssigns(courseId) {
@@ -184,6 +185,15 @@ function GradesTab() {
         setShowSimpleGradeTable(prev => !prev);
     }
 
+    // editing functions
+    const handleEditDone = () => {
+        setIsEditing(false);
+    };
+
+    const handleEditCancel = () => {
+        setIsEditing(false);
+    };
+
     useEffect(() => {
         FetchSimpleAssigns(courseId);
         FetchSimpleExams(courseId);
@@ -222,13 +232,37 @@ function GradesTab() {
         return (
             <>
                 <div className={styles["grade-tab-container"]}>
-                    <SimpleGradeTable
-                        simpleGrades={simpleGrades}
-                    />
+                    <button 
+                        className={styles["toggle-button"]} 
+                        onClick={ToggleShowSimpleGradeTable}
+                    >
+                        <span className={styles["toggle-icon"]}>
+                            {showSimpleGradeTable ? "−" : "+"}
+                        </span>
+                        <span className={styles["toggle-text"]}>
+                            {showSimpleGradeTable ? "隱藏成績分配" : "顯示成績分配"}
+                        </span>
+                    </button>
 
-                    <StudentsGradeTable
-                        studentGrades={studentGrades}
-                    />
+                    {showSimpleGradeTable ? (
+                        <div className={styles["section-block"]}>
+                            <div className={styles["section-header"]}>
+                                <div className={styles["section-title"]}>課程成績分配總覽</div>
+                            </div>
+                            <SimpleGradeTable
+                                simpleGrades={simpleGrades}
+                            />
+                        </div>
+                    ) : null}
+
+                    <div className={styles["section-block"]}>
+                        <div className={styles["section-header"]}>
+                            <div className={styles["section-title"]}>學生成績詳情</div>
+                        </div>
+                        <StudentsGradeTable
+                            studentGrades={studentGrades}
+                        />
+                    </div>
                 </div>
             </>
         );
@@ -247,24 +281,63 @@ function GradesTab() {
 
     return (
         <div className={styles["grade-tab-container"]}>
-            <button className={styles["toggle-button"]} onClick={ToggleShowSimpleGradeTable}>
-                {showSimpleGradeTable ? "−" : "+"}
+            <button 
+                className={`${styles["toggle-button"]} ${isEditing ? styles["toggle-disabled"] : ""}`} 
+                onClick={ToggleShowSimpleGradeTable}
+                disabled={isEditing}
+            >
+                <span className={styles["toggle-icon"]}>
+                    {showSimpleGradeTable ? "−" : "+"}
+                </span>
+                <span className={styles["toggle-text"]}>
+                    {isEditing ? "編輯模式中..." : showSimpleGradeTable ? "隱藏評分設定" : "顯示評分設定"}
+                </span>
             </button>
 
             {showSimpleGradeTable ? (
-                <SimpleGradeTable
-                    simpleGrades={simpleGrades}
-                    canEdit={!role.isStudent}
+                <div className={styles["section-block"]}>
+                    <div className={styles["section-header"]}>
+                        <div className={styles["section-title"]}>⚙️ 課程評分設定</div>
+                        {!role.isStudent && (
+                            <div className={styles["edit-controls"]}>
+                                {isEditing ? (
+                                    <>
+                                        <button className={styles["cancel-button"]} onClick={handleEditCancel}>
+                                            取消
+                                        </button>
+                                        <button className={styles["edit-button"]} onClick={handleEditDone}>
+                                            完成
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button className={styles["edit-button"]} onClick={() => setIsEditing(true)}>
+                                        <img src="/icons/pencil.png" className={styles["edit-icon"]} alt="Edit" />
+                                        編輯
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <SimpleGradeTable
+                        simpleGrades={simpleGrades}
+                        canEdit={!role.isStudent}
+                        isEditing={isEditing}
 
-                    // call backs
-                    SaveNewAssign={SaveNewAssign}
-                    SaveNewExam={SaveNewExam}
-                />
+                        // call backs
+                        SaveNewAssign={SaveNewAssign}
+                        SaveNewExam={SaveNewExam}
+                    />
+                </div>
             ) : null}
 
-            <StudentsGradeTable
-                studentGrades={studentGrades}
-            />
+            <div className={styles["section-block"]}>
+                <div className={styles["section-header"]}>
+                    <div className={styles["section-title"]}>👥 學生成績總覽</div>
+                </div>
+                <StudentsGradeTable
+                    studentGrades={studentGrades}
+                />
+            </div>
         </div>
     );
 }
