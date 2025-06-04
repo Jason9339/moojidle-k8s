@@ -11,6 +11,7 @@
 
 .contactItem {
     position: relative;
+    align-items: center;
     background: #fafbfc;
     border: 1px solid #e8eaed;
     border-radius: 6px;
@@ -32,13 +33,16 @@
 .inputGroup {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 16px;
     position: relative;
     padding-right: 40px;
+    min-height: 40px;
 }
 
 .input {
-    padding: 8px 12px;
+    padding: 6px 12px;
+    margin: 0;
     border: 1px solid #dadce0;
     border-radius: 4px;
     font-size: 14px;
@@ -46,6 +50,8 @@
     background: #ffffff;
     transition: all 0.2s ease;
     box-sizing: border-box;
+    height: 36px;
+    line-height: 36px;
 }
 
 .input:focus {
@@ -86,7 +92,7 @@
 
 
 .separator {
-    transform: translateY(-30%);
+    /* transform: translateY(-30%); */
     /* width: 1px; */
     /* height: 24px; */
     display: flex;
@@ -98,7 +104,7 @@
 .removeIcon {
     position: absolute;
     top: 50%;
-    transform: translateY(-80%);
+    transform: translateY(-50%);
     /* flex-direction:column; */
     right: 12px;
     color: white;
@@ -177,7 +183,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top:     0px;
+    margin-top: 0px;
     padding: 16px 0 0 0;
     border-top: 1px solid #e8eaed;
 }
@@ -243,51 +249,51 @@
     .contactList {
         max-width: 100%;
     }
-    
+
     .contactItem {
         padding: 12px 14px;
     }
-    
+
     .inputGroup {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
         padding-right: 30px;
     }
-    
+
     .input[placeholder*="Type"] {
         width: 100%;
         text-align: left;
     }
-    
+
     .input[placeholder*="Details"] {
         width: 100%;
         min-width: auto;
     }
-    
+
     .removeIcon {
         top: 12px;
         right: 12px;
         transform: none;
     }
-    
+
     .removeIcon:hover {
         transform: scale(1.1);
     }
-    
+
     .buttonGroup {
         justify-content: center;
         flex-direction: column;
         gap: 10px;
         margin-top: 16px;
     }
-    
+
     .cancelBtn,
     .saveBtn {
         padding: 10px 20px;
         min-width: 120px;
     }
-    
+
     .addBtn {
         width: 28px;
         height: 28px;
