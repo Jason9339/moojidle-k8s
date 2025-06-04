@@ -60,14 +60,6 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             <div className={styles.contactList}>
                 {contacts.map((contact, idx) => (
                     <li key={idx} className={styles.contactItem}>
-                        <span
-                            onClick={() => handleRemove(idx)}
-                            className={styles.removeIcon}
-                            role="button"
-                            aria-label="移除聯絡方式"
-                        >
-                            ×
-                        </span>
                         <div className={styles.inputGroup}>
                             <input
                                 type="text"
@@ -76,6 +68,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                                 placeholder="Type (e.g. email, phone)"
                                 className={styles.input}
                             />
+                            <span className={styles.separator}>:</span>
                             <input
                                 type="text"
                                 value={contact.details}
@@ -83,22 +76,24 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                                 placeholder="Details"
                                 className={styles.input}
                             />
+                            <span
+                                onClick={() => handleRemove(idx)}
+                                className={styles.removeIcon}
+                                role="button"
+                                aria-label="移除聯絡方式"
+                            >
+                                ×
+                            </span>
                         </div>
                     </li>
                 ))}
-                <li className={styles.contactItem}>
-                    <div className={styles.inputGroup}>
-                        <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
-                            +
-                        </button>
-                    </div>
-                </li>
-                <li className={styles.contactItem}>
-                    <div className={styles.buttonGroup}>
-                        <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
-                        <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
-                    </div>
-                </li>
+                <button onClick={handleAdd} className={styles.addBtn} aria-label="新增聯絡方式">
+                    +
+                </button>
+                <div className={styles.buttonGroup}>
+                    <button onClick={onCancel} className={styles.cancelBtn}>取消</button>
+                    <button onClick={handleSave} className={styles.saveBtn}>儲存</button>
+                </div>
             </div>
         </div>
     );
