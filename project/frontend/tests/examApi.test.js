@@ -72,25 +72,66 @@ describe('前端 Exam API 整合測試', () => {
         });
     });
 
-    describe('DownloadExam 整合測試', () => {
-        it('應該返回錯誤當缺少 path 參數', async () => {
-            let error;
-            try {
-                await DownloadExam(); // no path provided
-            } catch (err) {
-                error = err;
+        describe('DownloadExam 整合測試', () => {
+        it('應該在成功時觸發下載行為', async () => {
+            // Mock browser APIs
+            const createObjectURL = vi.fn(() => 'blob:url');
+            const click = vi.fn();
+            const removeChild = vi.fn();
+            const appendChild = vi.fn();
+            const setAttribute = vi.fn();
+            const mockLink = {
+                click,
+                setAttribute,
+                parentNode: { removeChild },
+            };
+    
+            // Only mock createObjectURL, not the whole URL global
+            if (!globalThis.URL) {
+                globalThis.URL = class {};
             }
-            expect(error).toBeDefined();
+            const originalCreateObjectURL = globalThis.URL.createObjectURL;
+            globalThis.URL.createObjectURL = createObjectURL;
+    
+            vi.stubGlobal('document', {
+                createElement: vi.fn(() => mockLink),
+                body: { appendChild },
+                cookie: '',
+            });
+    
+            // Mock api.get to return a fake blob and headers
+            const fakeBlob = new Blob(['test']);
+            const fakeHeaders = { 'content-disposition': 'attachment; filename=test.pdf' };
+            const api = (await import('@/ApiClient.js')).default;
+            vi.spyOn(api, 'get').mockResolvedValue({
+                data: fakeBlob,
+                headers: fakeHeaders,
+            });
+    
+            await DownloadExam('/some/path/test.pdf', 'test.pdf');
+    
+            expect(createObjectURL).toHaveBeenCalled();
+            expect(appendChild).toHaveBeenCalledWith(mockLink);
+            expect(setAttribute).toHaveBeenCalledWith('download', 'test.pdf');
+            expect(click).toHaveBeenCalled();
+            expect(removeChild).toHaveBeenCalledWith(mockLink);
+    
+            // Restore
+            globalThis.URL.createObjectURL = originalCreateObjectURL;
         });
-
-        it('應該返回錯誤當檔案不存在', async () => {
-            let error;
-            try {
-                await DownloadExam('/not/exist/file.pdf', 'file.pdf');
-            } catch (err) {
-                error = err;
-            }
-            expect(error).toBeDefined();
+    
+        it('應該在失敗時呼叫 console.error', async () => {
+            // Mock api.get to throw
+            const api = (await import('@/ApiClient.js')).default;
+            vi.spyOn(api, 'get').mockRejectedValue(new Error('File not found'));
+    
+            const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    
+            await DownloadExam('/not/exist/file.pdf', 'file.pdf');
+    
+            expect(errorSpy).toHaveBeenCalled();
+    
+            errorSpy.mockRestore();
         });
     });
 });
