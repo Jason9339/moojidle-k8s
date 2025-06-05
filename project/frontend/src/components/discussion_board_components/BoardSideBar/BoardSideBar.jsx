@@ -67,7 +67,9 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                                     marginRight: "8px",
                                 },
                                 ".ps-menu-label > span": {
-                                    whiteSpace: "normal",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
                                     wordBreak: "break-word",
                                     display: "block",
                                     lineHeight: "1.45",
