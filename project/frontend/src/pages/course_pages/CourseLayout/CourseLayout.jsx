@@ -1,4 +1,4 @@
-import { useParams, Outlet, useNavigate, NavLink } from "react-router-dom";
+import { useParams, Outlet, useNavigate, NavLink, useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import { GetCourses } from "@/services/CourseApi";
@@ -9,6 +9,9 @@ export default function CourseLayout() {
 	const navigate = useNavigate();
 	const [role, setRole] = useState(null);
 	const [course, setCourse] = useState(null);
+	const role1 = useOutletContext();
+	const isEditor = role?.isTeacher || role?.isAssistant;
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -60,8 +63,10 @@ export default function CourseLayout() {
 						<NavLink to="" end className={({ isActive }) => isActive ? styles.active : ""}>課程</NavLink>
 						<NavLink to="grade" className={({ isActive }) => isActive ? styles.active : ""}>成績</NavLink>
 						<NavLink to="assignment" className={({ isActive }) => isActive ? styles.active : ""}>作業</NavLink>
-						<NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
-						<NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink>
+						{isEditor && (
+							<NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
+						)}
+						{/* <NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink> */}
 						<NavLink to="announcement" className={({ isActive }) => isActive ? styles.active : ""}>公告</NavLink>
 						<NavLink to="members" className={({ isActive }) => isActive ? styles.active : ""}>成員</NavLink>
 					</div>

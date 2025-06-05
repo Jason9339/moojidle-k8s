@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./CourseCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
+import { GrDocumentPerformance } from "react-icons/gr";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({
@@ -75,9 +76,9 @@ function CourseCard({
                     title="Assignments"
                     onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
-                <FaComments
-                    title="Discussion"
-                    onClick={() => navigate(`/course/${courseId}/discussion`)}
+                <GrDocumentPerformance   //TODO: 換ICON
+                    title="grade"
+                    onClick={() => navigate(`/course/${courseId}/grade`)}
                 />
             </div>
             {showEditModal && (
