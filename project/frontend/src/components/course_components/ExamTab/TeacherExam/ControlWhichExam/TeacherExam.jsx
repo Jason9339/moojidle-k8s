@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./TeacherExam.module.css";
 import ExamDetail from "@/components/course_components/ExamTab/TeacherExam/TeacherExamDetail/TeacherExamDetail.jsx";
-// import TeacherExamReview from "@/components/course_components/ExamTab/TeacherExam/TeacherExamReview/TeacherExamReview.jsx";
+import TeacherExamReview from "@/components/course_components/ExamTab/TeacherExam/TeacherExamReview/TeacherExamReview.jsx";
 
 function TeacherExam({ exams }) {
     const [selectedIdx, setSelectedIdx] = useState(0);
@@ -68,12 +68,13 @@ function TeacherExam({ exams }) {
                     </button>
                 </div>
             </div>
-            {<ExamDetail exam = {selectedExam} 
-            />/* 
+            <ExamDetail exam = {selectedExam} 
+            />
+                
             <TeacherExamReview
                 examId={examId}
                 examMaxScore={examMaxScore}
-            /> */}
+            /> 
         </div>
     );
 }

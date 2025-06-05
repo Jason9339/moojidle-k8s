@@ -169,6 +169,16 @@ async function FindExamById(examId) {
     return db.collection("exams").findOne({ exam_id: parseInt(examId) });
 }
 
+async function FindCourseIdByExamId(examId) {
+    try{
+        const db = mongoose.connection.db;
+        const result = await db.collection("exams").findOne({exam_id: parseInt(examId)}, {projection: {in_course_id: 1}});
+        return result ? result.in_course_id : null;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     FindFromExamJoinStudyInJoinCourseByUserId,
     FindProjectedExamsByCourseId,
@@ -180,4 +190,6 @@ export {
     UpdateOneExamScoreById,
     
     // getComingExams
+
+    FindCourseIdByExamId
 };

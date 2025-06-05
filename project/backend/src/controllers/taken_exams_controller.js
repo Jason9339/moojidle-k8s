@@ -1,7 +1,9 @@
 import { FindCourseById } from "#src/services/course_service.js";
 import { FindStudyInJoinUserByCourseId } from "#src/services/course_member_service.js";
-import { FindProjectedExamsByCourseId } from "#src/services/exam_service.js";
-import { FindProjectTakenExamByUserIdAssId } from "#src/services/taken_exams_services.js";
+import { FindProjectedExamsByCourseId, FindCourseIdByExamId } from "#src/services/exam_service.js";
+import { FindProjectTakenExamByUserIdAssId, FindAllTakenExamsByExamId, CreateTakenExam, UpdateTakenExam } from "#src/services/taken_exams_services.js";
+
+
 
 async function GetAllStudentsProjectedTakenExam(req, res) {
     try {
@@ -161,7 +163,89 @@ async function GetStudentProjectedTakenExam(req, res) {
     }
 }
 
+
+async function GetTakenExamsByExamId(req, res) {
+    try {
+        const examId = parseInt(req.params.examId);
+
+        if (isNaN(examId)) {
+            res.status(400).send("Invalid exam ID");
+            return;
+        }
+    
+        const courseId = await FindCourseIdByExamId(examId);
+        
+        if (courseId == null) {
+            res.status(404).send("Exam not found");
+            return;
+        }
+
+        const allStudents =  await FindStudyInJoinUserByCourseId(courseId);
+        const takenExams = await FindAllTakenExamsByExamId(examId);
+
+        // console.log(allStudents);
+
+        // no taken exams yet
+        if (takenExams == null || takenExams.length == 0) {
+            res.status(200).send([]);
+            return;
+        }
+
+        const data = {
+            "takenExams": takenExams,
+            "students": allStudents
+        }
+
+        res.status(200).send(data);
+    } catch (error) {
+        throw error;
+    }
+
+}
+
+async function GradeExam(req, res) {
+    try {
+
+        const examId = parseInt(req.params.examId);
+        const beGradedUserId = parseInt(req.params.beGradedUserId);
+        let { score, graderId, takenExamId } = req.body;
+        score = parseFloat(score);
+        graderId = parseInt(graderId);
+        console.log("Taken Exam ID:", takenExamId);
+
+        if (takenExamId !== undefined) {
+            takenExamId = parseInt(takenExamId);
+            console.log("Grading existing taken exam with ID:", takenExamId);
+            const IsUpdatedTakenExam = await UpdateTakenExam(takenExamId, score, graderId, beGradedUserId, examId);
+            if (!IsUpdatedTakenExam) {
+                res.status(404).send({
+                    updated: false,
+                    message:"Taken exam not found or update failed"
+                });
+                return;
+            }
+            res.status(200).send({
+                updated: true,
+                message:"Taken exam updated successfully"
+            });
+        }
+        else {
+            console.log("Creating new taken exam for user:", beGradedUserId);
+            const newTakenExam = await CreateTakenExam(score, graderId, beGradedUserId, examId);
+            res.status(201).send(newTakenExam);
+        }
+    } catch (error) {
+        res.status(400).send(`Error grading exam : ${error.message}`);
+        throw error;
+
+    }
+
+}
+
+
 export {
     GetAllStudentsProjectedTakenExam,
     GetStudentProjectedTakenExam,
+    GetTakenExamsByExamId,
+    GradeExam
 }
