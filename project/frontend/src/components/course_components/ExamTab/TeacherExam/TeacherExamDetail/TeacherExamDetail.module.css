@@ -1,0 +1,106 @@
+.descBox {
+    border: 2px solid #a39999;
+    border-radius: 10px;
+    padding: 15px; 
+    min-height: 70px; 
+    background-color: white;
+    margin-bottom: 1.2%;
+}
+
+.descTitle {
+    font-weight: bold;   
+    font-size: 1.2rem; 
+    word-break: break-all; 
+    margin-bottom: 8px; 
+}
+
+.descHint {
+    color: red;
+}
+
+.descContent {
+    font-size: 0.9rem; 
+    line-height: 1.5; 
+    white-space: pre-line;
+    transition: max-height 0.2s;
+    word-break: break-all; 
+    overflow: hidden;
+    margin-bottom: 6px; 
+}
+
+.descContentCollapsed {
+    max-height: calc(1.5em * 5); 
+    overflow: hidden;
+}
+
+.descToggleWrapper {
+    position: relative;
+    min-height: 28px; 
+}
+
+.descToggle {
+    position: absolute;
+    right: 10px; 
+    bottom: 6px; 
+    color: #1976d2;
+    font-size: 0.9rem;          
+    cursor: pointer;
+    user-select: none;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 2px;                  
+}
+
+/* 標題和描述的距離 */
+.verticalSpacer {
+    height: 8px; 
+}
+
+.attachmentsBox {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.attachmentsLabel {
+    font-weight: bold;
+    margin-right: 6px;
+    margin-top: 2px;
+}
+
+.attachmentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.attachmentItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.attachmentIcon {
+    margin-right: 6px;
+    color: #1976d2;
+    font-size: 1.1em;
+}
+
+.attachmentLink {
+    color: #1976d2;
+    text-decoration: underline;
+    margin-right: 12px;
+    cursor: pointer;
+    word-break: break-all;
+}
+
+.attachmentLink:hover {
+    color: #125299;
+}
+
+
