@@ -33,12 +33,28 @@ async function UpdateUserPassword(userId, data) {
 
 async function UpdateUserData(userId, data) {
     try {
-        const response = await api.put(`/user/update-user-data/${userId}`, data);
+        const response = await api.put(`/user/update-profile/${userId}`, data);
         console.log("User data updated successfully:", response.data);
         return response.data;
     } catch (err) {
         console.error(err);
         return { message: "An error occurred while updating the user data." };
+    }
+}
+
+// 新增專門處理個人資料更新的函數（支援檔案上傳）
+async function UpdateUserProfile(userId, formData) {
+    try {
+        const response = await api.put(`/user/update-profile/${userId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log("Profile updated successfully:", response.data);
+        return response.data;
+    } catch (err) {
+        console.error("Profile update error:", err);
+        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
     }
 }
 
@@ -62,5 +78,6 @@ export {
     UpdateUserPassword,
     GetUserTagsById,
     UpdateUserData,
+    UpdateUserProfile,
     UpdateUserTags
 }

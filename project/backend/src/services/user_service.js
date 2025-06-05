@@ -160,7 +160,7 @@ async function UpdateUserTags(userId, newTags) {
 
 
 
-async function UpdateUserContactWay(userId, newContactWays) {
+async function UpdateUserContactWay(userId, newContactWays, avatarUrl = null) {
     let result;
     try {
        
@@ -179,28 +179,32 @@ async function UpdateUserContactWay(userId, newContactWays) {
             contact.details !== ""
         );
 
-        // 更新聯絡方式
+        // 準備更新的欄位
+        const updateFields = {
+            contact_ways: validContactWays
+        };        // 如果有提供頭像 URL，則加入更新欄位
+        if (avatarUrl !== null && avatarUrl !== undefined && avatarUrl.trim() !== "") {
+            updateFields.path_to_profile_pic = avatarUrl.trim();
+        }
+
+        // 更新聯絡方式和頭像
         result = await mongoose.connection.db.collection('user').updateOne(
             { user_id: parseInt(userId) },
             {
-                $set: {
-                    contact_ways: validContactWays
-                }
+                $set: updateFields
             }
         );
 
         return {
             modifiedCount: result.modifiedCount,
-            message: result.modifiedCount ? "聯絡方式更新成功" : "沒有更新任何聯絡方式",
-            updatedContactWays: validContactWays
-        };
-
-    } catch (err) {
-        console.error("Error updating contact ways:", err);
-        throw new Error(`更新聯絡方式失敗: ${err.message}`);
+            message: result.modifiedCount ? "資料更新成功" : "沒有更新任何資料",
+            updatedContactWays: validContactWays,
+            updatedAvatar: avatarUrl
+        };    } catch (err) {
+        console.error("Error updating contact ways and avatar:", err);
+        throw new Error(`更新聯絡方式和頭像失敗: ${err.message}`);
     }
 }
-
 
 export {
     RegisterUser,

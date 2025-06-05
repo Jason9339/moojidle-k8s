@@ -1,12 +1,39 @@
 import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
-import { UpdateUserData } from "@/services/UserApi";
+import { UpdateUserProfile } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
 
-function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
+function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(currentAvatar || "/user_pfp/default.png");
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // 檢查檔案類型
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('請選擇有效的圖片檔案 (JPG, PNG, GIF, WebP)');
+                return;
+            }
+            
+            // 檢查檔案大小 (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('檔案大小不能超過 2MB');
+                return;
+            }
+
+            setSelectedFile(file);
+            
+            // 創建預覽 URL
+            const reader = new FileReader();
+            reader.onload = (e) => setPreviewUrl(e.target.result);
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleChange = (index, field, value) => {
         setContacts(contacts.map((c, i) =>
@@ -20,9 +47,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
 
     const handleRemove = (index) => {
         setContacts(contacts.filter((_, i) => i !== index));
-    };
-
-    const handleSave = async () => {
+    };    const handleSave = async () => {
         setLoading(true);
         try {
             const validContacts = contacts
@@ -39,31 +64,81 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
                     details: c.details.trim()
                 }));
 
-            // 檢查資料是否有變更
-            const isDataChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
+            // 檢查是否有變更
+            const isContactChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
+            const hasNewAvatar = selectedFile !== null;
 
-            if (!isDataChanged && validContacts.length === 0) {
+            if (!isContactChanged && !hasNewAvatar) {
+                alert("沒有資料需要更新");
+                return;
+            }
+
+            if (!isContactChanged && validContacts.length === 0) {
                 alert("請至少添加一個聯絡方式");
                 return;
             }
 
-            if (!isDataChanged) {
-                alert("資料未更改");
-                return;
+            // 建立 FormData 來支援檔案上傳
+            const formData = new FormData();
+            
+            // 添加聯絡方式資料
+            if (isContactChanged) {
+                formData.append('contactWays', JSON.stringify(validContacts));
             }
 
-            await UpdateUserData(userId, { contactWays: validContacts });
-            onSave(validContacts);
+            // 添加頭像檔案
+            if (hasNewAvatar) {
+                formData.append('avatar', selectedFile);
+            }
+
+            const result = await UpdateUserProfile(userId, formData);
+            
+            // 呼叫父組件的回調函數
+            onSave({
+                contactWays: validContacts,
+                newAvatar: result.updatedAvatar,
+                hasNewAvatar: result.hasNewAvatar
+            });
+            
         } catch (err) {
             console.error("儲存失敗:", err);
-            alert("儲存失敗，請稍後再試");
+            alert(err.message || "儲存失敗，請稍後再試");
         } finally {
             setLoading(false);
         }
-    };
-
-    return (
+    };    return (
         <div className={loading ? styles.loading : ''}>
+            {/* 頭像上傳區域 */}
+            <div className={styles.avatarSection}>
+                <label className={styles.avatarLabel}>個人頭像:</label>
+                <div className={styles.avatarContainer}>
+                    <img 
+                        src={previewUrl} 
+                        alt="預覽頭像" 
+                        className={styles.avatarPreview}
+                        onError={() => setPreviewUrl("/user_pfp/default.png")}
+                    />
+                    <div className={styles.avatarControls}>
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/gif,image/webp"
+                            onChange={handleFileChange}
+                            className={styles.fileInput}
+                            id="avatar-upload"
+                            disabled={loading}
+                        />
+                        <label htmlFor="avatar-upload" className={styles.uploadBtn}>
+                            選擇頭像
+                        </label>
+                        {selectedFile && (
+                            <span className={styles.fileName}>
+                                {selectedFile.name}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </div>
+
             <div className={styles.contactList}>
                 {contacts.map((contact, idx) => (
                     <div key={idx} className={styles.contactItem}>
