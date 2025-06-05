@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { Bold, Italic, Code as CodeIcon, List as ListIcon, ListOrdered, Quote, Heading } from "lucide-react"
+import { Bold, Italic, Code as CodeIcon, Quote, Heading } from "lucide-react"
+import { FaList as ListIcon } from "react-icons/fa";
+import { GoListOrdered as ListOrdered } from "react-icons/go"
 import Button from "@/components/Button/Button"
 import TextArea from "@/components/TextArea/TextArea"
 
@@ -16,13 +18,13 @@ const CardContent = ({ className = "", ...props }) => (
 )
 
 
-export default function TextEditor({ className = "", height, onChange, value }) {
+export default function TextEditor({ className = "", height, onChange, value, toolbarItemSize = 16 }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
 
     useEffect(() => {
-        if (value !== undefined && value !== text) {
+        if (value !== undefined) {
             setText(value)
         }
     }, [value])
@@ -30,53 +32,105 @@ export default function TextEditor({ className = "", height, onChange, value }) 
     // Wrap selected text with markers
     const wrapSelection = (before, after = before) => {
         const ta = textareaRef.current
+        if (!ta) return;
+
         const start = ta.selectionStart
         const end = ta.selectionEnd
         const selected = text.slice(start, end)
         const newText = text.slice(0, start) + before + selected + after + text.slice(end)
         setText(newText)
-        setTimeout(() => ta.focus(), 0)
+        setTimeout(() => {
+            ta.focus();
+            const newEnd = end + before.length;
+            ta.setSelectionRange(newEnd, newEnd);
+        }, 0)
     }
 
     // Prefix each selected line with prefix
+
     const prefixLines = (prefix) => {
-        const ta = textareaRef.current
-        const start = ta.selectionStart
-        const end = ta.selectionEnd
-        const before = text.slice(0, start)
-        const selection = text.slice(start, end)
-        const after = text.slice(end)
-        const lines = selection.split("\n")
-        const prefixed = lines.map(line => line.startsWith(prefix) ? line : prefix + line).join("\n")
-        const newText = before + prefixed + after
-        setText(newText)
-        setTimeout(() => ta.focus(), 0)
-    }
+        const ta = textareaRef.current;
+        if (!ta) return;
+
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const before = text.slice(0, start);
+        const selection = text.slice(start, end);
+        const after = text.slice(end);
+
+        const lines = selection.split("\n");
+        let addedChars = 0;
+
+        const prefixedLines = lines.map((line) => {
+            if (line.startsWith(prefix)) {
+                return line;
+            } else {
+                addedChars += prefix.length;
+                return prefix + line;
+            }
+        });
+        const newSelection = prefixedLines.join("\n");
+
+        const newText = before + newSelection + after;
+        setText(newText);
+
+        setTimeout(() => {
+            ta.focus();
+            const newStart = start;
+            const newEnd = end + addedChars;
+            ta.setSelectionRange(newStart, newEnd);
+        }, 0);
+    };
+
 
     const handleKeyDown = e => {
 
         if (e.key == "Enter") {
             const ta = textareaRef.current
             const { selectionStart, selectionEnd } = ta
-            // console.log("selectionStart:", selectionStart, "selectionEnd:", selectionEnd)
             const val = text
             const before = val.slice(0, selectionStart)
             const after = val.slice(selectionEnd)
 
-            // console.log("before:", before, "after:", after);
             // find current line
             const lastNL = before.lastIndexOf("\n")
             const line = before.slice(lastNL + 1)
 
-            // console.log("line", line)
-            // capture > , #, or 1. prefixes (with trailing space)
-            const regex = /^(\s*(?:>#{1,3}|#{1,6}|\d+\.|-|)\s+)/
-            const m = line.match(regex)
+            const numMatch = line.match(/^(\s*)(\d+)\.\s/)
 
-            // console.log("m=", m)
-            if (m) {
+            if (numMatch) {
+
+                e.preventDefault();
+                const leadingSpaces = numMatch[1];
+                const currNum = parseInt(numMatch[2], 10);
+                const nextNum = currNum + 1;
+
+                const fullPrefix = `${leadingSpaces}${currNum}. `;
+                const shouldContinue = line.length > fullPrefix.length;
+                const insert = shouldContinue
+                    ? `\n${leadingSpaces}${nextNum}. `
+                    : "\n";
+
+
+                const newText = before + insert + after;
+                setText(newText);
+
+                setTimeout(() => {
+                    ta.focus();
+                    const newPos = selectionStart + insert.length;
+                    ta.setSelectionRange(newPos, newPos);
+                }, 0);
+                return;
+            }
+
+
+
+            // capture > , -, or # 
+            const otherMatch = line.match(/^(\s*(?:> |#{1,6}\s|- )+)/)
+
+            if (otherMatch) {
                 e.preventDefault()
-                const prefix = m[1]
+                const prefix = otherMatch[1]
                 // console.log("prefix:", prefix)
                 // if line is just the prefix (empty after it), don't re-insert
                 const insert = "\n" + (line.length > prefix.length ? prefix : "")
@@ -90,16 +144,15 @@ export default function TextEditor({ className = "", height, onChange, value }) 
                 }, 0)
             }
         }
-    }
-    // Toolbar buttons definition with original icons
+    }    // Toolbar buttons definition with original icons
     const toolbarItems = [
-        { icon: <Bold size={16} />, action: () => wrapSelection("**", "**"), title: "Bold" },
-        { icon: <Italic size={16} />, action: () => wrapSelection("*", "*"), title: "Italic" },
-        { icon: <CodeIcon size={16} />, action: () => wrapSelection("`", "`"), title: "Code" },
-        { icon: <Heading size={16} />, action: () => wrapSelection("## ", ""), title: "Heading" },
-        { icon: <Quote size={16} />, action: () => prefixLines("> "), title: "Blockquote" },
-        { icon: <ListIcon size={16} />, action: () => prefixLines("- "), title: "Bulleted List" },
-        { icon: <ListOrdered size={16} />, action: () => prefixLines("1. "), title: "Numbered List" },
+        { icon: <Bold size={toolbarItemSize} />, action: () => wrapSelection("**", "**"), title: "Bold" },
+        { icon: <Italic size={toolbarItemSize} />, action: () => wrapSelection("*", "*"), title: "Italic" },
+        { icon: <CodeIcon size={toolbarItemSize} />, action: () => wrapSelection("`", "`"), title: "Code" },
+        { icon: <Heading size={toolbarItemSize} />, action: () => wrapSelection("## ", ""), title: "Heading" },
+        { icon: <Quote size={toolbarItemSize} />, action: () => prefixLines("> "), title: "Blockquote" },
+        { icon: <ListIcon size={toolbarItemSize} />, action: () => prefixLines("- "), title: "Bulleted List" },
+        { icon: <ListOrdered size={toolbarItemSize} />, action: () => prefixLines("1. "), title: "Numbered List" },
     ]
 
     return (
@@ -121,7 +174,6 @@ export default function TextEditor({ className = "", height, onChange, value }) 
                     {toolbarItems.map((item, idx) => (
                         <Button
                             key={idx}
-                            size="icon"
                             variant="ghost"
                             onClick={item.action}
                             title={item.title}
