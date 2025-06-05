@@ -1,18 +1,44 @@
-import React from "react";
+import React, { useMemo, useCallback, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import styles from "./PostEditCustomTag.module.css";
 
 const MAX_VISIBLE = 3;
 export default function PostEditCustomTag({
     allUserTags,
-    onChange, // default to no-op if not provided
+    onChange,
+    postTags = [],
 }) {
-    const tagOptions = allUserTags.map((tag) => ({ label: tag, value: tag }));
+    const tagOptions = useMemo(() =>
+        allUserTags.map((tag) => ({ label: tag, value: tag })),
+        [allUserTags]
+    );
 
-    const handleChange = (newOpts) => {
-        const values = newOpts ? newOpts.map((o) => o.value) : [];
-        onChange?.(values);
+    const [selectedTags, setSelectedTags] = useState(() =>
+        postTags.map(tag => ({ label: tag, value: tag })) || []
+    );
+
+    useEffect(() => {
+        const newSelected = postTags.map(tag => ({ label: tag, value: tag }));
+        const isSame = newSelected.length === selectedTags.length &&
+            newSelected.every((v, i) => v.value === selectedTags[i].value);
+        if (!isSame) {
+            setSelectedTags(newSelected);
+        }
+    }, [postTags, selectedTags]);
+
+    const handleChange = useCallback(
+        (newOpts) => {
+            const values = newOpts ? newOpts.map((o) => o.value) : [];
+            onChange?.(values);
+        },
+        [onChange]
+    );
+
+    const handleSelectChange = (newOpts) => {
+        setSelectedTags(newOpts || []);
+        handleChange(newOpts);
     };
+
 
 
     // 自訂 MultiValue 元件：只顯示前 MAX_VISIBLE 個，之後顯示 "+X more"
@@ -99,11 +125,12 @@ export default function PostEditCustomTag({
         <div className={styles.container}>
             <Select
                 isMulti
+                value={selectedTags}
                 options={tagOptions}
-                onChange={handleChange}
+                onChange={handleSelectChange}
                 styles={customStyles}
                 closeMenuOnSelect={false}
-                placeholder="Select tags…"
+                placeholder="Select tags..."
                 components={{ MultiValue }}
             />
         </div>
