@@ -76,7 +76,6 @@ function ExamDetail({ exam }) {
                     </button>
                 </div>
             )}
-            {/* 附件永遠顯示 */}
             {exam.attachments && exam.attachments.length > 0 && (
                 <div className={styles.attachmentsBox}>
                     <span className={styles.attachmentsLabel}>附件：</span>
