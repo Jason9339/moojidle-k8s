@@ -4,7 +4,7 @@ import {
     ResetBackendDatabase,
 } from './setup.js';
 
-import { GetCourseExams, UploadExam } from '@/services/ExamApi.js';
+import { GetCourseExams, UploadExam, DownloadExam } from '@/services/ExamApi.js';
 
 describe('前端 Exam API 整合測試', () => {
     beforeAll(async () => {
@@ -65,6 +65,28 @@ describe('前端 Exam API 整合測試', () => {
             let error;
             try {
                 await UploadExam(formData);
+            } catch (err) {
+                error = err;
+            }
+            expect(error).toBeDefined();
+        });
+    });
+
+    describe('DownloadExam 整合測試', () => {
+        it('應該返回錯誤當缺少 path 參數', async () => {
+            let error;
+            try {
+                await DownloadExam(); // no path provided
+            } catch (err) {
+                error = err;
+            }
+            expect(error).toBeDefined();
+        });
+
+        it('應該返回錯誤當檔案不存在', async () => {
+            let error;
+            try {
+                await DownloadExam('/not/exist/file.pdf', 'file.pdf');
             } catch (err) {
                 error = err;
             }
