@@ -23,7 +23,7 @@ const PostEdit = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [userTags, setUserTags] = useState([]);
-    const allUserTags = useRef([]);
+    const [allUserTags, setAllUserTags] = useState([]);
     const [error, setError] = useState(null);
     const [isDisabled, setIsDisabled] = useState(true);
     const navigate = useNavigate();
@@ -42,7 +42,7 @@ const PostEdit = () => {
             try {
                 const userId = JSON.parse(localStorage.getItem("user")).user_id;
                 const tags = await GetUserTagsById(userId);
-                allUserTags.current = tags.map((t) => t.user_tag);
+                setAllUserTags(tags.map((t) => t.user_tag));
                 setSelectedCourse(state?.current?.course || null);
                 setSelectedBoard(state?.current?.board || null);
             } catch (e) {
@@ -60,7 +60,7 @@ const PostEdit = () => {
     useEffect(() => {
         const fetchPost = async () => {
             console.log("post_id", post_id);
-            if (post_id !== "new") {  
+            if (post_id !== "new") {
                 try {
                     const data = await GetPostContent(post_id);
                     setPost(data);
@@ -76,16 +76,6 @@ const PostEdit = () => {
         };
         fetchPost();
     }, [post_id, refreshTrigger]);
-
-    if (!state?.data) {
-        return (
-            <>
-                <LeftBar />
-                <div style={{ backgroundColor: "#eff2f5", flex: 1, width: "100%" }} />
-                <Redirect />
-            </>
-        );
-    }
 
     const handleTitleChange = useCallback((txt) => {
         txt = txt.replace(/[\r\n]+/g, "");
@@ -149,12 +139,22 @@ const PostEdit = () => {
                 post_id: post_id, // 別忘了傳入要編輯哪篇貼文
             };
 
-            const resData = await EditPost(post_id, data);
-            const post = resData.post;
+            await EditPost(post_id, data);
 
             navigate(`/post/${post_id}`);
         }
-    }, [navigate, description, title, userTags, selectedBoard]);
+    }, [navigate, description, title, userTags, selectedBoard, isModified, post_id]);
+
+    if (!state?.data) {
+        return (
+            <>
+                <LeftBar />
+                <div style={{ backgroundColor: "#eff2f5", flex: 1, width: "100%" }} />
+                <Redirect />
+            </>
+        );
+    }
+
 
     // 移除沒有討論版的課程
     for (let i = 0; i < state.data.length; i++) {
@@ -177,7 +177,7 @@ const PostEdit = () => {
                 />
 
                 <PostEditCustomTag
-                    allUserTags={allUserTags.current}
+                    allUserTags={allUserTags}
                     onChange={(newSelectedTags) => setUserTags(newSelectedTags)}
                 />
                 <hr />

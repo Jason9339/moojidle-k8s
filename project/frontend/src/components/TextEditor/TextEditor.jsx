@@ -29,28 +29,36 @@ export default function TextEditor({ className = "", height, onChange, value, to
         }
     }, [value])
 
+
     // Wrap selected text with markers
     const wrapSelection = (before, after = before) => {
-        const ta = textareaRef.current
+        const ta = textareaRef.current;
         if (!ta) return;
 
-        const start = ta.selectionStart
-        const end = ta.selectionEnd
-        const selected = text.slice(start, end)
-        const newText = text.slice(0, start) + before + selected + after + text.slice(end)
-        setText(newText)
+        const prevScroll = ta.scrollTop;
+
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const selected = text.slice(start, end);
+        const newText =
+            text.slice(0, start) + before + selected + after + text.slice(end);
+
+        setText(newText);
+
         setTimeout(() => {
             ta.focus();
             const newEnd = end + before.length;
             ta.setSelectionRange(newEnd, newEnd);
-        }, 0)
-    }
+            ta.scrollTop = prevScroll;
+        }, 0);
+    };
 
     // Prefix each selected line with prefix
-
     const prefixLines = (prefix) => {
         const ta = textareaRef.current;
         if (!ta) return;
+
+        const prevScroll = ta.scrollTop;
 
         const start = ta.selectionStart;
         const end = ta.selectionEnd;
@@ -79,8 +87,10 @@ export default function TextEditor({ className = "", height, onChange, value, to
             const newStart = start;
             const newEnd = end + addedChars;
             ta.setSelectionRange(newStart, newEnd);
+            ta.scrollTop = prevScroll;
         }, 0);
     };
+
 
 
     const handleKeyDown = e => {
