@@ -193,6 +193,7 @@ async function GetStudentProjectedSubAssign(req, res) {
         // no assignment yet in the course
         if (assigns == null || assigns.length == 0) {
             res.status(200).send(studentGrade);
+            return;
         } else {
             // for each assignment
             for (const assign of assigns) {

@@ -33,7 +33,7 @@ export const UploadExam = async (formData) => {
     try {
         const courseId = formData.get('courseId');
         const endpoint = `/exams/course/${courseId}/upload`;
-        
+
         const response = await api.post(endpoint, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -56,8 +56,12 @@ export const DownloadExam = async (pathToFile, filename) => {
         const contentDisposition = response.headers['content-disposition'];
         let fileName = filename;
         if (contentDisposition) {
-            const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-            if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
+            // Fixed: More precise regex that only captures content within quotes
+            const fileNameMatch = contentDisposition.match(/filename="([^"]+)"/);
+
+            if (fileNameMatch && fileNameMatch[1]) {
+                fileName = fileNameMatch[1];
+            }
         }
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
