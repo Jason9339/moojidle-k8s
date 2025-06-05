@@ -9,7 +9,6 @@ export default function CourseLayout() {
 	const navigate = useNavigate();
 	const [role, setRole] = useState(null);
 	const [course, setCourse] = useState(null);
-	const role1 = useOutletContext();
 	const isEditor = role?.isTeacher || role?.isAssistant;
 
 
@@ -66,7 +65,6 @@ export default function CourseLayout() {
 						{isEditor && (
 							<NavLink to="exams" className={({ isActive }) => isActive ? styles.active : ""}>考試</NavLink>
 						)}
-						{/* <NavLink to="discussion" className={({ isActive }) => isActive ? styles.active : ""}>討論</NavLink> */}
 						<NavLink to="announcement" className={({ isActive }) => isActive ? styles.active : ""}>公告</NavLink>
 						<NavLink to="members" className={({ isActive }) => isActive ? styles.active : ""}>成員</NavLink>
 					</div>

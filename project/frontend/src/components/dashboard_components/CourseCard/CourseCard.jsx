@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./CourseCard.module.css";
 import { useNavigate } from "react-router-dom";
-import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
+import { FaBullhorn, FaTasks, FaEdit } from "react-icons/fa";
 import { GrDocumentPerformance } from "react-icons/gr";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
