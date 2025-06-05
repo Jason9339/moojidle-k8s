@@ -162,6 +162,48 @@ async function DeleteCourse(id) {
     }
 }
 
+
+// Service to edit course name
+async function EditCourseName(courseId, newName) {
+    try {
+        // 輸入驗證
+        if (!courseId) {
+            throw new Error("Course ID is required");
+        }
+
+        if (!newName || typeof newName !== 'string' || newName.trim() === '') {
+            throw new Error("New course name must be a non-empty string");
+        }
+
+        // 查找是否存在該課程
+        const courseCollection = mongoose.connection.db.collection('course');
+        const existingCourse = await courseCollection.findOne({ course_id: courseId });
+
+        if (!existingCourse) {
+            throw new Error(`Course with ID ${courseId} not found`);
+        }
+
+        // 執行更新
+        const updateResult = await courseCollection.updateOne(
+            { course_id: courseId },
+            { $set: { name: newName } }
+        );
+
+        if (updateResult.modifiedCount === 0) {
+            throw new Error("Course name update failed or no changes made");
+        }
+
+        // 回傳更新後的課程資訊
+        const updatedCourse = await courseCollection.findOne({ course_id: courseId });
+        return updatedCourse;
+
+    } catch (err) {
+        console.error("Error updating course name in service:", err);
+        throw new Error(`Failed to update course name: ${err.message}`);
+    }
+}
+
+
 // Service function to delete related data from other collections based on course_id
 async function DeleteCourseRelationships(courseIdInt) {
     try {
@@ -280,5 +322,6 @@ export {
     FindCourseIdByInviteCode,
     InsertCourse,
     UpdateCourseName,
-    DeleteCourse
+    DeleteCourse,
+    EditCourseName
 };
