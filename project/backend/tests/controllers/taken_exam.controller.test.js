@@ -34,6 +34,7 @@ describe('Taken Exams Controller Test', () => {
             expect(data[0].taken_exams).toBeDefined();
             expect(data[0].taken_exams.length).toBe(1);
             expect(data[0].taken_exams[0].score).toBe(100);
+            expect(data[0].taken_exams[0].max_score).toBe(100);
             expect(data[0].taken_exams[0].percentage).toBe(0.1);
         });
 
@@ -72,6 +73,7 @@ describe('Taken Exams Controller Test', () => {
             expect(data.taken_exams).toBeDefined();
             expect(data.taken_exams.length).toBe(1);
             expect(data.taken_exams[0].score).toBe(100);
+            expect(data.taken_exams[0].max_score).toBe(100);
             expect(data.taken_exams[0].percentage).toBe(0.1);
         });
 
