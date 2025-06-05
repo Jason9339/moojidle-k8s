@@ -10,7 +10,7 @@ import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
 import { GetComingUpExamList } from "@/services/ExamApi";
-import { GetCourses } from "@/services/CourseApi";
+import { GetCoursesForUser } from "@/services/CourseApi";
 import { GetTodoAssignList } from "@/services/AssignmentApi";
 
 function Dashboard() {
@@ -23,11 +23,24 @@ function Dashboard() {
 
     const fetchAll = async () => {
         try {
-            const [courses, todoList, comingUpList] = await Promise.all([
-                GetCourses(currentUserId),
+            const [allCourses, todoList, comingUpList] = await Promise.all([
+                GetCoursesForUser(currentUserId),
                 GetTodoAssignList(currentUserId),
                 GetComingUpExamList(currentUserId),
             ]);
+
+            // dont show out dated courses
+            const now = new Date();
+            let courses = [];
+            for (let course of allCourses) {
+                let startDate = new Date(course.start_date);
+                let endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + course.week_num * 7);
+
+                if (endDate >= now) {
+                    courses.push(course);
+                }
+            }
 
             setDashboardData({
                 courses,
@@ -58,6 +71,11 @@ function Dashboard() {
             console.error("刪除課程後重新抓取資料失敗：", error);
         }
     };
+
+    // wait for data
+    if (!dashboardData) {
+        return <></>
+    }
 
     return (
         <div className={styles["app-layout"]}>
