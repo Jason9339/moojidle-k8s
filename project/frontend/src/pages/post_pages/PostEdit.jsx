@@ -2,11 +2,11 @@ import Button from "@/components/Button/Button";
 import LeftBar from "@/components/LeftBar/LeftBar";
 import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
-import PostEditCustomTag from "@/components/post_components/PostEditCustomTag";
+import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 const PostEdit = () => {
