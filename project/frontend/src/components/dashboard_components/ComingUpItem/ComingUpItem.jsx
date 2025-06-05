@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./ComingUpItem.module.css";
 
 function ComingUpItem({ comingUpList }) {
+    const Navigate = useNavigate();
     const Show = (startDate) => {
         const now = new Date();
         const due = new Date(startDate);
@@ -28,7 +30,7 @@ function ComingUpItem({ comingUpList }) {
         <div>
             {comingUpList.map((item, index) => (
                 Show(item.date) == true ? (
-                    <div key={index} className={`${styles["comingup-item"]}`}>
+                    <div key={index} className={`${styles["comingup-item"]}`} onClick={() => Navigate(`/course/${item.course_id}`)}>
                         <p className={`${styles["comingup-title"]}`}>
                             {item.title}
                         </p>

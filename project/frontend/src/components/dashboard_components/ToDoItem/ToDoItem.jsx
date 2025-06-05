@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./ToDoItem.module.css";
 
 function ToDoItem({ todoList }) {
+    const Navigate = useNavigate();
     const Show = (dueDate) => {
         const now = new Date();
         const due = new Date(dueDate);
@@ -45,7 +47,7 @@ function ToDoItem({ todoList }) {
         <div>
             {todoList.map((item, index) => {
                 return Show(item.due) === true ? (
-                    <div key={index} className={`${styles["todo-item"]}`}>
+                    <div key={index} className={`${styles["todo-item"]}`} onClick={() => Navigate(`/course/${item.course_id}/assignment`)}>
                         <p className={`${styles["todo-title"]}`}>
                             {item.title}
                         </p>

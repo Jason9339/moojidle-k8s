@@ -90,10 +90,10 @@ function Dashboard() {
                     </div>
 
                     <div className={styles["dashboard-right"]}>
-                        <h3 className={styles["section-title"]}>To Do</h3>
+                        <h3 className={styles["section-title"]}>To Do Assignments</h3>
                         <ToDoItem todoList={dashboardData.todoList} />
                         <hr />
-                        <h3 className={styles["section-title"]}>Coming Up</h3>
+                        <h3 className={styles["section-title"]}>Up Comming Exams</h3>
                         <ComingUpItem comingUpList={dashboardData.comingUpList} />
                     </div>
                 </div>

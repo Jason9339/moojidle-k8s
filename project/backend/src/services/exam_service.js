@@ -48,6 +48,7 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
                 $project: {
                     _id: 0,
                     course: "$course_data.name",
+                    course_id: "$course_data.course_id",
                     title: "$exam_name", // Map to frontend's "title"
                     date: "$start_date" // Map to frontend's "date"
                 }
