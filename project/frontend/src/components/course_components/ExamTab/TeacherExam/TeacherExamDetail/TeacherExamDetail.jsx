@@ -58,7 +58,6 @@ function ExamDetail({ exam }) {
                     {exam.description}
                 </div>
             </div>
-            {/* 展開/縮合按鈕放在附件上方 */}
             {descOverflow && (
                 <div className={styles.descToggleWrapper}>
                     <button
