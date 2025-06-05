@@ -129,6 +129,7 @@ describe('Submitted Assignments Controller Test', () => {
             expect(data[0].sub_ass).toBeDefined();
             expect(data[0].sub_ass.length).toBe(1);
             expect(data[0].sub_ass[0].score).toBe(100);
+            expect(data[0].sub_ass[0].max_score).toBe(100);
             expect(data[0].sub_ass[0].percentage).toBe(0.1);
         });
 
@@ -167,6 +168,7 @@ describe('Submitted Assignments Controller Test', () => {
             expect(data.sub_ass).toBeDefined();
             expect(data.sub_ass.length).toBe(1);
             expect(data.sub_ass[0].score).toBe(100);
+            expect(data.sub_ass[0].max_score).toBe(100);
             expect(data.sub_ass[0].percentage).toBe(0.1);
         });
 
