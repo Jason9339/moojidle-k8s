@@ -24,7 +24,7 @@ const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore
         if (response.updated) {
             // Create a copy of the examData
             const updatedExamData = { ...examData };
-            
+
             // Update the specific taken exam in the takenExams array
             updatedExamData.takenExams = examData.takenExams.map(takenExam => 
                 takenExam.t_exam_id === takenExamId && takenExam.taken_by_user_id === beGradedUserId
@@ -35,19 +35,19 @@ const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore
                     }
                     : takenExam
             );
-            
+
             setExamData(updatedExamData);
         } 
         else if (response?.t_exam_id !== undefined) {
             // A new taken exam was created - append it to the existing data
             const updatedExamData = { ...examData };
-            
+
             // Add the new taken exam to the takenExams array
             updatedExamData.takenExams = [
                 ...examData.takenExams,
                 response // The newly created taken exam object
             ];
-            
+
             // Update the state with the new data
             setExamData(updatedExamData);
             // Close any form or modal that might be open
@@ -92,28 +92,26 @@ const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore
 
 const fetchTakenExams = async (examId, setLoading, setError) => {
 
-        try {
-            setLoading(true);
-            const data = await GetTakenExamInExam(examId);
-            console.log("Fetched data:", data);
+    try {
+        setLoading(true);
+        const data = await GetTakenExamInExam(examId);
+        console.log("Fetched data:", data);
 
-            return data
-            
-        } catch (error) {
-            console.error("Error fetching submissions:", error);
-            setError("Failed to fetch exam data. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
+        return data
+
+    } catch (error) {
+        console.error("Error fetching submissions:", error);
+        setError("Failed to fetch exam data. Please try again later.");
+    } finally {
+        setLoading(false);
+    }
 }
 
 const TeacherExamReview = ({ examId, examMaxScore }) => {
-    const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [examData, setExamData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [gradeFormVisible, setGradeFormVisible] = useState(false);
-    const [gradingUser, setGradingUser] = useState(null);
 
     useEffect(() => {
         const loadExamData = async () => {
@@ -126,7 +124,7 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
     }, [examId]);
 
 
-        
+
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -160,7 +158,7 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                             // Find if student has taken this exam
                             const takenExam = examData.takenExams?.find(t => t.taken_by_user_id === student.user_id);
                             const hasTakenExam = !!takenExam;
-                            
+
                             return (
                                 <tr key={student.user_id || index} className={styles["submission-row"]}>
                                     <td>{student.name || 'Unknown Student'}</td>
@@ -173,8 +171,8 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                                         {!hasTakenExam ? (
                                             <span className={styles["status-pending"]}>待評分</span>
                                         ) : (
-                                            <span className={styles["status-graded"]}>已評分</span>
-                                        )}
+                                                <span className={styles["status-graded"]}>已評分</span>
+                                            )}
                                     </td>
                                     <td>
                                         <button
@@ -188,7 +186,7 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                                         </button>
 
                                     </td>
-                                    
+
 
                                     <GradeForm 
                                         examData={examData}
@@ -201,19 +199,19 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                                         examId={examId}
 
                                     />
-                                     
+
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
             ) : (
-                <p>No exam submissions available for this exam.</p>
-            )}
+                    <p>No exam submissions available for this exam.</p>
+                )}
         </div>
     );
 
-    
+
 
 
 }
