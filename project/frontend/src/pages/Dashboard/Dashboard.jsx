@@ -11,7 +11,7 @@ import styles from "./Dashboard.module.css";
 
 import { GetComingUpList } from "@/services/ExamApi";
 import { GetCourses } from "@/services/CourseApi";
-import { GetTodoList } from "@/services/AssignmentApi";
+import { GetTodoAssignList } from "@/services/AssignmentApi";
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -25,7 +25,7 @@ function Dashboard() {
         try {
             const [courses, todoList, comingUpList] = await Promise.all([
                 GetCourses(currentUserId),
-                GetTodoList(currentUserId),
+                GetTodoAssignList(currentUserId),
                 GetComingUpList(currentUserId),
             ]);
 
