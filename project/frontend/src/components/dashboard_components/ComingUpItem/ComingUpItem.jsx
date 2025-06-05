@@ -2,6 +2,17 @@ import React from "react";
 import styles from "./ComingUpItem.module.css";
 
 function ComingUpItem({ comingUpList }) {
+    const Show = (startDate) => {
+        const now = new Date();
+        const due = new Date(startDate);
+
+        if (now < due) {
+            return true;
+        }
+
+        return false;
+    };
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleString("zh-TW", {
             year: "numeric",
@@ -15,10 +26,8 @@ function ComingUpItem({ comingUpList }) {
 
     return (
         <div>
-            {comingUpList.length === 0 ? (
-                <p className={`${styles["comingup-empty"]}`}>近期無活動</p>
-            ) : (
-                comingUpList.map((item, index) => (
+            {comingUpList.map((item, index) => (
+                Show(item.date) == true ? (
                     <div key={index} className={`${styles["comingup-item"]}`}>
                         <p className={`${styles["comingup-title"]}`}>
                             {item.title}
@@ -27,8 +36,8 @@ function ComingUpItem({ comingUpList }) {
                             時間：{formatDate(item.date)}
                         </p>
                     </div>
-                ))
-            )}
+                ) : null
+            ))}
         </div>
     );
 }

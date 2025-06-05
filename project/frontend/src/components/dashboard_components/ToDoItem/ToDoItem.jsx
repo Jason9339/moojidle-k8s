@@ -7,7 +7,6 @@ function ToDoItem({ todoList }) {
         const due = new Date(dueDate);
 
         if (now < due) {
-            console.error("true");
             return true;
         }
 
@@ -41,8 +40,6 @@ function ToDoItem({ todoList }) {
             hour12: true,
         });
     };
-
-    console.error(todoList);
 
     return (
         <div>

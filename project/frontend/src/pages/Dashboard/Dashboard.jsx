@@ -9,7 +9,7 @@ import JoinCourseModal from "@/components/dashboard_components/JoinCourseModal/J
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
-import { GetComingUpList } from "@/services/ExamApi";
+import { GetComingUpExamList } from "@/services/ExamApi";
 import { GetCourses } from "@/services/CourseApi";
 import { GetTodoAssignList } from "@/services/AssignmentApi";
 
@@ -26,7 +26,7 @@ function Dashboard() {
             const [courses, todoList, comingUpList] = await Promise.all([
                 GetCourses(currentUserId),
                 GetTodoAssignList(currentUserId),
-                GetComingUpList(currentUserId),
+                GetComingUpExamList(currentUserId),
             ]);
 
             setDashboardData({

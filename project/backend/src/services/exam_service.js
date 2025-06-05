@@ -29,7 +29,6 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
             {
                 $match: {
                     "study_data.user_id": parsedUserId, // Filter by user_id
-                    exam_date: { $gt: current_time } // current_time < exam_date
                 }
             },
             // Join with the course collection to get course details
@@ -48,8 +47,9 @@ async function FindFromExamJoinStudyInJoinCourseByUserId(user_id) {
             {
                 $project: {
                     _id: 0,
+                    course: "$course_data.name",
                     title: "$exam_name", // Map to frontend's "title"
-                    date: "$exam_date" // Map to frontend's "date"
+                    date: "$start_date" // Map to frontend's "date"
                 }
             }
         ]).toArray();
