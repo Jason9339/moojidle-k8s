@@ -171,7 +171,7 @@ async function GetStudentProjectedTakenExam(req, res) {
 async function GetTakenExamsByExamId(req, res) {
     try {
         const examId = parseInt(req.params.examId);
-        console.log("Exam ID:", examId);
+        // console.log("Exam ID:", examId);
 
         if (isNaN(examId)) {
             res.status(400).send("Invalid exam ID");
@@ -211,11 +211,11 @@ async function GradeExam(req, res) {
         let { score, graderId, takenExamId } = req.body;
         score = parseFloat(score);
         graderId = parseInt(graderId);
-        console.log("Taken Exam ID:", takenExamId);
+        // console.log("Taken Exam ID:", takenExamId);
 
         if (takenExamId !== undefined) {
             takenExamId = parseInt(takenExamId);
-            console.log("Grading existing taken exam with ID:", takenExamId);
+            // console.log("Grading existing taken exam with ID:", takenExamId);
             const IsUpdatedTakenExam = await UpdateTakenExam(takenExamId, score, graderId, beGradedUserId, examId);
             if (!IsUpdatedTakenExam) {
                 res.status(404).send({
@@ -230,7 +230,7 @@ async function GradeExam(req, res) {
             });
         }
         else {
-            console.log("Creating new taken exam for user:", beGradedUserId);
+            // console.log("Creating new taken exam for user:", beGradedUserId);
             const newTakenExam = await CreateTakenExam(score, graderId, beGradedUserId, examId);
             res.status(201).send(newTakenExam);
         }
