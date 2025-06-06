@@ -89,3 +89,16 @@ export const InviteStudent = async (courseId, userId, studentId) => {
         })
     ).data;
 };
+
+export const EditCourseName = async (courseId, newCourseName) => {
+    try {
+        const response = await api.put(`/course/edit/${courseId}`, {name : newCourseName});
+        return response.data;
+    } catch (error) {
+        console.error(
+            "Error edit course :",
+            error.response?.data || error.message
+        );
+        throw error;
+    }
+};
