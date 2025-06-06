@@ -28,26 +28,3 @@ export const getAvatarUrl = (path) => {
     // 返回安全的 API 端點 URL
     return `http://localhost:3000/user/avatar/${filename}`;
 };
-
-// /**
-//  * 檢查是否為預設頭像
-//  * @param {string} path - 頭像路徑
-//  * @returns {boolean} 是否為預設頭像
-//  */
-// export const isDefaultAvatar = (path) => {
-//     return !path || path === '/user_pfp/default.png' || path.trim() === '';
-// };
-
-// /**
-//  * 從頭像路徑提取檔案名稱
-//  * @param {string} path - 頭像路徑
-//  * @returns {string|null} 檔案名稱，如果無效則返回 null
-//  */
-// export const extractAvatarFilename = (path) => {
-//     if (!path || typeof path !== 'string') {
-//         return null;
-//     }
-    
-//     const filename = path.split('/').pop();
-//     return filename || null;
-// };
