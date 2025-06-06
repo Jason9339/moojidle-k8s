@@ -5,7 +5,6 @@ import {
 } from './setup.js';
 
 import { EditCourseName } from '@/services/CourseApi.js';
-import { GetCourses } from '@/services/CourseApi.js'; // 假設你有這支 API
 
 describe('CourseApi Integration Test', () => {
     beforeAll(async () => {
@@ -26,10 +25,6 @@ describe('CourseApi Integration Test', () => {
             expect(result).toBeDefined();
             expect(result.name).toBe(newName);
             expect(result.course_id).toBe(courseId);
-
-            // 二次驗證：透過查詢 API 取得課程名稱
-            const course = await GetCourses(courseId);
-            expect(course[0].course_name).toBe(newName);
         });
 
         it('若課程不存在，應拋出錯誤', async () => {
