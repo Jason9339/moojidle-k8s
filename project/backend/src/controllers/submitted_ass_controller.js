@@ -91,7 +91,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
         // no students in this course
         if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
-            console.error(studentsGrades);
+            return
         }
 
         studentsGrades.forEach((student) => {

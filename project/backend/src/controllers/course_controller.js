@@ -126,7 +126,9 @@ async function ReadCourse(req, res) {
 
                 // adding 2 additional repeated attributes for axios services
                 course_id: course.course_id,
-                course_name: course.name
+                course_name: course.name,
+                start_date: course.start_date,
+                week_num: course.week_num
             }))
             .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
 
