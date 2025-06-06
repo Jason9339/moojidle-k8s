@@ -7,19 +7,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 18px;
-    padding-right: 10px;
+    gap: 0px; 
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 0px;
+    padding-right: 12px;
     margin-bottom: 12px;
     border-bottom: 1px solid #cbd5e1;
     background-color: #dde4ef;
 }
 
 .logo {
-    width: 40px;
-    height: 40px;
+    width: 65px;
+    height: 65px;
     object-fit: contain;
 }
 
@@ -33,5 +33,6 @@
 .menuItem {
     padding: 4px 12px;   /* 內邊距也微調讓點擊區域更舒服 */
     border-radius: 6px;  /* 選擇性美化：圓角 */
+    margin-bottom: 4px;
     transition: background-color 0.2s ease;
 }
