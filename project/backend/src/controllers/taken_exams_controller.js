@@ -171,6 +171,7 @@ async function GetStudentProjectedTakenExam(req, res) {
 async function GetTakenExamsByExamId(req, res) {
     try {
         const examId = parseInt(req.params.examId);
+        console.log("Exam ID:", examId);
 
         if (isNaN(examId)) {
             res.status(400).send("Invalid exam ID");
@@ -189,11 +190,6 @@ async function GetTakenExamsByExamId(req, res) {
 
         // console.log(allStudents);
 
-        // no taken exams yet
-        if (takenExams == null || takenExams.length == 0) {
-            res.status(200).send([]);
-            return;
-        }
 
         const data = {
             "takenExams": takenExams,

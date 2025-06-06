@@ -132,7 +132,6 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
 
     return (
         <div className={styles["exam-review-container"]}>
-            {examData.takenExams && examData.takenExams.length > 0 ? (
                 <table className={styles["submissions-table"]}>
                     <colgroup>
                         <col style={{ width: "12%" }} />
@@ -205,9 +204,8 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                         })}
                     </tbody>
                 </table>
-            ) : (
-                    <p>No exam submissions available for this exam.</p>
-                )}
+            
+        
         </div>
     );
 
