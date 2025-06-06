@@ -1,7 +1,7 @@
 import { useParams, Outlet, useNavigate, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar/LeftBar";
-import { GetCourses } from "@/services/CourseApi";
+import { GetCoursesForUser } from "@/services/CourseApi";
 import styles from "./CourseLayout.module.css";
 
 export default function CourseLayout() {
@@ -15,7 +15,7 @@ export default function CourseLayout() {
 			const user = JSON.parse(localStorage.getItem("user"));
 
 			try {
-				const allCourses = await GetCourses(user.user_id);
+				const allCourses = await GetCoursesForUser(user.user_id);
 				const currentCourse = allCourses.find(
 					(c) => String(c.courseId) === String(courseId)
 				);
