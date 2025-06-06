@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./CourseCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { FaBullhorn, FaTasks, FaEdit } from "react-icons/fa";
-import { MdBarChart } from "react-icons/md";
+import { IoBarChart } from "react-icons/io5";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({
@@ -76,7 +76,7 @@ function CourseCard({
                     title="Assignments"
                     onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
-                <MdBarChart
+                <IoBarChart
                     title="grade"
                     onClick={() => navigate(`/course/${courseId}/grade`)}
                 />
