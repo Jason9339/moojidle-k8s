@@ -1,31 +1,20 @@
 import React, { useState } from 'react';
 import styles from "./MainLayout.module.css";
 import EditMainLayout from "../EditMainLayout/EditMainLayout";
+import { getAvatarUrl } from '@/utils/avatarUtils.js';
 
 function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
-    // 確保頭像路徑包含完整的 URL
-    const getAvatarUrl = (path) => {
-        if (!path || path === '/user_pfp/default.png') {
-            return '/user_pfp/default.png';
-        }
-        if (path.startsWith('http')) {
-            return path;
-        }
-        return `http://localhost:3000${path}`;
-    };
-
     const [imgSrc, setImgSrc] = useState(getAvatarUrl(pfp_path));
     const [isEditing, setIsEditing] = useState(false);
-    const [contactWays, setContactWays] = useState(initialContacts || []);const handleSave = (updateData) => {
+    const [contactWays, setContactWays] = useState(initialContacts || []);
+
+    const handleSave = (updateData) => {
         if (updateData.contactWays) {
             setContactWays(updateData.contactWays);
         }
         if (updateData.hasNewAvatar && updateData.newAvatar) {
-            // 確保圖片路徑以 http://localhost:3000 開頭
-            const avatarUrl = updateData.newAvatar.startsWith('http') 
-                ? updateData.newAvatar 
-                : `http://localhost:3000${updateData.newAvatar}`;
-            setImgSrc(avatarUrl);
+            // 使用 utils 函數處理新頭像 URL
+            setImgSrc(getAvatarUrl(updateData.newAvatar));
         }
         setIsEditing(false);
     };

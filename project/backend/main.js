@@ -1,4 +1,5 @@
-import express from 'express'; import bodyParser from 'body-parser';
+import express from 'express'; 
+import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -26,8 +27,6 @@ app.use(cors({
     origin: ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173"]
 }));
 
-// 設定靜態檔案服務 - 提供上傳的檔案
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes are here ----------------------------------------------------------------------
 import assignmentRoute from "#src/routes/assignment_route.js"

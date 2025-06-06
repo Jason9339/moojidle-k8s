@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from "./OverviewPostCard.module.css";
+import { getAvatarUrl } from '@/utils/avatarUtils.js';
 
 const MAX_LINES = 5;
 const MAX_CHARS = 400;
@@ -15,7 +16,7 @@ const OverviewPostCard = ({
     postDate,
     onClick
 }) => {
-    const [imgSrc, setImgSrc] = useState(userPfp || "/user_pfp/default.png");
+    const [imgSrc, setImgSrc] = useState(getAvatarUrl(userPfp));
 
     const lines = content.split('\n');
     const shouldTruncate = lines.length > MAX_LINES || content.length > MAX_CHARS;

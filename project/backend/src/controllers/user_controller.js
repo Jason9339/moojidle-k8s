@@ -14,6 +14,13 @@ import{
 } from "#src/services/notification_service.js"
 
 import { SaveFile, DeleteFile } from "#src/services/file_services/file_storage_service.js";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// 獲取當前檔案的目錄
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Register a new user in the database
 // In Postman send this json format in the body
@@ -293,7 +300,60 @@ async function UpdateUserProfile(req, res) {
     }
 }
 
-
+// 安全的頭像檔案獲取 API
+async function GetUserAvatar(req, res) {
+    const filename = req.params.filename;
+    
+    try {
+        // 驗證檔案名稱，防止路徑遍歷攻擊
+        if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+            return res.status(400).send({ message: "無效的檔案名稱" });
+        }
+        
+        // 構建安全的檔案路徑
+        const uploadsDir = path.join(__dirname, '../../uploads/profiles');
+        const filePath = path.join(uploadsDir, filename);
+        
+        // 檢查檔案是否存在
+        if (!fs.existsSync(filePath)) {
+            // 如果檔案不存在，返回預設頭像
+            const defaultPath = path.join(__dirname, '../../public/user_pfp/default.png');
+            if (fs.existsSync(defaultPath)) {
+                return res.sendFile(defaultPath);
+            } else {
+                return res.status(404).send({ message: "檔案不存在" });
+            }
+        }
+        
+        // 檢查檔案類型
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const fileExtension = path.extname(filename).toLowerCase();
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            return res.status(400).send({ message: "不支援的檔案類型" });
+        }
+        
+        // 設定適當的 Content-Type
+        const contentTypes = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.webp': 'image/webp'
+        };
+        
+        res.setHeader('Content-Type', contentTypes[fileExtension]);
+        //告訴瀏覽器可以快取這個檔案
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 24小時快取
+        
+        // 發送檔案
+        res.sendFile(filePath);
+        
+    } catch (err) {
+        console.error("獲取頭像檔案錯誤:", err);
+        return res.status(500).send({ message: "獲取檔案失敗" });
+    }
+}
 
 
 export {
@@ -304,7 +364,8 @@ export {
     GetUserTags,
     UpdatePassword,
     UpdateTags,
-    UpdateUserProfile
+    UpdateUserProfile,
+    GetUserAvatar
 }
 
 

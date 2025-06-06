@@ -9,7 +9,8 @@ import {
     UpdatePassword,
     GetUserTags,
     UpdateTags,
-    UpdateUserProfile
+    UpdateUserProfile,
+    GetUserAvatar
 } from '#src/controllers/user_controller.js';
 
 import { 
@@ -48,6 +49,10 @@ import {
 
 router.get("/get-user-by-id/:userId", GetUserData);
 router.get("/get-user-tags-by-id/:userId", GetUserTags);
+
+// 安全的頭像獲取路由
+router.get("/avatar/:filename", GetUserAvatar);
+
 router.post("/register", Register);
 router.post("/login", Login);
 

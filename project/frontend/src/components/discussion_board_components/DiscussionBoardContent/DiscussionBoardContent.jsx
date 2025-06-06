@@ -48,10 +48,10 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
             <div className={styles["content-flex-box"]}>
                 {/* foreach overviewPost in overviewPosts */}
                 {overviewPosts && overviewPosts.length > 0 ? (
-                    overviewPosts.slice().reverse().map((overviewPost, index) => (
-                        <OverviewPostCard
+                    overviewPosts.slice().reverse().map((overviewPost, index) => (                        
+                    <OverviewPostCard
                             key={overviewPost.post_id}
-                            userPfp={overviewPost.post_by_user_name}
+                            userPfp={overviewPost.post_by_user_pfp}
                             courseName={courseName}
                             boardName={boardName}
                             userName={overviewPost.post_by_user_name}

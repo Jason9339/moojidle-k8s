@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { getAvatarUrl } from '@/utils/avatarUtils.js';
 
 
 function PostContent({
@@ -14,7 +15,7 @@ function PostContent({
     description,
     textareaRef,
 }) {
-    const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
+    const [imgSrc, setImgSrc] = useState(getAvatarUrl(post.auther_image));
 
     return (
         <div className={styles.card}>
