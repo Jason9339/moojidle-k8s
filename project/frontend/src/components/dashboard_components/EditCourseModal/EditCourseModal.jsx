@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeleteCourse } from "@/services/CourseApi";
+import { DeleteCourse, EditCourseName } from "@/services/CourseApi";
 import styles from "./EditCourseModal.module.css";
 
 function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
@@ -16,8 +16,10 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
         setError("");
         setIsSaving(true);
         try {
-            // console.log("修改課程:", { courseId: course.courseId, newName: courseName });
-            onClose(); // 待實作完整儲存邏輯
+            EditCourseName(course.courseId, courseName );
+            onClose();
+            alert("課程名稱已成功更新");
+            window.location.reload();
         } catch (err) {
             console.error("儲存課程失敗:", err);
             setError("儲存失敗，請稍後再試");
