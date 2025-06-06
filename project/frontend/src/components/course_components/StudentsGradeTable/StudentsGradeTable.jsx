@@ -71,12 +71,12 @@ function StudentsGradeTable({ studentGrades }) {
         let sum = 0;
         // start from student's assign score
         for(let i = 0; i < tableData.sub_ass.length; i ++){
-            sum += ((tableData.sub_ass[i].score || 0) * tableData.sub_ass[i].percentage)
+            sum += ((tableData.sub_ass[i].score || 0) / tableData.sub_ass[i].max_score * tableData.sub_ass[i].percentage)
         }
 
         // next is student's exam score
         for(let i = 0; i < tableData.taken_exams.length; i ++){
-            sum += ((tableData.taken_exams[i].score || 0) * tableData.taken_exams[i].percentage)
+            sum += ((tableData.taken_exams[i].score || 0) / tableData.taken_exams[i].max_score * tableData.taken_exams[i].percentage)
         }
 
         return sum.toFixed(2);

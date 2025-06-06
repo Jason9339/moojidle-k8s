@@ -38,6 +38,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
         // no studentsin this course
         if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
+            return;
         }
 
         studentsGrades.forEach((student) => {
@@ -54,6 +55,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
         // no exam yet in the course
         if (exams == null || exams.length == 0) {
             res.status(200).send(studentsGrades);
+            return;
         } else {
             // for each exam
             for (const exam of exams) {
@@ -66,6 +68,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
                     } else {
                         let finalTakenExam = takenExam.at(-1);
                         finalTakenExam.exam_name = exam.exam_name;
+                        finalTakenExam.max_score = exam.max_score;
                         finalTakenExam.percentage = exam.percentage;
                         student.taken_exams.push(finalTakenExam);
                     }
@@ -137,6 +140,7 @@ async function GetStudentProjectedTakenExam(req, res) {
         // no exam yet in the course
         if (exams == null || exams.length == 0) {
             res.status(200).send(studentGrade);
+            return;
         } else {
             // for each exam
             for (const exam of exams) {
@@ -148,6 +152,7 @@ async function GetStudentProjectedTakenExam(req, res) {
                 } else {
                     let finalTakenExam = takenExam.at(-1);
                     finalTakenExam.exam_name = exam.exam_name;
+                    finalTakenExam.max_score = exam.max_score;
                     finalTakenExam.percentage = exam.percentage;
                     studentGrade.taken_exams.push(finalTakenExam);
                 }
