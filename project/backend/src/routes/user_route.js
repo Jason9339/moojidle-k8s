@@ -50,8 +50,8 @@ import {
 router.get("/get-user-by-id/:userId", GetUserData);
 router.get("/get-user-tags-by-id/:userId", GetUserTags);
 
-// 安全的頭像獲取路由
-router.get("/avatar/:filename", GetUserAvatar);
+// 安全的頭像獲取路由 - 改為使用 query parameter
+router.get("/avatar", GetUserAvatar);
 
 router.post("/register", Register);
 router.post("/login", Login);

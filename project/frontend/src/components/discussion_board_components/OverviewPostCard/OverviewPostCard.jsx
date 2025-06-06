@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./OverviewPostCard.module.css";
-import { getAvatarUrl } from '@/utils/avatarUtils.js';
+import { getAvatarUrl, revokeBlobUrl } from '@/utils/avatarUtils.js';
 
 const MAX_LINES = 5;
 const MAX_CHARS = 400;
@@ -16,7 +16,46 @@ const OverviewPostCard = ({
     postDate,
     onClick
 }) => {
-    const [imgSrc, setImgSrc] = useState(getAvatarUrl(userPfp));
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
+
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadAvatar = async () => {
+            try {
+                const avatarUrl = await getAvatarUrl(userPfp);
+                if (isMounted) {
+                    setImgSrc(avatarUrl);
+                }
+            } catch (error) {
+                console.error('載入頭像失敗:', error);
+                if (isMounted) {
+                    setImgSrc("/user_pfp/default.png");
+                }
+            }
+        };
+
+        if (userPfp) {
+            loadAvatar();
+        }
+
+        return () => {
+            isMounted = false;
+            // 清理 blob URL
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                revokeBlobUrl(imgSrc);
+            }
+        };
+    }, [userPfp]);
+
+    useEffect(() => {
+        // 組件卸載時清理 blob URL
+        return () => {
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                revokeBlobUrl(imgSrc);
+            }
+        };
+    }, []);
 
     const lines = content.split('\n');
     const shouldTruncate = lines.length > MAX_LINES || content.length > MAX_CHARS;

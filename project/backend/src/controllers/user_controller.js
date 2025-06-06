@@ -263,7 +263,6 @@ async function UpdateUserProfile(req, res) {
             if (user.path_to_profile_pic && user.path_to_profile_pic.trim() !== "") {
                 try {
                     await DeleteFile(user.path_to_profile_pic);
-                    console.log(`已刪除舊頭像: ${user.path_to_profile_pic}`);
                 } catch (deleteError) {
                     console.warn("刪除舊頭像失敗，但繼續上傳新頭像:", deleteError.message);
                 }
@@ -302,12 +301,21 @@ async function UpdateUserProfile(req, res) {
 
 // 安全的頭像檔案獲取 API
 async function GetUserAvatar(req, res) {
-    const filename = req.params.filename;
+    const { path: avatarPath } = req.query;
     
     try {
-        // 驗證檔案名稱，防止路徑遍歷攻擊
+        // 預設頭像路徑 - 從前端 public 目錄獲取
+        const defaultPath = path.join(__dirname, '../../../frontend/public/user_pfp/default.png');
+        
+        // 如果沒有提供路徑或為預設路徑，返回預設頭像
+        if (!avatarPath || avatarPath === '/user_pfp/default.png' || avatarPath.trim() === '') {
+            return res.sendFile(defaultPath);
+        }
+        
+        // 從路徑中提取檔案名稱
+        const filename = avatarPath.split('/').pop();
         if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-            return res.status(400).send({ message: "無效的檔案名稱" });
+            return res.sendFile(defaultPath);
         }
         
         // 構建安全的檔案路徑
@@ -316,13 +324,7 @@ async function GetUserAvatar(req, res) {
         
         // 檢查檔案是否存在
         if (!fs.existsSync(filePath)) {
-            // 如果檔案不存在，返回預設頭像
-            const defaultPath = path.join(__dirname, '../../public/user_pfp/default.png');
-            if (fs.existsSync(defaultPath)) {
-                return res.sendFile(defaultPath);
-            } else {
-                return res.status(404).send({ message: "檔案不存在" });
-            }
+            return res.sendFile(defaultPath);
         }
         
         // 檢查檔案類型
@@ -330,28 +332,17 @@ async function GetUserAvatar(req, res) {
         const fileExtension = path.extname(filename).toLowerCase();
         
         if (!allowedExtensions.includes(fileExtension)) {
-            return res.status(400).send({ message: "不支援的檔案類型" });
+            return res.sendFile(defaultPath);
         }
-        
-        // 設定適當的 Content-Type
-        const contentTypes = {
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
-            '.png': 'image/png',
-            '.gif': 'image/gif',
-            '.webp': 'image/webp'
-        };
-        
-        res.setHeader('Content-Type', contentTypes[fileExtension]);
-        //告訴瀏覽器可以快取這個檔案
-        res.setHeader('Cache-Control', 'public, max-age=86400'); // 24小時快取
         
         // 發送檔案
         res.sendFile(filePath);
         
     } catch (err) {
         console.error("獲取頭像檔案錯誤:", err);
-        return res.status(500).send({ message: "獲取檔案失敗" });
+        // 錯誤時也返回預設頭像
+        const defaultPath = path.join(__dirname, '../../../frontend/public/user_pfp/default.png');
+        return res.sendFile(defaultPath);
     }
 }
 

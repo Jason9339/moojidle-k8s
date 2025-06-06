@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { getAvatarUrl } from '@/utils/avatarUtils.js';
+import { getAvatarUrl, revokeBlobUrl } from '@/utils/avatarUtils.js';
 
 
 function PostContent({
@@ -15,7 +15,46 @@ function PostContent({
     description,
     textareaRef,
 }) {
-    const [imgSrc, setImgSrc] = useState(getAvatarUrl(post.auther_image));
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
+
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadAvatar = async () => {
+            try {
+                const avatarUrl = await getAvatarUrl(post.auther_image);
+                if (isMounted) {
+                    setImgSrc(avatarUrl);
+                }
+            } catch (error) {
+                console.error('載入頭像失敗:', error);
+                if (isMounted) {
+                    setImgSrc("/user_pfp/default.png");
+                }
+            }
+        };
+
+        if (post.auther_image) {
+            loadAvatar();
+        }
+
+        return () => {
+            isMounted = false;
+            // 清理 blob URL
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                revokeBlobUrl(imgSrc);
+            }
+        };
+    }, [post.auther_image]);
+
+    useEffect(() => {
+        // 組件卸載時清理 blob URL
+        return () => {
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                revokeBlobUrl(imgSrc);
+            }
+        };
+    }, []);
 
     return (
         <div className={styles.card}>
