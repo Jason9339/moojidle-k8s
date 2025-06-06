@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./MainLayout.module.css";
 import EditMainLayout from "../EditMainLayout/EditMainLayout";
-import { getAvatarUrl, revokeBlobUrl } from '@/utils/avatarUtils.js';
+import { GetAvatarUrl } from '@/services/UserApi.js';
 
 function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
     const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
@@ -12,28 +12,23 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
         let isMounted = true;
         
         const loadAvatar = async () => {
-            try {
-                const avatarUrl = await getAvatarUrl(pfp_path);
-                if (isMounted) {
-                    setImgSrc(avatarUrl);
-                }
-            } catch (error) {
-                console.error('載入頭像失敗:', error);
-                if (isMounted) {
-                    setImgSrc("/user_pfp/default.png");
-                }
+            const avatarUrl = await GetAvatarUrl(pfp_path);
+            if (isMounted) {
+                setImgSrc(avatarUrl);
             }
         };
 
         if (pfp_path) {
             loadAvatar();
+        } else {
+            setImgSrc("/user_pfp/default.png");
         }
 
         return () => {
             isMounted = false;
             // 清理 blob URL
             if (imgSrc && imgSrc.startsWith('blob:')) {
-                revokeBlobUrl(imgSrc);
+                URL.revokeObjectURL(imgSrc);
             }
         };
     }, [pfp_path]);
@@ -42,7 +37,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
         // 組件卸載時清理 blob URL
         return () => {
             if (imgSrc && imgSrc.startsWith('blob:')) {
-                revokeBlobUrl(imgSrc);
+                URL.revokeObjectURL(imgSrc);
             }
         };
     }, []);
@@ -53,12 +48,8 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
         }
         if (updateData.hasNewAvatar && updateData.newAvatar) {
             // 使用 utils 函數處理新頭像 URL
-            try {
-                const newAvatarUrl = await getAvatarUrl(updateData.newAvatar);
-                setImgSrc(newAvatarUrl);
-            } catch (error) {
-                console.error('載入新頭像失敗:', error);
-            }
+            const newAvatarUrl = await GetAvatarUrl(updateData.newAvatar);
+            setImgSrc(newAvatarUrl);
         }
         setIsEditing(false);
     };

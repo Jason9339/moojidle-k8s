@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./OverviewPostCard.module.css";
-import { getAvatarUrl, revokeBlobUrl } from '@/utils/avatarUtils.js';
+import { GetAvatarUrl } from '@/services/UserApi.js';
 
 const MAX_LINES = 5;
 const MAX_CHARS = 400;
@@ -22,28 +22,23 @@ const OverviewPostCard = ({
         let isMounted = true;
         
         const loadAvatar = async () => {
-            try {
-                const avatarUrl = await getAvatarUrl(userPfp);
-                if (isMounted) {
-                    setImgSrc(avatarUrl);
-                }
-            } catch (error) {
-                console.error('載入頭像失敗:', error);
-                if (isMounted) {
-                    setImgSrc("/user_pfp/default.png");
-                }
+            const avatarUrl = await GetAvatarUrl(userPfp);
+            if (isMounted) {
+                setImgSrc(avatarUrl);
             }
         };
 
         if (userPfp) {
             loadAvatar();
+        } else {
+            setImgSrc("/user_pfp/default.png");
         }
 
         return () => {
             isMounted = false;
             // 清理 blob URL
             if (imgSrc && imgSrc.startsWith('blob:')) {
-                revokeBlobUrl(imgSrc);
+                URL.revokeObjectURL(imgSrc);
             }
         };
     }, [userPfp]);
@@ -52,7 +47,7 @@ const OverviewPostCard = ({
         // 組件卸載時清理 blob URL
         return () => {
             if (imgSrc && imgSrc.startsWith('blob:')) {
-                revokeBlobUrl(imgSrc);
+                URL.revokeObjectURL(imgSrc);
             }
         };
     }, []);

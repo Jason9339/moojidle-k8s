@@ -322,18 +322,15 @@ async function GetUserAvatar(req, res) {
     const { path: avatarPath } = req.query;
     
     try {
-        // 預設頭像路徑 - 從前端 public 目錄獲取
-        const defaultPath = path.join(__dirname, '../../../frontend/public/user_pfp/default.png');
-        
-        // 如果沒有提供路徑或為預設路徑，返回預設頭像
+        // 如果沒有提供路徑或為預設路徑，返回 404
         if (!avatarPath || avatarPath === '/user_pfp/default.png' || avatarPath.trim() === '') {
-            return res.sendFile(defaultPath);
+            return res.status(404).send({ message: "頭像路徑無效" });
         }
         
         // 從路徑中提取檔案名稱
         const filename = avatarPath.split('/').pop();
         if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-            return res.sendFile(defaultPath);
+            return res.status(400).send({ message: "無效的檔案路徑" });
         }
         
         // 構建安全的檔案路徑
@@ -342,7 +339,7 @@ async function GetUserAvatar(req, res) {
         
         // 檢查檔案是否存在
         if (!fs.existsSync(filePath)) {
-            return res.sendFile(defaultPath);
+            return res.status(404).send({ message: "頭像檔案不存在" });
         }
         
         // 檢查檔案類型
@@ -350,7 +347,7 @@ async function GetUserAvatar(req, res) {
         const fileExtension = path.extname(filename).toLowerCase();
         
         if (!allowedExtensions.includes(fileExtension)) {
-            return res.sendFile(defaultPath);
+            return res.status(400).send({ message: "不支援的檔案格式" });
         }
         
         // 發送檔案
@@ -358,9 +355,7 @@ async function GetUserAvatar(req, res) {
         
     } catch (err) {
         console.error("獲取頭像檔案錯誤:", err);
-        // 錯誤時也返回預設頭像
-        const defaultPath = path.join(__dirname, '../../../frontend/public/user_pfp/default.png');
-        return res.sendFile(defaultPath);
+        return res.status(500).send({ message: "伺服器錯誤", error: err.message });
     }
 }
 

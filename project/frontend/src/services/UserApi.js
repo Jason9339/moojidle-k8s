@@ -73,17 +73,18 @@ async function UpdateUserTags(userId, tags) {
     }
 }
 
-// 新增獲取頭像的函數
-async function GetUserAvatar(pathToProfilePic) {
+// 獲取頭像並回傳 Blob URL
+async function GetAvatarUrl(pathToProfilePic) {
     try {
         const response = await api.get('/user/avatar', {
             params: { path: pathToProfilePic },
             responseType: 'blob',
         });
-        return response.data;
+        return URL.createObjectURL(response.data);
     } catch (err) {
         console.error('獲取頭像錯誤:', err);
-        throw err;
+        // 直接回傳預設頭像路徑，不再嘗試後端
+        return '/user_pfp/default.png';
     }
 }
 
@@ -94,5 +95,5 @@ export {
     UpdateUserData,
     UpdateUserProfile,
     UpdateUserTags,
-    GetUserAvatar
+    GetAvatarUrl
 }
