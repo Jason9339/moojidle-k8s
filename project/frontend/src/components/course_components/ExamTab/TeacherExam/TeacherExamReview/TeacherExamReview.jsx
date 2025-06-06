@@ -164,7 +164,7 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
                                     <td>
                                         {hasTakenExam 
                                             ? (takenExam.score !== null ? takenExam.score : 'Not graded') 
-                                            : '0'}
+                                            : 'Not graded'}
                                     </td>
                                     <td>
                                         {!hasTakenExam ? (
