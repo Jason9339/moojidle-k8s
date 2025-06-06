@@ -1,6 +1,6 @@
 import api from "@/ApiClient";
 
-export const GetCourses = async (userId) => {
+export const GetCoursesForUser = async (userId) => {
     return (await api.get(`/course/read/${userId}`)).data;
 };
 
@@ -88,4 +88,17 @@ export const InviteStudent = async (courseId, userId, studentId) => {
             studentId,
         })
     ).data;
+};
+
+export const EditCourseName = async (courseId, newCourseName) => {
+    try {
+        const response = await api.put(`/course/edit/${courseId}`, {name : newCourseName});
+        return response.data;
+    } catch (error) {
+        console.error(
+            "Error edit course :",
+            error.response?.data || error.message
+        );
+        throw error;
+    }
 };
