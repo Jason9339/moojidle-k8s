@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styles from "./CourseCard.module.css";
 import { useNavigate } from "react-router-dom";
-import { FaBullhorn, FaTasks, FaComments, FaEdit } from "react-icons/fa";
+import { FaBullhorn, FaTasks, FaEdit } from "react-icons/fa";
+import { IoBarChart } from "react-icons/io5";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({
@@ -17,7 +18,7 @@ function CourseCard({
     const navigate = useNavigate();
     const [showEditModal, setShowEditModal] = useState(false);
 
-    const handleCardClick = () => {  
+    const handleCardClick = () => {
         navigate(`/course/${courseId}`);
     };
 
@@ -75,9 +76,9 @@ function CourseCard({
                     title="Assignments"
                     onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
-                <FaComments
-                    title="Discussion"
-                    onClick={() => navigate(`/course/${courseId}/discussion`)}
+                <IoBarChart
+                    title="grade"
+                    onClick={() => navigate(`/course/${courseId}/grade`)}
                 />
             </div>
             {showEditModal && (

@@ -5,7 +5,6 @@ import AssignmentsTab from "@/pages/course_pages/AssignmentsTab/AssignmentsTab";
 import GradesTab from "@/pages/course_pages/GradesTab/GradesTab";
 import AnnouncementsTab from "@/pages/course_pages/AnnouncementsTab/AnnouncementsTab";
 import MembersTab from "@/pages/course_pages/MembersTab/MembersTab";
-import DiscussionTab from "@/pages/course_pages/DiscussionTab/DiscussionTab";
 import ExamsTab from "@/pages/course_pages/ExamsTab/ExamsTab";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
@@ -58,7 +57,6 @@ function App() {
                             <Route path="grade" element={<GradesTab />} />
                             <Route path="announcement" element={<AnnouncementsTab />} />
                             <Route path="members" element={<MembersTab />} />
-                            <Route path="discussion" element={<DiscussionTab />} />
                             <Route path="exams" element={<ExamsTab />} />
                         </Route>
 

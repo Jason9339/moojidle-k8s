@@ -59,9 +59,9 @@ router.get("/read/teach_in", ReadTeachIn);
 
 // posters
 router.post("/create", CreateCourse);
-router.post("/edit/:id", EditCourse);
 
 // putters
+router.put("/edit/:id", EditCourse);
 
 // deleters
 router.delete("/delete/:id", RemoveCourse);
