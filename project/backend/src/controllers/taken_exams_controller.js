@@ -40,6 +40,7 @@ async function GetAllStudentsProjectedTakenExam(req, res) {
         // no studentsin this course
         if (studentsGrades == null || studentsGrades.length == 0) {
             res.status(200).send([]);
+            return;
         }
 
         studentsGrades.forEach((student) => {
