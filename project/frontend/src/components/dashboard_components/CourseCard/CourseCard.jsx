@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./CourseCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { FaBullhorn, FaTasks, FaEdit } from "react-icons/fa";
-import { GrDocumentPerformance } from "react-icons/gr";
+import { MdBarChart } from "react-icons/md";
 import EditCourseModal from "../EditCourseModal/EditCourseModal";
 
 function CourseCard({
@@ -18,7 +18,7 @@ function CourseCard({
     const navigate = useNavigate();
     const [showEditModal, setShowEditModal] = useState(false);
 
-    const handleCardClick = () => {  
+    const handleCardClick = () => {
         navigate(`/course/${courseId}`);
     };
 
@@ -76,7 +76,7 @@ function CourseCard({
                     title="Assignments"
                     onClick={() => navigate(`/course/${courseId}/assignment`)}
                 />
-                <GrDocumentPerformance   //TODO: 換ICON
+                <MdBarChart
                     title="grade"
                     onClick={() => navigate(`/course/${courseId}/grade`)}
                 />
