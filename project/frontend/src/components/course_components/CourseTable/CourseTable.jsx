@@ -10,6 +10,7 @@ function CourseTable({
     materials,
     assignments,
     exams,
+    todoAssignments,
     isEditMode,
     onMaterialsChange,
 }) {
@@ -179,6 +180,17 @@ function CourseTable({
             return exams.filter((e) => e.week === w || (!e.week && w === 1));
         });
     }, [exams, weekNum]);
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleString("zh-TW", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+        });
+    };
 
     return (
         <div className={styles["material-table-section"]}>
@@ -389,20 +401,25 @@ function CourseTable({
 
             <div className={styles["todo-panel"]}>
                 <h4>To Do</h4>
-                {assignments.length > 0 ? (
-                    assignments.slice(0, 3).map((a, idx) => (
-                        <div key={idx} className={styles["todo-item"]}>
-                            <strong>{a.name}</strong>
-                            <span>{course.title}</span>
-                            <span>
-                                {a.points || "N/A"} pts •{" "}
-                                {new Date(a.dueDate).toLocaleDateString()} at{" "}
-                                {new Date(a.dueDate).toLocaleTimeString()}
-                            </span>
+                {todoAssignments.length > 0 ? (
+                    todoAssignments.slice(0, 3).map((assignment, idx) => (
+                        <div 
+                            key={idx} 
+                            className={styles["todo-item"]}
+                        >
+                            <p className={styles["todo-title"]}>
+                                {assignment.title}
+                            </p>
+                            {/* <p className={styles["todo-course"]}>
+                                {assignment.course}
+                            </p> */}
+                            <p className={styles["todo-meta-row"]}>
+                                <span>截止：{formatDate(assignment.due)}</span>
+                            </p>
                         </div>
                     ))
                 ) : (
-                    <div className={styles["todo-item"]}>
+                    <div className={styles["todo-empty"]}>
                         <span>目前沒有待辦事項</span>
                     </div>
                 )}
