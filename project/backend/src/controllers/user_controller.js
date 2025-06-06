@@ -254,6 +254,22 @@ async function UpdateUserProfile(req, res) {
                     details: "example@email.com"
                 }]
             });
+        }
+
+        // 嚴格驗證每個聯絡方式項目的格式
+        for (const contact of contactWays) {
+            if (!contact || typeof contact !== 'object' || 
+                !contact.approach || !contact.details ||
+                typeof contact.approach !== 'string' || typeof contact.details !== 'string' ||
+                contact.approach.trim() === '' || contact.details.trim() === '') {
+                return res.status(400).send({
+                    message: "聯絡方式必須是陣列格式",
+                    example: [{
+                        approach: "email",
+                        details: "example@email.com"
+                    }]
+                });
+            }
         }        let avatarUrl = null;
 
         // 檢查是否有新頭像上傳

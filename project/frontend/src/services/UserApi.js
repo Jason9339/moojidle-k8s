@@ -38,7 +38,7 @@ async function UpdateUserData(userId, data) {
         return response.data;
     } catch (err) {
         console.error(err);
-        return { message: "An error occurred while updating the user data." };
+        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
     }
 }
 

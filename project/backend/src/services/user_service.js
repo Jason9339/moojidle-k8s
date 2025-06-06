@@ -182,9 +182,15 @@ async function UpdateUserProfileData(userId, newContactWays, avatarUrl = null) {
         // 準備更新的欄位
         const updateFields = {
             contact_ways: validContactWays
-        };        // 如果有提供頭像 URL，則加入更新欄位
-        if (avatarUrl !== null && avatarUrl !== undefined && avatarUrl.trim() !== "") {
-            updateFields.path_to_profile_pic = avatarUrl.trim();
+        };
+        
+        // 處理頭像 URL
+        let processedAvatarUrl = avatarUrl;
+        if (avatarUrl !== null && avatarUrl !== undefined) {
+            processedAvatarUrl = avatarUrl.trim();
+            if (processedAvatarUrl !== "") {
+                updateFields.path_to_profile_pic = processedAvatarUrl;
+            }
         }
 
         // 更新聯絡方式和頭像
@@ -199,7 +205,7 @@ async function UpdateUserProfileData(userId, newContactWays, avatarUrl = null) {
             modifiedCount: result.modifiedCount,
             message: result.modifiedCount ? "資料更新成功" : "沒有更新任何資料",
             updatedContactWays: validContactWays,
-            updatedAvatar: avatarUrl
+            updatedAvatar: processedAvatarUrl
         };    } catch (err) {
         console.error("Error updating contact ways and avatar:", err);
         throw new Error(`更新聯絡方式和頭像失敗: ${err.message}`);
