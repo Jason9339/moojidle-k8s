@@ -9,9 +9,9 @@ import JoinCourseModal from "@/components/dashboard_components/JoinCourseModal/J
 import LeftBar from "@/components/LeftBar/LeftBar";
 import styles from "./Dashboard.module.css";
 
-import { GetComingUpList } from "@/services/ExamApi";
-import { GetCourses } from "@/services/CourseApi";
-import { GetTodoList } from "@/services/AssignmentApi";
+import { GetComingUpExamList } from "@/services/ExamApi";
+import { GetCoursesForUser } from "@/services/CourseApi";
+import { GetTodoAssignList } from "@/services/AssignmentApi";
 
 function Dashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -23,11 +23,24 @@ function Dashboard() {
 
     const fetchAll = async () => {
         try {
-            const [courses, todoList, comingUpList] = await Promise.all([
-                GetCourses(currentUserId),
-                GetTodoList(currentUserId),
-                GetComingUpList(currentUserId),
+            const [allCourses, todoList, comingUpList] = await Promise.all([
+                GetCoursesForUser(currentUserId),
+                GetTodoAssignList(currentUserId),
+                GetComingUpExamList(currentUserId),
             ]);
+
+            // dont show out dated courses
+            const now = new Date();
+            let courses = [];
+            for (let course of allCourses) {
+                let startDate = new Date(course.start_date);
+                let endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + course.week_num * 7);
+
+                if (endDate >= now) {
+                    courses.push(course);
+                }
+            }
 
             setDashboardData({
                 courses,
@@ -58,6 +71,11 @@ function Dashboard() {
             console.error("刪除課程後重新抓取資料失敗：", error);
         }
     };
+
+    // wait for data
+    if (!dashboardData) {
+        return <></>
+    }
 
     return (
         <div className={styles["app-layout"]}>
@@ -90,10 +108,10 @@ function Dashboard() {
                     </div>
 
                     <div className={styles["dashboard-right"]}>
-                        <h3 className={styles["section-title"]}>To Do</h3>
+                        <h3 className={styles["section-title"]}>To Do Assignments</h3>
                         <ToDoItem todoList={dashboardData.todoList} />
                         <hr />
-                        <h3 className={styles["section-title"]}>Coming Up</h3>
+                        <h3 className={styles["section-title"]}>Up Comming Exams</h3>
                         <ComingUpItem comingUpList={dashboardData.comingUpList} />
                     </div>
                 </div>
