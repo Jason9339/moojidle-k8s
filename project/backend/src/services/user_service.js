@@ -206,7 +206,8 @@ async function UpdateUserProfileData(userId, newContactWays, avatarUrl = null) {
             message: result.modifiedCount ? "資料更新成功" : "沒有更新任何資料",
             updatedContactWays: validContactWays,
             updatedAvatar: processedAvatarUrl
-        };    } catch (err) {
+        };    
+    } catch (err) {
         console.error("Error updating contact ways and avatar:", err);
         throw new Error(`更新聯絡方式和頭像失敗: ${err.message}`);
     }

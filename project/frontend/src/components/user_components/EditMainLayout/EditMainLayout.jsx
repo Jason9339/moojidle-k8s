@@ -47,7 +47,8 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
 
     const handleRemove = (index) => {
         setContacts(contacts.filter((_, i) => i !== index));
-    };    const handleSave = async () => {
+    };    
+    const handleSave = async () => {
         setLoading(true);
         try {
             const validContacts = contacts
@@ -106,7 +107,8 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
         } finally {
             setLoading(false);
         }
-    };    return (
+    };    
+    return (
         <div className={loading ? styles.loading : ''}>
             {/* 頭像上傳區域 */}
             <div className={styles.avatarSection}>
