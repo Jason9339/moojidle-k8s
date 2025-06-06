@@ -89,7 +89,8 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                     </div>
 
                     <div className={styles.infoBlock}>
-                        <span className={styles.label}>Other Contact Ways:</span>                        {isEditing ? (
+                        <span className={styles.label}>Other Contact Ways:</span>       
+                         {isEditing ? (
                             <EditMainLayout
                                 contact_ways={contactWays}
                                 currentAvatar={imgSrc}

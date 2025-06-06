@@ -293,13 +293,15 @@ async function UpdateUserProfile(req, res) {
         const result = await UpdateUserProfileData(userId, contactWays, avatarUrl);
 
         if (result.modifiedCount > 0) {
-            return res.status(200).send({                message: "個人資料更新成功",
+            return res.status(200).send({               
+                message: "個人資料更新成功",
                 updatedContactWays: result.updatedContactWays,
                 updatedAvatar: result.updatedAvatar || user.path_to_profile_pic,
                 hasNewAvatar: !!uploadedFile
             });
         } else {
-            return res.status(200).send({                message: "沒有資料需要更新",
+            return res.status(200).send({                
+                message: "沒有資料需要更新",
                 updatedContactWays: result.updatedContactWays,
                 updatedAvatar: result.updatedAvatar || user.path_to_profile_pic,
                 hasNewAvatar: !!uploadedFile
