@@ -5,7 +5,7 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserContactWay,
+    UpdateUserProfileData,
     UpdateUserTags
 } from "#src/services/user_service.js";
 
@@ -274,7 +274,7 @@ async function UpdateUserProfile(req, res) {
         }
 
         // 更新資料庫
-        const result = await UpdateUserContactWay(userId, contactWays, avatarUrl);
+        const result = await UpdateUserProfileData(userId, contactWays, avatarUrl);
 
         if (result.modifiedCount > 0) {
             return res.status(200).send({                message: "個人資料更新成功",

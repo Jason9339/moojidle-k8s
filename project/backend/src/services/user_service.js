@@ -160,7 +160,7 @@ async function UpdateUserTags(userId, newTags) {
 
 
 
-async function UpdateUserContactWay(userId, newContactWays, avatarUrl = null) {
+async function UpdateUserProfileData(userId, newContactWays, avatarUrl = null) {
     let result;
     try {
        
@@ -214,5 +214,5 @@ export {
     FindOnesTagById,
     UpdateUserPassword,
     UpdateUserTags,
-    UpdateUserContactWay
+    UpdateUserProfileData
 }

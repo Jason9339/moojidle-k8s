@@ -6,7 +6,7 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserContactWay,
+    UpdateUserProfileData,
     UpdateUserTags
 } from '#src/services/user_service.js';
 
@@ -161,9 +161,9 @@ describe('User Service', () => {
             expect(result.modifiedCount).toBe(0);
         });
     });
-    describe('UpdateUserContactWay', () => {
+    describe('UpdateUserProfileData', () => {
         it('應該成功更新用戶聯絡方式', async () => {
-            const result = await UpdateUserContactWay(1, [
+            const result = await UpdateUserProfileData(1, [
                 { approach: "phone", details: "555-1234" },
                 { approach: "email", details: "user1@example.com" }
             ]);
@@ -175,7 +175,7 @@ describe('User Service', () => {
             ]);
         });
         it('當聯絡方式格式不正確時應該拋出錯誤', async () => {
-            await expect(UpdateUserContactWay(1, "invalid format")).rejects.toThrow("聯絡方式必須是陣列格式");
+            await expect(UpdateUserProfileData(1, "invalid format")).rejects.toThrow("聯絡方式必須是陣列格式");
         });
     });
     describe('UpdateUserTags', () => {
