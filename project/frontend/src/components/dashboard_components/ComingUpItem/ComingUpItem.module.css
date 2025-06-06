@@ -7,6 +7,11 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
+.comingup-item:hover {
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
 .comingup-title {
     font-weight: bold;
     margin: 0 0 6px;

@@ -73,6 +73,7 @@ async function GetToDoAssignmentsByUserId(user_id) {
                     _id: 0,
                     title: "$ass_name", // Map to frontend's "title"
                     course: "$course_data.name", // Map to frontend's "course"
+                    course_id: "$course_data.course_id", // Map to frontend's "course_id"
                     start_date: "$start_date", // Map to frontend's "start_date"
                     due: "$end_date", // Map to frontend's "due"
                     points: { $literal: 100 } // Add a placeholder value for "points"

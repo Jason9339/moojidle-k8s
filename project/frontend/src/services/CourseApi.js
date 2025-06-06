@@ -1,6 +1,6 @@
 import api from "@/ApiClient";
 
-export const GetCourses = async (userId) => {
+export const GetCoursesForUser = async (userId) => {
     return (await api.get(`/course/read/${userId}`)).data;
 };
 
