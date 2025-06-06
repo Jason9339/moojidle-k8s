@@ -108,6 +108,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
         // no assign yet in the course
         if (assigns == null || assigns.length == 0) {
             res.status(200).send(studentsGrades);
+            return;
         } else {
             // for each assigns
             for (const ass of assigns) {
@@ -121,6 +122,7 @@ async function GetAllStudentsProjectedSubAssign(req, res) {
                         let finalSubAss = subAss.at(-1);
                         finalSubAss.ass_name = ass.ass_name;
                         finalSubAss.percentage = ass.percentage;
+                        finalSubAss.max_score = ass.max_score;
                         student.sub_ass.push(finalSubAss);
                     }
                 }
@@ -191,6 +193,7 @@ async function GetStudentProjectedSubAssign(req, res) {
         // no assignment yet in the course
         if (assigns == null || assigns.length == 0) {
             res.status(200).send(studentGrade);
+            return;
         } else {
             // for each assignment
             for (const assign of assigns) {
@@ -203,6 +206,7 @@ async function GetStudentProjectedSubAssign(req, res) {
                     let finalSubAss = subAss.at(-1);
                     finalSubAss.ass_name = assign.ass_name;
                     finalSubAss.percentage = assign.percentage;
+                    finalSubAss.max_score = assign.max_score;
                     studentGrade.sub_ass.push(finalSubAss);
                 }
             }
