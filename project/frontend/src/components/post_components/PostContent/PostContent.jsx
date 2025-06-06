@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 // markdown
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 function PostContent({
     post,
     currentUserId,
@@ -68,9 +69,17 @@ function PostContent({
                             {new Date(post.post_date).toISOString().split("T")[0]}
                         </div>
                     </div>
-                    {post.post_user_custom_tags?.length > 0 && (
-                        <div className={styles.customTag}>{post.post_user_custom_tags[0].tag_name}</div>
-                    )}
+                    <div className={styles.userTags}>
+
+                        {
+                            post.post_user_custom_tags?.map((tag) => (
+                                <span key={tag.tag_name} className={styles.customTag}>
+                                    {tag.tag_name}
+
+                                </span>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
 
