@@ -31,7 +31,7 @@ function LeftBar() {
                             alt="Moojidle Logo"
                             className={styles.logo}
                         />
-                        {/* <h1 className={styles.projectName}>Moojidle</h1> */}
+                        <h1 className={styles.projectName}>Moojidle</h1>
                     </div>
                     <Menu>
                         <MenuItem icon={<FaUser />} onClick={toggleShowUser} className={styles.menuItem}>使用者</MenuItem>

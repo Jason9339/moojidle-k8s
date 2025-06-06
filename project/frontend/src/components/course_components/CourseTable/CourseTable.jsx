@@ -192,6 +192,18 @@ function CourseTable({
         });
     };
 
+    // 判斷作業狀態
+    const getAssignmentStatus = (assignment) => {
+        const now = new Date();
+        const dueDate = new Date(assignment.due);
+        
+        if (now > dueDate) {
+            return { status: 'overdue', label: '遲交', cssClass: 'status-overdue' };
+        } else {
+            return { status: 'pending', label: '未繳交', cssClass: 'status-pending' };
+        }
+    };
+
     return (
         <div className={styles["material-table-section"]}>
             <table className={styles["material-table"]}>
@@ -402,22 +414,27 @@ function CourseTable({
             <div className={styles["todo-panel"]}>
                 <h4>To Do</h4>
                 {todoAssignments.length > 0 ? (
-                    todoAssignments.slice(0, 3).map((assignment, idx) => (
-                        <div 
-                            key={idx} 
-                            className={styles["todo-item"]}
-                        >
-                            <p className={styles["todo-title"]}>
-                                {assignment.title}
-                            </p>
-                            {/* <p className={styles["todo-course"]}>
-                                {assignment.course}
-                            </p> */}
-                            <p className={styles["todo-meta-row"]}>
-                                <span>截止：{formatDate(assignment.due)}</span>
-                            </p>
-                        </div>
-                    ))
+                    todoAssignments.slice(0, 3).map((assignment, idx) => {
+                        const statusInfo = getAssignmentStatus(assignment);
+                        return (
+                            <div 
+                                key={idx} 
+                                className={styles["todo-item"]}
+                            >
+                                <div className={styles["todo-title-row"]}>
+                                    <p className={styles["todo-title"]}>
+                                        {assignment.title}
+                                    </p>
+                                    <span className={`${styles["todo-status"]} ${styles[statusInfo.cssClass]}`}>
+                                        {statusInfo.label}
+                                    </span>
+                                </div>
+                                <p className={styles["todo-meta-row"]}>
+                                    <span>截止：{formatDate(assignment.due)}</span>
+                                </p>
+                            </div>
+                        );
+                    })
                 ) : (
                     <div className={styles["todo-empty"]}>
                         <span>目前沒有待辦事項</span>
