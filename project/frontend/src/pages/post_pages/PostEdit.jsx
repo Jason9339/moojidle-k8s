@@ -8,6 +8,12 @@ import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
+const arraysEqual = (a, b) => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
+};
 
 const PostEdit = () => {
     const { post_id } = useParams();
@@ -27,7 +33,9 @@ const PostEdit = () => {
     const [error, setError] = useState(null);
     const [isDisabled, setIsDisabled] = useState(true);
     const navigate = useNavigate();
-    const isModified = title !== post?.title || description !== post?.description
+    const isModified = title !== post?.title ||
+        description !== post?.description ||
+        !arraysEqual(userTags, post?.post_user_custom_tags?.map(tag => tag.tag_name) || []);
     const handleCourseChange = useCallback((option) => {
         setSelectedCourse(option);
         setSelectedBoard(null);
@@ -66,6 +74,10 @@ const PostEdit = () => {
                     setPost(data);
                     setTitle(data.title);
                     setDescription(data.description);
+                    if (data.post_user_custom_tags) {
+                        const initialTags = data.post_user_custom_tags.map(tag => tag.tag_name);
+                        setUserTags(initialTags);
+                    }
                     // console.log("Edit");
                 } catch (err) {
                     setError("載入貼文失敗：" + (err.message || "未知錯誤"));
@@ -76,6 +88,10 @@ const PostEdit = () => {
         };
         fetchPost();
     }, [post_id, refreshTrigger]);
+
+    const handleTagsChange = (newTags) => {
+        setUserTags(newTags);
+    };
 
     const handleTitleChange = useCallback((txt) => {
         txt = txt.replace(/[\r\n]+/g, "");
@@ -132,11 +148,11 @@ const PostEdit = () => {
             }
             const data = {
                 post_by_user_id: userId,
-                post_user_custom_tags: userTags,
+                post_user_custom_tags: userTags.map(tag => ({ tag_name: tag })), // 轉換格式
                 description,
                 title,
                 in_b_id: selectedBoard.value,
-                post_id: post_id, // 別忘了傳入要編輯哪篇貼文
+                post_id: post_id,
             };
 
             await EditPost(post_id, data);
@@ -179,6 +195,7 @@ const PostEdit = () => {
                 <PostEditCustomTag
                     allUserTags={allUserTags}
                     onChange={(newSelectedTags) => setUserTags(newSelectedTags)}
+                    postTags={userTags}
                 />
                 <hr />
 
