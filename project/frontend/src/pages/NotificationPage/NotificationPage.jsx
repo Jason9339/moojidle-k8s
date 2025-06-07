@@ -63,7 +63,7 @@ function NotificationPage() {
 
     const handleBatchDelete = async () => {
         if (selectedIds.length === 0) {
-            addAlert({ level: "error", message: "請先勾選欲刪除的通知" });
+            addAlert("請先勾選欲刪除的通知", "error");
             return;
         }
 
@@ -74,11 +74,11 @@ function NotificationPage() {
                     DeleteNotification({ n_id, user_id: uid })
                 )
             );
-            alert("已刪除選取的通知");
+            addAlert("已刪除選取的通知", "success");
             fetchNotifications();
             setSelectedIds([]);
         } catch (err) {
-            alert("刪除失敗，請稍後再試");
+            addAlert("刪除失敗，請稍後再試", "error");
         }
     };
 
@@ -115,7 +115,7 @@ function NotificationPage() {
                     break;
             }
         } catch (err) {
-            alert("操作失敗，請稍後再試");
+            addAlert("操作失敗，請稍後再試", "error");
         }
     };
 

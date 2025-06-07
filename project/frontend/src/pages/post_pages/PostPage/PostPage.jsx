@@ -73,7 +73,7 @@ function PostPage() {
             setNewComment("");
             reflash();
         } catch (err) {
-            alert("留言送出失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言送出失敗：" + (err.message || "未知錯誤"));
         }
     };
 
@@ -86,10 +86,10 @@ function PostPage() {
         };
         try {
             await DeleteCommend(commenData);
-            alert("留言刪除成功");
+            addAlert("留言刪除成功");
             reflash();
         } catch (err) {
-            alert("留言刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言刪除失敗：" + (err.message || "未知錯誤"));
         }
         setActiveCommentId(null);
         reflash();
@@ -98,10 +98,10 @@ function PostPage() {
     const handleDeletePost = async () => {
         try {
             await DeletePost(post.post_id);
-            alert("貼文刪除成功");
+            addAlert("貼文刪除成功");
             navigate(`/discussion/${post.in_b_id}`);
         } catch (err) {
-            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("貼文刪除失敗：" + (err.message || "未知錯誤"));
         }
     };
 

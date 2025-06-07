@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserData } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
+import { useAlert } from '@/utils/alert/AlertCenter/AlertContext';
 
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
-
+    const { addAlert } = useAlert();
     const handleChange = (index, field, value) => {
         setContacts(contacts.map((c, i) =>
             i === index ? { ...c, [field]: value } : c
@@ -43,12 +44,12 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             const isDataChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
 
             if (!isDataChanged && validContacts.length === 0) {
-                alert("請至少添加一個聯絡方式");
+                addAlert("請至少添加一個聯絡方式");
                 return;
             }
 
             if (!isDataChanged) {
-                alert("資料未更改");
+                addAlert("資料未更改");
                 return;
             }
 
@@ -56,7 +57,7 @@ function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
             onSave(validContacts);
         } catch (err) {
             console.error("儲存失敗:", err);
-            alert("儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試");
         } finally {
             setLoading(false);
         }

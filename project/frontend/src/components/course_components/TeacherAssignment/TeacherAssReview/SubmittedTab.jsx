@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
 import { DownloadSubmissions, GradeAssignment } from '@/services/SubmittedAssignApi.js';
+import { useAlert } from '@/utils/alert/AlertCenter/AlertContext';
 
-const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore}) => {
+const ReviewForm = ({ userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore }) => {
     const [reviewScore, setReviewScore] = useState('');
-
+    const { addAlert } = useAlert();
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 
         // Validate that a score has been entered
         if (!reviewScore || reviewScore.trim() === '') {
             console.error('Review score is required.');
-            alert('Please enter a score before submitting.');
+            addAlert('Please enter a score before submitting.');
             return;
         }
 
@@ -58,7 +59,7 @@ const ReviewForm = ({userId, reviewData, setReviewData, reviewingSubmission, set
     );
 };
 
-const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, assignmentMaxScore }) => {
+const SubmittedTab = ({ userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, assignmentMaxScore }) => {
     const [expandedSubmissionId, setExpandedSubmissionId] = useState(null);
 
     const handleAttachmentClick = (file, event) => {
@@ -139,7 +140,7 @@ const SubmittedTab = ({userId, reviewData, setReviewData, reviewingSubmission, s
                                         Review
                                     </button>
                                 </td>
-                                <ReviewForm 
+                                <ReviewForm
                                     userId={userId}
                                     reviewData={reviewData}
                                     setReviewData={setReviewData}

@@ -96,11 +96,11 @@ export const validateMultipleFilesSize = (files, maxSize = MAX_FILE_SIZE) => {
  */
 export const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
@@ -114,12 +114,12 @@ export const formatFileSize = (bytes) => {
  */
 export const checkFilesAndAlert = (files, maxSize = MAX_FILE_SIZE, showAlert = true) => {
     const validation = validateMultipleFilesSize(files, maxSize);
-    
+    // TODO: move alert to JSX Module
     if (!validation.isValid && showAlert) {
         const errorMessages = validation.invalidFiles.map(item => item.message).join('\n');
         alert(`檔案過大：\n\n${errorMessages}`);
     }
-    
+
     return validation.isValid;
 };
 

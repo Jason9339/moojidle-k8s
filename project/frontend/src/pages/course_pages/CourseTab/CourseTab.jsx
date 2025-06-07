@@ -18,6 +18,7 @@ import CourseTable from "@/components/course_components/CourseTable/CourseTable"
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
 import ExamUploadModal from "@/components/course_components/ExamUploadModal/ExamUploadModal";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();
@@ -37,7 +38,7 @@ export default function CourseInfoPage() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
-
+    const { addAlert } = useAlert();
     useEffect(() => {
         const fetchCourseData = async () => {
             try {
@@ -81,7 +82,7 @@ export default function CourseInfoPage() {
                 setIsSaving(true);
 
                 if (editedMaterials.some((m) => !m.name?.trim())) {
-                    alert("教材名稱不能為空");
+                    addAlert("教材名稱不能為空");
                     setIsSaving(false);
                     return;
                 }
@@ -107,7 +108,7 @@ export default function CourseInfoPage() {
                 setEditedMaterials([]);
             } catch (err) {
                 console.error("保存失敗", err);
-                alert("保存教材變更失敗，請稍後再試");
+                addAlert("保存教材變更失敗，請稍後再試");
                 return;
             } finally {
                 setIsSaving(false);
@@ -153,7 +154,7 @@ export default function CourseInfoPage() {
                             上傳考試
                         </button>
                     </div>
-                    
+
                     <div className={styles["function-group"]}>
                         <span className={styles["function-label"]}>編輯操作</span>
                         <button

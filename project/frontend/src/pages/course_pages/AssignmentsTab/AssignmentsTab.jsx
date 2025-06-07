@@ -4,6 +4,7 @@ import TeacherAssignment from "@/components/course_components/TeacherAssignment/
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 
 
@@ -16,7 +17,7 @@ function AssignmentsTab() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submissionMap, setSubmissionMap] = useState({});
-
+    const { addAlert } = useAlert();
     // 檢查是否為學生
     const isStudent = role.isStudent;
 
@@ -36,7 +37,7 @@ function AssignmentsTab() {
     // 獲取作業列表
     const fetchAssignments = async () => {
         if (!course?.courseId || !isStudent) return;
-        
+
         setLoading(true);
         setError(null);
         try {
@@ -54,10 +55,10 @@ function AssignmentsTab() {
     // 獲取提交記錄
     const fetchSubmissionMapWithAssignments = async (assignmentsList) => {
         if (!course?.courseId || !assignmentsList || assignmentsList.length === 0) return;
-        
+
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
-        
+
         try {
             const results = await Promise.all(assignmentsList.map(a =>
                 GetTheAssignSubAssForOneStuednt(a.id, userId)
@@ -86,7 +87,7 @@ function AssignmentsTab() {
         try {
             await DownloadAssignment(attachment.path_to_file, attachment.filename);
         } catch (error) {
-            alert(`下載失敗：${attachment.filename}`);
+            addAlert(`下載失敗：${attachment.filename}`);
             console.error("下載作業附件錯誤:", error);
         }
     };
@@ -96,7 +97,7 @@ function AssignmentsTab() {
         try {
             await DownloadAssignment(attachment.path_to_file, attachment.filename);
         } catch (error) {
-            alert(`下載失敗：${attachment.filename}`);
+            addAlert(`下載失敗：${attachment.filename}`);
             console.error("下載學生繳交檔案錯誤:", error);
         }
     };
@@ -119,7 +120,7 @@ function AssignmentsTab() {
     if (isStudent) {
         return (
             <div>
-                <AssignmentsStudentsTab 
+                <AssignmentsStudentsTab
                     courseId={course?.courseId}
                     assignments={assignments}
                     loading={loading}
@@ -136,7 +137,7 @@ function AssignmentsTab() {
         return (
             <div>
 
-            <TeacherAssignment assignments={TeacherAssignments} />
+                <TeacherAssignment assignments={TeacherAssignments} />
             </div>
         )
     }

@@ -3,6 +3,7 @@ import { DownloadMaterial } from "@/services/MaterialApi";
 import { DownloadAssignment } from "@/services/AssignmentApi";
 import { DownloadExam } from "@/services/ExamApi";
 import styles from "./CourseTable.module.css";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 function CourseTable({
     courseId,
@@ -16,6 +17,7 @@ function CourseTable({
     const [editingMaterials, setEditingMaterials] = useState([]);
     const [expandedAssignments, setExpandedAssignments] = useState({});
     const [expandedExams, setExpandedExams] = useState({});
+    const { addAlert } = useAlert();
 
     const toggleAssignment = (assignmentId) => {
         if (!assignmentId) return;
@@ -35,7 +37,7 @@ function CourseTable({
                 window.open(material.url, '_blank');
             }
         } catch (e) {
-            alert(`下載失敗：${material.name}`);
+            addAlert(`下載失敗：${material.name}`);
             console.error("Download error:", e);
         }
     };
@@ -44,7 +46,7 @@ function CourseTable({
         try {
             await DownloadAssignment(path, filename);
         } catch (e) {
-            alert(`下載失敗：${filename}`);
+            addAlert(`下載失敗：${filename}`);
             console.error("Assignment download error:", e);
         }
     };
@@ -53,7 +55,7 @@ function CourseTable({
         try {
             await DownloadExam(path, filename);
         } catch (e) {
-            alert(`下載失敗：${filename}`);
+            addAlert(`下載失敗：${filename}`);
             console.error("Assignment download error:", e);
         }
     };
@@ -104,9 +106,8 @@ function CourseTable({
             begin.setDate(begin.getDate() + i * 7);
             const end = new Date(begin);
             end.setDate(begin.getDate() + 6);
-            return `${begin.getMonth() + 1}/${begin.getDate()} - ${
-                end.getMonth() + 1
-            }/${end.getDate()}`;
+            return `${begin.getMonth() + 1}/${begin.getDate()} - ${end.getMonth() + 1
+                }/${end.getDate()}`;
         });
     }, [course, weekNum]);
 
@@ -172,7 +173,7 @@ function CourseTable({
             [examId]: !prev[examId],
         }));
     };
-    
+
     const examsByWeek = useMemo(() => {
         return Array.from({ length: weekNum }, (_, i) => {
             const w = i + 1;
@@ -212,63 +213,63 @@ function CourseTable({
                                 <td>
                                     {isEditMode
                                         ? weekMaterials.map((m, idx) => (
-                                              <div
-                                                  key={idx}
-                                                  className={
-                                                      styles[
-                                                          "edit-material-item"
-                                                      ]
-                                                  }
-                                              >
-                                                  <input
-                                                      type="text"
-                                                      value={m.name || ""}
-                                                      onChange={(e) =>
-                                                          handleMaterialNameChange(
-                                                              i,
-                                                              idx,
-                                                              e.target.value
-                                                          )
-                                                      }
-                                                      className={
-                                                          styles[
-                                                              "material-input"
-                                                          ]
-                                                      }
-                                                      placeholder="教材名稱"
-                                                  />
-                                                  <input
-                                                      type="date"
-                                                      value={formatDateForInput(
-                                                          m.displayDate
-                                                      )}
-                                                      onChange={(e) =>
-                                                          handleMaterialDateChange(
-                                                              i,
-                                                              idx,
-                                                              e.target.value
-                                                          )
-                                                      }
-                                                      className={
-                                                          styles[
-                                                              "material-date-input"
-                                                          ]
-                                                      }
-                                                  />
-                                                  <button
-                                                      onClick={() =>
-                                                          deleteMaterial(i, idx)
-                                                      }
-                                                      className={
-                                                          styles[
-                                                              "delete-material-btn"
-                                                          ]
-                                                      }
-                                                  >
-                                                      刪除
-                                                  </button>
-                                              </div>
-                                          ))
+                                            <div
+                                                key={idx}
+                                                className={
+                                                    styles[
+                                                    "edit-material-item"
+                                                    ]
+                                                }
+                                            >
+                                                <input
+                                                    type="text"
+                                                    value={m.name || ""}
+                                                    onChange={(e) =>
+                                                        handleMaterialNameChange(
+                                                            i,
+                                                            idx,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className={
+                                                        styles[
+                                                        "material-input"
+                                                        ]
+                                                    }
+                                                    placeholder="教材名稱"
+                                                />
+                                                <input
+                                                    type="date"
+                                                    value={formatDateForInput(
+                                                        m.displayDate
+                                                    )}
+                                                    onChange={(e) =>
+                                                        handleMaterialDateChange(
+                                                            i,
+                                                            idx,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className={
+                                                        styles[
+                                                        "material-date-input"
+                                                        ]
+                                                    }
+                                                />
+                                                <button
+                                                    onClick={() =>
+                                                        deleteMaterial(i, idx)
+                                                    }
+                                                    className={
+                                                        styles[
+                                                        "delete-material-btn"
+                                                        ]
+                                                    }
+                                                >
+                                                    刪除
+                                                </button>
+                                            </div>
+                                        ))
                                         : weekMaterials.map((m, idx) => (
                                             <div
                                                 key={idx}
@@ -284,7 +285,7 @@ function CourseTable({
                                                     </span>
                                                 )}
                                             </div>
-                                          ))}
+                                        ))}
                                 </td>
                                 <td>
                                     {weekAssignments.map((a, idx) => (
@@ -307,19 +308,19 @@ function CourseTable({
                                                 <div
                                                     className={
                                                         styles[
-                                                            "assignment-file-list"
+                                                        "assignment-file-list"
                                                         ]
                                                     }
                                                 >
                                                     {a.attachments?.length >
-                                                    0 ? (
+                                                        0 ? (
                                                         a.attachments.map(
                                                             (f, i) => (
                                                                 <div
                                                                     key={i}
                                                                     className={
                                                                         styles[
-                                                                            "clickable-material"
+                                                                        "clickable-material"
                                                                         ]
                                                                     }
                                                                     onClick={() =>

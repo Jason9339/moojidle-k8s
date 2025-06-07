@@ -8,6 +8,7 @@ import {
     EditAnnouncement,
     DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 function AnnouncementsPage() {
     const { courseId } = useParams();
@@ -26,7 +27,7 @@ function AnnouncementsPage() {
         new Date().toISOString()
     );
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-
+    const { addAlert } = useAlert();
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {
@@ -73,9 +74,12 @@ function AnnouncementsPage() {
     };
 
     const handleCreate = async () => {
-        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (!newAnnouncementContext.trim()) {
+            addAlert("內容不能為空");
+            return;
+        }
         if (new Date(newAnnounceDate) > new Date()) {
-            alert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示");
         }
         try {
             await CreateAnnouncement(
@@ -93,9 +97,9 @@ function AnnouncementsPage() {
     };
 
     const handleEditAnnouncement = async () => {
-        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (!newAnnouncementContext.trim()) return addAlert("內容不能為空");
         if (new Date(newAnnounceDate) > new Date()) {
-            alert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示");
         }
         try {
             await EditAnnouncement(
@@ -114,7 +118,7 @@ function AnnouncementsPage() {
     const handleDeleteAnnouncement = async (announcement) => {
         if (!window.confirm("確定要刪除這則公告嗎？")) return;
         try {
-            await DeleteAnnouncement(announcement.a_id); 
+            await DeleteAnnouncement(announcement.a_id);
             setAnnouncements(await GetAnnouncements(courseId));
         } catch (err) {
             setError("刪除失敗");

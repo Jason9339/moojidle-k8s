@@ -18,7 +18,7 @@ export function AlertProvider({ children }) {
         setAlerts((prev) => prev.filter((a) => a.id !== id));
     }, []);
 
-    const addAlert = useCallback(({ level, message }) => {
+    const addAlert = useCallback((message, level = "info") => {
         const id = nextAlertId++;
         const newAlert = { id, level, message };
         setAlerts((prev) => [...prev, newAlert]);

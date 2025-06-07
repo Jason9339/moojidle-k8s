@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { DeleteDiscussionBoard, EditDiscussionBoard} from "@/services/DiscussionBoardApi.js";
+import { DeleteDiscussionBoard, EditDiscussionBoard } from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 export default function EditDiscussionBoardModal({ boardId, onClose }) {
     const [boardName, setBoardName] = useState(""); // 預留未來可編輯
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
+    const { addAlert } = useAlert();
     const handleDelete = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
-            alert("討論版已成功刪除");
+            addAlert("討論版已成功刪除");
             onClose();
             navigate("/discussion/home");
         } catch (err) {
@@ -21,9 +22,9 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
     };
 
     const handleSave = async () => {
-        try{
+        try {
             await EditDiscussionBoard(boardId, boardName);
-            alert("討論版名稱已成功更新");
+            addAlert("討論版名稱已成功更新");
             onClose();
             navigate("/discussion/" + boardId);
         } catch (err) {

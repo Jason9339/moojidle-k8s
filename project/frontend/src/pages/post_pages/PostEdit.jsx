@@ -6,6 +6,7 @@ import PostEditCustomTag from "@/components/post_components/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
@@ -33,6 +34,7 @@ const PostEdit = () => {
         setSelectedBoard(null);
     }, []);
 
+    const { addAlert } = useAlert();
     const handleBoardChange = useCallback((option) => {
         setSelectedBoard(option);
     }, []);
@@ -60,7 +62,7 @@ const PostEdit = () => {
     useEffect(() => {
         const fetchPost = async () => {
             console.log("post_id", post_id);
-            if (post_id !== "new") {  
+            if (post_id !== "new") {
                 try {
                     const data = await GetPostContent(post_id);
                     setPost(data);
@@ -105,17 +107,17 @@ const PostEdit = () => {
 
         if (post_id === "new") {
             if (!selectedBoard) {
-                alert("請選擇討論版");
+                addAlert("請選擇討論版", "error");
                 return;
             }
 
             if (title.length === 0) {
-                alert("請輸入貼文標題");
+                addAlert("請輸入貼文標題", "error");
                 return;
             }
 
             if (description.length === 0) {
-                alert("請輸入貼文內容");
+                addAlert("請輸入貼文內容", "error");
                 return;
             }
 
@@ -137,7 +139,7 @@ const PostEdit = () => {
             });
         } else {
             if (!isModified) {
-                alert("內容沒有變更。")
+                addAlert("內容沒有變更", "info")
                 return
             }
             const data = {

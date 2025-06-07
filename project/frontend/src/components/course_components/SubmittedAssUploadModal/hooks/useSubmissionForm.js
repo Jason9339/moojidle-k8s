@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
 import { checkFilesAndAlert } from "@/utils/fileValidation";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 export function useSubmissionForm({ courseId, assignmentId, existingSubmission, onSuccess }) {
     const [files, setFiles] = useState([]);
@@ -11,7 +12,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const existingFiles = existingSubmission?.attachments || [];
     const submissionId = existingSubmission?.s_ass_id;
-
+    const { addAlert } = useAlert();
     useEffect(() => {
         setDescription(existingSubmission?.description || "");
         setFiles([]);
@@ -43,7 +44,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
     const validateSubmission = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user?.user_id) {
-            alert("請先登入");
+            addAlert("請先登入", "error");
             return false;
         }
 
@@ -51,7 +52,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         const hasNoNewFiles = files.length === 0;
 
         if (!submissionId && isEmptyDescription && hasNoNewFiles) {
-            alert("沒有內容可以提交。");
+            addAlert("沒有內容可以提交。");
             return false;
         }
 
@@ -60,7 +61,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const handleCreateSubmission = async (formData) => {
         await CreateSubAssign(assignmentId, JSON.parse(localStorage.getItem("user")).user_id, formData);
-        alert("作業提交成功！");
+        addAlert("作業提交成功！");
     };
 
     const handleUpdateSubmission = async (formData) => {
@@ -74,9 +75,9 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         if (isEmptyDescription && hasNoNewFiles && remainingExistingFiles.length === 0) {
             if (existingFiles.length > 0 || (existingSubmission?.description || "").trim()) {
                 await DeleteSubAss(submissionId);
-                alert("作業提交記錄已因內容清空而被刪除！");
+                addAlert("作業提交記錄已因內容清空而被刪除！");
             } else {
-                alert("沒有內容可更新。");
+                addAlert("沒有內容可更新。");
                 return false;
             }
         } else {
@@ -85,7 +86,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             const noFilesMarkedForDeletion = deletedFiles.length === 0;
 
             if (noChangeInDescription && hasNoNewFiles && noFilesMarkedForDeletion) {
-                alert("內容未作修改。");
+                addAlert("內容未作修改。");
                 return false;
             }
 
@@ -113,7 +114,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             } else if (description !== originalDescription) {
                 message = "作業描述更新成功！";
             }
-            alert(message);
+            addAlert(message);
         }
         return true;
     };
