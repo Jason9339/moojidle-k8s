@@ -34,6 +34,7 @@ async function UpdateUserPassword(userId, data) {
 async function UpdateUserData(userId, data) {
     try {
         const response = await api.put(`/user/update-profile/${userId}`, data);
+        alert("個人資料更新成功！");
         return response.data;
     } catch (err) {
         console.error(err);
@@ -49,6 +50,7 @@ async function UpdateUserProfile(userId, formData) {
                 'Content-Type': 'multipart/form-data',
             },
         });
+        alert("個人資料更新成功！");
         return response.data;
     } catch (err) {
         console.error("Profile update error:", err);
@@ -62,7 +64,7 @@ async function UpdateUserTags(userId, tags) {
         const response = await api.put(`/user/update-user-tags/${userId}`, {
             tags: tags  // 確保這裡傳送的是字串陣列
         });
-        
+       alert("標籤更新成功！");
         return response.data;
     } catch (err) {
         console.error('更新標籤錯誤:', err);
