@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./TeacherExam.module.css";
-import ExamDetail from "@/components/course_components/ExamTab/TeacherExam/TeacherExamDetail/TeacherExamDetail.jsx";
-import TeacherExamReview from "@/components/course_components/ExamTab/TeacherExam/TeacherExamReview/TeacherExamReview.jsx";
+import ExamDetail from "@/components/course_components/TeacherExam/TeacherExamDetail/TeacherExamDetail.jsx";
+import TeacherExamReview from "@/components/course_components/TeacherExam/TeacherExamReview/TeacherExamReview.jsx";
 
 function TeacherExam({ exams }) {
     const [selectedIdx, setSelectedIdx] = useState(0);

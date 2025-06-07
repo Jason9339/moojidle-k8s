@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { GetCourseExams } from "@/services/ExamApi.js";
-import TeacherExam from "@/components/course_components/ExamTab/TeacherExam/ControlWhichExam/TeacherExam.jsx";
+import TeacherExam from "@/components/course_components/TeacherExam/ControlWhichExam/TeacherExam.jsx";
 
 function ExamsTab() {
     const { role, course } = useOutletContext();
