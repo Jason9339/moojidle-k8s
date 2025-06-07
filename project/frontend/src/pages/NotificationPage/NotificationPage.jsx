@@ -10,6 +10,7 @@ import {
     ReadNotification,
 } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
+import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
 
 function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
@@ -17,7 +18,7 @@ function NotificationPage() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterCategory, setFilterCategory] = useState("all");
     const navigate = useNavigate();
-
+    const { addAlert } = useAlert();
     const categoryMap = {
         all: "全部",
         course: "課程",
@@ -62,7 +63,7 @@ function NotificationPage() {
 
     const handleBatchDelete = async () => {
         if (selectedIds.length === 0) {
-            alert("請先勾選欲刪除的通知");
+            addAlert({ level: "error", message: "請先勾選欲刪除的通知" });
             return;
         }
 

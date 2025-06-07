@@ -1,5 +1,5 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { AlertProvider } from "@/utils/alert/AlertCenter/Alert";
+import { AlertProvider } from "@/utils/alert/AlertCenter/AlertContext";
 import CourseLayout from "@/pages/course_pages/CourseLayout/CourseLayout";
 import CourseTab from "@/pages/course_pages/CourseTab/CourseTab";
 import AssignmentsTab from "@/pages/course_pages/AssignmentsTab/AssignmentsTab";
