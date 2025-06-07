@@ -3,6 +3,9 @@ import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
+// markdown
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function PostContent({
     post,
@@ -12,8 +15,8 @@ function PostContent({
     handleDeletePost,
     editLinkState,
     description,
-    textareaRef,
 }) {
+
     const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
 
     return (
@@ -66,21 +69,30 @@ function PostContent({
                             {new Date(post.post_date).toISOString().split("T")[0]}
                         </div>
                     </div>
-                    {post.post_user_custom_tags?.length > 0 && (
-                        <div className={styles.customTag}>{post.post_user_custom_tags[0].tag_name}</div>
-                    )}
+                    <div className={styles.userTags}>
+
+                        {
+                            post.post_user_custom_tags?.map((tag) => (
+                                <span key={tag.tag_name} className={styles.customTag}>
+                                    {tag.tag_name}
+
+                                </span>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
 
             <h2 className={styles.postTitle}>{post.title}</h2>
 
-            <textarea
-                ref={textareaRef}
-                className={styles.description}
-                value={description}
-                readOnly
-                rows={1}
-            />
+
+            <div className={`markdown-body ${styles.description}`}>
+
+                <ReactMarkdown remarkPlugins={[remarkGfm]} >
+
+                    {description}
+                </ReactMarkdown>
+            </div>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import BoardSideBar from "@/components/discussion_board_components/BoardSideBar";
+import BoardSideBar from "@/components/discussion_board_components/BoardSideBar/BoardSideBar";
 import LeftBar from "@/components/LeftBar/LeftBar.jsx";
 import DiscussionBoardInitContent from "@/components/discussion_board_components/DiscussionBoardInitContent/DiscussionBoardInitContent";
 import DiscussionBoardContent from "@/components/discussion_board_components/DiscussionBoardContent/DiscussionBoardContent";
