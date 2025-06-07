@@ -21,7 +21,7 @@ import {
 } from '#src/services/course_service.js';
 
 import {
-    SendNotification,SendNotified
+    SendNotification, SendNotified
 } from '#src/services/notification_service.js';
 
 async function GetPostContent(req, res, next) {
@@ -98,7 +98,7 @@ async function LeaveComment(req, res) {
             const course = await FindCourseById(board.course_id);
             console.log(course);
 
-            
+
             const notificationData = {
                 event_id: post_id,
                 event_category: "comment",
@@ -106,10 +106,10 @@ async function LeaveComment(req, res) {
             }
             const notificationres = await SendNotification(notificationData);
             const res1 = await SendNotified(notificationres.notification.n_id, [
-                    {
-                        user_id:postdata.post_by_user_id
-                    }
-                ])
+                {
+                    user_id: postdata.post_by_user_id
+                }
+            ])
             console.log(res1);
             res.status(201).send({ message: "Comment added successfully" });
         } else {
@@ -241,7 +241,13 @@ async function AddPosts(req, res) {
 
 async function EditPost(req, res) {
     const postId = parseInt(req.params.id);
-    const { title, description, public: isPublic } = req.body;
+    const {
+        title,
+        description,
+        public: isPublic,
+        post_user_custom_tags,  
+        post_tags              
+    } = req.body;
 
     if (isNaN(postId)) {
         return res.status(400).send({ error: "Invalid post_id" });
@@ -255,6 +261,19 @@ async function EditPost(req, res) {
     if (typeof isPublic === 'boolean') {
         updateFields.public = isPublic;
     }
+
+    if (Array.isArray(post_user_custom_tags)) {
+        updateFields.post_user_custom_tags = post_user_custom_tags.map(tag =>
+            typeof tag === 'string' ? { tag_name: tag } : tag
+        );
+    }
+
+    if (Array.isArray(post_tags)) {
+        updateFields.post_tags = post_tags.map(tag =>
+            typeof tag === 'string' ? { tag_name: tag } : tag
+        );
+    }
+
 
     try {
         const result = await UpdatePostById(postId, updateFields);

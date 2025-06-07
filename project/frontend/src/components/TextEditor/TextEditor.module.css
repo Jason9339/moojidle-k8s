@@ -1,0 +1,22 @@
+.toolbar {
+  display: flex;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.markdown-body {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    z-index: 0;
+}
