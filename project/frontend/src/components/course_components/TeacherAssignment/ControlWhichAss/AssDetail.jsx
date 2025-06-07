@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./AssDetail.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import { DownloadAssignment } from "@/services/AssignmentApi";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function AssDetail({ assignment }) {
     const [descExpanded, setDescExpanded] = useState(false);

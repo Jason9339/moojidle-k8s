@@ -1,5 +1,5 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { AlertProvider } from "@/utils/alert/AlertCenter/AlertContext";
+import { AlertProvider } from "@/utils/alert/AlertContext";
 import CourseLayout from "@/pages/course_pages/CourseLayout/CourseLayout";
 import CourseTab from "@/pages/course_pages/CourseTab/CourseTab";
 import AssignmentsTab from "@/pages/course_pages/AssignmentsTab/AssignmentsTab";
@@ -27,7 +27,7 @@ import EditSecondaryLayout from "@/components/user_components/EditSecondaryLayou
 
 // pages for calendar
 import CalendarPage from "@/pages/calendar_pages/CalendarPage/CalendarPage";
-import AlertCenter from "./utils/alert/AlertCenter/AlertCenter";
+import AlertCenter from "@/utils/alert/AlertCenter/AlertCenter";
 
 function App() {
     let login;

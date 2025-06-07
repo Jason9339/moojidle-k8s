@@ -18,7 +18,7 @@ import CourseTable from "@/components/course_components/CourseTable/CourseTable"
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
 import ExamUploadModal from "@/components/course_components/ExamUploadModal/ExamUploadModal";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();

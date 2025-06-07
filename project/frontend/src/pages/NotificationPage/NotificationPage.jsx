@@ -10,7 +10,7 @@ import {
     ReadNotification,
 } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function NotificationPage() {
     const [notifications, setNotifications] = useState([]);

@@ -4,7 +4,7 @@ import {
     InviteStudent,
 } from "@/services/CourseApi";
 import styles from "./JoinCourseModal.module.css";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
     const [inviteCode, setInviteCode] = useState("");

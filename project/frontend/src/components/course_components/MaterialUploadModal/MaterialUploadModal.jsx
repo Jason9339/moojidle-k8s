@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadMaterialFile, UploadMaterialLink } from "@/services/MaterialApi";
 import styles from "./MaterialUploadModal.module.css";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [file, setFile] = useState(null);

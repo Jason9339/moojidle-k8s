@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
 import { checkFilesAndAlert } from "@/utils/fileValidation";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 export function useSubmissionForm({ courseId, assignmentId, existingSubmission, onSuccess }) {
     const [files, setFiles] = useState([]);

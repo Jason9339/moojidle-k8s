@@ -1,6 +1,6 @@
 import { createRef, useRef } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { useAlert } from './AlertContext';
+import { useAlert } from '../AlertContext';
 import styles from './AlertCenter.module.css';
 import { Info, CheckCircle, AlertCircle } from 'lucide-react';
 

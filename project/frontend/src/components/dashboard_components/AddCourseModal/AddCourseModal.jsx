@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AddCourse } from "@/services/CourseApi";
 import styles from "./AddCourseModal.module.css";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
     const [title, setTitle] = useState("");

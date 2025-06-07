@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadExam } from "@/services/ExamApi";
 import styles from "./ExamUploadModal.module.css";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);

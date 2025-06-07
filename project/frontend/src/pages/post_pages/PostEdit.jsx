@@ -6,7 +6,7 @@ import PostEditCustomTag from "@/components/post_components/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 

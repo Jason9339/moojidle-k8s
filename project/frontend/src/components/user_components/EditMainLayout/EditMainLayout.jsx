@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserData } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
-import { useAlert } from '@/utils/alert/AlertCenter/AlertContext';
+import { useAlert } from '@/utils/alert/AlertContext';
 
 function EditMainLayout({ contact_ways = [], onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);

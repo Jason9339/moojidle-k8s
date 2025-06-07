@@ -3,7 +3,7 @@ import { DownloadMaterial } from "@/services/MaterialApi";
 import { DownloadAssignment } from "@/services/AssignmentApi";
 import { DownloadExam } from "@/services/ExamApi";
 import styles from "./CourseTable.module.css";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function CourseTable({
     courseId,

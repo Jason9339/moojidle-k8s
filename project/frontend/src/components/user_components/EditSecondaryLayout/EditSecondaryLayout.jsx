@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
 import { UpdateUserTags } from "@/services/UserApi";
 import { LuPlus } from "react-icons/lu";
-import { useAlert } from '@/utils/alert/AlertCenter/AlertContext';
+import { useAlert } from '@/utils/alert/AlertContext';
 
 function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);

@@ -4,7 +4,7 @@ import TeacherAssignment from "@/components/course_components/TeacherAssignment/
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 
 

@@ -8,7 +8,7 @@ import {
     EditAnnouncement,
     DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
-import { useAlert } from "@/utils/alert/AlertCenter/AlertContext";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function AnnouncementsPage() {
     const { courseId } = useParams();
