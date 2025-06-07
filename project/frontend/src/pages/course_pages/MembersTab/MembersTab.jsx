@@ -124,7 +124,7 @@ export default function MembersPage() {
                 <strong>課程邀請碼：</strong> <code>{code}</code>
             </div>
     
-            {isTeacher && (
+            {/* {isTeacher && (
                 <div className={styles.addStudentSection}>
                     <button className={styles.addButton} onClick={() => setShowAddForm(prev => !prev)}>
                         {showAddForm ? "取消" : "手動加入學生"}
@@ -165,7 +165,7 @@ export default function MembersPage() {
                         </form>
                     )}
                 </div>
-            )}
+            )} */}
     
             {(loading || !role) ? (
                 <div style={{ backgroundColor: "#eff2f5", flex: 1 }} />

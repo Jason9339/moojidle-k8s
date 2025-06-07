@@ -55,7 +55,6 @@ export default function CourseLayout() {
 						<span className={styles["course-title"]} title={course.course_name}>
 							{course.course_name}
 						</span>
-						<span>{courseId}</span>
 					</div>
 
 					<div className={styles["tab-menu"]}>
