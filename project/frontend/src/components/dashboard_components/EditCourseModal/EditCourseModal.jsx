@@ -1,33 +1,33 @@
 import React, { useState } from "react";
-import { DeleteCourse } from "@/services/CourseApi";
+import { DeleteCourse, EditCourseName } from "@/services/CourseApi";
 import styles from "./EditCourseModal.module.css";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
     const [courseName, setCourseName] = useState(course.title);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [error, setError] = useState("");
-
+    const { addAlert } = useAlert();
     const handleSave = async () => {
         if (!courseName.trim()) {
-            setError("課程名稱不能為空");
+            addAlert("課程名稱不能為空", "error");
             return;
         }
-        setError("");
         setIsSaving(true);
         try {
-            // console.log("修改課程:", { courseId: course.courseId, newName: courseName });
-            onClose(); // 待實作完整儲存邏輯
+            EditCourseName(course.courseId, courseName);
+            onClose();
+            addAlert("課程名稱已成功更新", "success");
+            window.location.reload();
         } catch (err) {
             console.error("儲存課程失敗:", err);
-            setError("儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試", "error");
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleDelete = async () => {
-        setError("");
         setIsDeleting(true);
         try {
             // console.log("刪除課程:", course.courseId);
@@ -36,7 +36,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
             onClose();
         } catch (err) {
             console.error("刪除課程失敗:", err);
-            setError("刪除失敗，請稍後再試");
+            addAlert("刪除失敗，請稍後再試", "error");
         } finally {
             setIsDeleting(false);
         }
@@ -44,7 +44,6 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
 
     const handleNameChange = (e) => {
         setCourseName(e.target.value);
-        if (error) setError("");
     };
 
     const isDisabled = isSaving || isDeleting;
@@ -60,7 +59,6 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
             >
                 <h3 id="editCourseModalTitle">編輯課程</h3>
 
-                {error && <p className={styles["error-message"]}>{error}</p>}
 
                 <div className={styles["form-field"]}>
                     <label htmlFor="courseNameInput" className={styles["field-label"]}>
@@ -73,7 +71,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
                         onChange={handleNameChange}
                         placeholder="請輸入新的課程名稱"
                         disabled={isDisabled}
-                        aria-describedby={error ? "errorMessage" : undefined}
+                    // aria-describedby={error ? "errorMessage" : undefined}
                     />
                 </div>
 

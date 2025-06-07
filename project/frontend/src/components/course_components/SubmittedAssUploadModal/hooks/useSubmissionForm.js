@@ -152,7 +152,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             onSuccess && onSuccess();
         } catch (error) {
             console.error("處理作業提交失敗:", error);
-            alert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
+            addAlert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"), "error");
         } finally {
             setLoading(false);
         }
@@ -176,15 +176,15 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             if (submissionId) {
                 await DeleteSubAss(submissionId);
-                alert("作業提交記錄已完全清除！");
+                addAlert("作業提交記錄已完全清除", "success");
             } else {
-                alert("本地內容已清空！");
+                addAlert("本地內容已清空", "success");
             }
 
             onSuccess && onSuccess();
         } catch (error) {
             console.error("清空作業內容失敗:", error);
-            alert("清空失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
+            addAlert("清空失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"), "error");
         } finally {
             setLoading(false);
         }

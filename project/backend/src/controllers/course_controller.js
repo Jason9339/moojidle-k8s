@@ -2,7 +2,7 @@ import {
     FindAllCourses,
     FindCourseInCourseId,
     InsertCourse,
-    UpdateCourseName,
+    EditCourseName,
     DeleteCourse,
     FindCourseById,
     FindCourseIdByInviteCode
@@ -126,7 +126,9 @@ async function ReadCourse(req, res) {
 
                 // adding 2 additional repeated attributes for axios services
                 course_id: course.course_id,
-                course_name: course.name
+                course_name: course.name,
+                start_date: course.start_date,
+                week_num: course.week_num
             }))
             .filter(course => course.isTeacher || course.isStudent || course.isAssistant);
 
@@ -192,7 +194,7 @@ async function EditCourse(req, res) {
             return res.status(400).send({ message: "Lack of update Data." });
         }
 
-        const updatedData = await UpdateCourseName(courseId, updateData.name);
+        const updatedData = await EditCourseName(courseId, updateData.name);
         res.status(200).send(updatedData); // 返回更新的課程物件
     } catch (error) {
         console.error("Failed to Edit course", error);

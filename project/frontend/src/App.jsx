@@ -1,4 +1,5 @@
 import { Outlet, BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import AlertCenter from "@/utils/alert/AlertCenter/AlertCenter";
 import { AlertProvider } from "@/utils/alert/AlertContext";
 import CourseLayout from "@/pages/course_pages/CourseLayout/CourseLayout";
 import CourseTab from "@/pages/course_pages/CourseTab/CourseTab";
@@ -6,7 +7,6 @@ import AssignmentsTab from "@/pages/course_pages/AssignmentsTab/AssignmentsTab";
 import GradesTab from "@/pages/course_pages/GradesTab/GradesTab";
 import AnnouncementsTab from "@/pages/course_pages/AnnouncementsTab/AnnouncementsTab";
 import MembersTab from "@/pages/course_pages/MembersTab/MembersTab";
-import DiscussionTab from "@/pages/course_pages/DiscussionTab/DiscussionTab";
 import ExamsTab from "@/pages/course_pages/ExamsTab/ExamsTab";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
@@ -27,7 +27,6 @@ import EditSecondaryLayout from "@/components/user_components/EditSecondaryLayou
 
 // pages for calendar
 import CalendarPage from "@/pages/calendar_pages/CalendarPage/CalendarPage";
-import AlertCenter from "@/utils/alert/AlertCenter/AlertCenter";
 
 function App() {
     let login;
@@ -62,7 +61,6 @@ function App() {
                                 <Route path="grade" element={<GradesTab />} />
                                 <Route path="announcement" element={<AnnouncementsTab />} />
                                 <Route path="members" element={<MembersTab />} />
-                                <Route path="discussion" element={<DiscussionTab />} />
                                 <Route path="exams" element={<ExamsTab />} />
                             </Route>
 
@@ -95,3 +93,5 @@ function App() {
 }
 
 export default App;
+
+
