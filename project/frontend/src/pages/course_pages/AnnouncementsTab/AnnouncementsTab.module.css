@@ -202,3 +202,18 @@
     background-color: #e53935;
     transform: scale(1.08);
 }
+
+.announcement-separator {
+    border-top: 2px solid red;
+    margin: 24px 0 16px 0;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding-top: 4px;
+}
+
+.no-announcement {
+    color: #888;
+    text-align: center;
+    margin: 12px 0;
+}
