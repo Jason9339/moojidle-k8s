@@ -16,8 +16,12 @@
 }
 
 .announcement-item {
-    border-bottom: 1px solid #ddd;
-    padding: 16px 0;
+    border-bottom: none;
+    padding: 18px;
+    margin-bottom: 16px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 1px solid #999;
 }
 
 .announcement-title {
@@ -160,7 +164,7 @@
 .announcement-inner {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
 }
 
@@ -175,9 +179,6 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    align-self: flex-end;
-    margin-top: 0px;
-    /* change the margin to 0 */
     white-space: nowrap; /* Prevent text from wrapping */
 }
 
@@ -193,7 +194,6 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    align-self: flex-end;
     margin-left: 8px;
     white-space: nowrap;
 }
@@ -204,23 +204,48 @@
 }
 
 .announcement-separator {
-    border-top: 2px dashed #ccc;   /* light grey divider */
-    margin: 24px 0 16px 0;
-    text-align: center;
-    padding-top: 4px;
+    display: flex;
+    align-items: center;
+    margin: 32px 0 24px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.announcement-separator::before,
+.announcement-separator::after {
+    content: "";
+    flex: 1;
+    border-top: 1px dashed #bababa;
+}
+
+.announcement-separator::before {
+    margin-right: 8px;
+}
+
+.announcement-separator::after {
+    margin-left: 8px;
 }
 
 .announcement-section-title {
-    color: #666;                   /* dark grey text */
-    font-weight: bold;
-    background: #fff;
-    padding: 0 8px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 16px;
+    background: #f0f0f0;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid #999;
+    white-space: nowrap;
     position: relative;
-    top: -14px;
+    top: 0;
 }
 
 .no-announcement {
     color: #888;
     text-align: center;
-    margin: 12px 0;
+    margin: 40px 0;
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    font-style: italic;
+    border: 2px dashed #ddd;
 }
