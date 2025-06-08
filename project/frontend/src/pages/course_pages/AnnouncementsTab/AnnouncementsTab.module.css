@@ -204,12 +204,19 @@
 }
 
 .announcement-separator {
-    border-top: 2px solid red;
+    border-top: 2px dashed #ccc;   /* light grey divider */
     margin: 24px 0 16px 0;
     text-align: center;
-    color: red;
-    font-weight: bold;
     padding-top: 4px;
+}
+
+.announcement-section-title {
+    color: #666;                   /* dark grey text */
+    font-weight: bold;
+    background: #fff;
+    padding: 0 8px;
+    position: relative;
+    top: -14px;
 }
 
 .no-announcement {

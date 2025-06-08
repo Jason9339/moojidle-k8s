@@ -163,57 +163,64 @@ function AnnouncementsPage() {
             </div>
 
             <div className={styles["announcements-list"]}>
-                {/* Past Announcements */}
-                {past.length === 0 && (
-                    <div className={styles["no-announcement"]}>沒有過去公告</div>
-                )}
-                {past.map(a => (
-                    <div key={a.a_id} className={styles["announcement-item"]}>
-                        <div className={styles["announcement-inner"]}>
-                            <div className={styles["announcement-left"]}>
-                                <p className={styles["announcement-content"]}>{a.context}</p>
-                                <p className={styles["announcement-posted"]}>
-                                    Posted on: {new Date(a.create_date).toLocaleString()}
-                                </p>
-                            </div>
-                            {canEdit && (
-                                <>
-                                    <button
-                                        className={styles["edit-announcement-button"]}
-                                        onClick={() => openEditModal(a)}
-                                    >
-                                        編輯
-                                    </button>
-                                    <button
-                                        className={styles["delete-announcement-button"]}
-                                        onClick={() => handleDeleteAnnouncement(a)}
-                                    >
-                                        刪除
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            
-                {/* Red line separator and future announcements: only for teachers/TAs */}
+                {/* Future Announcements Section (only for teachers/TAs) */}
                 {canEdit && (
                     <>
                         <div className={styles["announcement-separator"]}>
-                            <span>未來公告</span>
+                            <span className={styles["announcement-section-title"]}>未來公告</span>
                         </div>
-                        {future.length === 0 && (
+                        {future.length === 0 ? (
                             <div className={styles["no-announcement"]}>沒有未來公告</div>
-                        )}
-                        {future.map(a => (
-                            <div key={a.a_id} className={styles["announcement-item"]}>
-                                <div className={styles["announcement-inner"]}>
-                                    <div className={styles["announcement-left"]}>
-                                        <p className={styles["announcement-content"]}>{a.context}</p>
-                                        <p className={styles["announcement-posted"]}>
-                                            Posted on: {new Date(a.create_date).toLocaleString()}
-                                        </p>
+                        ) : (
+                            future.map(a => (
+                                <div key={a.a_id} className={styles["announcement-item"]}>
+                                    <div className={styles["announcement-inner"]}>
+                                        <div className={styles["announcement-left"]}>
+                                            <p className={styles["announcement-content"]}>{a.context}</p>
+                                            <p className={styles["announcement-posted"]}>
+                                                Posted on: {new Date(a.create_date).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <>
+                                            <button
+                                                className={styles["edit-announcement-button"]}
+                                                onClick={() => openEditModal(a)}
+                                            >
+                                                編輯
+                                            </button>
+                                            <button
+                                                className={styles["delete-announcement-button"]}
+                                                onClick={() => handleDeleteAnnouncement(a)}
+                                            >
+                                                刪除
+                                            </button>
+                                        </>
                                     </div>
+                                </div>
+                            ))
+                        )}
+
+                        {/* Current Announcements Section (only for teachers/TAs) */}
+                        <div className={styles["announcement-separator"]}>
+                            <span className={styles["announcement-section-title"]}>當前公告</span>
+                        </div>
+                    </>
+                )}
+
+                {/* Current Announcements List */}
+                {past.length === 0 ? (
+                    <div className={styles["no-announcement"]}>沒有當前公告</div>
+                ) : (
+                    past.map(a => (
+                        <div key={a.a_id} className={styles["announcement-item"]}>
+                            <div className={styles["announcement-inner"]}>
+                                <div className={styles["announcement-left"]}>
+                                    <p className={styles["announcement-content"]}>{a.context}</p>
+                                    <p className={styles["announcement-posted"]}>
+                                        Posted on: {new Date(a.create_date).toLocaleString()}
+                                    </p>
+                                </div>
+                                {canEdit && (
                                     <>
                                         <button
                                             className={styles["edit-announcement-button"]}
@@ -228,10 +235,10 @@ function AnnouncementsPage() {
                                             刪除
                                         </button>
                                     </>
-                                </div>
+                                )}
                             </div>
-                        ))}
-                    </>
+                        </div>
+                    ))
                 )}
             </div>
 
