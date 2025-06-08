@@ -114,7 +114,8 @@ async function GetCourseExams(req, res) {
                 dueDate: exam.end_date,
                 startDate: exam.start_date,
                 attachments: exam.attachments || [],
-                week: week
+                week: week,
+                maxScore: exam.max_score || 100, // 使用傳入的值或預設100
             };
         })
 

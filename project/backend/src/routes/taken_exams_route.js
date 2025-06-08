@@ -1,7 +1,12 @@
 import express from 'express';
 const router = express.Router();
 
-import { GetAllStudentsProjectedTakenExam, GetStudentProjectedTakenExam } from '#src/controllers/taken_exams_controller.js';
+import { 
+    GetAllStudentsProjectedTakenExam,
+    GetStudentProjectedTakenExam,
+    GetTakenExamsByExamId,
+    GradeExam
+} from '#src/controllers/taken_exams_controller.js';
 
 // entry point http://localhost:PORT/taken-exam
 
@@ -54,5 +59,13 @@ router.get("/in-course/:courseId", GetAllStudentsProjectedTakenExam);
 // }
 //
 router.get("/in-course/:courseId/user/:userId", GetStudentProjectedTakenExam);
+
+
+
+// frontend gives examId
+
+router.get('/:examId/taken', GetTakenExamsByExamId);
+
+router.post('/:examId/grade/:beGradedUserId', GradeExam);
 
 export default router;
