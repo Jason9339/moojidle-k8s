@@ -1,16 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./MainLayout.module.css";
 import EditMainLayout from "../EditMainLayout/EditMainLayout";
+import { GetAvatarUrl } from '@/services/UserApi.js';
 
 function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
-    const [imgSrc, setImgSrc] = useState(pfp_path || "/user_pfp/default.png");
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
     const [isEditing, setIsEditing] = useState(false);
     const [contactWays, setContactWays] = useState(initialContacts || []);
 
-    const handleSave = (newContacts) => {
-        setContactWays(newContacts);
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadAvatar = async () => {
+            const avatarUrl = await GetAvatarUrl(pfp_path);
+            if (isMounted) {
+                setImgSrc(avatarUrl);
+            }
+        };
+
+        if (pfp_path) {
+            loadAvatar();
+        } else {
+            setImgSrc("/user_pfp/default.png");
+        }
+
+        return () => {
+            isMounted = false;
+            // 清理 blob URL
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, [pfp_path]);
+
+    useEffect(() => {
+        // 組件卸載時清理 blob URL
+        return () => {
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, []);
+
+    const handleSave = async (updateData) => {
+        if (updateData.contactWays) {
+            setContactWays(updateData.contactWays);
+        }
+        if (updateData.hasNewAvatar && updateData.newAvatar) {
+            // 使用 utils 函數處理新頭像 URL
+            const newAvatarUrl = await GetAvatarUrl(updateData.newAvatar);
+            setImgSrc(newAvatarUrl);
+        }
         setIsEditing(false);
-        // 這裡可加 API 呼叫
     };
 
     return (
@@ -21,7 +62,6 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                     <img src="/icons/pencil.png" className={styles.editIcon} alt="Edit" />
                     {"編輯基本個人檔案"}
                 </button>}
-
             </div>
 
             <div className={styles.infoSection}>
@@ -43,6 +83,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                         {isEditing ? (
                             <EditMainLayout
                                 contact_ways={contactWays}
+                                currentAvatar={imgSrc}
                                 onSave={handleSave}
                                 onCancel={() => setIsEditing(false)}
                             />

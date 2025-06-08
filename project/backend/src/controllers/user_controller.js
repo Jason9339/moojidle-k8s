@@ -5,13 +5,22 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserContactWay,
+    UpdateUserProfileData,
     UpdateUserTags
 } from "#src/services/user_service.js";
 
 import{
     SendNotification, SendNotified
 } from "#src/services/notification_service.js"
+
+import { SaveFile, DeleteFile } from "#src/services/file_services/file_storage_service.js";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// 獲取當前檔案的目錄
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Register a new user in the database
 // In Postman send this json format in the body
@@ -159,56 +168,6 @@ async function UpdatePassword(req, res) {
     }
 }
 
-
-async function UpdateData(req, res) {
-    const userId = req.params.id;
-    const { contactWays } = req.body;
-
-    if (!Array.isArray(contactWays)) {
-        return res.status(400).send({
-            message: "contactWays must be a non-empty array",
-            example: [{
-                approach: "email",
-                details: "example@email.com"
-            }]
-        });
-    }
-    if (contactWays.length > 0) {
-        for (const contact of contactWays) {
-            if (!contact.approach || !contact.details) {
-                return res.status(400).send({
-                    message: "Each contact way must have 'approach' and 'details' fields",
-                    example: [{
-                        approach: "email",
-                        details: "example@email.com"
-                    }]
-                });
-            }
-        }
-    }
-    try {
-        const result = await UpdateUserContactWay(userId, contactWays);
-
-        if (result.modifiedCount > 0) {
-            return res.status(200).send({
-                message: "成功更新聯絡方式",
-                updatedCount: result.modifiedCount
-            });
-        }
-        if (result.matchedCount === 0) {
-            return res.status(404).send({
-                message: "找不到使用者或聯絡方式未更改",
-            });
-        }
-    } catch (err) {
-        console.error("更新聯絡方式時發生錯誤:", err);
-        return res.status(500).send({
-            message: "更新聯絡方式失敗",
-            error: err.message
-        });
-    }
-}
-
 async function UpdateTags(req, res) {
     const userId = parseInt(req.params.id, 10);
     const { tags } = req.body;
@@ -257,7 +216,148 @@ async function UpdateTags(req, res) {
     }
 }
 
+// 統一的個人資料更新端點 - 支援同時更新聯絡方式和頭像
+async function UpdateUserProfile(req, res) {
+    const userId = req.params.id;
 
+    try {
+        // 檢查使用者是否存在
+        const user = await FindOneUserById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "使用者不存在" });
+        }
+
+        // 從請求中取得聯絡方式資料
+        let contactWays = [];
+        if (req.body.contactWays) {
+            try {
+                // 如果是字串，嘗試解析為 JSON
+                contactWays = typeof req.body.contactWays === 'string' 
+                    ? JSON.parse(req.body.contactWays) 
+                    : req.body.contactWays;
+            } catch (parseError) {
+                return res.status(400).send({ 
+                    message: "聯絡方式格式錯誤，請確認資料格式正確" 
+                });
+            }
+        } else {
+            // 如果沒有提供聯絡方式，保持原有的
+            contactWays = user.contact_ways || [];
+        }
+
+        // 驗證聯絡方式格式
+        if (!Array.isArray(contactWays)) {
+            return res.status(400).send({
+                message: "聯絡方式必須是陣列格式",
+                example: [{
+                    approach: "email",
+                    details: "example@email.com"
+                }]
+            });
+        }
+
+        // 嚴格驗證每個聯絡方式項目的格式
+        for (const contact of contactWays) {
+            if (!contact || typeof contact !== 'object' || 
+                !contact.approach || !contact.details ||
+                typeof contact.approach !== 'string' || typeof contact.details !== 'string' ||
+                contact.approach.trim() === '' || contact.details.trim() === '') {
+                return res.status(400).send({
+                    message: "聯絡方式必須是陣列格式",
+                    example: [{
+                        approach: "email",
+                        details: "example@email.com"
+                    }]
+                });
+            }
+        }        let avatarUrl = null;
+
+        // 檢查是否有新頭像上傳
+        const uploadedFile = req.file || (req.files && req.files[0]);
+        if (uploadedFile) {
+            // 如果使用者已有頭像，先刪除舊的
+            if (user.path_to_profile_pic && user.path_to_profile_pic.trim() !== "") {
+                try {
+                    await DeleteFile(user.path_to_profile_pic);
+                } catch (deleteError) {
+                    console.warn("刪除舊頭像失敗，但繼續上傳新頭像:", deleteError.message);
+                }
+            }
+
+            // 儲存新頭像到 profiles 資料夾
+            const savedFile = await SaveFile(uploadedFile.buffer, decodeURIComponent(uploadedFile.originalname), "profiles");
+            avatarUrl = savedFile.relativeUrl;
+        }
+
+        // 更新資料庫
+        const result = await UpdateUserProfileData(userId, contactWays, avatarUrl);
+
+        if (result.modifiedCount > 0) {
+            return res.status(200).send({               
+                message: "個人資料更新成功",
+                updatedContactWays: result.updatedContactWays,
+                updatedAvatar: result.updatedAvatar || user.path_to_profile_pic,
+                hasNewAvatar: !!uploadedFile
+            });
+        } else {
+            return res.status(200).send({                
+                message: "沒有資料需要更新",
+                updatedContactWays: result.updatedContactWays,
+                updatedAvatar: result.updatedAvatar || user.path_to_profile_pic,
+                hasNewAvatar: !!uploadedFile
+            });
+        }
+
+    } catch (err) {
+        console.error("更新個人資料錯誤:", err);
+        return res.status(500).send({
+            message: "更新個人資料失敗",
+            error: err.message
+        });
+    }
+}
+
+// 安全的頭像檔案獲取 API
+async function GetUserAvatar(req, res) {
+    const { path: avatarPath } = req.query;
+    
+    try {
+        // 如果沒有提供路徑或為預設路徑，返回 404
+        if (!avatarPath || avatarPath === '/user_pfp/default.png' || avatarPath.trim() === '') {
+            return res.status(404).send({ message: "頭像路徑無效" });
+        }
+        
+        // 從路徑中提取檔案名稱
+        const filename = avatarPath.split('/').pop();
+        if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+            return res.status(400).send({ message: "無效的檔案路徑" });
+        }
+        
+        // 構建安全的檔案路徑
+        const uploadsDir = path.join(__dirname, '../../uploads/profiles');
+        const filePath = path.join(uploadsDir, filename);
+        
+        // 檢查檔案是否存在
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send({ message: "頭像檔案不存在" });
+        }
+        
+        // 檢查檔案類型
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const fileExtension = path.extname(filename).toLowerCase();
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            return res.status(400).send({ message: "不支援的檔案格式" });
+        }
+        
+        // 發送檔案
+        res.sendFile(filePath);
+        
+    } catch (err) {
+        console.error("獲取頭像檔案錯誤:", err);
+        return res.status(500).send({ message: "伺服器錯誤", error: err.message });
+    }
+}
 
 
 export {
@@ -267,8 +367,9 @@ export {
     GetUserData,
     GetUserTags,
     UpdatePassword,
-    UpdateData,
-    UpdateTags
+    UpdateTags,
+    UpdateUserProfile,
+    GetUserAvatar
 }
 
 

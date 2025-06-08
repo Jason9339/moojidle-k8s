@@ -6,7 +6,7 @@ import {
     GetUserData,
     GetUserTags,
     UpdatePassword,
-    UpdateData,
+    UpdateUserProfile,
     UpdateTags
 } from '#src/controllers/user_controller.js';
 import { createMockReq, createMockRes } from '../test-utils.js';
@@ -248,7 +248,7 @@ describe('User Controller', () => {
             });
         });
     });
-    describe('UpdateData', () => {
+    describe('UpdateUserProfile', () => {
         it('應該成功更新使用者contact way', async () => {
             const req = createMockReq(
                 {
@@ -263,12 +263,14 @@ describe('User Controller', () => {
                 });
             const res = createMockRes();
 
-            await UpdateData(req, res);
+            await UpdateUserProfile(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.send).toHaveBeenCalledWith({
-                message: "成功更新聯絡方式",
-                updatedCount: 1
+                message: "個人資料更新成功",
+                updatedContactWays: expect.any(Array),
+                updatedAvatar: expect.any(String),
+                hasNewAvatar: false
             });
         });
         it('當傳入資料格式錯誤時', async () => {
@@ -283,15 +285,118 @@ describe('User Controller', () => {
                 });
             const res = createMockRes();
 
-            await UpdateData(req, res);
+            await UpdateUserProfile(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
             expect(res.send).toHaveBeenCalledWith({
-                message: "Each contact way must have 'approach' and 'details' fields",
+                message: "聯絡方式必須是陣列格式",
                 example: [{
                     approach: "email",
                     details: "example@email.com"
                 }]
+            });
+        });
+
+    
+        it('當聯絡方式不是陣列格式時應返回 400 錯誤', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: { approach: 'email', details: 'user@example.com' } // 物件而非陣列
+                },
+                { id: 1 }
+            );
+            const res = createMockRes();
+
+            await UpdateUserProfile(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "聯絡方式必須是陣列格式",
+                example: [{
+                    approach: "email",
+                    details: "example@email.com"
+                }]
+            });
+        });
+
+        it('當 contactWays JSON 格式無效時應返回 400 錯誤', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: '{"invalid": json}' // 無效的 JSON 字串
+                },
+                { id: 1 }
+            );
+            const res = createMockRes();
+
+            await UpdateUserProfile(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "聯絡方式格式錯誤，請確認資料格式正確"
+            });
+        });
+
+        it('當混合有效和無效項目時應返回 400 錯誤', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: [
+                        { approach: 'email', details: 'valid@example.com' }, // 有效項目
+                        { approach: 'phone' }, // 無效項目：缺少 details
+                        { approach: 'social', details: '@username' } // 有效項目
+                    ]
+                },
+                { id: 1 }
+            );
+            const res = createMockRes();
+
+            await UpdateUserProfile(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "聯絡方式必須是陣列格式",
+                example: [{
+                    approach: "email",
+                    details: "example@email.com"
+                }]
+            });
+        });
+
+        it('當用戶不存在時應返回 404 錯誤', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: [
+                        { approach: 'email', details: 'user@example.com' }
+                    ]
+                },
+                { id: 999 } // 不存在的用戶 ID
+            );
+            const res = createMockRes();
+
+            await UpdateUserProfile(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.send).toHaveBeenCalledWith({
+                message: "使用者不存在"
+            });
+        });
+
+        it('當聯絡方式陣列為空時應成功更新（清空聯絡方式）', async () => {
+            const req = createMockReq(
+                {
+                    contactWays: [] // 空陣列
+                },
+                { id: 1 }
+            );
+            const res = createMockRes();
+
+            await UpdateUserProfile(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.send).toHaveBeenCalledWith({
+                message: expect.any(String),
+                updatedContactWays: expect.any(Array),
+                updatedAvatar: expect.any(String),
+                hasNewAvatar: false
             });
         });
 

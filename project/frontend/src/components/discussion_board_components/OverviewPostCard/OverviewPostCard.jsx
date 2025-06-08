@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import ReactMarkdown from "react-markdown"
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from "react-markdown";
 import styles from "./OverviewPostCard.module.css";
+import { GetAvatarUrl } from '@/services/UserApi.js';
 const MAX_LINES = 5;
 const MAX_CHARS = 400;
 
@@ -15,7 +16,41 @@ const OverviewPostCard = ({
     postDate,
     onClick
 }) => {
-    const [imgSrc, setImgSrc] = useState(userPfp || "/user_pfp/default.png");
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
+
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadAvatar = async () => {
+            const avatarUrl = await GetAvatarUrl(userPfp);
+            if (isMounted) {
+                setImgSrc(avatarUrl);
+            }
+        };
+
+        if (userPfp) {
+            loadAvatar();
+        } else {
+            setImgSrc("/user_pfp/default.png");
+        }
+
+        return () => {
+            isMounted = false;
+            // 清理 blob URL
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, [userPfp]);
+
+    useEffect(() => {
+        // 組件卸載時清理 blob URL
+        return () => {
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, []);
 
     const lines = content.split('\n');
     const shouldTruncate = lines.length > MAX_LINES || content.length > MAX_CHARS;

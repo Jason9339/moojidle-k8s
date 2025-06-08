@@ -6,7 +6,7 @@ import {
     FindOneUserById,
     FindOnesTagById,
     UpdateUserPassword,
-    UpdateUserContactWay,
+    UpdateUserProfileData,
     UpdateUserTags
 } from '#src/services/user_service.js';
 
@@ -161,9 +161,9 @@ describe('User Service', () => {
             expect(result.modifiedCount).toBe(0);
         });
     });
-    describe('UpdateUserContactWay', () => {
+    describe('UpdateUserProfileData', () => {
         it('應該成功更新用戶聯絡方式', async () => {
-            const result = await UpdateUserContactWay(1, [
+            const result = await UpdateUserProfileData(1, [
                 { approach: "phone", details: "555-1234" },
                 { approach: "email", details: "user1@example.com" }
             ]);
@@ -174,8 +174,106 @@ describe('User Service', () => {
                 { approach: "email", details: "user1@example.com" }
             ]);
         });
+
+        it('應該成功更新用戶聯絡方式和頭像', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "phone", details: "555-1234" }
+            ], "https://example.com/avatar.jpg");
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" }
+            ]);
+            expect(result.updatedAvatar).toBe("https://example.com/avatar.jpg");
+        });
+
         it('當聯絡方式格式不正確時應該拋出錯誤', async () => {
-            await expect(UpdateUserContactWay(1, "invalid format")).rejects.toThrow("聯絡方式必須是陣列格式");
+            await expect(UpdateUserProfileData(1, "invalid format")).rejects.toThrow("聯絡方式必須是陣列格式");
+        });
+
+        it('應該過濾掉空白的聯絡方式項目', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "phone", details: "555-1234" },
+                { approach: "", details: "test" }, // 空白 approach
+                { approach: "email", details: "" }, // 空白 details
+                { approach: "   ", details: "   " }, // 只有空白字元
+                { approach: "social", details: "instagram" }
+            ]);
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" },
+                { approach: "social", details: "instagram" }
+            ]);
+        });
+
+        it('應該修剪聯絡方式的前後空白', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "  phone  ", details: "  555-1234  " },
+                { approach: "email", details: "user@example.com" }
+            ]);
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" },
+                { approach: "email", details: "user@example.com" }
+            ]);
+        });
+
+        it('當所有聯絡方式都無效時應該設定為空陣列', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "", details: "test" },
+                { approach: "test", details: "" },
+                { approach: "   ", details: "   " }
+            ]);
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([]);
+        });
+
+        it('當聯絡方式項目缺少欄位時應該正確處理', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "phone", details: "555-1234" },
+                { approach: "email" }, // 缺少 details
+                { details: "test" }, // 缺少 approach
+                { approach: "social", details: "instagram" }
+            ]);
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" },
+                { approach: "social", details: "instagram" }
+            ]);
+        });
+
+        it('當用戶不存在時應該返回 modifiedCount 為 0', async () => {
+            const result = await UpdateUserProfileData(999, [
+                { approach: "phone", details: "555-1234" }
+            ]);
+
+            expect(result.modifiedCount).toBe(0);
+            expect(result.message).toBe("沒有更新任何資料");
+        });
+
+        it('應該正確處理空頭像 URL', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "phone", details: "555-1234" }
+            ], "");
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedContactWays).toEqual([
+                { approach: "phone", details: "555-1234" }
+            ]);
+            expect(result.updatedAvatar).toBe("");
+        });
+
+        it('應該修剪頭像 URL 的前後空白', async () => {
+            const result = await UpdateUserProfileData(1, [
+                { approach: "phone", details: "555-1234" }
+            ], "  https://example.com/avatar.jpg  ");
+
+            expect(result.modifiedCount).toBe(1);
+            expect(result.updatedAvatar).toBe("https://example.com/avatar.jpg");
         });
     });
     describe('UpdateUserTags', () => {

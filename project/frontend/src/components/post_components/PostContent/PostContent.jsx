@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./PostContent.module.css";
 import { FiMoreVertical } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { GetAvatarUrl } from '@/services/UserApi.js';
 
 // markdown
 import ReactMarkdown from "react-markdown";
@@ -16,8 +17,41 @@ function PostContent({
     editLinkState,
     description,
 }) {
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
 
-    const [imgSrc, setImgSrc] = useState(post.auther_image || "/user_pfp/default.png");
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadAvatar = async () => {
+            const avatarUrl = await GetAvatarUrl(post.auther_image);
+            if (isMounted) {
+                setImgSrc(avatarUrl);
+            }
+        };
+
+        if (post.auther_image) {
+            loadAvatar();
+        } else {
+            setImgSrc("/user_pfp/default.png");
+        }
+
+        return () => {
+            isMounted = false;
+            // 清理 blob URL
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, [post.auther_image]);
+
+    useEffect(() => {
+        // 組件卸載時清理 blob URL
+        return () => {
+            if (imgSrc && imgSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(imgSrc);
+            }
+        };
+    }, []);
 
     return (
         <div className={styles.card}>
