@@ -70,16 +70,30 @@ function StudentsGradeTable({ studentGrades }) {
     function calcTotalScore(tableData) {
         let sum = 0;
         // start from student's assign score
-        for(let i = 0; i < tableData.sub_ass.length; i ++){
-            sum += ((tableData.sub_ass[i].score || 0) / tableData.sub_ass[i].max_score * tableData.sub_ass[i].percentage)
+        for (let i = 0; i < tableData.sub_ass.length; i++) {
+            if (tableData.sub_ass[i].score == undefined) {
+                return "TBD";
+            }
+            sum += (100 * (tableData.sub_ass[i].score / tableData.sub_ass[i].max_score * tableData.sub_ass[i].percentage))
         }
 
         // next is student's exam score
-        for(let i = 0; i < tableData.taken_exams.length; i ++){
-            sum += ((tableData.taken_exams[i].score || 0) / tableData.taken_exams[i].max_score * tableData.taken_exams[i].percentage)
+        for (let i = 0; i < tableData.taken_exams.length; i++) {
+            if (tableData.taken_exams[i].score == undefined) {
+                return "TBD";
+            }
+            sum += (100 * (tableData.taken_exams[i].score / tableData.taken_exams[i].max_score * tableData.taken_exams[i].percentage))
         }
 
         return sum.toFixed(2);
+    }
+
+    function showScore(val){
+        if (val == undefined){
+            return 'Not Graded';
+        }else{
+            return val;
+        }
     }
 
     let assignExamNames = [null];
@@ -100,8 +114,8 @@ function StudentsGradeTable({ studentGrades }) {
                     <thead>
                         <tr>
                             {assignExamNames.map((name, index) => (
-                                <th 
-                                    key={index} 
+                                <th
+                                    key={index}
                                     className={styles["header-row"]}
                                 >
                                     {name}
@@ -117,12 +131,12 @@ function StudentsGradeTable({ studentGrades }) {
                                 </th>
                                 {row.sub_ass.map((cell, colIndex) =>
                                     <td key={colIndex} className={styles["value"]}>
-                                        {cell.score || 0}
+                                        {showScore(cell.score)}
                                     </td>
                                 )}
                                 {row.taken_exams.map((cell, colIndex) =>
                                     <td key={colIndex} className={styles["value"]}>
-                                        {cell.score || 0}
+                                        {showScore(cell.score)}
                                     </td>
                                 )}
                                 <td className={styles["value"]}>

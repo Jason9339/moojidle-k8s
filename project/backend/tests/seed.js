@@ -21,7 +21,8 @@ async function CounterSeed() {
         teach_in: 1,
         user: 4,
         notification: 1,
-        notified : 2
+        notified : 2,
+        taken_exams : 1
     });
 }
 
