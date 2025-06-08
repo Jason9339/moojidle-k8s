@@ -5,12 +5,14 @@
 
 .headerContainer {
     display: flex;
+
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px; 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 18px;
+    gap: 2px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 2px;
     padding-right: 10px;
     margin-bottom: 12px;
     border-bottom: 1px solid #cbd5e1;
@@ -18,20 +20,21 @@
 }
 
 .logo {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
 }
 
 .projectName {
     font-size: 1.1rem;
-    font-weight: 600;
-    color: #1e293b; /* slate-800 */
+    font-weight: 650;
+    color: #1e293b;
     white-space: nowrap;
 }
 
 .menuItem {
-    padding: 4px 12px;   /* 內邊距也微調讓點擊區域更舒服 */
+    padding: 4px 8px;   /* 內邊距也微調讓點擊區域更舒服 */
     border-radius: 6px;  /* 選擇性美化：圓角 */
+    margin-bottom: 4px;
     transition: background-color 0.2s ease;
 }

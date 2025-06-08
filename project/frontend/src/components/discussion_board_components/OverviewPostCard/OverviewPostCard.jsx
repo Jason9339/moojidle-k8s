@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from "react-markdown";
 import styles from "./OverviewPostCard.module.css";
 import { GetAvatarUrl } from '@/services/UserApi.js';
-
 const MAX_LINES = 5;
 const MAX_CHARS = 400;
 
@@ -96,10 +96,11 @@ const OverviewPostCard = ({
             <div className={styles["padder-each-block"]}>
                 <p className={styles["title"]}>{title}</p>
             </div>
-            <div className={styles["padder-content-block"]}>
-                <div className={styles["content"]}>
+            <div className={`markdown-body ${styles["padder-content-block"]}`}>
+                <ReactMarkdown>
+
                     {displayContent}
-                </div>
+                </ReactMarkdown>
             </div>
             <div className={styles["post-date"]}>
                 {postDate.substring(0, 10)}

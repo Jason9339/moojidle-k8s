@@ -2,35 +2,41 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ToDoItem.module.css";
 
-function ToDoItem({ todoList }) {
+function ToDoItem({ todoList, courses }) {
     const Navigate = useNavigate();
-    const Show = (dueDate) => {
-        const now = new Date();
-        const due = new Date(dueDate);
 
-        if (now < due) {
-            return true;
+    const courseMap = new Map(courses.map(course => [course.courseId, course]));
+
+    const Show = (item) => {
+        const course = courseMap.get(item.course_id);
+        if (!course) {
+            return false;
         }
 
-        return false;
+        const now = new Date();
+        const courseStartDate = new Date(course.start_date);
+        const courseEndDate = new Date(courseStartDate);
+        courseEndDate.setDate(courseStartDate.getDate() + course.week_num * 7);
+
+        // 如果課程已過期，則不顯示
+        if (now > courseEndDate) {
+            return false;
+        }
+
+        return true;
     };
 
-    // const renderStatus = (status) => {
-    //     const labelMap = {
-    //         upcoming: "未到",
-    //         ongoing: "進行中",
-    //         expired: "已過期",
-    //     };
-    //     return (
-    //         <span
-    //             className={`${styles["todo-status"]} ${
-    //                 styles[`status-${status}`]
-    //             }`}
-    //         >
-    //             {labelMap[status]}
-    //         </span>
-    //     );
-    // };
+    // 判斷作業狀態
+    const getAssignmentStatus = (assignment) => {
+        const now = new Date();
+        const dueDate = new Date(assignment.due);
+        
+        if (now > dueDate) {
+            return { status: 'overdue', label: '遲交', cssClass: 'status-overdue' };
+        } else {
+            return { status: 'pending', label: '未繳交', cssClass: 'status-pending' };
+        }
+    };
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleString("zh-TW", {
@@ -46,11 +52,17 @@ function ToDoItem({ todoList }) {
     return (
         <div>
             {todoList.map((item, index) => {
-                return Show(item.due) === true ? (
+                const statusInfo = getAssignmentStatus(item);
+                return Show(item) ? (
                     <div key={index} className={`${styles["todo-item"]}`} onClick={() => Navigate(`/course/${item.course_id}/assignment`)}>
-                        <p className={`${styles["todo-title"]}`}>
-                            {item.title}
-                        </p>
+                        <div className={styles["todo-title-row"]}>
+                            <p className={`${styles["todo-title"]}`}>
+                                {item.title}
+                            </p>
+                            <span className={`${styles["todo-status"]} ${styles[statusInfo.cssClass]}`}>
+                                {statusInfo.label}
+                            </span>
+                        </div>
                         <p className={`${styles["todo-course"]}`}>
                             {item.course}
                         </p>

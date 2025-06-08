@@ -55,7 +55,7 @@
     flex-direction: column;
     width: calc(100% - 180px);
     height: 100vh;
-    overflow: hidden;
+    /* overflow: hidden; */
     padding: 24px;
     box-sizing: border-box;
 }
