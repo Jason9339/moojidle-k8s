@@ -29,6 +29,7 @@ function DiscussionBoard() {
             userIdRef.current = uid;
 
             const data = await GetBoardsGroupByCourseByUserID(uid);
+            console.log(data);
             setCourseBoardData(data);
             setError(null);
         } catch (err) {
