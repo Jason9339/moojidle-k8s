@@ -70,6 +70,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                             value={tag.user_tag}
                             onChange={e => handleChange(idx, e.target.value)}
                             placeholder="Tag"
+                            maxLength={35}
                             className={styles.input}
                         />
                         {/* 隱藏的 span，用於測量寬度 */}

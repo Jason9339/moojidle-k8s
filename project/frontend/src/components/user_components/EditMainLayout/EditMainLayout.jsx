@@ -4,13 +4,13 @@ import { UpdateUserProfile } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
 import { addAlert } from '@/utils/alert/AlertContext';
 
-function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) {
+function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(currentAvatar || "/user_pfp/default.png");
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
-    
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -114,7 +114,7 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
         <div className={loading ? styles.loading : ''}>
             {/* 頭像上傳區域 */}
             <div className={styles.avatarSection}>
-                <label className={styles.avatarLabel}>個人頭像:</label>
+                <label className={styles.avatarLabel}>Edit Profile Picture:</label>
                 <div className={styles.avatarContainer}>
                     <img
                         src={previewUrl}
@@ -143,67 +143,80 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
                 </div>
             </div>
 
-            <div className={styles.contactList}>
-                {contacts.map((contact, idx) => (
-                    <div key={idx} className={styles.contactItem}>
-                        <div className={styles.inputGroup}>
-                            <input
-                                type="text"
-                                value={contact.approach}
-                                onChange={e => handleChange(idx, 'approach', e.target.value)}
-                                placeholder="Type (e.g. email, phone)"
-                                className={styles.input}
-                                disabled={loading}
-                            />
-                            <span className={styles.separator}>:</span>
-                            <input
-                                type="text"
-                                value={contact.details}
-                                onChange={e => handleChange(idx, 'details', e.target.value)}
-                                placeholder="Details"
-                                className={styles.input}
-                                disabled={loading}
-                            />
+            {/* 電子郵件顯示區域 */}
+            <div className={styles.emailSection}>
+                <div className={styles.infoBlock}>
+                    <span className={styles.label}>Registered Email:</span>
+                    <span className={styles.value}>{email}</span>
+                </div>
+            </div>
+
+            {/* 其他聯絡方式編輯區域 */}
+            <div className={styles.contactSection}>
+                <label className={styles.contactLabel}>Other Contact Ways:</label>
+                <div className={styles.contactList}>
+                    {contacts.map((contact, idx) => (
+                        <div key={idx} className={styles.contactItem}>
+                            <div className={styles.inputGroup}>
+                                <input
+                                    type="text"
+                                    value={contact.approach}
+                                    onChange={e => handleChange(idx, 'approach', e.target.value)}
+                                    placeholder="Type (e.g. email, phone)"
+                                    className={styles.input}
+                                    disabled={loading}
+                                />
+                                <span className={styles.separator}>:</span>
+                                <input
+                                    type="text"
+                                    value={contact.details}
+                                    onChange={e => handleChange(idx, 'details', e.target.value)}
+                                    placeholder="Details"
+                                    className={styles.input}
+                                    disabled={loading}
+                                />
+                            </div>
+                            <span
+                                onClick={() => !loading && handleRemove(idx)}
+                                className={styles.removeIcon}
+                                role="button"
+                                aria-label="移除聯絡方式"
+                                tabIndex={0}
+                            >
+                                <HiXMark />
+                            </span>
                         </div>
-                        <span
-                            onClick={() => !loading && handleRemove(idx)}
-                            className={styles.removeIcon}
-                            role="button"
-                            aria-label="移除聯絡方式"
-                            tabIndex={0}
+                    ))}
+
+                    <div className={styles.addButtonContainer}>
+                        <button
+                            onClick={handleAdd}
+                            className={styles.addBtn}
+                            aria-label="新增聯絡方式"
+                            disabled={loading}
                         >
-                            <HiXMark />
-                        </span>
+                            新增聯絡方式
+                        </button>
                     </div>
-                ))}
-
-                <div className={styles.addButtonContainer}>
-                    <button
-                        onClick={handleAdd}
-                        className={styles.addBtn}
-                        aria-label="新增聯絡方式"
-                        disabled={loading}
-                    >
-                        新增聯絡方式
-                    </button>
                 </div>
+            </div>
 
-                <div className={styles.buttonGroup}>
-                    <button
-                        onClick={onCancel}
-                        className={styles.cancelBtn}
-                        disabled={loading}
-                    >
-                        取消
-                    </button>
-                    <button
-                        onClick={handleSave}
-                        className={styles.saveBtn}
-                        disabled={loading}
-                    >
-                        {loading ? "儲存中..." : "儲存"}
-                    </button>
-                </div>
+            {/* 操作按鈕 */}
+            <div className={styles.buttonGroup}>
+                <button
+                    onClick={onCancel}
+                    className={styles.cancelBtn}
+                    disabled={loading}
+                >
+                    取消
+                </button>
+                <button
+                    onClick={handleSave}
+                    className={styles.saveBtn}
+                    disabled={loading}
+                >
+                    {loading ? "儲存中..." : "儲存"}
+                </button>
             </div>
         </div>
     );
