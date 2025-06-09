@@ -11,6 +11,32 @@ export default function AssignmentStudentCard({
     onSubmittedFileDownload,
     onUploadClick
 }) {
+    const [descriptionExpanded, setDescriptionExpanded] = useState({});
+
+    const toggleDescriptionExpand = (assignmentId) => {
+        setDescriptionExpanded(prev => ({
+            ...prev,
+            [assignmentId]: !prev[assignmentId]
+        }));
+    };
+
+    const shouldTruncateDescription = (text, maxLength = 1500) => {
+        return text && text.length > maxLength;
+    };
+
+    const getDisplayDescription = (text, assignmentId, maxLength = 1500) => {
+        if (!text) return '無說明';
+        
+        const isExpanded = descriptionExpanded[assignmentId];
+        const shouldTruncate = shouldTruncateDescription(text, maxLength);
+        
+        if (!shouldTruncate || isExpanded) {
+            return text;
+        }
+        
+        return text.substring(0, maxLength) + '...';
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return '無截止日期';
         const date = new Date(dateString);
@@ -77,7 +103,15 @@ export default function AssignmentStudentCard({
                     </div>
                     <div className={styles["assignment-description"]}>
                         <p className={styles["description-label"]}>作業說明：</p>
-                        <p>{assignment.description || '無說明'}</p>
+                        <p>{getDisplayDescription(assignment.description, assignment.id)}</p>
+                        {shouldTruncateDescription(assignment.description) && (
+                            <button 
+                                className={styles["show-more-button"]}
+                                onClick={() => toggleDescriptionExpand(assignment.id)}
+                            >
+                                {descriptionExpanded[assignment.id] ? '顯示較少' : '顯示更多'}
+                            </button>
+                        )}
                     </div>
                     {/* 附件下載按鈕 */}
                     {assignment.attachments && assignment.attachments.length > 0 && (

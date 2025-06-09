@@ -31,7 +31,7 @@ function ComingUpItem({ comingUpList }) {
             {comingUpList.map((item, index) => (
                 Show(item.date) == true ? (
                     <div key={index} className={`${styles["comingup-item"]}`} onClick={() => Navigate(`/course/${item.course_id}`)}>
-                        <p className={`${styles["comingup-title"]}`}>
+                        <p className={`${styles["comingup-title"]}`} title={item.title}>
                             {item.title}
                         </p>
                         <p className={`${styles["comingup-date"]}`}>
