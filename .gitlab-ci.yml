@@ -47,7 +47,8 @@ noop:
     - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-db/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^style-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix-ci/
 
       when: always
-
+  tags:
+    - jxdemo
 # 真正的 backend test
 backend-test:
   <<: *ci_conditions
@@ -63,6 +64,8 @@ backend-test:
     paths:
       - project/backend/test-output.json
     expire_in: 1 week
+  tags:
+    - jxdemo
 
 # frontend 測試也一樣
 frontend-test:
@@ -87,7 +90,8 @@ frontend-test:
     paths:
       - project/frontend/test-output.json
     expire_in: 1 week
-
+  tags:
+    - jxdemo
 # Cache node_modules to speed up builds
 cache:
   paths:
