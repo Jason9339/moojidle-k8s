@@ -1,0 +1,13 @@
+.container {
+    margin-top : 2vh;
+    gap: 2vw;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    background-color: #eff2f5;
+}
+
+.select {
+    width: 40%;
+}
+

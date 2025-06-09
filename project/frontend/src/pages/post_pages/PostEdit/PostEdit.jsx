@@ -1,14 +1,15 @@
-import Button from "@/components/Button/Button";
-import LeftBar from "@/components/LeftBar/LeftBar";
+import Button from "@/components/Button/Button"; import LeftBar from "@/components/LeftBar/LeftBar";
 import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
 import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/PostEditCustomTag";
-import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
+import PostEditDestSelector from "@/components/post_components/PostEditDestSelector/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
-import { GetUserTagsById } from "@/services/UserApi";
+import { GetAvatarUrl, GetUserDataById } from "@/services/UserApi";
 import { addAlert } from "@/utils/alert/AlertContext";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
+
+import styles from "./PostEdit.module.css";
 const arraysEqual = (a, b) => {
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -23,16 +24,22 @@ const PostEdit = () => {
     const initialBoard = state?.selectedBoard || null;
     const [post, setPost] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [loading, setLoading] = useState(true);
+
+    // Destination 
     const [selectedCourse, setSelectedCourse] = useState(initialCourse);
     const [selectedBoard, setSelectedBoard] = useState(initialBoard);
+    const [isDisabled, setIsDisabled] = useState(true);
 
+    // User 
+    const [imgSrc, setImgSrc] = useState("/user_pfp/default.png");
     const [title, setTitle] = useState("");
+    const [username, setUsername] = useState("");
+
+    // Post
     const [description, setDescription] = useState("");
     const [userTags, setUserTags] = useState([]);
     const [allUserTags, setAllUserTags] = useState([]);
-    const [error, setError] = useState(null);
-    const [isDisabled, setIsDisabled] = useState(true);
+
     const navigate = useNavigate();
     const isModified = title !== post?.title ||
         description !== post?.description ||
@@ -48,28 +55,55 @@ const PostEdit = () => {
     }, []);
 
     useEffect(() => {
+
+        setSelectedCourse(state?.current?.course || null);
+        setSelectedBoard(state?.current?.board || null);
+
+        if (!state?.current?.course) {
+            setIsDisabled(false);
+        }
+    }, [state])
+
+    useEffect(() => {
         const fetchTag = async () => {
             try {
                 const userId = JSON.parse(localStorage.getItem("user")).user_id;
-                const tags = await GetUserTagsById(userId);
-                setAllUserTags(tags.map((t) => t.user_tag));
-                setSelectedCourse(state?.current?.course || null);
-                setSelectedBoard(state?.current?.board || null);
-            } catch (e) {
-                setError("找不到User Id: ", e);
+                const data = await GetUserDataById(userId);
+                setUsername(data?.name);
+                setAllUserTags(data?.user_tags.map((t) => t.user_tag));
+                let isMounted = true;
+                const userPfp = data?.path_to_profile_pic;
+                const loadAvatar = async () => {
+                    const avatarUrl = await GetAvatarUrl(userPfp);
+                    if (isMounted) {
+                        setImgSrc(avatarUrl);
+                    }
+                };
+
+                if (userPfp) {
+                    loadAvatar();
+                } else {
+                    setImgSrc("/user_pfp/default.png");
+                }
+
+                return () => {
+                    isMounted = false;
+                    // 清理 blob URL
+                    if (imgSrc && imgSrc.startsWith('blob:')) {
+                        URL.revokeObjectURL(imgSrc);
+                    }
+                };
+            } catch {
+                navigate("/login");
             }
         };
 
         fetchTag();
 
-        if (!state?.current?.course) {
-            setIsDisabled(false);
-        }
-    }, [state]);
+    }, [navigate]);
 
     useEffect(() => {
         const fetchPost = async () => {
-            console.log("post_id", post_id);
             if (post_id !== "new") {
                 try {
                     const data = await GetPostContent(post_id);
@@ -80,20 +114,13 @@ const PostEdit = () => {
                         const initialTags = data.post_user_custom_tags.map(tag => tag.tag_name);
                         setUserTags(initialTags);
                     }
-                    // console.log("Edit");
                 } catch (err) {
-                    setError("載入貼文失敗：" + (err.message || "未知錯誤"));
-                } finally {
-                    setLoading(false);
+                    console.error(err);
                 }
             }
         };
         fetchPost();
     }, [post_id, refreshTrigger]);
-
-    const handleTagsChange = (newTags) => {
-        setUserTags(newTags);
-    };
 
     const handleTitleChange = useCallback((txt) => {
         txt = txt.replace(/[\r\n]+/g, "");
@@ -190,11 +217,13 @@ const PostEdit = () => {
             i--; // 調整索引，因為陣列長度改變了
         }
     }
+    console.log("tags:", allUserTags);
 
     return (
-        <div className="flex">
+        <div className={styles.appLayout}>
+
             <LeftBar />
-            <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] h-screen bg-[#eff2f5]">
+            <div className={styles.container}>
                 <PostEditDestSelector
                     courseData={activeData}
                     selectedCourse={selectedCourse}
@@ -204,12 +233,32 @@ const PostEdit = () => {
                     isDisabled={isDisabled}
                 />
 
-                <PostEditCustomTag
-                    allUserTags={allUserTags}
-                    onChange={(newSelectedTags) => setUserTags(newSelectedTags)}
-                    postTags={userTags}
-                />
-                <hr />
+
+                <div className={styles["user-profiles"]}>
+
+                    <img
+                        src={imgSrc}
+                        onError={() => setImgSrc("/user_pfp/default.png")}
+                        className={styles["user-pfp"]}
+                        alt="profile"
+                    />
+
+                    <div className={styles["user-info"]}>
+
+                        <span
+                            className={styles["user-name"]}>
+
+                            {username}
+                        </span>
+                        <PostEditCustomTag
+                            className={styles["user-tags"]}
+                            allUserTags={allUserTags}
+                            onChange={(newSelectedTags) => setUserTags(newSelectedTags)}
+                            postTags={userTags}
+                        />
+
+                    </div>
+                </div>
 
                 <form className="mt-3 space-y-3" onSubmit={handleSubmit}>
                     <div>
@@ -249,13 +298,13 @@ const PostEdit = () => {
 
                     <div className="flex justify-end gap-4">
                         <Button
-                            className="bg-gray-300 text-gray-800 hover:bg-gray-400"
+                            variant="cancel"
                             onClick={handleCancel}
                         >
                             取消
                         </Button>
                         <Button
-                            className="bg-blue-600 text-white hover:bg-blue-700"
+                            variant="confirm"
                             onClick={handleSubmit}
                         >
                             確認
@@ -263,7 +312,7 @@ const PostEdit = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        </div >
     );
 };
 

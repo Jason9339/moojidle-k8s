@@ -13,10 +13,13 @@
     border-radius: 10px;
     margin: 40px 0;
     width: 85%;
+    max-width: 1200px;
     height: calc(100vh - 80px); /* 限制可用高度（根據 margin） */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
+    overflow: auto;
+    box-sizing: border-box;
 }
 
 .contentWrapper {
@@ -25,6 +28,8 @@
     align-items: flex-start;
     flex: 1;
     height: 90%;
+    overflow: auto;
+    min-height: 0;
 }
 
 

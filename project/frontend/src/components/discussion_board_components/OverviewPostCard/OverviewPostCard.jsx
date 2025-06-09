@@ -20,7 +20,7 @@ const OverviewPostCard = ({
 
     useEffect(() => {
         let isMounted = true;
-        
+
         const loadAvatar = async () => {
             const avatarUrl = await GetAvatarUrl(userPfp);
             if (isMounted) {
