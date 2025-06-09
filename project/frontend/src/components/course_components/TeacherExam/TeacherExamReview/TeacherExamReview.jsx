@@ -6,7 +6,7 @@ import { addAlert } from '@/utils/alert/AlertContext';
 const GradeForm = ({ examData, setExamData, isGrading, setIsGrading, examMaxScore, beGradedUserId, takenExamId, examId }) => {
     const graderId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [GradeScore, setReviewScore] = useState('');
-    
+
     const handleSubmitGrading = async (e) => {
         e.preventDefault();
 
@@ -16,11 +16,7 @@ const GradeForm = ({ examData, setExamData, isGrading, setIsGrading, examMaxScor
             addAlert("請輸入成績", "error");
             return;
         }
-        // console.log("Submitting grading for user:", beGradedUserId);
-        // console.log("Grading score:", GradeScore);
-        // console.log("Taken exam ID:", takenExamId);
         const response = await GradeExam(GradeScore, graderId, beGradedUserId, takenExamId, examId);
-        // console.log("Grading response:", response);
         if (response.updated) {
             // Create a copy of the examData
             const updatedExamData = { ...examData };
@@ -95,7 +91,6 @@ const fetchTakenExams = async (examId, setLoading, setError) => {
     try {
         setLoading(true);
         const data = await GetTakenExamInExam(examId);
-        // console.log("Fetched data:", data);
 
         return data
 

@@ -28,7 +28,6 @@ async function CreateDiscussionBoard(course_id, name) {
 
 async function DeleteDiscussionBoard(boardID) {
     const response = await api.delete(`/discussion-board/course-boards/${boardID}`);
-    //console.log("DeleteDiscussionBoard response", response.data);
     return response.data;
 }
 
@@ -37,7 +36,6 @@ async function EditDiscussionBoard(boardID, boardName) {
         const response = await api.patch(`/discussion-board/course-boards/${boardID}`, {
             board_name: boardName
         });
-        //console.log("EditDiscussionBoard response", response.data.boardID);
         return response.data;
     } catch (err) {
         console.error("編輯討論版失敗", err);

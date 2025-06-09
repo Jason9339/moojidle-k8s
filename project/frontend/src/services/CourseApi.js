@@ -14,7 +14,6 @@ export const GetCourseMembers = async (courseId) => {
 };
 
 export const ManualAddStudent = async (courseId, userId, studentId) => {
-    console.log(courseId, studentId, userId);
     return (
         await api.post(`/course/member/add/${courseId}`, {
             userId,
@@ -34,7 +33,7 @@ export const GetInviteCode = async (courseId) => {
 };
 
 export const CanUserEditAnnouncements = async (userId, courseId) => {
-  return (await api.get(`/course/member/can_edit/${userId}/${courseId}`)).data;
+    return (await api.get(`/course/member/can_edit/${userId}/${courseId}`)).data;
 };
 
 export const GetTeachIn = async (userId) => {
@@ -57,7 +56,6 @@ export const AddCourse = async (coursePayload) => {
 export const DeleteCourse = async (courseId) => {
     try {
         const response = await api.delete(`/course/delete/${courseId}`);
-        console.log("Deleted course:", response.data);
         return response.data;
     } catch (error) {
         console.error(
@@ -92,7 +90,7 @@ export const InviteStudent = async (courseId, userId, studentId) => {
 
 export const EditCourseName = async (courseId, newCourseName) => {
     try {
-        const response = await api.put(`/course/edit/${courseId}`, {name : newCourseName});
+        const response = await api.put(`/course/edit/${courseId}`, { name: newCourseName });
         return response.data;
     } catch (error) {
         console.error(

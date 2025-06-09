@@ -10,7 +10,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [errorIndexes, setErrorIndexes] = useState([]);
     const spanRefs = useRef([]);
-    
+
     useEffect(() => {
         tags.forEach((tag, idx) => {
             const span = spanRefs.current[idx];
@@ -47,7 +47,6 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
                 .filter(tag => tag && tag.user_tag && tag.user_tag.trim() !== "")
                 .map(tag => tag.user_tag.trim());
 
-            console.log('準備儲存的標籤:', validTags);
 
             await UpdateUserTags(userId, validTags);
             onSave(validTags.map(tag => ({ user_tag: tag })));

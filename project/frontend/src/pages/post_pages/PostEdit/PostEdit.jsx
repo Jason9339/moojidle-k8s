@@ -49,7 +49,7 @@ const PostEdit = () => {
         setSelectedBoard(null);
     }, []);
 
-    
+
     const handleBoardChange = useCallback((option) => {
         setSelectedBoard(option);
     }, []);
@@ -217,7 +217,6 @@ const PostEdit = () => {
             i--; // 調整索引，因為陣列長度改變了
         }
     }
-    console.log("tags:", allUserTags);
 
     return (
         <div className={styles.appLayout}>
