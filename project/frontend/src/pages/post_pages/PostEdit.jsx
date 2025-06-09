@@ -171,11 +171,21 @@ const PostEdit = () => {
         );
     }
 
+    // 過濾掉過期的課程
+    const activeData = state.data.filter(course => {
+        // 如果沒有 current_week 或 week_num 資料，預設顯示
+        if (typeof course.current_week !== 'number' || typeof course.week_num !== 'number') {
+            return true;
+        }
+        // 只保留未過期的課程（current_week <= week_num）
+        return course.current_week <= course.week_num;
+    });
 
     // 移除沒有討論版的課程
-    for (let i = 0; i < state.data.length; i++) {
-        if (!state.data[i].boards || state.data[i].boards.length === 0) {
-            state.data.splice(i, 1);
+    for (let i = 0; i < activeData.length; i++) {
+        if (!activeData[i].boards || activeData[i].boards.length === 0) {
+            activeData.splice(i, 1);
+            i--; // 調整索引，因為陣列長度改變了
         }
     }
 
@@ -184,7 +194,7 @@ const PostEdit = () => {
             <LeftBar />
             <div className="flex flex-col w-[calc(100vw_-_180px)] px-[calc(100vw_-_180px-_80vw)] h-screen bg-[#eff2f5]">
                 <PostEditDestSelector
-                    courseData={state.data}
+                    courseData={activeData}
                     selectedCourse={selectedCourse}
                     selectedBoard={selectedBoard}
                     onCourseChange={handleCourseChange}

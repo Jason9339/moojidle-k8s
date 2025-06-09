@@ -24,6 +24,18 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
         );
     }
 
+    // 過濾掉過期的課程
+    const activeItemData = itemData ? itemData.filter(course => {
+        // 如果沒有 current_week 或 week_num 資料，預設顯示
+        if (typeof course.current_week !== 'number' || typeof course.week_num !== 'number') {
+            console.log("error");
+            console.log(course);
+            return true;
+        }
+        // 只顯示未過期的課程（current_week <= week_num）
+        return course.current_week <= course.week_num;
+    }) : [];
+
     return (
         <VerticalOverflowIndicator className={styles.container}>
             <StyledSidebar breakPoint="md">
@@ -84,57 +96,63 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                         },
                     }}
                 >
-                    {itemData.map(
-                        ({ course_id, course_name, boards }, index) => (
-                            <SubMenu key={course_id} label={course_name}>
-                                {boards.map(({ board_id, board_name }) => (
-                                    <MenuItem
-                                        key={board_id}
-                                        active={selectedID === board_id}
-                                        onClick={() => {
-                                            setSelectedID(board_id);
-                                            navigate(`/discussion/${board_id}`);
-                                        }}
-                                        suffix={
-                                            canEdit(index) && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleEditBoard(
-                                                            {
-                                                                course_id,
-                                                                course_name,
-                                                            },
-                                                            {
-                                                                board_id,
-                                                                board_name,
-                                                            }
-                                                        );
-                                                    }}
-                                                    className="edit-icon-button"
-                                                >
-                                                    <FaEdit className="w-4 h-4" />
-                                                </button>
-                                            )
-                                        }
-                                    >
-                                        <span>{board_name}</span>
-                                    </MenuItem>
-                                ))}
-                                {canEdit(index) && (
-                                    <MenuItem
-                                        className="addBoard"
-                                        onClick={() =>
-                                            handleAddBoard({
-                                                course_id,
-                                                course_name,
-                                            })
-                                        }
-                                    >
-                                        新增討論版
-                                    </MenuItem>
-                                )}
-                            </SubMenu>
+                    {activeItemData.length === 0 ? (
+                        <div className={styles.emptyMessage}>
+                            <small>目前沒有討論版</small>
+                        </div>
+                    ) : (
+                        activeItemData.map(
+                            ({ course_id, course_name, boards, current_week, week_num }, index) => (
+                                <SubMenu key={course_id} label={course_name}>
+                                    {boards.map(({ board_id, board_name }) => (
+                                        <MenuItem
+                                            key={board_id}
+                                            active={selectedID === board_id}
+                                            onClick={() => {
+                                                setSelectedID(board_id);
+                                                navigate(`/discussion/${board_id}`);
+                                            }}
+                                            suffix={
+                                                canEdit(itemData.findIndex(item => item.course_id === course_id)) && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEditBoard(
+                                                                {
+                                                                    course_id,
+                                                                    course_name,
+                                                                },
+                                                                {
+                                                                    board_id,
+                                                                    board_name,
+                                                                }
+                                                            );
+                                                        }}
+                                                        className="edit-icon-button"
+                                                    >
+                                                        <FaEdit className="w-4 h-4" />
+                                                    </button>
+                                                )
+                                            }
+                                        >
+                                            <span>{board_name}</span>
+                                        </MenuItem>
+                                    ))}
+                                    {canEdit(itemData.findIndex(item => item.course_id === course_id)) && (
+                                        <MenuItem
+                                            className="addBoard"
+                                            onClick={() =>
+                                                handleAddBoard({
+                                                    course_id,
+                                                    course_name,
+                                                })
+                                            }
+                                        >
+                                            新增討論版
+                                        </MenuItem>
+                                    )}
+                                </SubMenu>
+                            )
                         )
                     )}
                 </Menu>

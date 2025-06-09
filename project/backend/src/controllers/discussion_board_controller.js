@@ -25,6 +25,8 @@ import {
     FindProjectedPostsByBId
 } from "#src/services/post_services.js"
 
+import CalculateWeek from "#src/utils/calculate_week.js";
+
 async function GetCourseDiscussionBoard(req, res) {
     const courseId = parseInt(req.params.courseId, 10);
     if (isNaN(courseId)) {
@@ -62,14 +64,20 @@ async function GetAllCourseDiscussionBoard(req, res) {
     if (uniqueCourseIds.length === 0) {
         userCourses = [];
     } else {
-        // query course information, only return course_id and name
+        // query course information, return course_id, name, week_num, and start_date
         const courses = await FindCourseInCourseId(uniqueCourseIds);
 
-        // change name to course_name
-        userCourses = courses.map(c => ({
-            course_id: c.course_id,
-            course_name: c.name
-        }));
+        // change name to course_name and add week_num, start_date, current_week
+        userCourses = courses.map(c => {
+            const currentWeek = CalculateWeek(c.start_date, new Date(), c.week_num || 16);
+            return {
+                course_id: c.course_id,
+                course_name: c.name,
+                week_num: c.week_num || 16,
+                start_date: c.start_date,
+                current_week: currentWeek
+            };
+        });
     }
 
     if (userCourses === null) {
@@ -83,7 +91,12 @@ async function GetAllCourseDiscussionBoard(req, res) {
     let boardsList = await Promise.all(
         userCourses.map(async (course) => {
             const courseBoard = await FindCourseBoardByCourseId(course.course_id);
-            return courseBoard;
+            return {
+                ...courseBoard,
+                week_num: course.week_num,
+                start_date: course.start_date,
+                current_week: course.current_week
+            };
         })
     );
 
