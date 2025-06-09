@@ -62,7 +62,10 @@ function PostPage() {
     }, [description]);
 
     const handleCommentSubmit = async () => {
-        if (!newComment.trim()) return;
+        if (!newComment.trim()) {
+            addAlert("內容不能為空", "error");
+            return;
+        }
         const commenData = {
             post_id: post.post_id,
             user_id: currentUserId,
