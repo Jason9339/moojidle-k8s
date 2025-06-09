@@ -1,19 +1,15 @@
 import mongoose from 'mongoose';
 import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
-async function FindAnnouncementByCourseId(courseId, showFuture = false) {
+// Always fetch all announcements for a course
+async function FindAnnouncementsByCourseId(courseId) {
     try {
-        const now = new Date();
-        const query = { course_id: parseInt(courseId) };
-        if (!showFuture) {
-            query.announce_date = { $lte: now };
-        }
         return await mongoose.connection.db.collection('announcement')
-            .find(query)
+            .find({ course_id: parseInt(courseId) })
             .sort({ create_date: -1 })
             .toArray();
     } catch (error) {
-        console.error(`[getAnnouncementsByCourseId] Error fetching announcements for course ID ${courseId}:`, error);
+        console.error(`[FindAllAnnouncementsByCourseId] Error fetching announcements for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course announcements: ${error.message}`);
     }
 }
@@ -76,7 +72,7 @@ async function DeleteAnnouncementByAnnouncementID(announcementId) {
 }
 
 export {
-    FindAnnouncementByCourseId,
+    FindAnnouncementsByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement,
     DeleteAnnouncementByAnnouncementID
