@@ -31,7 +31,7 @@ describe('Announcement Controller', () => {
 
         it('showFuture=false不應回傳未來公告', async () => {
             // 假設 courseId 1 已經有公告在 seed
-            const req = createMockReq({ courseId: "1" }, { showFuture: true });
+            const req = createMockReq({ courseId: "1" }, { showFuture: false });
             const res = createMockRes();
 
             await GetCourseAnnouncements(req, res);
