@@ -422,7 +422,7 @@ function CourseTable({
                                 className={styles["todo-item"]}
                             >
                                 <div className={styles["todo-title-row"]}>
-                                    <p className={styles["todo-title"]}>
+                                    <p className={styles["todo-title"]} title={assignment.title}>
                                         {assignment.title}
                                     </p>
                                     <span className={`${styles["todo-status"]} ${styles[statusInfo.cssClass]}`}>

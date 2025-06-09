@@ -56,7 +56,7 @@ function ToDoItem({ todoList, courses }) {
                 return Show(item) ? (
                     <div key={index} className={`${styles["todo-item"]}`} onClick={() => Navigate(`/course/${item.course_id}/assignment`)}>
                         <div className={styles["todo-title-row"]}>
-                            <p className={`${styles["todo-title"]}`}>
+                            <p className={`${styles["todo-title"]}`} title={item.title}>
                                 {item.title}
                             </p>
                             <span className={`${styles["todo-status"]} ${styles[statusInfo.cssClass]}`}>
