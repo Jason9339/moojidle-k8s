@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { DeleteAnnouncement } from '#src/controllers/announcement_controller.js';
+import { GetCourseAnnouncements, DeleteAnnouncement } from '#src/controllers/announcement_controller.js';
 import { createMockReq, createMockRes } from '../test-utils.js';
 import mongoose from 'mongoose';
 
@@ -12,6 +12,38 @@ describe('Announcement Controller', () => {
     beforeAll(global.beforeAll);
     afterAll(global.afterAll);
     beforeEach(global.beforeEach);
+
+    describe('GetCourseAnnouncements', () => {
+        it('showFuture=true應回傳未來公告', async () => {
+            // 假設 courseId 1 已經有公告在 seed
+            const req = createMockReq({}, { courseId: "1" }, { showFuture: true });
+            const res = createMockRes();
+
+            await GetCourseAnnouncements(req, res);
+
+            expect(res.json).toHaveBeenCalled();
+            const announcements = res.json.mock.calls[0][0];
+            expect(Array.isArray(announcements)).toBe(true);
+
+            expect(announcements[0].context).toBe("Announcement 1 content.");
+            expect(announcements[1].context).toBe("Announcement 2 content.");
+        });
+
+        it('showFuture=false不應回傳未來公告', async () => {
+            // 假設 courseId 1 已經有公告在 seed
+            const req = createMockReq({}, { courseId: "1" }, { showFuture: false });
+            const res = createMockRes();
+
+            await GetCourseAnnouncements(req, res);
+
+            expect(res.json).toHaveBeenCalled();
+            const announcements = res.json.mock.calls[0][0];
+            expect(Array.isArray(announcements)).toBe(true);
+
+            expect(announcements[0].context).toBe("Announcement 1 content.");
+            expect(announcements[1]).toBe(undefined);
+        });
+    });
 
     describe('DeleteAnnouncement', () => {
         it('應該成功刪除公告', async () => {

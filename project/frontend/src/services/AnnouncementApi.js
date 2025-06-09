@@ -1,7 +1,7 @@
 import api from "@/ApiClient";
 
-export const GetAnnouncements = async (courseId) => {
-  return (await api.get(`/announcement/course/${courseId}`)).data;
+export const GetAnnouncements = async (courseId, showFuture = false) => {
+  return (await api.get(`/announcement/course/${courseId}?showFuture=${showFuture}`)).data;
 };
 
 export const CreateAnnouncement = async (courseId, context, userId, announceDate) => {

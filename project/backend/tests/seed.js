@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 async function CounterSeed() {
     await mongoose.connection.db.collection('counter').insertOne({
-        announcement: 1,
+        announcement: 2,
         assignments: 1,
         assist_in: 1,
         course: 2,
@@ -196,6 +196,14 @@ async function AnnouncementSeed() {
             "create_date": new Date("2025-01-15T00:00:00.000Z"),
             "announce_date": new Date("2025-01-15T00:00:00.000Z"),
             "context": "Announcement 1 content.",
+            "user_id": 1,
+            "course_id": 1
+        },
+        {
+            "a_id": 2,
+            "create_date": new Date("2025-01-15T00:00:00.000Z"),
+            "announce_date": new Date("2026-01-15T00:00:00.000Z"),
+            "context": "Announcement 2 content.",
             "user_id": 1,
             "course_id": 1
         },

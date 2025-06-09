@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import styles from "./AnnouncementsTab.module.css";
-
 import {
     GetAnnouncements,
     CreateAnnouncement,
@@ -14,7 +13,6 @@ function AnnouncementsPage() {
     const { role } = useOutletContext();
     const currentUserId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const canEdit = role?.isTeacher || role?.isAssistant;
-
     const [announcements, setAnnouncements] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
@@ -31,7 +29,8 @@ function AnnouncementsPage() {
         const fetchAnnouncements = async () => {
             try {
                 setLoading(true);
-                const data = await GetAnnouncements(courseId);
+                // Teachers/TAs see all, students see only past
+                const data = await GetAnnouncements(courseId, canEdit);
                 setAnnouncements(data);
             } catch (err) {
                 setError("Failed to load announcements.");
@@ -41,11 +40,20 @@ function AnnouncementsPage() {
             }
         };
         fetchAnnouncements();
-    }, [courseId]);
+    }, [courseId, canEdit]);
 
-    const filteredAnnouncements = announcements.filter((a) =>
+    // Filter by search term
+    const filtered = announcements.filter(a =>
         a.context.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Split into past and future
+    const now = new Date();
+    const past = filtered.filter(a => new Date(a.announce_date) <= now);
+    // For students, future is always empty
+    const future = canEdit
+        ? filtered.filter(a => new Date(a.announce_date) > now)
+        : [];
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -84,7 +92,7 @@ function AnnouncementsPage() {
                 currentUserId,
                 newAnnounceDate
             );
-            setAnnouncements(await GetAnnouncements(courseId));
+            setAnnouncements(await GetAnnouncements(courseId, canEdit));
             closeCreateModal();
         } catch (err) {
             setError("新增失敗");
@@ -103,7 +111,7 @@ function AnnouncementsPage() {
                 newAnnouncementContext,
                 newAnnounceDate
             );
-            setAnnouncements(await GetAnnouncements(courseId));
+            setAnnouncements(await GetAnnouncements(courseId, canEdit));
             closeEditModal();
         } catch (err) {
             setError("Failed to edit announcement.");
@@ -115,7 +123,7 @@ function AnnouncementsPage() {
         if (!window.confirm("確定要刪除這則公告嗎？")) return;
         try {
             await DeleteAnnouncement(announcement.a_id); 
-            setAnnouncements(await GetAnnouncements(courseId));
+            setAnnouncements(await GetAnnouncements(courseId, canEdit));
         } catch (err) {
             setError("刪除失敗");
             console.error(err);
@@ -137,9 +145,6 @@ function AnnouncementsPage() {
     return (
         <div className={styles["announcements-tab"]}>
             <div className={styles["announcements-header"]}>
-                <select className={styles["filter-dropdown"]}>
-                    <option value="all">Announced</option>
-                </select>
                 <input
                     type="text"
                     className={styles["search-bar"]}
@@ -158,34 +163,83 @@ function AnnouncementsPage() {
             </div>
 
             <div className={styles["announcements-list"]}>
-                {filteredAnnouncements.map((a) => (
-                    <div key={a.a_id} className={styles["announcement-item"]}>
-                        <div className={styles["announcement-inner"]}>
-                            <div className={styles["announcement-left"]}>
-                                <p className={styles["announcement-content"]}>{a.context}</p>
-                                <p className={styles["announcement-posted"]}>
-                                    Posted on: {new Date(a.create_date).toLocaleString()}
-                                </p>
-                            </div>
-                            {canEdit && (
-                                <>
-                                    <button
-                                        className={styles["edit-announcement-button"]}
-                                        onClick={() => openEditModal(a)}
-                                    >
-                                        編輯
-                                    </button>
-                                    <button
-                                        className={styles["delete-announcement-button"]}
-                                        onClick={() => handleDeleteAnnouncement(a)}
-                                    >
-                                        刪除
-                                    </button>
-                                </>
-                            )}
+                {/* Future Announcements Section (only for teachers/TAs) */}
+                {canEdit && (
+                    <>
+                        <div className={styles["announcement-separator"]}>
+                            <span className={styles["announcement-section-title"]}>未來公告</span>
                         </div>
-                    </div>
-                ))}
+                        {future.length === 0 ? (
+                            <div className={styles["no-announcement"]}>沒有未來公告</div>
+                        ) : (
+                            future.map(a => (
+                                <div key={a.a_id} className={styles["announcement-item"]}>
+                                    <div className={styles["announcement-inner"]}>
+                                        <div className={styles["announcement-left"]}>
+                                            <p className={styles["announcement-content"]}>{a.context}</p>
+                                            <p className={styles["announcement-posted"]}>
+                                                Posted on: {new Date(a.create_date).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <>
+                                            <button
+                                                className={styles["edit-announcement-button"]}
+                                                onClick={() => openEditModal(a)}
+                                            >
+                                                編輯
+                                            </button>
+                                            <button
+                                                className={styles["delete-announcement-button"]}
+                                                onClick={() => handleDeleteAnnouncement(a)}
+                                            >
+                                                刪除
+                                            </button>
+                                        </>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+
+                        {/* Current Announcements Section (only for teachers/TAs) */}
+                        <div className={styles["announcement-separator"]}>
+                            <span className={styles["announcement-section-title"]}>當前公告</span>
+                        </div>
+                    </>
+                )}
+
+                {/* Current Announcements List */}
+                {past.length === 0 ? (
+                    <div className={styles["no-announcement"]}>沒有當前公告</div>
+                ) : (
+                    past.map(a => (
+                        <div key={a.a_id} className={styles["announcement-item"]}>
+                            <div className={styles["announcement-inner"]}>
+                                <div className={styles["announcement-left"]}>
+                                    <p className={styles["announcement-content"]}>{a.context}</p>
+                                    <p className={styles["announcement-posted"]}>
+                                        Posted on: {new Date(a.create_date).toLocaleString()}
+                                    </p>
+                                </div>
+                                {canEdit && (
+                                    <>
+                                        <button
+                                            className={styles["edit-announcement-button"]}
+                                            onClick={() => openEditModal(a)}
+                                        >
+                                            編輯
+                                        </button>
+                                        <button
+                                            className={styles["delete-announcement-button"]}
+                                            onClick={() => handleDeleteAnnouncement(a)}
+                                        >
+                                            刪除
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
             {/* Create Modal */}
