@@ -9,7 +9,7 @@ import { addAlert } from "@/utils/alert/AlertContext";
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
     const [inviteCode, setInviteCode] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
     const handleJoin = async () => {
         if (!inviteCode) {
             addAlert("請輸入課程代碼", "error");
@@ -26,7 +26,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
                 currentUserId
             );
 
-            addAlert(msg.message);
+            addAlert("成功加入課程！", "success");
 
             await onJoinCourse(); // 重新 fetch 所有資料
             onClose(); // 關閉 modal

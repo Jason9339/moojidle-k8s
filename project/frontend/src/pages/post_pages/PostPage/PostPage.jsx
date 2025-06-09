@@ -33,7 +33,7 @@ function PostPage() {
 
     const textareaRef = useRef(null);
     const [description, setDescription] = useState("");
-    
+
     useEffect(() => {
         const fetchPost = async () => {
             try {
@@ -66,13 +66,14 @@ function PostPage() {
         const commenData = {
             post_id: post.post_id,
             user_id: currentUserId,
-            custom_tag: "訪客",
+            // custom_tag: "訪客",
             description: newComment,
         };
         try {
             await LeaveCommend(commenData);
             setNewComment("");
-            reflash();
+            addAlert("留言送出成功", "success");
+            refresh();
         } catch (err) {
             addAlert("留言送出失敗：", "error");
         }
@@ -88,12 +89,12 @@ function PostPage() {
         try {
             await DeleteCommend(commenData);
             addAlert("留言刪除成功", "success");
-            reflash();
+            refresh();
         } catch (err) {
             addAlert("留言刪除失敗：", "error");
         }
         setActiveCommentId(null);
-        reflash();
+        refresh();
     };
 
     const handleDeletePost = async () => {
@@ -108,7 +109,7 @@ function PostPage() {
 
 
 
-    const reflash = () => {
+    const refresh = () => {
         setRefreshTrigger((prev) => prev + 1);
     };
 

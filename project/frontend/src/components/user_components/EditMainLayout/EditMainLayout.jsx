@@ -104,6 +104,8 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
                 hasNewAvatar: result.hasNewAvatar
             });
 
+            addAlert("個人資料儲存成功！", "success");
+
         } catch (err) {
             addAlert("儲存失敗，請稍後再試", "error");
         } finally {

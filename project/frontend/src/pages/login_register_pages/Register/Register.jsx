@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterUser } from "@/services/login_register_api/RegisterApi.js";
 import styles from "./Register.module.css";
-
+import { addAlert } from "@/utils/alert/AlertContext";
 const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,16 +17,18 @@ const Register = () => {
         try {
             const response = await RegisterUser({ name, email, password });
             if (response && response.message === "User registered successfully") {
-                navigate("/login"); 
+                addAlert("註冊成功！", "success");
+                navigate("/login");
             } else {
                 setError(response?.message || "Registration failed");
+                addAlert("註冊失敗", "error");
             }
         } catch (err) {
             setError("An error occurred. Please try again.");
         }
     };
 
-return (
+    return (
         <div className={styles["register-container"]}>
             <form className={styles["register-form"]} onSubmit={handleSubmit}>
                 <h2 className={styles["register-title"]}>Welcome Moojidle<span className={styles["moojidle-accent"]}> !</span></h2>
@@ -36,7 +38,7 @@ return (
                 {error && <p className={styles["error-message"]}>{error}</p>}
                 <div className={styles["form-group"]}>
                     <label htmlFor="name" className={styles["input-label"]}>
-                         Name
+                        Name
                         {!name && <span className={styles["required"]}>*</span>}
                     </label>
                     <input
@@ -70,7 +72,7 @@ return (
                     <label htmlFor="password" className={styles["input-label"]}>
                         Password
                         {!password && <span className={styles["required"]}>*</span>}
-                    </label>    
+                    </label>
                     <input
                         type="password"
                         id="password"

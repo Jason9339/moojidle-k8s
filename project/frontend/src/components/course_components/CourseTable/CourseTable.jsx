@@ -18,7 +18,7 @@ function CourseTable({
     const [editingMaterials, setEditingMaterials] = useState([]);
     const [expandedAssignments, setExpandedAssignments] = useState({});
     const [expandedExams, setExpandedExams] = useState({});
-    
+
 
     const toggleAssignment = (assignmentId) => {
         if (!assignmentId) return;
@@ -56,7 +56,7 @@ function CourseTable({
         try {
             await DownloadExam(path, filename);
         } catch (e) {
-            addAlert(`下載失敗：${filename}`);
+            addAlert(`下載失敗：${filename}`, "error");
             console.error("Assignment download error:", e);
         }
     };

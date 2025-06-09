@@ -12,7 +12,7 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [url, setUrl] = useState("");
 
     const fileInputRef = useRef(null);
-    
+
     // 計算課程的開始和結束日期範圍
     const dateRange = useMemo(() => {
         if (!course?.start_date || !course?.week_num) {
@@ -94,7 +94,7 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
             onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
-            addAlert("上傳失敗：" + error.message);
+            addAlert("上傳失敗", "error");
         }
     };
 

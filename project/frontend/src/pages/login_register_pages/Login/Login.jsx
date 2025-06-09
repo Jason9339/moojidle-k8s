@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LoginUser } from "@/services/login_register_api/LoginLogoutApi.js";
 import styles from "./Login.module.css";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
-
+import { addAlert } from "@/utils/alert/AlertContext";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -19,8 +19,10 @@ const Login = () => {
             if (response && response.user_id) {
                 // Save user data to localStorage
                 localStorage.setItem("user", JSON.stringify(response));
+                addAlert("登入成功", "success");
                 navigate("/dashboard");
             } else {
+                addAlert("登入失敗", "error");
                 setError(response?.message || "Invalid email or password");
             }
         } catch (err) {
@@ -40,7 +42,7 @@ const Login = () => {
                 <p className={styles["login-subtitle"]}>
                     Enter to get unlimited access to data &amp; information.
                 </p>
-                    {error && <p className={styles["error-message"]}>{error}</p>}
+                {error && <p className={styles["error-message"]}>{error}</p>}
                 <div className={styles["form-group"]}>
                     <label htmlFor="email" className={styles["input-label"]}>
                         Email
