@@ -194,7 +194,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             const newFiles = Array.from(e.target.files);
 
             const result = checkFiles(newFiles);
-            if (result.pass) {
+            if (!result.pass) {
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
                 }
@@ -204,7 +204,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             setFiles(prevFiles => [...prevFiles, ...newFiles]);
 
-            addAlert(result.message, "error");
+            addAlert("上傳成功", "success");
         }
     };
 

@@ -141,7 +141,6 @@ export default function TextEditor({ className = "", height, onChange, value, to
             if (otherMatch) {
                 e.preventDefault()
                 const prefix = otherMatch[1]
-                // console.log("prefix:", prefix)
                 // if line is just the prefix (empty after it), don't re-insert
                 const insert = "\n" + (line.length > prefix.length ? prefix : "")
                 const newText = before + insert + after

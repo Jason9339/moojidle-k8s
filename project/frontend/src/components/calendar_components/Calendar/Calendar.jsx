@@ -55,7 +55,6 @@ const Calendar = ({ events, ...props }) => {
                 break;
         }
 
-        console.log("handleSelectEvent:", event);
     }, [navigate, view])
 
     return (
