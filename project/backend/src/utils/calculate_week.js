@@ -13,7 +13,8 @@ function CalculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const weekNumber = Math.floor(diffDays / 7) + 1;
 
-    return Math.min(Math.max(weekNumber, 1), courseWeekNum);
+    // 回傳實際的週數，不限制最大值，以便判斷是否過期
+    return Math.max(weekNumber, 1);
 }
 
 export default CalculateWeek;
