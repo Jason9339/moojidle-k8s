@@ -96,11 +96,11 @@ export const validateMultipleFilesSize = (files, maxSize = MAX_FILE_SIZE) => {
  */
 export const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
@@ -109,18 +109,24 @@ export const formatFileSize = (bytes) => {
  * 適合在檔案選擇時直接使用
  * @param {File[]} files - 要檢查的檔案陣列
  * @param {number} maxSize - 最大檔案大小（bytes），預設為 5MB
- * @param {boolean} showAlert - 是否顯示 alert 警告，預設為 true
- * @returns {boolean} - 是否通過檢查
+ * @returns {{pass : boolean, message : string}} - 是否通過檢查
  */
-export const checkFilesAndAlert = (files, maxSize = MAX_FILE_SIZE, showAlert = true) => {
-    const validation = validateMultipleFilesSize(files, maxSize);
-    
-    if (!validation.isValid && showAlert) {
-        const errorMessages = validation.invalidFiles.map(item => item.message).join('\n');
-        alert(`檔案過大：\n\n${errorMessages}`);
+export const checkFiles = (files, maxSize = MAX_FILE_SIZE) => {
+    const size_validation = validateMultipleFilesSize(files, maxSize);
+
+    let result = {
+        pass: size_validation.isValid
+    };
+    const errorMessages = size_validation.invalidFiles.map(item => item.message).join('\n');
+
+    if (!size_validation.isValid) {
+        result = {
+            pass: false,
+            message: `有 ${size_validation.invalidFiles.length} 個檔案超過 ${formatFileSize(maxSize)} 限制\n${errorMessages}`
+        };
     }
-    
-    return validation.isValid;
+
+    return result;
 };
 
 // 匯出常數供外部使用

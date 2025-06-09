@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
 import { UpdateUserTags } from "@/services/UserApi";
 import { LuPlus } from "react-icons/lu";
+import { addAlert } from '@/utils/alert/AlertContext';
 
 function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);
@@ -9,6 +10,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [errorIndexes, setErrorIndexes] = useState([]);
     const spanRefs = useRef([]);
+    
     useEffect(() => {
         tags.forEach((tag, idx) => {
             const span = spanRefs.current[idx];
@@ -51,7 +53,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
             onSave(validTags.map(tag => ({ user_tag: tag })));
         } catch (err) {
             console.error('儲存失敗:', err);
-            alert(err.message || "儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試", "error");
         } finally {
             setLoading(false);
         }

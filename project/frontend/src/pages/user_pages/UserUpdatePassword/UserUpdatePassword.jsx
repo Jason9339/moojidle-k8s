@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UpdateUserPassword } from "@/services/UserApi.js";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import styles from "./UserUpdatePassword.module.css";
-
+import { addAlert } from "@/utils/alert/AlertContext";
 import LeftBar from "@/components/LeftBar/LeftBar";
 
 const UserUpdatePassword = () => {
@@ -23,11 +23,17 @@ const UserUpdatePassword = () => {
         try {
             const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
             if (!userId) {
-                setError("User not logged in. Please log in again.");
+
+                setError("使用者未登入");
+                addAlert("請先登入", "error");
+                navigate("/login");
                 return;
             }
             if (currentPassword === newPassword) {
-                setError("New password is the same as the original.");
+
+                setError("新密碼不能與舊密碼相同");
+                addAlert("新密碼不能與舊密碼相同", "error");
+
                 return;
             }
 
@@ -37,14 +43,15 @@ const UserUpdatePassword = () => {
             });
 
             if (response?.message === "Password updated successfully") {
-                setSuccess("Password updated successfully. You will be logged out.");
+                setSuccess("密碼更改成功！");
+                addAlert("密碼更改成功", "success");
                 localStorage.removeItem("user");
                 setTimeout(() => navigate("/login"), 2000);
             } else {
-                setError("Current password is incorrect.");
+                setError("密碼錯誤");
             }
         } catch (err) {
-            setError("An error occurred. Please try again.");
+            setError("發生錯誤，請稍後再試");
         }
     };
 

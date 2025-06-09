@@ -4,10 +4,10 @@ import {
     ResetBackendDatabase,
 } from './setup.js'
 
-import { 
+import {
     GetnotificationData,
     DeleteNotification,
-    ReadNotification 
+    ReadNotification
 } from '@/services/NotificationApi.js'
 
 describe('前端 Notification 整合測試', () => {
@@ -46,8 +46,8 @@ describe('前端 Notification 整合測試', () => {
     describe('ReadNotification 整合測試', () => {
         it('應該成功從後端已讀notified', async () => {
             const notifiedData = {
-                n_id : 1,
-                user_id : 2
+                n_id: 1,
+                user_id: 2
             }
 
             const response = await ReadNotification(notifiedData)
@@ -67,8 +67,8 @@ describe('前端 Notification 整合測試', () => {
         it('應該成功從後端刪除notified', async () => {
             // 這個測試使用後端預設的測試用戶
             const notifiedData = {
-                n_id : 1,
-                user_id : 2
+                n_id: 1,
+                user_id: 2
             }
 
             // Act

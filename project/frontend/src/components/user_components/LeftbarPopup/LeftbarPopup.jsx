@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LeftbarPopup.module.css";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function LeftbarPopup({ onClose }) {
     const navigate = useNavigate();
@@ -8,6 +9,7 @@ function LeftbarPopup({ onClose }) {
     const handleLogout = () => {
         // localStorage.removeItem("user");
         localStorage.clear();
+        addAlert("登出成功", "success");
         navigate("/login");
     };
 

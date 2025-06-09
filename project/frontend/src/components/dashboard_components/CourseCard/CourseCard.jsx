@@ -12,7 +12,7 @@ function CourseCard({
     isTeacher,
     isStudent,
     isAssistant,
-    onDeleteCourse,
+    refetchAll
 }) {
     // console.log(title, courseId, color, isTeacher, isStudent, isAssistant);
     const navigate = useNavigate();
@@ -22,6 +22,11 @@ function CourseCard({
         navigate(`/course/${courseId}`);
     };
 
+    const handleOnClose = () => {
+
+        refetchAll();
+        setShowEditModal(false);
+    }
     return (
         <div
             className={`${styles["course-card"]}`}
@@ -84,8 +89,7 @@ function CourseCard({
             {showEditModal && (
                 <EditCourseModal
                     course={{ title, courseId }}
-                    onClose={() => setShowEditModal(false)}
-                    onDeleteCourse={onDeleteCourse} // 傳進去
+                    onClose={handleOnClose}
                 />
             )}
         </div>

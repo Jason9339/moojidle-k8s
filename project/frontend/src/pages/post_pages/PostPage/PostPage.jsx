@@ -12,6 +12,7 @@ import {
     DeletePost,
     DeleteCommend,
 } from "@/services/PostApi";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function PostPage() {
     const { id } = useParams();
@@ -61,19 +62,23 @@ function PostPage() {
     }, [description]);
 
     const handleCommentSubmit = async () => {
-        if (!newComment.trim()) return;
+        if (!newComment.trim()) {
+            addAlert("內容不能為空", "error");
+            return;
+        }
         const commenData = {
             post_id: post.post_id,
             user_id: currentUserId,
-            custom_tag: "訪客",
+            // custom_tag: "訪客",
             description: newComment,
         };
         try {
             await LeaveCommend(commenData);
             setNewComment("");
-            reflash();
+            addAlert("留言送出成功", "success");
+            refresh();
         } catch (err) {
-            alert("留言送出失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言送出失敗：", "error");
         }
     };
 
@@ -86,28 +91,28 @@ function PostPage() {
         };
         try {
             await DeleteCommend(commenData);
-            alert("留言刪除成功");
-            reflash();
+            addAlert("留言刪除成功", "success");
+            refresh();
         } catch (err) {
-            alert("留言刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言刪除失敗：", "error");
         }
         setActiveCommentId(null);
-        reflash();
+        refresh();
     };
 
     const handleDeletePost = async () => {
         try {
             await DeletePost(post.post_id);
-            alert("貼文刪除成功");
+            addAlert("貼文刪除成功", "success");
             navigate(`/discussion/${post.in_b_id}`);
         } catch (err) {
-            alert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("貼文刪除失敗", "error");
         }
     };
 
 
 
-    const reflash = () => {
+    const refresh = () => {
         setRefreshTrigger((prev) => prev + 1);
     };
 

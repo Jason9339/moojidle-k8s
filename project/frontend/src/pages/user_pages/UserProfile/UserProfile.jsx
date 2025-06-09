@@ -21,7 +21,7 @@ function UserProfile() {
         }
 
         fetchData();
-    }, []);
+    }, [userId]);
 
     return (
         <div className={styles["app-layout"]}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CourseCard from "@/components/dashboard_components/CourseCard/CourseCard";
 import ToDoItem from "@/components/dashboard_components/ToDoItem/ToDoItem";
 import ComingUpItem from "@/components/dashboard_components/ComingUpItem/ComingUpItem";
@@ -21,7 +21,7 @@ function Dashboard() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
 
-    const fetchAll = async () => {
+    const fetchAll = useCallback(async () => {
         try {
             const [allCourses, todoList, comingUpList] = await Promise.all([
                 GetCoursesForUser(currentUserId),
@@ -50,11 +50,11 @@ function Dashboard() {
         } catch (err) {
             console.error("Failed to fetch dashboard data:", err);
         }
-    };
+    }, [currentUserId]);
 
     useEffect(() => {
         fetchAll();
-    }, []);
+    }, [fetchAll]);
 
     const handleAddCourse = async () => {
         await fetchAll();
@@ -64,13 +64,6 @@ function Dashboard() {
         await fetchAll();
     };
 
-    const handleDeleteCourse = async (courseId) => {
-        try {
-            await fetchAll();
-        } catch (error) {
-            console.error("刪除課程後重新抓取資料失敗：", error);
-        }
-    };
 
     // wait for data
     if (!dashboardData) {
@@ -101,7 +94,7 @@ function Dashboard() {
                                 <CourseCard
                                     key={index}
                                     {...course}
-                                    onDeleteCourse={handleDeleteCourse}
+                                    refetchAll={fetchAll}
                                 />
                             ))}
                         </div>
@@ -109,8 +102,8 @@ function Dashboard() {
 
                     <div className={styles["dashboard-right"]}>
                         <h3 className={styles["section-title"]}>To Do Assignments</h3>
-                        <ToDoItem 
-                            todoList={dashboardData.todoList} 
+                        <ToDoItem
+                            todoList={dashboardData.todoList}
                             courses={dashboardData.courses}
                         />
                         <hr />

@@ -7,6 +7,7 @@ import {
     EditAnnouncement,
     DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function AnnouncementsPage() {
     const { courseId } = useParams();
@@ -24,7 +25,7 @@ function AnnouncementsPage() {
         new Date().toISOString()
     );
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-
+    
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {
@@ -81,9 +82,12 @@ function AnnouncementsPage() {
     };
 
     const handleCreate = async () => {
-        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (!newAnnouncementContext.trim()) {
+            addAlert("內容不能為空", "error");
+            return;
+        }
         if (new Date(newAnnounceDate) > new Date()) {
-            alert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示", "info");
         }
         try {
             await CreateAnnouncement(
@@ -95,15 +99,18 @@ function AnnouncementsPage() {
             setAnnouncements(await GetAnnouncements(courseId, canEdit));
             closeCreateModal();
         } catch (err) {
-            setError("新增失敗");
+            addAlert("新增失敗", "error");
             console.error(err);
         }
     };
 
     const handleEditAnnouncement = async () => {
-        if (!newAnnouncementContext.trim()) return alert("內容不能為空");
+        if (!newAnnouncementContext.trim()) {
+            addAlert("內容不能為空", "error");
+            return;
+        }
         if (new Date(newAnnounceDate) > new Date()) {
-            alert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示", "info");
         }
         try {
             await EditAnnouncement(
@@ -122,11 +129,10 @@ function AnnouncementsPage() {
     const handleDeleteAnnouncement = async (announcement) => {
         if (!window.confirm("確定要刪除這則公告嗎？")) return;
         try {
-            await DeleteAnnouncement(announcement.a_id); 
+            await DeleteAnnouncement(announcement.a_id);
             setAnnouncements(await GetAnnouncements(courseId, canEdit));
         } catch (err) {
-            setError("刪除失敗");
-            console.error(err);
+            addAlert("刪除失敗", "error");
         }
     };
 

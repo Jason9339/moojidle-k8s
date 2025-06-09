@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./AssDetail.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import { DownloadAssignment } from "@/services/AssignmentApi";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function AssDetail({ assignment }) {
     const [descExpanded, setDescExpanded] = useState(false);
@@ -9,7 +10,7 @@ function AssDetail({ assignment }) {
 
     const titleRef = useRef(null);
     const descRef = useRef(null);
-
+    
     useEffect(() => {
         setDescExpanded(false);
         if (descRef.current && titleRef.current) {
@@ -41,7 +42,7 @@ function AssDetail({ assignment }) {
         try {
             await DownloadAssignment(attachment.path_to_file, attachment.filename);
         } catch (error) {
-            alert(`下載失敗：${attachment.filename}`);
+            addAlert(`下載失敗：${attachment.filename}`);
         }
     };
 
