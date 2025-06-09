@@ -34,11 +34,10 @@ async function UpdateUserPassword(userId, data) {
 async function UpdateUserData(userId, data) {
     try {
         const response = await api.put(`/user/update-profile/${userId}`, data);
-        alert("個人資料更新成功！");
         return response.data;
     } catch (err) {
         console.error(err);
-        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
+        return { message: "個人資料更新失敗" };
     }
 }
 
@@ -50,11 +49,10 @@ async function UpdateUserProfile(userId, formData) {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        alert("個人資料更新成功！");
         return response.data;
     } catch (err) {
         console.error("Profile update error:", err);
-        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
+        return { message: "更新個人資料時發生錯誤" }
     }
 }
 
@@ -64,11 +62,12 @@ async function UpdateUserTags(userId, tags) {
         const response = await api.put(`/user/update-user-tags/${userId}`, {
             tags: tags  // 確保這裡傳送的是字串陣列
         });
-       alert("標籤更新成功！");
         return response.data;
     } catch (err) {
         console.error('更新標籤錯誤:', err);
-        throw new Error(err.response?.data?.message || "更新標籤時發生錯誤");
+        return {
+            message: "更新標籤時發生錯誤"
+        }
     }
 }
 

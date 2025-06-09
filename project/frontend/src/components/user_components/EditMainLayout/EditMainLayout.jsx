@@ -18,13 +18,13 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
             // 檢查檔案類型
             const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
-                alert('請選擇有效的圖片檔案 (JPG, PNG, GIF, WebP)');
+                addAlert("請選擇有效的圖片檔案 (JPG, PNG, GIF, WebP)", "error");
                 return;
             }
 
             // 檢查檔案大小 (2MB)
             if (file.size > 2 * 1024 * 1024) {
-                alert('檔案大小不能超過 2MB');
+                addAlert("檔案大小不能超過 2MB", "error");
                 return;
             }
 
@@ -73,12 +73,12 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
 
 
             if (!isContactChanged && !hasNewAvatar) {
-                addAlert("沒有資料需要更新");
+                addAlert("沒有資料需要更新", "info");
                 return;
             }
 
             if (!isContactChanged && validContacts.length === 0) {
-                addAlert("請至少添加一個聯絡方式");
+                addAlert("請至少添加一個聯絡方式", "error");
                 return;
             }
 
@@ -105,8 +105,7 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
             });
 
         } catch (err) {
-            console.error("儲存失敗:", err);
-            addAlert("儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試", "error");
         } finally {
             setLoading(false);
         }

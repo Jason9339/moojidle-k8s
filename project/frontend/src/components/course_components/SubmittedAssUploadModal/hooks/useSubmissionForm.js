@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
-import { checkFilesAndAlert } from "@/utils/fileValidation";
+import { checkFiles } from "@/utils/fileValidation";
 import { useAlert } from "@/utils/alert/AlertContext";
 
 export function useSubmissionForm({ courseId, assignmentId, existingSubmission, onSuccess }) {
@@ -151,7 +151,6 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             onSuccess && onSuccess();
         } catch (error) {
-            console.error("處理作業提交失敗:", error);
             addAlert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"), "error");
         } finally {
             setLoading(false);
@@ -194,14 +193,18 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         if (e.target.files && e.target.files.length > 0) {
             const newFiles = Array.from(e.target.files);
 
-            if (!checkFilesAndAlert(newFiles)) {
+            const result = checkFiles(newFiles);
+            if (result.pass) {
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
                 }
+
                 return;
             }
 
             setFiles(prevFiles => [...prevFiles, ...newFiles]);
+
+            addAlert(result.message, "error");
         }
     };
 
