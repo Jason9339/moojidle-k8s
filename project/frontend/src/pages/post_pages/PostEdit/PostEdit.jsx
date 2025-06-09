@@ -247,7 +247,6 @@ const PostEdit = () => {
 
                     </div>
                 </div>
-                <hr />
 
                 <form className="mt-3 space-y-3" onSubmit={handleSubmit}>
                     <div>

@@ -21,7 +21,8 @@
     height: 10vh;
     position: relative;
     display: flex;
-    margin : 1em;
+    margin-top : 1.5em;
+    margin-bottom : 1em;
     align-items: center;
     justify-content: space-between;
 }
