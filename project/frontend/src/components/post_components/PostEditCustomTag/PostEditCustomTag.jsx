@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import Select, { components } from "react-select";
-import styles from "./PostEditCustomTag.module.css";
 
 const MAX_VISIBLE = 3;
 export default function PostEditCustomTag({
     allUserTags,
     onChange,
     postTags = [],
+    className = ""
 }) {
     const tagOptions = useMemo(() =>
         allUserTags.map((tag) => ({ label: tag, value: tag })),
@@ -63,6 +63,7 @@ export default function PostEditCustomTag({
                         borderRadius: "8px",
                         fontSize: "1rem",
                         color: "#fff",
+                        zIndex: 1000
                     }}
                 >
                     +{hiddenCount} more
@@ -92,6 +93,7 @@ export default function PostEditCustomTag({
             backgroundColor: "rgba(14,165,233,0.5)",
             borderRadius: 8,
             padding: "2px 6px",
+            zIndex: 1000,
         }),
         multiValueLabel: (base) => ({
             ...base,
@@ -99,11 +101,14 @@ export default function PostEditCustomTag({
             fontSize: "1rem",
             padding: 0,
             margin: 0,
+            zIndex: 1000,
         }),
         multiValueRemove: (base) => ({
             ...base,
             color: "#fff",
             marginLeft: 4,
+
+            zIndex: 8000,
             "&:hover": {
                 backgroundColor: "transparent",
                 color: "#f87171",
@@ -122,18 +127,17 @@ export default function PostEditCustomTag({
     };
 
     return (
-        <div className={styles.container}>
-            <Select
-                isMulti
-                value={selectedTags}
-                options={tagOptions}
-                onChange={handleSelectChange}
-                styles={customStyles}
-                closeMenuOnSelect={false}
-                placeholder="Select tags..."
-                components={{ MultiValue }}
-            />
-        </div>
+        <Select
+            className={`${className}`}
+            isMulti
+            value={selectedTags}
+            options={tagOptions}
+            onChange={handleSelectChange}
+            styles={customStyles}
+            closeMenuOnSelect={false}
+            placeholder="Select tags..."
+            components={{ MultiValue }}
+        />
     );
 }
 

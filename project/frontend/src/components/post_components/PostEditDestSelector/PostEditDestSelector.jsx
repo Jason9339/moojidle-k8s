@@ -1,5 +1,6 @@
 import Select from "react-select"
 import { useMemo } from "react";
+import styles from './PostEditDestSelector.module.css'
 const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userTags, onCourseChange, onBoardChange, isDisabled }) => {
     // Memoize course options
     const courseOptions = useMemo(
@@ -17,9 +18,9 @@ const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userT
 
     return (
 
-        <div className="flex w-[60vw] h-[8vh] pt-[4vh] pb-[4vh] ">
+        <div className={styles.container}>
             <Select
-                className="w-[40%]"
+                className={styles.select}
                 options={courseOptions}
                 isDisabled={isDisabled}
                 onChange={onCourseChange}
@@ -30,7 +31,7 @@ const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userT
 
             <Select
 
-                className="w-[40%]"
+                className={styles.select}
                 options={boardOptions}
                 isDisabled={isDisabled}
                 onChange={onBoardChange}

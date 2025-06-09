@@ -9,7 +9,7 @@ import ExamsTab from "@/pages/course_pages/ExamsTab/ExamsTab";
 import NotFoundPage from "@/pages/NotFoundPage";
 import DiscussionBoard from "@/pages/DiscussionBoardPage/DiscussionBoardPage";
 import Blank from "@/pages/Blank";
-import PostEdit from "@/pages/post_pages/PostEdit";
+import PostEdit from "@/pages/post_pages/PostEdit/PostEdit";
 import PostPage from "@/pages/post_pages/PostPage/PostPage";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import CoursePage from "@/pages/course_pages/CoursePage/CoursePage";
