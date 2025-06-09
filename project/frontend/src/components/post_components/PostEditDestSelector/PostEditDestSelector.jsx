@@ -1,6 +1,13 @@
 import Select from "react-select"
 import { useMemo } from "react";
 import styles from './PostEditDestSelector.module.css'
+
+const customStyles = {
+    menu: (provided) => ({
+        ...provided,
+        marginTop: 0,      // remove the default gutter
+    }),
+};
 const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userTags, onCourseChange, onBoardChange, isDisabled }) => {
     // Memoize course options
     const courseOptions = useMemo(
@@ -25,6 +32,7 @@ const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userT
                 isDisabled={isDisabled}
                 onChange={onCourseChange}
                 value={selectedCourse}
+                styles={customStyles}
                 isClearable
             />
 
@@ -36,6 +44,7 @@ const PostEditDestSelector = ({ courseData, selectedCourse, selectedBoard, userT
                 isDisabled={isDisabled}
                 onChange={onBoardChange}
                 value={selectedBoard}
+                styles={customStyles}
                 isClearable
             />
 

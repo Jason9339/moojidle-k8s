@@ -1,5 +1,4 @@
-import Button from "@/components/Button/Button";
-import LeftBar from "@/components/LeftBar/LeftBar";
+import Button from "@/components/Button/Button"; import LeftBar from "@/components/LeftBar/LeftBar";
 import Redirect from "@/components/Redirect/Redirect";
 import TextEditor from "@/components/TextEditor/TextEditor";
 import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/PostEditCustomTag";
