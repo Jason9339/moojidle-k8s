@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./AssDetail.module.css";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import { DownloadAssignment } from "@/services/AssignmentApi";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function AssDetail({ assignment }) {
     const [descExpanded, setDescExpanded] = useState(false);
@@ -10,7 +10,7 @@ function AssDetail({ assignment }) {
 
     const titleRef = useRef(null);
     const descRef = useRef(null);
-    const { addAlert } = useAlert();
+    
     useEffect(() => {
         setDescExpanded(false);
         if (descRef.current && titleRef.current) {

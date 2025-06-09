@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadAssignment } from "@/services/AssignmentApi";
 import styles from "./AssignmentUploadModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
@@ -15,7 +15,7 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [percentage, setPercentage] = useState("");
 
     const fileInputRef = useRef(null);
-    const { addAlert } = useAlert();
+    
 
     // 計算課程的開始和結束日期範圍
     const dateRange = useMemo(() => {

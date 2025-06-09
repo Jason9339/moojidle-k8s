@@ -12,7 +12,7 @@ import {
     DeletePost,
     DeleteCommend,
 } from "@/services/PostApi";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function PostPage() {
     const { id } = useParams();
@@ -33,7 +33,7 @@ function PostPage() {
 
     const textareaRef = useRef(null);
     const [description, setDescription] = useState("");
-    const { addAlert } = useAlert();
+    
     useEffect(() => {
         const fetchPost = async () => {
             try {

@@ -7,7 +7,7 @@ import {
     EditAnnouncement,
     DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function AnnouncementsPage() {
     const { courseId } = useParams();
@@ -25,7 +25,7 @@ function AnnouncementsPage() {
         new Date().toISOString()
     );
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-    const { addAlert } = useAlert();
+    
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {

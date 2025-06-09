@@ -4,12 +4,12 @@ import {
     InviteStudent,
 } from "@/services/CourseApi";
 import styles from "./JoinCourseModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
     const [inviteCode, setInviteCode] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { addAlert } = useAlert();
+    
     const handleJoin = async () => {
         if (!inviteCode) {
             addAlert("請輸入課程代碼", "error");

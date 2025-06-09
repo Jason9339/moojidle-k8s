@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { DeleteCourse, EditCourseName } from "@/services/CourseApi";
 import styles from "./EditCourseModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
-function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
+function EditCourseModal({ course, onClose }) {
     const [courseName, setCourseName] = useState(course.title);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const { addAlert } = useAlert();
+
     const handleSave = async () => {
         if (!courseName.trim()) {
             addAlert("課程名稱不能為空", "error");
@@ -18,7 +18,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
             EditCourseName(course.courseId, courseName);
             onClose();
             addAlert("課程名稱已成功更新", "success");
-            window.location.reload();
+
         } catch (err) {
             console.error("儲存課程失敗:", err);
             addAlert("儲存失敗，請稍後再試", "error");
@@ -32,7 +32,7 @@ function EditCourseModal({ course, onClose, onUpdateCourse, onDeleteCourse }) {
         try {
             // console.log("刪除課程:", course.courseId);
             await DeleteCourse(course.courseId);
-            onDeleteCourse(course.courseId);
+            addAlert("刪除成功", "success");
             onClose();
         } catch (err) {
             console.error("刪除課程失敗:", err);

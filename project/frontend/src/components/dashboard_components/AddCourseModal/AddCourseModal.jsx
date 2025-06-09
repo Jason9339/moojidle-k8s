@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AddCourse } from "@/services/CourseApi";
 import styles from "./AddCourseModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
     const [title, setTitle] = useState("");
@@ -10,7 +10,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
     const [time, setTime] = useState(new Date().toISOString().slice(0, 16)); // Default to current time
     const [weeks, setWeeks] = useState(16); // Default to 16 weeks
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { addAlert } = useAlert();
+    
     const handleAdd = async () => {
         if (!title) {
             addAlert("請輸入課程名稱", "error");

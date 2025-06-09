@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import styles from './TeacherAssignmentReview.module.css';
 import { DownloadSubmissions, GradeAssignment } from '@/services/SubmittedAssignApi.js';
-import { useAlert } from '@/utils/alert/AlertContext';
+import { addAlert } from '@/utils/alert/AlertContext';
 
 const ReviewForm = ({ userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore }) => {
     const [reviewScore, setReviewScore] = useState('');
-    const { addAlert } = useAlert();
+    
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 

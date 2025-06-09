@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from "./EditSecondaryLayout.module.css";
 import { UpdateUserTags } from "@/services/UserApi";
 import { LuPlus } from "react-icons/lu";
-import { useAlert } from '@/utils/alert/AlertContext';
+import { addAlert } from '@/utils/alert/AlertContext';
 
 function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const [tags, setTags] = useState(user_tags);
@@ -10,7 +10,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [errorIndexes, setErrorIndexes] = useState([]);
     const spanRefs = useRef([]);
-    const { addAlert } = useAlert();
+    
     useEffect(() => {
         tags.forEach((tag, idx) => {
             const span = spanRefs.current[idx];

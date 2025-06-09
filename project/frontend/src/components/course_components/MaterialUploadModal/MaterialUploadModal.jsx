@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadMaterialFile, UploadMaterialLink } from "@/services/MaterialApi";
 import styles from "./MaterialUploadModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [file, setFile] = useState(null);
@@ -12,7 +12,7 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [url, setUrl] = useState("");
 
     const fileInputRef = useRef(null);
-    const { addAlert } = useAlert();
+    
     // 計算課程的開始和結束日期範圍
     const dateRange = useMemo(() => {
         if (!course?.start_date || !course?.week_num) {

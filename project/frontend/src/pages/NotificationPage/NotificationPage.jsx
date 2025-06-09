@@ -10,7 +10,7 @@ import {
     ReadNotification,
 } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
@@ -18,7 +18,7 @@ function NotificationPage() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterCategory, setFilterCategory] = useState("all");
     const navigate = useNavigate();
-    const { addAlert } = useAlert();
+    
     const categoryMap = {
         all: "全部",
         course: "課程",

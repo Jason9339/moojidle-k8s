@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadExam } from "@/services/ExamApi";
 import styles from "./ExamUploadModal.module.css";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
@@ -13,7 +13,7 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [startTime, setStartTime] = useState("");
     const [maxScore, setMaxScore] = useState("");
     const [percentage, setPercentage] = useState("");
-    const { addAlert } = useAlert();
+    
     const fileInputRef = useRef(null);
 
     // 計算課程的開始和結束日期範圍

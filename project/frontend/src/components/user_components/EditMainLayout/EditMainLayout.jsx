@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserProfile } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
-import { useAlert } from '@/utils/alert/AlertContext';
+import { addAlert } from '@/utils/alert/AlertContext';
 
 function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
@@ -10,7 +10,7 @@ function EditMainLayout({ contact_ways = [], currentAvatar, onSave, onCancel }) 
     const [previewUrl, setPreviewUrl] = useState(currentAvatar || "/user_pfp/default.png");
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
-    const { addAlert } = useAlert();
+    
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];

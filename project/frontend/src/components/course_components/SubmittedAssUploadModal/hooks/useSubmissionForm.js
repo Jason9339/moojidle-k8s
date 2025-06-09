@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
 import { checkFiles } from "@/utils/fileValidation";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 export function useSubmissionForm({ courseId, assignmentId, existingSubmission, onSuccess }) {
     const [files, setFiles] = useState([]);
@@ -12,7 +12,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const existingFiles = existingSubmission?.attachments || [];
     const submissionId = existingSubmission?.s_ass_id;
-    const { addAlert } = useAlert();
+
     useEffect(() => {
         setDescription(existingSubmission?.description || "");
         setFiles([]);

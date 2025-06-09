@@ -4,7 +4,7 @@ import TeacherAssignment from "@/components/course_components/TeacherAssignment/
 import AssignmentsStudentsTab from "@/components/course_components/AssignmentStudentTab/AssignmentsStudentsTab";
 import { GetCourseAssignments, DownloadAssignment } from "@/services/AssignmentApi";
 import { GetTheAssignSubAssForOneStuednt } from "@/services/SubmittedAssignApi";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 
 
@@ -17,7 +17,7 @@ function AssignmentsTab() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [submissionMap, setSubmissionMap] = useState({});
-    const { addAlert } = useAlert();
+    
     // 檢查是否為學生
     const isStudent = role.isStudent;
 

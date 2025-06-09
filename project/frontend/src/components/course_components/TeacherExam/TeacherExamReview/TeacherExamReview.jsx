@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styles from './TeacherExamReview.module.css';
 
 import { GetTakenExamInExam, GradeExam } from '@/services/TakenExamApi.js';
-import { useAlert } from '@/utils/alert/AlertContext';
+import { addAlert } from '@/utils/alert/AlertContext';
 const GradeForm = ({ examData, setExamData, isGrading, setIsGrading, examMaxScore, beGradedUserId, takenExamId, examId }) => {
     const graderId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [GradeScore, setReviewScore] = useState('');
-    const { addAlert } = useAlert();
+    
     const handleSubmitGrading = async (e) => {
         e.preventDefault();
 

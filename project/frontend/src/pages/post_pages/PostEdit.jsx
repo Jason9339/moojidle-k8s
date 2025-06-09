@@ -6,7 +6,7 @@ import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/Po
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetUserTagsById } from "@/services/UserApi";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 const arraysEqual = (a, b) => {
@@ -42,7 +42,7 @@ const PostEdit = () => {
         setSelectedBoard(null);
     }, []);
 
-    const { addAlert } = useAlert();
+    
     const handleBoardChange = useCallback((option) => {
         setSelectedBoard(option);
     }, []);

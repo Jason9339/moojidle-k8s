@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { DeleteDiscussionBoard, EditDiscussionBoard } from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
-import { useAlert } from "@/utils/alert/AlertContext";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 export default function EditDiscussionBoardModal({ boardId, onClose }) {
     const [boardName, setBoardName] = useState(""); // 預留未來可編輯
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    const { addAlert } = useAlert();
+    
     const handleDelete = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
