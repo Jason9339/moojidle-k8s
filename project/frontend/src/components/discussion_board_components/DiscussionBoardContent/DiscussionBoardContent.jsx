@@ -51,7 +51,7 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
                     overviewPosts.slice().reverse().map((overviewPost, index) => (
                         <OverviewPostCard
                             key={overviewPost.post_id}
-                            userPfp={overviewPost.post_by_user_name}
+                            userPfp={overviewPost.post_by_user_pfp}
                             courseName={courseName}
                             boardName={boardName}
                             userName={overviewPost.post_by_user_name}
@@ -59,7 +59,6 @@ const DiscussionBoardContent = ({ overviewPosts, courseName, boardName }) => {
                             title={overviewPost.title}
                             content={overviewPost.description}
                             postDate={overviewPost.post_date}
-
                             onClick={() => handleCardClick(overviewPost)}
                         />
                     ))

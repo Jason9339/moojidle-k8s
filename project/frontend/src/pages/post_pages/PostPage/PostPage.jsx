@@ -148,44 +148,40 @@ function PostPage() {
                         </button>
 
                         <div className={styles.contentWrapper}>
-                            <div className={styles.postContentSection}>
-                                <PostContent
-                                    post={post}
-                                    currentUserId={currentUserId}
-                                    showMenu={showMenu}
-                                    setShowMenu={setShowMenu}
-                                    handleDeletePost={handleDeletePost}
-                                    description={description}
-                                    textareaRef={textareaRef}
-                                    editLinkState={{
-                                        data: courseData,
-                                        current: {
-                                            post,
-                                            course: {
-                                                value: post.course_id,
-                                                label: post.course_name,
-                                            },
-                                            board: {
-                                                value: post.board_id,
-                                                label: post.board_name,
-                                            },
+                            <PostContent
+                                post={post}
+                                currentUserId={currentUserId}
+                                showMenu={showMenu}
+                                setShowMenu={setShowMenu}
+                                handleDeletePost={handleDeletePost}
+                                description={description}
+                                textareaRef={textareaRef}
+                                editLinkState={{
+                                    data: courseData,
+                                    current: {
+                                        post,
+                                        course: {
+                                            value: post.course_id,
+                                            label: post.course_name,
                                         },
-                                    }}
-                                />
-                            </div>
+                                        board: {
+                                            value: post.board_id,
+                                            label: post.board_name,
+                                        },
+                                    },
+                                }}
+                            />
 
-                            <div className={styles.commentSection}>
-                                <CommentSection
-                                    post={post}
-                                    newComment={newComment}
-                                    setNewComment={setNewComment}
-                                    handleCommentSubmit={handleCommentSubmit}
-                                    currentUserId={currentUserId}
-                                    handleCommentDelete={handleCommentDelete}
-                                    activeCommentId={activeCommentId}
-                                    setActiveCommentId={setActiveCommentId}
-                                />
-                            </div>
+                            <CommentSection
+                                post={post}
+                                newComment={newComment}
+                                setNewComment={setNewComment}
+                                handleCommentSubmit={handleCommentSubmit}
+                                currentUserId={currentUserId}
+                                handleCommentDelete={handleCommentDelete}
+                                activeCommentId={activeCommentId}
+                                setActiveCommentId={setActiveCommentId}
+                            />
                         </div>
                     </div>
                 </div>

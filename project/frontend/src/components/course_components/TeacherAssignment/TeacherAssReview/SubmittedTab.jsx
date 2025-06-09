@@ -131,7 +131,13 @@ const SubmittedTab = ({ userId, reviewData, setReviewData, reviewingSubmission, 
                                     </div>
                                 </td>
                                 <td>{submission.grade}</td>
-                                <td>{submission.status}</td>
+                                <td>
+                                    {submission.status === "已評分" ? (
+                                        <span className={styles["status-graded"]}>已評分</span>
+                                    ) : (
+                                        <span className={styles["status-pending"]}>待評分</span>
+                                    )}
+                                </td>
                                 <td>
                                     <button
                                         className={styles["review-button"]}

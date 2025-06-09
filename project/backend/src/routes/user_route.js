@@ -8,9 +8,16 @@ import {
     Delete,
     UpdatePassword,
     GetUserTags,
-    UpdateData,
-    UpdateTags
+    UpdateTags,
+    UpdateUserProfile,
+    GetUserAvatar
 } from '#src/controllers/user_controller.js';
+
+import { 
+    uploadAvatar,
+    MulterErrorHandling 
+} from '#src/utils/multer_config.js';
+
 // the route address start from:
 // http://localhost:PORT/user/get-user-by-id/:userId
 
@@ -42,6 +49,10 @@ import {
 
 router.get("/get-user-by-id/:userId", GetUserData);
 router.get("/get-user-tags-by-id/:userId", GetUserTags);
+
+// 安全的頭像獲取路由 - 改為使用 query parameter
+router.get("/avatar", GetUserAvatar);
+
 router.post("/register", Register);
 router.post("/login", Login);
 
@@ -49,7 +60,9 @@ router.delete("/delete/:id", Delete);
 
 router.put("/update-password/:id", UpdatePassword)
 
-router.put("/update-user-data/:id", UpdateData);
 router.put("/update-user-tags/:id", UpdateTags);
+
+// 統一的個人資料更新路由 - 支援同時更新聯絡方式和頭像
+router.put("/update-profile/:id", uploadAvatar, UpdateUserProfile, MulterErrorHandling);
 
 export default router;

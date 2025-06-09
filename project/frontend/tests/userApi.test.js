@@ -67,10 +67,73 @@ describe('前端 UserApi 整合測試', () => {
             }
 
             // Act
-            const userContactWays = await UpdateUserData(userId, data)
+            const result = await UpdateUserData(userId, data)
+            
             // Assert
-            expect(userContactWays).toBeDefined()
-            expect(userContactWays.updatedCount).toBe(1);
+            expect(result).toBeDefined()
+            expect(result.message).toBe('個人資料更新成功')
+            expect(result.updatedContactWays).toBeDefined()
+            expect(Array.isArray(result.updatedContactWays)).toBe(true)
+            expect(result.updatedContactWays.length).toBe(1)
+            expect(result.updatedContactWays[0].approach).toBe('email')
+            expect(result.updatedContactWays[0].details).toBe('example@email.com')
+            expect(result.updatedAvatar).toBeDefined()
+            expect(typeof result.hasNewAvatar).toBe('boolean')
+        })
+
+        it('當傳入無效的聯絡方式格式時應處理錯誤', async () => {
+            const userId = 1
+            const invalidData = {
+                contactWays: [
+                    {
+                        approach: "", // 空字串
+                        details: "example@email.com"
+                    }
+                ]
+            }
+
+            // Act & Assert
+            try {
+                await UpdateUserData(userId, invalidData)
+                expect.fail('應該拋出錯誤')
+            } catch (error) {
+                expect(error.message).toContain('聯絡方式必須是陣列格式')
+            }
+        })
+
+        it('當傳入非陣列格式的聯絡方式時應處理錯誤', async () => {
+            const userId = 1
+            const invalidData = {
+                contactWays: "不是陣列"
+            }
+
+            // Act & Assert
+            try {
+                await UpdateUserData(userId, invalidData)
+                expect.fail('應該拋出錯誤')
+            } catch (error) {
+                expect(error.message).toContain('聯絡方式格式錯誤')
+            }
+        })
+
+        it('當傳入缺少必要欄位的聯絡方式時應處理錯誤', async () => {
+            const userId = 1
+            const invalidData = {
+                contactWays: [
+                    {
+                        approach: "email"
+                        // 缺少 details 欄位
+                    }
+                ]
+            }
+
+            // Act & Assert
+            try {
+                await UpdateUserData(userId, invalidData)
+                expect.fail('應該拋出錯誤')
+            } catch (error) {
+                expect(error.message).toContain('聯絡方式必須是陣列格式')
+            }
         })
     })
     describe('UpdateUserTags', () => {
@@ -89,4 +152,4 @@ describe('前端 UserApi 整合測試', () => {
             expect(result.insertedCount).toBe(tags.length);
         });
     })
-}) 
+})

@@ -3,7 +3,8 @@ import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
-
+import styles from "./BoardSideBar.module.css";
+import VerticalOverflowIndicator from "@/components/VerticalScrollIndicator/VerticalScrollIndicator";
 const NO_SELECTED = -1;
 
 const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
@@ -24,7 +25,7 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     }
 
     return (
-        <OuterWrapper>
+        <VerticalOverflowIndicator className={styles.container}>
             <StyledSidebar breakPoint="md">
                 <Menu
                     renderExpandIcon={({ open }) => (
@@ -62,11 +63,13 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
 
                                 ".ps-menu-label": {
                                     flexGrow: 1,
-                                    overflow: "visible",
+                                    overflow: "hidden",
                                     marginRight: "8px",
                                 },
                                 ".ps-menu-label > span": {
-                                    whiteSpace: "normal",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
                                     wordBreak: "break-word",
                                     display: "block",
                                     lineHeight: "1.45",
@@ -136,37 +139,20 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
                     )}
                 </Menu>
             </StyledSidebar>
-        </OuterWrapper>
+        </VerticalOverflowIndicator>
+
     );
 };
 
 export default BoardSideBar;
 
-// === styled-components ===
-const OuterWrapper = styled.div`
-    width: 250px;
-    margin-left: 10px;
-    margin-top: 40px;
-    margin-right: 10px;
-    background-color: #f9f9f9;
-    border-radius: 16px;
-    max-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    flex-shrink: 0;
-`;
-
 const StyledSidebar = styled(Sidebar)`
     width: 100% !important;
-    height: 100%;
-    max-height: inherit;
     background-color: #f9fafb !important;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-
+    z-index: 1;
     .ps-sidebar-container {
         background-color: transparent !important;
         height: 100%;
@@ -176,8 +162,7 @@ const StyledSidebar = styled(Sidebar)`
 
     .ps-menu-root {
         flex-grow: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden;
 
         &::-webkit-scrollbar {
             width: 8px;

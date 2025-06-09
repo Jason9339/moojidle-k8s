@@ -10,7 +10,7 @@ import {
     DeleteCourseMaterial,
 } from "@/services/MaterialApi";
 
-import { GetCourseAssignments } from "@/services/AssignmentApi";
+import { GetCourseAssignments, GetTodoAssignList } from "@/services/AssignmentApi";
 
 import { GetCourseExams } from "@/services/ExamApi";
 
@@ -31,6 +31,7 @@ export default function CourseInfoPage() {
     const [materials, setMaterials] = useState([]);
     const [assignments, setAssignments] = useState([]);
     const [exams, setExams] = useState([]);
+    const [todoAssignments, setTodoAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showMaterialUploadModal, setShowMaterialUploadModal] = useState(false);
     const [showAssignmentUploadModal, setShowAssignmentUploadModal] = useState(false);
@@ -54,6 +55,17 @@ export default function CourseInfoPage() {
                 setMaterials(materialsData);
                 setAssignments(assignmentsData);
                 setExams(examData);
+
+                const user = JSON.parse(localStorage.getItem("user"));
+                const currentUserId = user?.user_id;
+                
+                if (currentUserId) {
+                    const todoList = await GetTodoAssignList(currentUserId);
+                    const courseTodoList = todoList.filter(assignment => 
+                        assignment.course_id === parseInt(courseId)
+                    );
+                    setTodoAssignments(courseTodoList);
+                }
             } catch (error) {
                 console.error("獲取課程數據失敗:", error);
                 navigate("/dashboard");
@@ -186,6 +198,7 @@ export default function CourseInfoPage() {
                 materials={materials}
                 assignments={assignments}
                 exams={exams}
+                todoAssignments={todoAssignments}
                 isEditMode={isEditMode}
                 onMaterialsChange={handleMaterialsChange}
             />

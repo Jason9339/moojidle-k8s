@@ -109,7 +109,10 @@ function Dashboard() {
 
                     <div className={styles["dashboard-right"]}>
                         <h3 className={styles["section-title"]}>To Do Assignments</h3>
-                        <ToDoItem todoList={dashboardData.todoList} />
+                        <ToDoItem 
+                            todoList={dashboardData.todoList} 
+                            courses={dashboardData.courses}
+                        />
                         <hr />
                         <h3 className={styles["section-title"]}>Up Comming Exams</h3>
                         <ComingUpItem comingUpList={dashboardData.comingUpList} />
