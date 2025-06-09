@@ -294,26 +294,35 @@
 }
 
 .uploadBtn {
-    background: #1967d2;
-    color: white;
     padding: 8px 16px;
-    border: none;
+    margin-bottom: 0px;
+    background: transparent;
+    color: #1967d2;
+    border: 1px solid #1967d2;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
     transition: all 0.2s ease;
-    text-align: center;
+    white-space: nowrap;
 }
 
 .uploadBtn:hover {
-    background: #1557b0;
-    box-shadow: 0 2px 4px rgba(25, 103, 210, 0.2);
+    background: #1967d2;
+    color: white;
+    transform: none;
 }
 
 .uploadBtn:disabled {
-    background: #9aa0a6;
+    opacity: 0.6;
     cursor: not-allowed;
+    transform: none !important;
+}
+
+.uploadBtn:disabled:hover {
+    background: transparent;
+    color: #1967d2;
+    transform: none !important;
 }
 
 .fileName {
