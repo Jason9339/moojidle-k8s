@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadMaterialFile, UploadMaterialLink } from "@/services/MaterialApi";
 import styles from "./MaterialUploadModal.module.css";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [file, setFile] = useState(null);
@@ -17,11 +18,11 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         if (!course?.start_date || !course?.week_num) {
             return { min: null, max: null };
         }
-        
+
         const startDate = new Date(course.start_date);
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + (course.week_num * 7) - 1);
-        
+
         return {
             min: startDate.toISOString().split('T')[0],
             max: endDate.toISOString().split('T')[0]
@@ -30,22 +31,22 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     const handleUpload = async () => {
         if (!name.trim()) {
-            alert("請輸入教材名稱");
+            addAlert("請輸入教材名稱", "error");
             return;
         }
         if (!displayDate) {
-            alert("請選擇顯示日期");
+            addAlert("請選擇顯示日期", "error");
             return;
         }
-        
+
         if (uploadType === "file") {
             if (!file) {
-                alert("請選擇檔案");
+                addAlert("請選擇檔案", "error");
                 return;
             }
         } else {
             if (!url.trim()) {
-                alert("請輸入連結");
+                addAlert("請輸入連結", "error");
                 return;
             }
         }
@@ -53,14 +54,14 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
-            alert("請先登入");
+            addAlert("請先登入", "error");
             return;
         }
 
         try {
             if (uploadType === "file") {
                 const formData = new FormData();
-                
+
                 // 解決中文檔案名稱亂碼問題
                 const renamedFile = new File(
                     [file],
@@ -73,9 +74,9 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
                 formData.append("description", description);
                 formData.append("mName", name);
                 formData.append("displayDate", displayDate);
-                
+
                 await UploadMaterialFile(formData);
-                alert("教材檔案上傳成功！");
+                addAlert("教材檔案上傳成功！", "success");
             } else {
                 const linkData = {
                     createByUserId: userId,
@@ -84,16 +85,16 @@ const MaterialUploadModal = ({ onClose, courseId, course, onSuccess }) => {
                     displayDate: displayDate,
                     url: url
                 };
-                
+
                 await UploadMaterialLink(courseId, linkData);
-                alert("教材連結新增成功！");
+                addAlert("教材連結新增成功！", "success");
             }
-            
+
             onSuccess();
             onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
-            alert("上傳失敗：" + error.message);
+            addAlert("上傳失敗", "error");
         }
     };
 

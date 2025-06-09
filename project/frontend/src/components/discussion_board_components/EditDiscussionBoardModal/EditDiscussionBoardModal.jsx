@@ -1,34 +1,35 @@
 import React, { useState } from "react";
-import { DeleteDiscussionBoard, EditDiscussionBoard} from "@/services/DiscussionBoardApi.js";
+import { DeleteDiscussionBoard, EditDiscussionBoard } from "@/services/DiscussionBoardApi.js";
 import styles from "./EditDiscussionBoardModal.module.css";
 import { useNavigate } from "react-router-dom";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 export default function EditDiscussionBoardModal({ boardId, onClose }) {
     const [boardName, setBoardName] = useState(""); // 預留未來可編輯
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
+    
     const handleDelete = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
-            alert("討論版已成功刪除");
+            addAlert("討論版已成功刪除", "success");
             onClose();
             navigate("/discussion/home");
         } catch (err) {
             console.error(err);
-            setError("刪除失敗，請稍後再試");
+            addAlert("刪除失敗，請稍後再試", "error");
         }
     };
 
     const handleSave = async () => {
-        try{
+        try {
             await EditDiscussionBoard(boardId, boardName);
-            alert("討論版名稱已成功更新");
+            addAlert("討論版名稱已成功更新", "success");
             onClose();
             navigate("/discussion/" + boardId);
         } catch (err) {
             console.error(err);
-            setError("更新失敗，請稍後再試");
+            addAlert("更新失敗，請稍後再試", "error");
         }
     };
 

@@ -4,6 +4,7 @@ import {
     InviteStudent,
 } from "@/services/CourseApi";
 import styles from "./JoinCourseModal.module.css";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
     const [inviteCode, setInviteCode] = useState("");
@@ -11,7 +12,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
 
     const handleJoin = async () => {
         if (!inviteCode) {
-            alert("請輸入課程代碼！");
+            addAlert("請輸入課程代碼", "error");
             return;
         }
 
@@ -24,8 +25,8 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
                 currentUserId,
                 currentUserId
             );
-            console.log(msg);
-            alert(msg.message);
+
+            addAlert("成功加入課程！", "success");
 
             await onJoinCourse(); // 重新 fetch 所有資料
             onClose(); // 關閉 modal
@@ -35,7 +36,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
                 error.response?.data?.message ||
                 error.message ||
                 "加入課程失敗，請稍後再試。";
-            alert(`加入課程失敗: ${errorMessage}`);
+            addAlert(`加入課程失敗: ${errorMessage}`, "error");
         } finally {
             setIsSubmitting(false);
         }

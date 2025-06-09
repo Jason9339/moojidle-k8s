@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { CreateSubAssign, UpdateSubAssign, DeleteSubAss } from "@/services/SubmittedAssignApi";
-import { checkFilesAndAlert } from "@/utils/fileValidation";
+import { checkFiles } from "@/utils/fileValidation";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 export function useSubmissionForm({ courseId, assignmentId, existingSubmission, onSuccess }) {
     const [files, setFiles] = useState([]);
@@ -43,7 +44,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
     const validateSubmission = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user?.user_id) {
-            alert("請先登入");
+            addAlert("請先登入", "error");
             return false;
         }
 
@@ -51,7 +52,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         const hasNoNewFiles = files.length === 0;
 
         if (!submissionId && isEmptyDescription && hasNoNewFiles) {
-            alert("沒有內容可以提交。");
+            addAlert("沒有內容可以提交", "error");
             return false;
         }
 
@@ -60,7 +61,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const handleCreateSubmission = async (formData) => {
         await CreateSubAssign(assignmentId, JSON.parse(localStorage.getItem("user")).user_id, formData);
-        alert("作業提交成功！");
+        addAlert("作業提交成功！", "success");
     };
 
     const handleUpdateSubmission = async (formData) => {
@@ -74,9 +75,9 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         if (isEmptyDescription && hasNoNewFiles && remainingExistingFiles.length === 0) {
             if (existingFiles.length > 0 || (existingSubmission?.description || "").trim()) {
                 await DeleteSubAss(submissionId);
-                alert("作業提交記錄已因內容清空而被刪除！");
+                addAlert("作業提交記錄已因內容清空而被刪除！", "info");
             } else {
-                alert("沒有內容可更新。");
+                addAlert("沒有內容可更新", "info");
                 return false;
             }
         } else {
@@ -85,7 +86,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             const noFilesMarkedForDeletion = deletedFiles.length === 0;
 
             if (noChangeInDescription && hasNoNewFiles && noFilesMarkedForDeletion) {
-                alert("內容未作修改。");
+                addAlert("內容未作修改", "info");
                 return false;
             }
 
@@ -113,7 +114,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             } else if (description !== originalDescription) {
                 message = "作業描述更新成功！";
             }
-            alert(message);
+            addAlert(message, "success");
         }
         return true;
     };
@@ -150,8 +151,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             onSuccess && onSuccess();
         } catch (error) {
-            console.error("處理作業提交失敗:", error);
-            alert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
+            addAlert("處理失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"), "error");
         } finally {
             setLoading(false);
         }
@@ -175,15 +175,15 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             if (submissionId) {
                 await DeleteSubAss(submissionId);
-                alert("作業提交記錄已完全清除！");
+                addAlert("作業提交記錄已完全清除", "success");
             } else {
-                alert("本地內容已清空！");
+                addAlert("本地內容已清空", "success");
             }
 
             onSuccess && onSuccess();
         } catch (error) {
             console.error("清空作業內容失敗:", error);
-            alert("清空失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"));
+            addAlert("清空失敗：" + (error.response?.data?.message || error.message || "發生未知錯誤"), "error");
         } finally {
             setLoading(false);
         }
@@ -193,14 +193,18 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         if (e.target.files && e.target.files.length > 0) {
             const newFiles = Array.from(e.target.files);
 
-            if (!checkFilesAndAlert(newFiles)) {
+            const result = checkFiles(newFiles);
+            if (result.pass) {
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
                 }
+
                 return;
             }
 
             setFiles(prevFiles => [...prevFiles, ...newFiles]);
+
+            addAlert(result.message, "error");
         }
     };
 

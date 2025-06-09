@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from "./EditMainLayout.module.css";
 import { UpdateUserProfile } from "@/services/UserApi";
 import { HiXMark } from "react-icons/hi2";
+import { addAlert } from '@/utils/alert/AlertContext';
 
 function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCancel }) {
     const [contacts, setContacts] = useState(contact_ways);
@@ -10,24 +11,25 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
     const [loading, setLoading] = useState(false);
     const userId = JSON.parse(localStorage.getItem("user"))?.user_id;
 
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             // 檢查檔案類型
             const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
-                alert('請選擇有效的圖片檔案 (JPG, PNG, GIF, WebP)');
+                addAlert("請選擇有效的圖片檔案 (JPG, PNG, GIF, WebP)", "error");
                 return;
             }
-            
+
             // 檢查檔案大小 (2MB)
             if (file.size > 2 * 1024 * 1024) {
-                alert('檔案大小不能超過 2MB');
+                addAlert("檔案大小不能超過 2MB", "error");
                 return;
             }
 
             setSelectedFile(file);
-            
+
             // 創建預覽 URL
             const reader = new FileReader();
             reader.onload = (e) => setPreviewUrl(e.target.result);
@@ -47,7 +49,7 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
 
     const handleRemove = (index) => {
         setContacts(contacts.filter((_, i) => i !== index));
-    };    
+    };
     const handleSave = async () => {
         setLoading(true);
         try {
@@ -69,14 +71,20 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
             const isContactChanged = JSON.stringify(validContacts) !== JSON.stringify(contact_ways);
             const hasNewAvatar = selectedFile !== null;
 
+
             if (!isContactChanged && !hasNewAvatar) {
-                alert("沒有資料需要更新");
+                addAlert("沒有資料需要更新", "info");
+                return;
+            }
+
+            if (!isContactChanged && validContacts.length === 0) {
+                addAlert("請至少添加一個聯絡方式", "error");
                 return;
             }
 
             // 建立 FormData 來支援檔案上傳
             const formData = new FormData();
-            
+
             // 添加聯絡方式資料
             if (isContactChanged) {
                 formData.append('contactWays', JSON.stringify(validContacts));
@@ -88,30 +96,31 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
             }
 
             const result = await UpdateUserProfile(userId, formData);
-            
+
             // 呼叫父組件的回調函數
             onSave({
                 contactWays: validContacts,
                 newAvatar: result.updatedAvatar,
                 hasNewAvatar: result.hasNewAvatar
             });
-            
+
+            addAlert("個人資料儲存成功！", "success");
+
         } catch (err) {
-            console.error("儲存失敗:", err);
-            alert(err.message || "儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試", "error");
         } finally {
             setLoading(false);
         }
-    };    
+    };
     return (
         <div className={loading ? styles.loading : ''}>
             {/* 頭像上傳區域 */}
             <div className={styles.avatarSection}>
                 <label className={styles.avatarLabel}>Edit Profile Picture:</label>
                 <div className={styles.avatarContainer}>
-                    <img 
-                        src={previewUrl} 
-                        alt="預覽頭像" 
+                    <img
+                        src={previewUrl}
+                        alt="預覽頭像"
                         className={styles.avatarPreview}
                         onError={() => setPreviewUrl("/user_pfp/default.png")}
                     />

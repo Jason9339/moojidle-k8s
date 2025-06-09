@@ -10,7 +10,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
 
     useEffect(() => {
         let isMounted = true;
-        
+
         const loadAvatar = async () => {
             const avatarUrl = await GetAvatarUrl(pfp_path);
             if (isMounted) {
@@ -31,7 +31,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                 URL.revokeObjectURL(imgSrc);
             }
         };
-    }, [pfp_path]);
+    }, [pfp_path, imgSrc]);
 
     useEffect(() => {
         // 組件卸載時清理 blob URL
@@ -40,7 +40,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                 URL.revokeObjectURL(imgSrc);
             }
         };
-    }, []);
+    }, [imgSrc]);
 
     const handleSave = async (updateData) => {
         if (updateData.contactWays) {

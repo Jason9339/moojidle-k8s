@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
-import { UploadExam } from "@/services/ExamApi"; 
+import { UploadExam } from "@/services/ExamApi";
 import styles from "./ExamUploadModal.module.css";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
@@ -12,7 +13,7 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [startTime, setStartTime] = useState("");
     const [maxScore, setMaxScore] = useState("");
     const [percentage, setPercentage] = useState("");
-
+    
     const fileInputRef = useRef(null);
 
     // 計算課程的開始和結束日期範圍
@@ -20,11 +21,11 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         if (!course?.start_date || !course?.week_num) {
             return { min: null, max: null };
         }
-        
+
         const startDate = new Date(course.start_date);
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + (course.week_num * 7) - 1);
-        
+
         return {
             min: startDate.toISOString().split('T')[0],
             max: endDate.toISOString().split('T')[0]
@@ -33,15 +34,15 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     const handleUpload = async () => {
         if (!name.trim()) {
-            alert("請輸入考試名稱");
+            addAlert("請輸入考試名稱", "error");
             return;
         }
         if (!startDate || !startTime) {
-            alert("請選擇開始日期和時間");
+            addAlert("請選擇開始日期和時間", "error");
             return;
         }
         if (!endDate || !endTime) {
-            alert("請選擇結束日期和時間");
+            addAlert("請選擇結束日期和時間", "error");
             return;
         }
 
@@ -49,31 +50,27 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         const endDateTime = new Date(`${endDate}T${endTime}`);
 
         if (endDateTime <= startDateTime) {
-            alert("結束時間必須在開始時間之後");
+            addAlert("結束時間必須在開始時間之後", "error");
             return;
         }
 
         if (!maxScore || parseFloat(maxScore) <= 0) {
-            alert("請輸入有效的最高成績");
+            addAlert("請輸入有效的最高成績", "error");
             return;
         }
 
         if (!percentage || parseFloat(percentage) <= 0 || parseFloat(percentage) > 100) {
-            alert("請輸入有效的百分比 (1-100)");
+            addAlert("請輸入有效的百分比 (1-100)", "error");
             return;
         }
 
         if (!description.trim()) {
-            alert("請輸入簡介/描述");
+            addAlert("請輸入簡介/描述", "error");
             return;
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
-        if (!userId) {
-            alert("請先登入");
-            return;
-        }
 
         const formData = new FormData();
 
@@ -97,12 +94,12 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
         try {
             await UploadExam(formData);
-            alert("考試上傳成功！");
+            addAlert("考試上傳成功！", "success");
             onSuccess();
             onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
-            alert("上傳失敗：" + error.message);
+            addAlert("上傳失敗：" + error.message, "error");
         }
     };
 

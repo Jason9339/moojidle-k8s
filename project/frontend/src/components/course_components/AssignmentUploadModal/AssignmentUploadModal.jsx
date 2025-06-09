@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { UploadAssignment } from "@/services/AssignmentApi";
 import styles from "./AssignmentUploadModal.module.css";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [files, setFiles] = useState([]);
@@ -14,17 +15,18 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
     const [percentage, setPercentage] = useState("");
 
     const fileInputRef = useRef(null);
+    
 
     // 計算課程的開始和結束日期範圍
     const dateRange = useMemo(() => {
         if (!course?.start_date || !course?.week_num) {
             return { min: null, max: null };
         }
-        
+
         const startDate = new Date(course.start_date);
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + (course.week_num * 7) - 1);
-        
+
         return {
             min: startDate.toISOString().split('T')[0],
             max: endDate.toISOString().split('T')[0]
@@ -33,15 +35,15 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     const handleUpload = async () => {
         if (!name.trim()) {
-            alert("請輸入作業名稱");
+            addAlert("請輸入作業名稱", "error");
             return;
         }
         if (!startDate || !startTime) {
-            alert("請選擇開始日期和時間");
+            addAlert("請選擇開始日期和時間", "error");
             return;
         }
         if (!endDate || !endTime) {
-            alert("請選擇結束日期和時間");
+            addAlert("請選擇結束日期和時間", "error");
             return;
         }
 
@@ -49,24 +51,24 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         const endDateTime = new Date(`${endDate}T${endTime}`);
 
         if (endDateTime <= startDateTime) {
-            alert("結束時間必須在開始時間之後");
+            addAlert("結束時間必須在開始時間之後", "error");
             return;
         }
 
         if (!maxScore || parseFloat(maxScore) <= 0) {
-            alert("請輸入有效的最高成績");
+            addAlert("請輸入有效的最高成績", "error");
             return;
         }
 
         if (!percentage || parseFloat(percentage) <= 0 || parseFloat(percentage) > 100) {
-            alert("請輸入有效的百分比 (1-100)");
+            addAlert("請輸入有效的百分比 (1-100)", "error");
             return;
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
         if (!userId) {
-            alert("請先登入");
+            addAlert("請先登入", "error");
             return;
         }
 
@@ -92,12 +94,12 @@ const AssignmentUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
         try {
             await UploadAssignment(formData);
-            alert("作業上傳成功！");
+            addAlert("作業上傳成功！", "success");
             onSuccess();
             onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
-            alert("上傳失敗：" + error.message);
+            addAlert("上傳失敗", "erorr");
         }
     };
 

@@ -10,6 +10,7 @@ import {
     ReadNotification,
 } from "@/services/NotificationApi.js";
 import NotificationCard from "@/components/notification_components/NotificationCard.jsx";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
@@ -17,7 +18,7 @@ function NotificationPage() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [filterCategory, setFilterCategory] = useState("all");
     const navigate = useNavigate();
-
+    
     const categoryMap = {
         all: "全部",
         course: "課程",
@@ -62,7 +63,7 @@ function NotificationPage() {
 
     const handleBatchDelete = async () => {
         if (selectedIds.length === 0) {
-            alert("請先勾選欲刪除的通知");
+            addAlert("請先勾選欲刪除的通知", "error");
             return;
         }
 
@@ -73,11 +74,11 @@ function NotificationPage() {
                     DeleteNotification({ n_id, user_id: uid })
                 )
             );
-            alert("已刪除選取的通知");
+            addAlert("已刪除選取的通知", "success");
             fetchNotifications();
             setSelectedIds([]);
         } catch (err) {
-            alert("刪除失敗，請稍後再試");
+            addAlert("刪除失敗，請稍後再試", "error");
         }
     };
 
@@ -114,7 +115,7 @@ function NotificationPage() {
                     break;
             }
         } catch (err) {
-            alert("操作失敗，請稍後再試");
+            addAlert("操作失敗，請稍後再試", "error");
         }
     };
 

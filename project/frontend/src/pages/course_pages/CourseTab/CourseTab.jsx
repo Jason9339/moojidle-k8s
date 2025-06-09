@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 
 import styles from "./CourseTab.module.css";
@@ -18,6 +18,7 @@ import CourseTable from "@/components/course_components/CourseTable/CourseTable"
 import MaterialUploadModal from "@/components/course_components/MaterialUploadModal/MaterialUploadModal";
 import AssignmentUploadModal from "@/components/course_components/AssignmentUploadModal/AssignmentUploadModal";
 import ExamUploadModal from "@/components/course_components/ExamUploadModal/ExamUploadModal";
+import { addAlert } from "@/utils/alert/AlertContext";
 
 export default function CourseInfoPage() {
     const { courseId } = useParams();
@@ -39,42 +40,43 @@ export default function CourseInfoPage() {
     const [editedMaterials, setEditedMaterials] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        const fetchCourseData = async () => {
-            try {
-                setLoading(true);
-                const [courseData, materialsData, assignmentsData, examData] =
-                    await Promise.all([
-                        GetCourseDetails(courseId),
-                        GetCourseMaterials(courseId),
-                        GetCourseAssignments(courseId),
-                        GetCourseExams(courseId),
-                    ]);
-                setCourse(courseData);
-                setMaterials(materialsData);
-                setAssignments(assignmentsData);
-                setExams(examData);
+    const fetchCourseData = useCallback(async () => {
+        try {
+            setLoading(true);
+            const [courseData, materialsData, assignmentsData, examData] =
+                await Promise.all([
+                    GetCourseDetails(courseId),
+                    GetCourseMaterials(courseId),
+                    GetCourseAssignments(courseId),
+                    GetCourseExams(courseId),
+                ]);
+            setCourse(courseData);
+            setMaterials(materialsData);
+            setAssignments(assignmentsData);
+            setExams(examData);
 
-                const user = JSON.parse(localStorage.getItem("user"));
-                const currentUserId = user?.user_id;
-                
-                if (currentUserId) {
-                    const todoList = await GetTodoAssignList(currentUserId);
-                    const courseTodoList = todoList.filter(assignment => 
-                        assignment.course_id === parseInt(courseId)
-                    );
-                    setTodoAssignments(courseTodoList);
-                }
-            } catch (error) {
-                console.error("獲取課程數據失敗:", error);
-                navigate("/dashboard");
-            } finally {
-                setLoading(false);
+            const user = JSON.parse(localStorage.getItem("user"));
+            const currentUserId = user?.user_id;
+
+            if (currentUserId) {
+                const todoList = await GetTodoAssignList(currentUserId);
+                const courseTodoList = todoList.filter(assignment =>
+                    assignment.course_id === parseInt(courseId)
+                );
+                setTodoAssignments(courseTodoList);
             }
-        };
+        } catch (error) {
+            console.error("獲取課程數據失敗:", error);
+            navigate("/dashboard");
+        } finally {
+            setLoading(false);
+        }
+    }, [courseId, navigate]);
+
+    useEffect(() => {
 
         fetchCourseData();
-    }, [courseId]);
+    }, [fetchCourseData]);
 
     const handleMaterialsChange = (updated) => {
         setEditedMaterials(updated);
@@ -93,7 +95,7 @@ export default function CourseInfoPage() {
                 setIsSaving(true);
 
                 if (editedMaterials.some((m) => !m.name?.trim())) {
-                    alert("教材名稱不能為空");
+                    addAlert("教材名稱不能為空", "error");
                     setIsSaving(false);
                     return;
                 }
@@ -119,7 +121,7 @@ export default function CourseInfoPage() {
                 setEditedMaterials([]);
             } catch (err) {
                 console.error("保存失敗", err);
-                alert("保存教材變更失敗，請稍後再試");
+                addAlert("保存教材變更失敗，請稍後再試", "error");
                 return;
             } finally {
                 setIsSaving(false);
@@ -165,7 +167,7 @@ export default function CourseInfoPage() {
                             上傳考試
                         </button>
                     </div>
-                    
+
                     <div className={styles["function-group"]}>
                         <span className={styles["function-label"]}>編輯操作</span>
                         <button
@@ -212,7 +214,7 @@ export default function CourseInfoPage() {
                         onClose={() => setShowMaterialUploadModal(false)}
                         courseId={courseId}
                         course={course}
-                        onSuccess={() => window.location.reload()}
+                        onSuccess={fetchCourseData}
                     />
                 </>
             )}
@@ -227,7 +229,7 @@ export default function CourseInfoPage() {
                         onClose={() => setShowAssignmentUploadModal(false)}
                         courseId={courseId}
                         course={course}
-                        onSuccess={() => window.location.reload()}
+                        onSuccess={fetchCourseData}
                     />
                 </>
             )}
@@ -242,7 +244,7 @@ export default function CourseInfoPage() {
                         onClose={() => setShowExamUploadModal(false)}
                         courseId={courseId}
                         course={course}
-                        onSuccess={() => window.location.reload()}
+                        onSuccess={fetchCourseData}
                     />
                 </>
             )}

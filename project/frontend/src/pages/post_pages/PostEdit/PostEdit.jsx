@@ -5,6 +5,7 @@ import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/Po
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
 import { GetAvatarUrl, GetUserDataById } from "@/services/UserApi";
+import { addAlert } from "@/utils/alert/AlertContext";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
@@ -48,6 +49,7 @@ const PostEdit = () => {
         setSelectedBoard(null);
     }, []);
 
+    
     const handleBoardChange = useCallback((option) => {
         setSelectedBoard(option);
     }, []);
@@ -138,17 +140,17 @@ const PostEdit = () => {
 
         if (post_id === "new") {
             if (!selectedBoard) {
-                alert("請選擇討論版");
+                addAlert("請選擇討論版", "error");
                 return;
             }
 
             if (title.length === 0) {
-                alert("請輸入貼文標題");
+                addAlert("請輸入貼文標題", "error");
                 return;
             }
 
             if (description.length === 0) {
-                alert("請輸入貼文內容");
+                addAlert("請輸入貼文內容", "error");
                 return;
             }
 
@@ -170,7 +172,7 @@ const PostEdit = () => {
             });
         } else {
             if (!isModified) {
-                alert("內容沒有變更。")
+                addAlert("內容沒有變更", "info")
                 return
             }
             const data = {
