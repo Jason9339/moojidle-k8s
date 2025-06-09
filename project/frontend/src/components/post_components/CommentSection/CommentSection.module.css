@@ -2,7 +2,12 @@
     padding: 0px 12px;
     min-width: 300px;
     max-height: 100%;
-
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .commentTitle {
@@ -54,6 +59,9 @@
     padding: 12px;
     margin-bottom: 10px;
     position: relative;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .moreOptionsWrapper {
@@ -120,6 +128,9 @@
     box-sizing: border-box;
     resize: none;
     overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .expandButton {
