@@ -5,8 +5,8 @@ const Button = React.forwardRef(({ variant = "default", size = "default", classN
         default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
         secondary: "bg-zinc-200 hover:bg-zinc-300 text-zinc-900 focus:ring-zinc-500",
         ghost: "hover:bg-zinc-100 text-zinc-900",
-        cancel: "bg-gray-300 text-black hover:bg-gray-400",
-        confirm: "bg-sky-300 text-black hover:bg-sky-400"
+        cancel: "bg-gray-300 text-[#222222] hover:bg-gray-400",
+        confirm: "bg-[#60A5FA] text-[#222222] hover:bg-[#3B82F6]"
     }[variant]
     const sizeClass = size === "icon" ? "h-11 w-11 p-0" : "h-11 px-4 py-2 min-w-[72px]"
     return (

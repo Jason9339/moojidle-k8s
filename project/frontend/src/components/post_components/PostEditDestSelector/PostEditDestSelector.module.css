@@ -1,6 +1,5 @@
 .container {
     margin-top : 2vh;
-    padding-top : 2em;
     gap: 2vw;
     align-items: center;
     display: flex;
@@ -9,8 +8,6 @@
 }
 
 .select {
-    height: 10vh;
     width: 40%;
-    margin-top: 0;
 }
 
