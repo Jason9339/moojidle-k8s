@@ -1,5 +1,5 @@
 import {
-    FindAnnouncementByCourseId,
+    FindAnnouncementsByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement,
     DeleteAnnouncementByAnnouncementID
@@ -22,7 +22,7 @@ async function GetCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
         const showFuture = req.query.showFuture === 'true';
-        let announcements = await FindAllAnnouncementsByCourseId(courseId);
+        let announcements = await FindAnnouncementsByCourseId(courseId);
 
         if (!showFuture) {
             const now = new Date();

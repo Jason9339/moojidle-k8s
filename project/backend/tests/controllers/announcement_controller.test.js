@@ -14,7 +14,7 @@ describe('Announcement Controller', () => {
     beforeEach(global.beforeEach);
 
     describe('GetCourseAnnouncements', () => {
-        it('應該能回傳至少一筆公告', async () => {
+        it('showFuture=true應回傳未來公告', async () => {
             // 假設 courseId 1 已經有公告在 seed
             const req = createMockReq({ courseId: "1" }, { showFuture: true });
             const res = createMockRes();
@@ -24,6 +24,24 @@ describe('Announcement Controller', () => {
             expect(res.json).toHaveBeenCalled();
             const announcements = res.json.mock.calls[0][0];
             expect(Array.isArray(announcements)).toBe(true);
+
+            expect(announcements).toContain("Announcement 1 content.");
+            expect(announcements).toContain("Announcement 2 content.");
+        });
+
+        it('showFuture=false不應回傳未來公告', async () => {
+            // 假設 courseId 1 已經有公告在 seed
+            const req = createMockReq({ courseId: "1" }, { showFuture: true });
+            const res = createMockRes();
+
+            await GetCourseAnnouncements(req, res);
+
+            expect(res.json).toHaveBeenCalled();
+            const announcements = res.json.mock.calls[0][0];
+            expect(Array.isArray(announcements)).toBe(true);
+
+            expect(announcements).toContain("Announcement 1 content.");
+            expect(announcements).not.toContain("Announcement 2 content.");
         });
     });
 
