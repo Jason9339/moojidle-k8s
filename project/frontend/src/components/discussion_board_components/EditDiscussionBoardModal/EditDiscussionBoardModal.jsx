@@ -12,24 +12,24 @@ export default function EditDiscussionBoardModal({ boardId, onClose }) {
     const handleDelete = async () => {
         try {
             await DeleteDiscussionBoard(boardId);
-            addAlert("討論版已成功刪除");
+            addAlert("討論版已成功刪除", "success");
             onClose();
             navigate("/discussion/home");
         } catch (err) {
             console.error(err);
-            setError("刪除失敗，請稍後再試");
+            addAlert("刪除失敗，請稍後再試", "error");
         }
     };
 
     const handleSave = async () => {
         try {
             await EditDiscussionBoard(boardId, boardName);
-            addAlert("討論版名稱已成功更新");
+            addAlert("討論版名稱已成功更新", "success");
             onClose();
             navigate("/discussion/" + boardId);
         } catch (err) {
             console.error(err);
-            setError("更新失敗，請稍後再試");
+            addAlert("更新失敗，請稍後再試", "error");
         }
     };
 

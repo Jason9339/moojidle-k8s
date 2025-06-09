@@ -13,12 +13,12 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
     const { addAlert } = useAlert();
     const handleAdd = async () => {
         if (!title) {
-            addAlert("請輸入課程名稱！");
+            addAlert("請輸入課程名稱", "error");
             return;
         }
 
         if (!weeks || weeks < 5 || weeks > 30) {
-            addAlert("週數必須介於 5 到 30 週之間！");
+            addAlert("週數必須介於 5 到 30 週之間", "error");
             return;
         }
 
@@ -44,7 +44,7 @@ function AddCourseModal({ onClose, onAddCourse, currentUserId }) {
                 error.response?.data?.message ||
                 error.message ||
                 "新增課程失敗，請稍後再試。";
-            addAlert(`新增課程失敗: ${errorMessage}`);
+            addAlert("新增課程失敗", "error");
         } finally {
             setIsSubmitting(false); // 恢復狀態
         }

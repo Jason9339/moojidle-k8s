@@ -83,11 +83,11 @@ function AnnouncementsPage() {
 
     const handleCreate = async () => {
         if (!newAnnouncementContext.trim()) {
-            addAlert("內容不能為空");
+            addAlert("內容不能為空", "error");
             return;
         }
         if (new Date(newAnnounceDate) > new Date()) {
-            addAlert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示", "info");
         }
         try {
             await CreateAnnouncement(
@@ -99,15 +99,18 @@ function AnnouncementsPage() {
             setAnnouncements(await GetAnnouncements(courseId, canEdit));
             closeCreateModal();
         } catch (err) {
-            setError("新增失敗");
+            addAlert("新增失敗", "error");
             console.error(err);
         }
     };
 
     const handleEditAnnouncement = async () => {
-        if (!newAnnouncementContext.trim()) return addAlert("內容不能為空");
+        if (!newAnnouncementContext.trim()) {
+            addAlert("內容不能為空", "error");
+            return;
+        }
         if (new Date(newAnnounceDate) > new Date()) {
-            addAlert("公告時間在未來，將延後顯示");
+            addAlert("公告時間在未來，將延後顯示", "info");
         }
         try {
             await EditAnnouncement(
@@ -129,8 +132,7 @@ function AnnouncementsPage() {
             await DeleteAnnouncement(announcement.a_id);
             setAnnouncements(await GetAnnouncements(courseId, canEdit));
         } catch (err) {
-            setError("刪除失敗");
-            console.error(err);
+            addAlert("刪除失敗", "error");
         }
     };
 

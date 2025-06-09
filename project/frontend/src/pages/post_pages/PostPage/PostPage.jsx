@@ -12,6 +12,7 @@ import {
     DeletePost,
     DeleteCommend,
 } from "@/services/PostApi";
+import { useAlert } from "@/utils/alert/AlertContext";
 
 function PostPage() {
     const { id } = useParams();
@@ -32,7 +33,7 @@ function PostPage() {
 
     const textareaRef = useRef(null);
     const [description, setDescription] = useState("");
-
+    const { addAlert } = useAlert();
     useEffect(() => {
         const fetchPost = async () => {
             try {
@@ -73,7 +74,7 @@ function PostPage() {
             setNewComment("");
             reflash();
         } catch (err) {
-            addAlert("留言送出失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言送出失敗：", "error");
         }
     };
 
@@ -86,10 +87,10 @@ function PostPage() {
         };
         try {
             await DeleteCommend(commenData);
-            addAlert("留言刪除成功");
+            addAlert("留言刪除成功", "success");
             reflash();
         } catch (err) {
-            addAlert("留言刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("留言刪除失敗：", "error");
         }
         setActiveCommentId(null);
         reflash();
@@ -98,10 +99,10 @@ function PostPage() {
     const handleDeletePost = async () => {
         try {
             await DeletePost(post.post_id);
-            addAlert("貼文刪除成功");
+            addAlert("貼文刪除成功", "success");
             navigate(`/discussion/${post.in_b_id}`);
         } catch (err) {
-            addAlert("貼文刪除失敗：" + (err.message || "未知錯誤"));
+            addAlert("貼文刪除失敗", "error");
         }
     };
 

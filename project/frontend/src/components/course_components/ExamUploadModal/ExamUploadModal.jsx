@@ -34,15 +34,15 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
     const handleUpload = async () => {
         if (!name.trim()) {
-            addAlert("請輸入考試名稱");
+            addAlert("請輸入考試名稱", "error");
             return;
         }
         if (!startDate || !startTime) {
-            addAlert("請選擇開始日期和時間");
+            addAlert("請選擇開始日期和時間", "error");
             return;
         }
         if (!endDate || !endTime) {
-            addAlert("請選擇結束日期和時間");
+            addAlert("請選擇結束日期和時間", "error");
             return;
         }
 
@@ -50,31 +50,27 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
         const endDateTime = new Date(`${endDate}T${endTime}`);
 
         if (endDateTime <= startDateTime) {
-            addAlert("結束時間必須在開始時間之後");
+            addAlert("結束時間必須在開始時間之後", "error");
             return;
         }
 
         if (!maxScore || parseFloat(maxScore) <= 0) {
-            addAlert("請輸入有效的最高成績");
+            addAlert("請輸入有效的最高成績", "error");
             return;
         }
 
         if (!percentage || parseFloat(percentage) <= 0 || parseFloat(percentage) > 100) {
-            addAlert("請輸入有效的百分比 (1-100)");
+            addAlert("請輸入有效的百分比 (1-100)", "error");
             return;
         }
 
         if (!description.trim()) {
-            addAlert("請輸入簡介/描述");
+            addAlert("請輸入簡介/描述", "error");
             return;
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.user_id;
-        if (!userId) {
-            addAlert("請先登入");
-            return;
-        }
 
         const formData = new FormData();
 
@@ -98,12 +94,12 @@ const ExamUploadModal = ({ onClose, courseId, course, onSuccess }) => {
 
         try {
             await UploadExam(formData);
-            addAlert("考試上傳成功！");
+            addAlert("考試上傳成功！", "success");
             onSuccess();
             onClose();
         } catch (error) {
             console.error("上傳時發生錯誤", error);
-            addAlert("上傳失敗：" + error.message);
+            addAlert("上傳失敗：" + error.message, "error");
         }
     };
 

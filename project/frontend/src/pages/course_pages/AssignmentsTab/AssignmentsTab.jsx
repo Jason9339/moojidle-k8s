@@ -87,7 +87,7 @@ function AssignmentsTab() {
         try {
             await DownloadAssignment(attachment.path_to_file, attachment.filename);
         } catch (error) {
-            addAlert(`下載失敗：${attachment.filename}`);
+            addAlert(`下載失敗：${attachment.filename}`, "error");
             console.error("下載作業附件錯誤:", error);
         }
     };
@@ -97,7 +97,7 @@ function AssignmentsTab() {
         try {
             await DownloadAssignment(attachment.path_to_file, attachment.filename);
         } catch (error) {
-            addAlert(`下載失敗：${attachment.filename}`);
+            addAlert(`下載失敗：${attachment.filename}`, "error");
             console.error("下載學生繳交檔案錯誤:", error);
         }
     };

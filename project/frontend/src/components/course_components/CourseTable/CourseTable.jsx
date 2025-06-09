@@ -38,7 +38,7 @@ function CourseTable({
                 window.open(material.url, '_blank');
             }
         } catch (e) {
-            addAlert(`下載失敗：${material.name}`);
+            addAlert(`下載失敗：${material.name}`, "error");
             console.error("Download error:", e);
         }
     };
@@ -47,7 +47,7 @@ function CourseTable({
         try {
             await DownloadAssignment(path, filename);
         } catch (e) {
-            addAlert(`下載失敗：${filename}`);
+            addAlert(`下載失敗：${filename}`, "error");
             console.error("Assignment download error:", e);
         }
     };
@@ -197,7 +197,7 @@ function CourseTable({
     const getAssignmentStatus = (assignment) => {
         const now = new Date();
         const dueDate = new Date(assignment.due);
-        
+
         if (now > dueDate) {
             return { status: 'overdue', label: '遲交', cssClass: 'status-overdue' };
         } else {
@@ -418,8 +418,8 @@ function CourseTable({
                     todoAssignments.slice(0, 3).map((assignment, idx) => {
                         const statusInfo = getAssignmentStatus(assignment);
                         return (
-                            <div 
-                                key={idx} 
+                            <div
+                                key={idx}
                                 className={styles["todo-item"]}
                             >
                                 <div className={styles["todo-title-row"]}>

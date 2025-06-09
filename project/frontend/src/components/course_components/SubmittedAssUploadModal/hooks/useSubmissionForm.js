@@ -52,7 +52,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         const hasNoNewFiles = files.length === 0;
 
         if (!submissionId && isEmptyDescription && hasNoNewFiles) {
-            addAlert("沒有內容可以提交。");
+            addAlert("沒有內容可以提交", "error");
             return false;
         }
 
@@ -61,7 +61,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const handleCreateSubmission = async (formData) => {
         await CreateSubAssign(assignmentId, JSON.parse(localStorage.getItem("user")).user_id, formData);
-        addAlert("作業提交成功！");
+        addAlert("作業提交成功！", "success");
     };
 
     const handleUpdateSubmission = async (formData) => {
@@ -75,9 +75,9 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
         if (isEmptyDescription && hasNoNewFiles && remainingExistingFiles.length === 0) {
             if (existingFiles.length > 0 || (existingSubmission?.description || "").trim()) {
                 await DeleteSubAss(submissionId);
-                addAlert("作業提交記錄已因內容清空而被刪除！");
+                addAlert("作業提交記錄已因內容清空而被刪除！", "info");
             } else {
-                addAlert("沒有內容可更新。");
+                addAlert("沒有內容可更新", "info");
                 return false;
             }
         } else {
@@ -86,7 +86,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             const noFilesMarkedForDeletion = deletedFiles.length === 0;
 
             if (noChangeInDescription && hasNoNewFiles && noFilesMarkedForDeletion) {
-                addAlert("內容未作修改。");
+                addAlert("內容未作修改", "info");
                 return false;
             }
 
@@ -114,7 +114,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
             } else if (description !== originalDescription) {
                 message = "作業描述更新成功！";
             }
-            addAlert(message);
+            addAlert(message, "success");
         }
         return true;
     };

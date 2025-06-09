@@ -58,10 +58,10 @@ export default function CourseInfoPage() {
 
                 const user = JSON.parse(localStorage.getItem("user"));
                 const currentUserId = user?.user_id;
-                
+
                 if (currentUserId) {
                     const todoList = await GetTodoAssignList(currentUserId);
-                    const courseTodoList = todoList.filter(assignment => 
+                    const courseTodoList = todoList.filter(assignment =>
                         assignment.course_id === parseInt(courseId)
                     );
                     setTodoAssignments(courseTodoList);
@@ -94,7 +94,7 @@ export default function CourseInfoPage() {
                 setIsSaving(true);
 
                 if (editedMaterials.some((m) => !m.name?.trim())) {
-                    addAlert("教材名稱不能為空");
+                    addAlert("教材名稱不能為空", "error");
                     setIsSaving(false);
                     return;
                 }
@@ -120,7 +120,7 @@ export default function CourseInfoPage() {
                 setEditedMaterials([]);
             } catch (err) {
                 console.error("保存失敗", err);
-                addAlert("保存教材變更失敗，請稍後再試");
+                addAlert("保存教材變更失敗，請稍後再試", "error");
                 return;
             } finally {
                 setIsSaving(false);

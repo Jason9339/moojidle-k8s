@@ -12,7 +12,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
     const { addAlert } = useAlert();
     const handleJoin = async () => {
         if (!inviteCode) {
-            addAlert("請輸入課程代碼！");
+            addAlert("請輸入課程代碼", "error");
             return;
         }
 
@@ -25,7 +25,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
                 currentUserId,
                 currentUserId
             );
-            console.log(msg);
+
             addAlert(msg.message);
 
             await onJoinCourse(); // 重新 fetch 所有資料
@@ -36,7 +36,7 @@ function JoinCourseModal({ onClose, onJoinCourse, currentUserId }) {
                 error.response?.data?.message ||
                 error.message ||
                 "加入課程失敗，請稍後再試。";
-            addAlert(`加入課程失敗: ${errorMessage}`);
+            addAlert(`加入課程失敗: ${errorMessage}`, "error");
         } finally {
             setIsSubmitting(false);
         }

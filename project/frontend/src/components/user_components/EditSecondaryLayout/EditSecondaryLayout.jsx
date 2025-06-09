@@ -53,7 +53,7 @@ function EditSecondaryLayout({ user_tags = [], onSave, onCancel }) {
             onSave(validTags.map(tag => ({ user_tag: tag })));
         } catch (err) {
             console.error('儲存失敗:', err);
-            addAlert(err.message || "儲存失敗，請稍後再試");
+            addAlert("儲存失敗，請稍後再試", "error");
         } finally {
             setLoading(false);
         }
