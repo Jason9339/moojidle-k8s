@@ -5,7 +5,7 @@ import TextEditor from "@/components/TextEditor/TextEditor";
 import PostEditCustomTag from "@/components/post_components/PostEditCustomTag/PostEditCustomTag";
 import PostEditDestSelector from "@/components/post_components/PostEditDestSelector/PostEditDestSelector";
 import { CreatePost, EditPost, GetPostContent } from "@/services/PostApi";
-import { GetUserDataById } from "@/services/UserApi";
+import { GetAvatarUrl, GetUserDataById } from "@/services/UserApi";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
@@ -70,6 +70,28 @@ const PostEdit = () => {
                 const data = await GetUserDataById(userId);
                 setUsername(data?.name);
                 setAllUserTags(data?.user_tags.map((t) => t.user_tag));
+                let isMounted = true;
+                const userPfp = data?.path_to_profile_pic;
+                const loadAvatar = async () => {
+                    const avatarUrl = await GetAvatarUrl(userPfp);
+                    if (isMounted) {
+                        setImgSrc(avatarUrl);
+                    }
+                };
+
+                if (userPfp) {
+                    loadAvatar();
+                } else {
+                    setImgSrc("/user_pfp/default.png");
+                }
+
+                return () => {
+                    isMounted = false;
+                    // 清理 blob URL
+                    if (imgSrc && imgSrc.startsWith('blob:')) {
+                        URL.revokeObjectURL(imgSrc);
+                    }
+                };
             } catch {
                 navigate("/login");
             }
