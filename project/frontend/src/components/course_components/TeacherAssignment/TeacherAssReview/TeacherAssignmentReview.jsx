@@ -12,6 +12,14 @@ const TeacherAssignmentReview = ({ assignmentId, assignmentMaxScore }) => {
     const [activeTab, setActiveTab] = useState('submitted');
     const [reviewingSubmission, setReviewingSubmission] = useState(null);
 
+    function tellStatus(status, sub) {
+        if (sub.score == undefined) {
+            return status || "Submitted";
+        } else {
+            return "已評分";
+        }
+    }
+
     const fetchSubmissions = async () => {
         try {
             setLoading(true);
@@ -21,8 +29,9 @@ const TeacherAssignmentReview = ({ assignmentId, assignmentMaxScore }) => {
                 const enhancedSubmissions = response.submissions.map(sub => ({
                     studentName: sub.student_name || "Unknown",
                     submissionDate: new Date(sub.submit_date).toLocaleString(),
-                    status: sub.status || "Submitted",
-                    grade: sub.score || "-",
+                    // status: sub.status || "Submitted",
+                    status: tellStatus(sub.status, sub),
+                    grade: sub.score == undefined ? "Not Graded" : sub.score,
                     description: sub.description || "-",
                     attachments: sub.attachments || [],
                     submissionId: sub.s_ass_id
