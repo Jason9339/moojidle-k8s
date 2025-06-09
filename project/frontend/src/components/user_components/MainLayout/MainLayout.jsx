@@ -73,36 +73,39 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                 />
 
                 <div className={styles.textSection}>
-                    <div className={styles.infoBlock}>
-                        <span className={styles.label}>Registered Email:</span>
-                        <span className={styles.value}>{email}</span>
-                    </div>
+                    {isEditing ? (
+                        <EditMainLayout
+                            email={email}
+                            contact_ways={contactWays}
+                            currentAvatar={imgSrc}
+                            onSave={handleSave}
+                            onCancel={() => setIsEditing(false)}
+                        />
+                    ) : (
+                        <>
+                            <div className={styles.infoBlock}>
+                                <span className={styles.label}>Registered Email:</span>
+                                <span className={styles.value}>{email}</span>
+                            </div>
 
-                    <div className={styles.infoBlock}>
-                        <span className={styles.label}>Other Contact Ways:</span>
-                        {isEditing ? (
-                            <EditMainLayout
-                                contact_ways={contactWays}
-                                currentAvatar={imgSrc}
-                                onSave={handleSave}
-                                onCancel={() => setIsEditing(false)}
-                            />
-                        ) : (
-                            contactWays?.length > 0 ? (
-                                <ul className={styles.contactList}>
-                                    {contactWays.map((contact, index) => (
-                                        <li key={index} className={styles.contactItem}>
-                                            <span className={styles.approach}>{contact.approach}</span>
-                                            {":"}
-                                            <span className={styles.details}>{contact.details}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <span className={styles.value}>尚未提供聯絡資訊</span>
-                            )
-                        )}
-                    </div>
+                            <div className={styles.infoBlock}>
+                                <span className={styles.label}>Other Contact Ways:</span>
+                                {contactWays?.length > 0 ? (
+                                    <ul className={styles.contactList}>
+                                        {contactWays.map((contact, index) => (
+                                            <li key={index} className={styles.contactItem}>
+                                                <span className={styles.approach}>{contact.approach}</span>
+                                                {":"}
+                                                <span className={styles.details}>{contact.details}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <span className={styles.value}>尚未提供聯絡資訊</span>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
