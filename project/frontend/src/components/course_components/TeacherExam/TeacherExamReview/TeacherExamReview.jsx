@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import styles from './TeacherExamReview.module.css';
 
 import { GetTakenExamInExam, GradeExam } from '@/services/TakenExamApi.js';
-
-const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore, beGradedUserId, takenExamId, examId}) => {
+import { useAlert } from '@/utils/alert/AlertContext';
+const GradeForm = ({ examData, setExamData, isGrading, setIsGrading, examMaxScore, beGradedUserId, takenExamId, examId }) => {
     const graderId = JSON.parse(localStorage.getItem("user"))?.user_id;
     const [GradeScore, setReviewScore] = useState('');
-
+    const { addAlert } = useAlert();
     const handleSubmitGrading = async (e) => {
         e.preventDefault();
 
         // Validate that a score has been entered
         if (!GradeScore || GradeScore.trim() === '') {
             console.error('Grading score is required.');
-            alert('Please enter a score before submitting.');
+            addAlert("請輸入成績", "error");
             return;
         }
         // console.log("Submitting grading for user:", beGradedUserId);
@@ -26,10 +26,10 @@ const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore
             const updatedExamData = { ...examData };
 
             // Update the specific taken exam in the takenExams array
-            updatedExamData.takenExams = examData.takenExams.map(takenExam => 
+            updatedExamData.takenExams = examData.takenExams.map(takenExam =>
                 takenExam.t_exam_id === takenExamId && takenExam.taken_by_user_id === beGradedUserId
-                    ? { 
-                        ...takenExam, 
+                    ? {
+                        ...takenExam,
                         score: parseFloat(GradeScore),
                         graded_by_user_id: graderId // Update the grader ID as well
                     }
@@ -37,7 +37,7 @@ const GradeForm = ({examData, setExamData, isGrading, setIsGrading, examMaxScore
             );
 
             setExamData(updatedExamData);
-        } 
+        }
         else if (response?.t_exam_id !== undefined) {
             // A new taken exam was created - append it to the existing data
             const updatedExamData = { ...examData };
@@ -132,80 +132,80 @@ const TeacherExamReview = ({ examId, examMaxScore }) => {
 
     return (
         <div className={styles["exam-review-container"]}>
-                <table className={styles["submissions-table"]}>
-                    <colgroup>
-                        <col style={{ width: "12%" }} />
-                        <col style={{ width: "12%" }} />
-                        <col style={{ width: "12%" }} />
-                        <col style={{ width: "12%" }} />
-                        <col style={{ width: "12%" }} />
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            {/* <th>Student ID</th> */}
-                            {/* <th>Email</th> */}
-                            {/* <th>Submissions</th> */}
-                            <th>Grade (0-{examMaxScore})</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                            <th>GradeForm</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {examData.students && examData.students.map((student, index) => {
-                            // Find if student has taken this exam
-                            const takenExam = examData.takenExams?.find(t => t.taken_by_user_id === student.user_id);
-                            const hasTakenExam = !!takenExam;
+            <table className={styles["submissions-table"]}>
+                <colgroup>
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "12%" }} />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        {/* <th>Student ID</th> */}
+                        {/* <th>Email</th> */}
+                        {/* <th>Submissions</th> */}
+                        <th>Grade (0-{examMaxScore})</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                        <th>GradeForm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {examData.students && examData.students.map((student, index) => {
+                        // Find if student has taken this exam
+                        const takenExam = examData.takenExams?.find(t => t.taken_by_user_id === student.user_id);
+                        const hasTakenExam = !!takenExam;
 
-                            return (
-                                <tr key={student.user_id || index} className={styles["submission-row"]}>
-                                    <td>{student.name || 'Unknown Student'}</td>
-                                    <td>
-                                        {hasTakenExam 
-                                            ? (takenExam.score !== null ? takenExam.score : 'Not graded') 
-                                            : 'Not graded'}
-                                    </td>
-                                    <td>
-                                        {!hasTakenExam ? (
-                                            <span className={styles["status-pending"]}>待評分</span>
-                                        ) : (
-                                                <span className={styles["status-graded"]}>已評分</span>
-                                            )}
-                                    </td>
-                                    <td>
-                                        <button
-                                            className={styles["review-button"]}
-                                            onClick={() => {
-                                                // Set the specific student ID as the current grading target
-                                                setGradeFormVisible(student.user_id);
-                                            }}
-                                        >
-                                            Grade
-                                        </button>
+                        return (
+                            <tr key={student.user_id || index} className={styles["submission-row"]}>
+                                <td>{student.name || 'Unknown Student'}</td>
+                                <td>
+                                    {hasTakenExam
+                                        ? (takenExam.score !== null ? takenExam.score : 'Not graded')
+                                        : 'Not graded'}
+                                </td>
+                                <td>
+                                    {!hasTakenExam ? (
+                                        <span className={styles["status-pending"]}>待評分</span>
+                                    ) : (
+                                        <span className={styles["status-graded"]}>已評分</span>
+                                    )}
+                                </td>
+                                <td>
+                                    <button
+                                        className={styles["review-button"]}
+                                        onClick={() => {
+                                            // Set the specific student ID as the current grading target
+                                            setGradeFormVisible(student.user_id);
+                                        }}
+                                    >
+                                        Grade
+                                    </button>
 
-                                    </td>
+                                </td>
 
 
-                                    <GradeForm 
-                                        examData={examData}
-                                        setExamData={setExamData}
-                                        isGrading={gradeFormVisible}
-                                        setIsGrading={setGradeFormVisible}
-                                        examMaxScore={examMaxScore}
-                                        beGradedUserId={student.user_id}
-                                        takenExamId={takenExam?.t_exam_id}
-                                        examId={examId}
+                                <GradeForm
+                                    examData={examData}
+                                    setExamData={setExamData}
+                                    isGrading={gradeFormVisible}
+                                    setIsGrading={setGradeFormVisible}
+                                    examMaxScore={examMaxScore}
+                                    beGradedUserId={student.user_id}
+                                    takenExamId={takenExam?.t_exam_id}
+                                    examId={examId}
 
-                                    />
+                                />
 
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            
-        
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+
+
         </div>
     );
 
