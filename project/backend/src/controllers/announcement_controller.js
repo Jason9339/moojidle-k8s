@@ -21,7 +21,7 @@ import {
 async function GetCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
-        const showFuture = req.query.showFuture === 'true';
+        const showFuture = req.query.showFuture;
         let announcements = await FindAnnouncementsByCourseId(courseId);
 
         if (!showFuture) {

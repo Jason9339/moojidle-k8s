@@ -16,7 +16,7 @@ describe('Announcement Controller', () => {
     describe('GetCourseAnnouncements', () => {
         it('showFuture=true應回傳未來公告', async () => {
             // 假設 courseId 1 已經有公告在 seed
-            const req = createMockReq({ courseId: "1" }, { showFuture: true });
+            const req = createMockReq({}, { courseId: "1" }, { showFuture: true });
             const res = createMockRes();
 
             await GetCourseAnnouncements(req, res);
@@ -25,13 +25,13 @@ describe('Announcement Controller', () => {
             const announcements = res.json.mock.calls[0][0];
             expect(Array.isArray(announcements)).toBe(true);
 
-            expect(announcements).toContain("Announcement 1 content.");
-            expect(announcements).toContain("Announcement 2 content.");
+            expect(announcements[0].context).toBe("Announcement 1 content.");
+            expect(announcements[1].context).toBe("Announcement 2 content.");
         });
 
         it('showFuture=false不應回傳未來公告', async () => {
             // 假設 courseId 1 已經有公告在 seed
-            const req = createMockReq({ courseId: "1" }, { showFuture: false });
+            const req = createMockReq({}, { courseId: "1" }, { showFuture: false });
             const res = createMockRes();
 
             await GetCourseAnnouncements(req, res);
@@ -40,8 +40,8 @@ describe('Announcement Controller', () => {
             const announcements = res.json.mock.calls[0][0];
             expect(Array.isArray(announcements)).toBe(true);
 
-            expect(announcements).toContain("Announcement 1 content.");
-            expect(announcements).not.toContain("Announcement 2 content.");
+            expect(announcements[0].context).toBe("Announcement 1 content.");
+            expect(announcements[1]).toBe(undefined);
         });
     });
 
