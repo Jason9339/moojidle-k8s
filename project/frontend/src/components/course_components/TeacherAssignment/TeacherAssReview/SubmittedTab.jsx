@@ -5,14 +5,13 @@ import { addAlert } from '@/utils/alert/AlertContext';
 
 const ReviewForm = ({ userId, reviewData, setReviewData, reviewingSubmission, setReviewingSubmission, submission, assignmentMaxScore }) => {
     const [reviewScore, setReviewScore] = useState('');
-    
+
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 
         // Validate that a score has been entered
         if (!reviewScore || reviewScore.trim() === '') {
-            console.error('Review score is required.');
-            addAlert('Please enter a score before submitting.');
+            addAlert('請輸入成績', "error");
             return;
         }
 
