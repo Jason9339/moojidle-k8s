@@ -1,5 +1,7 @@
 .appLayout {
     display: flex;
+    overflow-y: hidden;
+    width: 100vw;
 }
 
 .container {
