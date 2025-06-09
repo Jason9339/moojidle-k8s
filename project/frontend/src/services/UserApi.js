@@ -37,7 +37,7 @@ async function UpdateUserData(userId, data) {
         return response.data;
     } catch (err) {
         console.error(err);
-        return { message: "個人資料更新失敗" };
+        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
     }
 }
 
@@ -52,7 +52,7 @@ async function UpdateUserProfile(userId, formData) {
         return response.data;
     } catch (err) {
         console.error("Profile update error:", err);
-        return { message: "更新個人資料時發生錯誤" }
+        throw new Error(err.response?.data?.message || "更新個人資料時發生錯誤");
     }
 }
 
@@ -65,9 +65,7 @@ async function UpdateUserTags(userId, tags) {
         return response.data;
     } catch (err) {
         console.error('更新標籤錯誤:', err);
-        return {
-            message: "更新標籤時發生錯誤"
-        }
+        throw new Error(err.response?.data?.message || "更新標籤時發生錯誤");
     }
 }
 
