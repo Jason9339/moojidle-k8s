@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import styles from "./OverviewPostCard.module.css";
 import { GetAvatarUrl } from '@/services/UserApi.js';
 const MAX_LINES = 5;
-const MAX_CHARS = 400;
+const MAX_CHARS = 80;
 
 const OverviewPostCard = ({
     userPfp,
