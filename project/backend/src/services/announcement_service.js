@@ -1,19 +1,15 @@
 import mongoose from 'mongoose';
 import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
-// 查詢課程公告
-async function FindAnnouncementByCourseId(courseId) {
+// Always fetch all announcements for a course
+async function FindAnnouncementsByCourseId(courseId) {
     try {
-        const now = new Date();
         return await mongoose.connection.db.collection('announcement')
-            .find({
-                course_id: parseInt(courseId),
-                announce_date: { $lte: now } // Only return announcements where announce_date is less than or equal to now
-            })
-            .sort({ create_date: -1 }) // 依日期降序排列
+            .find({ course_id: parseInt(courseId) })
+            .sort({ create_date: -1 })
             .toArray();
     } catch (error) {
-        console.error(`[getAnnouncementsByCourseId] Error fetching announcements for course ID ${courseId}:`, error);
+        console.error(`[FindAllAnnouncementsByCourseId] Error fetching announcements for course ID ${courseId}:`, error);
         throw new Error(`Failed to retrieve course announcements: ${error.message}`);
     }
 }
@@ -76,7 +72,7 @@ async function DeleteAnnouncementByAnnouncementID(announcementId) {
 }
 
 export {
-    FindAnnouncementByCourseId,
+    FindAnnouncementsByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement,
     DeleteAnnouncementByAnnouncementID

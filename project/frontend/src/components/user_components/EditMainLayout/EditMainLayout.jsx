@@ -107,7 +107,7 @@ function EditMainLayout({ email, contact_ways = [], currentAvatar, onSave, onCan
         <div className={loading ? styles.loading : ''}>
             {/* 頭像上傳區域 */}
             <div className={styles.avatarSection}>
-                <label className={styles.avatarLabel}>修改個人頭像:</label>
+                <label className={styles.avatarLabel}>Edit Profile Picture:</label>
                 <div className={styles.avatarContainer}>
                     <img 
                         src={previewUrl} 

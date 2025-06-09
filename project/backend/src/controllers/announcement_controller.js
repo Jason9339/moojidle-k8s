@@ -1,5 +1,5 @@
 import {
-    FindAnnouncementByCourseId,
+    FindAnnouncementsByCourseId,
     InsertAnnouncement,
     UpdateAnnouncement,
     DeleteAnnouncementByAnnouncementID
@@ -18,11 +18,17 @@ import {
     FindStudyInJoinUserByCourseId,
 } from '#src/services/course_member_service.js';
 
-// 取得特定課程的公告
 async function GetCourseAnnouncements(req, res) {
     try {
         const { courseId } = req.params;
-        const announcements = await FindAnnouncementByCourseId(courseId);
+        const showFuture = req.query.showFuture;
+        let announcements = await FindAnnouncementsByCourseId(courseId);
+
+        if (!showFuture) {
+            const now = new Date();
+            announcements = announcements.filter(a => new Date(a.announce_date) <= now);
+        }
+
         res.json(announcements);
     } catch (error) {
         console.error("取得課程公告錯誤:", error);
