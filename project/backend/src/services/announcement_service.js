@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
 import GetNextCounterId from "#src/utils/get_next_counter_id.js"
 
-// 查詢課程公告
-async function FindAnnouncementByCourseId(courseId) {
+async function FindAnnouncementByCourseId(courseId, showFuture = false) {
     try {
         const now = new Date();
+        const query = { course_id: parseInt(courseId) };
+        if (!showFuture) {
+            query.announce_date = { $lte: now };
+        }
         return await mongoose.connection.db.collection('announcement')
-            .find({
-                course_id: parseInt(courseId),
-                announce_date: { $lte: now } // Only return announcements where announce_date is less than or equal to now
-            })
-            .sort({ create_date: -1 }) // 依日期降序排列
+            .find(query)
+            .sort({ create_date: -1 })
             .toArray();
     } catch (error) {
         console.error(`[getAnnouncementsByCourseId] Error fetching announcements for course ID ${courseId}:`, error);
