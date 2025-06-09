@@ -28,8 +28,6 @@ const BoardSideBar = ({ itemData, handleAddBoard, handleEditBoard }) => {
     const activeItemData = itemData ? itemData.filter(course => {
         // 如果沒有 current_week 或 week_num 資料，預設顯示
         if (typeof course.current_week !== 'number' || typeof course.week_num !== 'number') {
-            console.log("error");
-            console.log(course);
             return true;
         }
         // 只顯示未過期的課程（current_week <= week_num）

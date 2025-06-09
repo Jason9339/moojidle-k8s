@@ -31,7 +31,7 @@ function MainLayout({ pfp_path, name, email, contact_ways: initialContacts }) {
                 URL.revokeObjectURL(imgSrc);
             }
         };
-    }, [pfp_path, imgSrc]);
+    }, [pfp_path]);
 
     useEffect(() => {
         // 組件卸載時清理 blob URL

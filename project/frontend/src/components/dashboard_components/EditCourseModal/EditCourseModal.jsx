@@ -30,7 +30,6 @@ function EditCourseModal({ course, onClose }) {
     const handleDelete = async () => {
         setIsDeleting(true);
         try {
-            // console.log("刪除課程:", course.courseId);
             await DeleteCourse(course.courseId);
             addAlert("刪除成功", "success");
             onClose();

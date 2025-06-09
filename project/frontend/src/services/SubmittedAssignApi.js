@@ -100,7 +100,6 @@ export const UpdateSubAssign = async (subAssId, formData) => {
 };
 
 export const GradeAssignment = async (graderId, submissionId, grade) => {
-    console.log("Grade", grade, "graderId", graderId)
     return (await api.patch(`/submitted-assignment/review/${submissionId}`, {
         score: grade,
         graderId: graderId

@@ -14,7 +14,6 @@ function CourseCard({
     isAssistant,
     refetchAll
 }) {
-    // console.log(title, courseId, color, isTeacher, isStudent, isAssistant);
     const navigate = useNavigate();
     const [showEditModal, setShowEditModal] = useState(false);
 
