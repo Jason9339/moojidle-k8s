@@ -46,23 +46,12 @@ export const UploadExam = async (formData) => {
     }
 }
 
-export const DownloadExam = async (pathToFile, filename) => {
+export const DownloadExam = async (pathToFile, fileName) => {
     try {
         const response = await api.get(`/exams/download/download`, {
             params: { path: pathToFile },
             responseType: 'blob',
         });
-
-        const contentDisposition = response.headers['content-disposition'];
-        let fileName = filename;
-        if (contentDisposition) {
-            // Fixed: More precise regex that only captures content within quotes
-            const fileNameMatch = contentDisposition.match(/filename="([^"]+)"/);
-
-            if (fileNameMatch && fileNameMatch[1]) {
-                fileName = fileNameMatch[1];
-            }
-        }
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');

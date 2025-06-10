@@ -48,23 +48,12 @@ export const UploadAssignment = async (formData) => {
 };
 
 // 下載作業檔案
-export const DownloadAssignment = async (pathToFile, filename) => {
+export const DownloadAssignment = async (pathToFile, fileName) => {
     try {
         const response = await api.get(`/assignment/download`, {
             params: { path: pathToFile },
             responseType: 'blob',
         });
-
-        const contentDisposition = response.headers['content-disposition'];
-        let fileName = filename;
-        if (contentDisposition) {
-            // Fixed: More precise regex that only captures content within quotes
-            const fileNameMatch = contentDisposition.match(/filename="([^"]+)"/);
-
-            if (fileNameMatch && fileNameMatch[1]) {
-                fileName = fileNameMatch[1];
-            }
-        }
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
