@@ -18,7 +18,7 @@ const CardContent = ({ className = "", ...props }) => (
 )
 
 
-export default function TextEditor({ className = "", height, onChange, value, toolbarItemSize = 16 }) {
+export default function TextEditor({ className = "", height, onChange, value, toolbarItemSize = 16, maxLength = 3000 }) {
     const [preview, setPreview] = useState(false)
     const [text, setText] = useState("")
     const textareaRef = useRef(null)
@@ -206,6 +206,7 @@ export default function TextEditor({ className = "", height, onChange, value, to
                         value={text}
                         onChange={(e) => { setText(e.target.value); onChange?.(e.target.value) }}
                         onKeyDown={handleKeyDown}
+                        maxLength={maxLength}
                         placeholder=""
                         className={`flex-2 w-full p-4 font-mono outline-none overflow-y-scroll resize-none bg-[#ffffff] rounded-[15px]`}
                     >
