@@ -415,7 +415,7 @@ function CourseTable({
             <div className={styles["todo-panel"]}>
                 <h4>To Do</h4>
                 {todoAssignments.length > 0 ? (
-                    todoAssignments.slice(0, 3).map((assignment, idx) => {
+                    todoAssignments.map((assignment, idx) => {
                         const statusInfo = getAssignmentStatus(assignment);
                         return (
                             <div
