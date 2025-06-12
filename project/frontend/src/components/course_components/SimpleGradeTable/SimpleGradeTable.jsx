@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 
 // css style
 import styles from "./SimpleGradeTable.module.css";
-
 function SimpleGradeTable({ simpleGrades, isCanceling, isEditing, SaveNewAssign, SaveNewExam }) {
     const [tableData, setTableData] = useState(null);
 
@@ -85,8 +84,9 @@ function SimpleGradeTable({ simpleGrades, isCanceling, isEditing, SaveNewAssign,
 
         // 確保 colIndex 在有效範圍內
         if (colIndex >= 0 && colIndex < newData.length) {
-            const numValue = value === "" ? 0 : Number(value);
+            let numValue = value === "" ? 0 : Number(value);
 
+            if (numValue < 0) numValue = 0;
             if (rowIndex === 0) {
                 newData[colIndex].max_score = numValue;
             } else if (rowIndex === 1) {
