@@ -8,7 +8,8 @@ import {
     DeleteAnnouncement
 } from "@/services/AnnouncementApi.js";
 import { addAlert } from "@/utils/alert/AlertContext";
-
+import TextEditor from "@/components/TextEditor/TextEditor";
+import ReactMarkdown from "react-markdown";
 function AnnouncementsPage() {
     const { courseId } = useParams();
     const { role } = useOutletContext();
@@ -25,7 +26,7 @@ function AnnouncementsPage() {
         new Date().toISOString()
     );
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-    
+
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {
@@ -136,8 +137,7 @@ function AnnouncementsPage() {
         }
     };
 
-    const handleContextChange = (e) => {
-        const value = e.target.value;
+    const handleContextChange = (value) => {
         setNewAnnouncementContext(
             value.length <= 2500 ? value : value.slice(0, 2500)
         );
@@ -221,7 +221,13 @@ function AnnouncementsPage() {
                         <div key={a.a_id} className={styles["announcement-item"]}>
                             <div className={styles["announcement-inner"]}>
                                 <div className={styles["announcement-left"]}>
-                                    <p className={styles["announcement-content"]}>{a.context}</p>
+                                    <p className={`${styles["announcement-content"]} markdown-body`}>
+                                        <ReactMarkdown>
+
+                                            {a.context}
+                                        </ReactMarkdown>
+
+                                    </p>
                                     <p className={styles["announcement-posted"]}>
                                         Posted on: {new Date(a.create_date).toLocaleString()}
                                     </p>
@@ -271,10 +277,11 @@ function AnnouncementsPage() {
                         </label>
                         <label>
                             Context:
-                            <textarea
+                            <TextEditor
                                 value={newAnnouncementContext}
                                 onChange={handleContextChange}
                                 maxLength={2500}
+                                height='50vh'
                             />
                         </label>
                         <div
@@ -289,7 +296,7 @@ function AnnouncementsPage() {
                             {2500 - newAnnouncementContext.length}
                         </div>
                         <div className={styles["modal-actions"]}>
-                            <button onClick={handleCreate}>Create</button>
+                            <button className={styles["modal-button"]} onClick={handleCreate}>Create</button>
                             <button onClick={closeCreateModal}>Cancel</button>
                         </div>
                     </div>
@@ -319,10 +326,11 @@ function AnnouncementsPage() {
                         </label>
                         <label>
                             Context:
-                            <textarea
+                            <TextEditor
                                 value={newAnnouncementContext}
                                 onChange={handleContextChange}
                                 maxLength={2500}
+                                height='50vh'
                             />
                         </label>
                         <div
