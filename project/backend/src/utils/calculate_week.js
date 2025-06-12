@@ -8,7 +8,6 @@ function CalculateWeek(courseStartDate, itemDate, courseWeekNum = 16) {
 
     // 標準化時間到午夜，避免時間部分影響計算
     courseDate.setHours(0, 0, 0, 0);
-    itemDate2.setHours(0, 0, 0, 0);
 
     // 將課程起始日對齊到當週的週日
     const dayOfWeek = courseDate.getDay(); // Sunday=0, Monday=1, ..., Saturday=6
