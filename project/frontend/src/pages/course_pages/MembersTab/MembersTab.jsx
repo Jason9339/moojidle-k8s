@@ -76,7 +76,11 @@ export default function MembersPage() {
                 <table className={styles.memberTable}>
                     <thead>
                         <tr>
-                            <th>姓名</th><th>Email</th>{isStudent && <th>學號</th>}<th>聯絡方式</th>{showSwitch && <th>操作</th>}
+                            <th>姓名</th>
+                            <th>Email</th>
+                            {/* {isStudent && <th>學號</th>} */}
+                            <th>聯絡方式</th>
+                            {showSwitch && <th>操作</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -84,7 +88,7 @@ export default function MembersPage() {
                             <tr key={user.user_id}>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
-                                {isStudent && <td>{user.student_id}</td>}
+                                {/* {isStudent && <td>{user.student_id}</td>} */}
                                 <td>
                                     {(user.contact_ways?.length > 0)
                                         ? user.contact_ways.map((c, i) => (
