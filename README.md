@@ -66,3 +66,8 @@ project-root/
 ├── backend/
 └── database/
 ```
+
+## Demo Video Link
+
+https://youtu.be/WaS_Lv9BzrI
+
