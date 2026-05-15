@@ -14,7 +14,8 @@ import {
 
 import { 
     SaveFile, 
-    DeleteFile 
+    DeleteFile,
+    DownloadFile
 } from '#src/services/file_services/file_storage_service.js';
 
 import {
@@ -26,13 +27,6 @@ import {
 } from '#src/services/course_member_service.js'
 
 import CalculateWeek from '#src/utils/calculate_week.js';
-
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function GetUpcomingExamsByUserId(req, res) {
     try {
@@ -194,32 +188,11 @@ async function UploadExam(req, res) {
 }
 
 // 下載考試附件
-function DownloadExam(req, res) {
-    const { path: filePathParam } = req.query;
+async function DownloadExam(req, res) {
+    const { path: filePathParam, filename } = req.query;
     if (!filePathParam) return res.status(400).json({ message: "Missing path parameter" });
 
-    const sanitizedPath = filePathParam.replace(/^\/+/, "");
-    const filePath = path.join(__dirname, "../../", sanitizedPath);
-    // console.log("Resolved file path:", filePath);
-
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error("❌ 檔案不存在:", filePath);
-            return res.status(404).json({ message: "File not found" });
-        }
-
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${path.basename(filePath)}"`
-        );
-
-        res.download(filePath, (err) => {
-            if (err) {
-                console.error("❌ 下載錯誤:", err);
-                res.status(500).json({ message: "Error downloading file" });
-            }
-        });
-    });
+    return DownloadFile(filePathParam, res, { downloadName: filename });
 }
 
 // async function DeleteExam(req, res) {

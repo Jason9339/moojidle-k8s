@@ -17,7 +17,8 @@ import { SaveFile, DeleteFile } from '#src/services/file_services/file_storage_s
 // Mock the file storage service
 vi.mock('#src/services/file_services/file_storage_service.js', () => ({
     SaveFile: vi.fn(),
-    DeleteFile: vi.fn()
+    DeleteFile: vi.fn(),
+    DownloadFile: vi.fn()
 }));
 
 // Seed 中只有一筆提交紀錄
