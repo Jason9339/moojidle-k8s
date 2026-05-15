@@ -233,7 +233,7 @@ async function DeleteSubmissionRecord(req, res) {
 
         // handle file deletion
         for (let attachment of subAss.attachments) {
-            const filePath = attachment.path_to_file; // Use path_to_file field
+            const filePath = attachment.url;
             const result = await DeleteFile(filePath);
 
             // since seed has a lot of invalid path, i dont do error handle here,
@@ -278,11 +278,16 @@ async function CreateAssignmentSubmission(req, res) {
         // handle file storage
         const savedFiles = [];
         for (const file of files) {
-            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment", {
+                contentType: file.mimetype,
+                size: file.size,
+                uploadedByUserId: userId,
+                relatedType: "assignment",
+                relatedId: assId
+            });
             savedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl,
-                size: file.size || 0 // 添加檔案大小資訊
+                url: savedFile.relativeUrl
             });
         }
 
@@ -340,11 +345,16 @@ async function UpdateAssignmentSubmission(req, res) {
         // handle file storage - 保存新上傳的檔案
         const newSavedFiles = [];
         for (const file of files) {
-            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment");
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "submitted_assignment", {
+                contentType: file.mimetype,
+                size: file.size,
+                uploadedByUserId: subAss.submit_by_user_id,
+                relatedType: "assignment",
+                relatedId: subAss.ass_id
+            });
             newSavedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl,
-                size: file.size || 0 // 添加檔案大小資訊
+                url: savedFile.relativeUrl
             });
         }
 
@@ -353,12 +363,12 @@ async function UpdateAssignmentSubmission(req, res) {
         for (const origFile of originalFiles) {
             const shouldKeep = filesToKeep.some(keepFile => 
                 keepFile.filename === origFile.filename || 
-                keepFile.path_to_file === origFile.path_to_file
+                keepFile.url === origFile.url
             );
 
             if (!shouldKeep) {
                 // 檔案不在保留列表中，需要刪除
-                const filePath = origFile.path_to_file;
+                const filePath = origFile.url;
                 
                 // 呼叫刪除函數，但不因為刪除失敗而中斷整個流程
                 const deleteResult = await DeleteFile(filePath);
@@ -369,9 +379,7 @@ async function UpdateAssignmentSubmission(req, res) {
         const finalAttachments = [
             ...filesToKeep.map(keepFile => ({
                 filename: keepFile.filename,
-                path_to_file: keepFile.path_to_file,
-                // 如果有 size 欄位就保留，否則設為 0
-                ...(keepFile.size !== undefined && { size: keepFile.size })
+                url: keepFile.url
             })),
             ...newSavedFiles
         ];

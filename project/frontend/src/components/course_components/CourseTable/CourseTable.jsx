@@ -30,9 +30,9 @@ function CourseTable({
 
     const handleMaterialDownload = async (material) => {
         try {
-            if (material.path_to_file) {
+            if (material.url?.startsWith("gridfs:")) {
                 // 檔案類型：使用 DownloadMaterial API
-                await DownloadMaterial(material.path_to_file, material.filename || material.name);
+                await DownloadMaterial(material.url, material.filename || material.name);
             } else if (material.url) {
                 // 連結類型：直接打開連結
                 window.open(material.url, '_blank');
@@ -349,7 +349,7 @@ function CourseTable({
                                                                     }
                                                                     onClick={() =>
                                                                         handleAssignmentDownload(
-                                                                            f.path_to_file,
+                                                                            f.url,
                                                                             f.filename
                                                                         )
                                                                     }
@@ -390,7 +390,7 @@ function CourseTable({
                                                                 className={styles["clickable-material"]}
                                                                 onClick={() =>
                                                                     handleExamDownload(
-                                                                        f.path_to_file,
+                                                                        f.url,
                                                                         f.filename
                                                                     )
                                                                 }

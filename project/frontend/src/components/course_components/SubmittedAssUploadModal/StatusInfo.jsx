@@ -8,7 +8,7 @@ export const StatusInfo = ({ existingFiles, deletedFiles, files }) => {
                 <strong>目前狀態：</strong>
                 {existingFiles.length > 0 ? (
                     <span className={styles["status-submitted"]}>
-                        已提交 {existingFiles.filter(f => !deletedFiles.includes(f.path_to_file)).length} 個檔案
+                        已提交 {existingFiles.filter(f => !deletedFiles.includes(f.url)).length} 個檔案
                     </span>
                 ) : (
                     <span className={styles["status-not-submitted"]}>尚未提交</span>

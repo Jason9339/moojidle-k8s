@@ -277,8 +277,13 @@ async function UpdateUserProfile(req, res) {
                 }
             }
 
-            // 儲存新頭像到 profiles 資料夾
-            const savedFile = await SaveFile(uploadedFile.buffer, decodeURIComponent(uploadedFile.originalname), "profiles");
+            const savedFile = await SaveFile(uploadedFile.buffer, decodeURIComponent(uploadedFile.originalname), "profiles", {
+                contentType: uploadedFile.mimetype,
+                size: uploadedFile.size,
+                uploadedByUserId: parseInt(userId),
+                relatedType: "user",
+                relatedId: parseInt(userId)
+            });
             avatarUrl = savedFile.relativeUrl;
         }
 
@@ -340,4 +345,3 @@ export {
     UpdateUserProfile,
     GetUserAvatar
 }
-

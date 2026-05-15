@@ -138,10 +138,16 @@ async function UploadExam(req, res) {
 
         const savedFiles = [];
         for (const file of files) {
-            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "exam");
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "exam", {
+                contentType: file.mimetype,
+                size: file.size,
+                uploadedByUserId: parseInt(createByUserId),
+                relatedType: "course",
+                relatedId: parseInt(courseId)
+            });
             savedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl
+                url: savedFile.relativeUrl
             });
         }
 

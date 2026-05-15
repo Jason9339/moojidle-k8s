@@ -137,13 +137,18 @@ async function UploadAssignment(req, res) {
         // 支援多檔案上傳
         const files = req.files || [];
 
-        // 儲存所有檔案到硬碟
         const savedFiles = [];
         for (const file of files) {
-            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment");
+            const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "assignment", {
+                contentType: file.mimetype,
+                size: file.size,
+                uploadedByUserId: parseInt(createByUserId),
+                relatedType: "course",
+                relatedId: parseInt(courseId)
+            });
             savedFiles.push({
                 filename: savedFile.originalName,
-                path_to_file: savedFile.relativeUrl
+                url: savedFile.relativeUrl
             });
         }
 

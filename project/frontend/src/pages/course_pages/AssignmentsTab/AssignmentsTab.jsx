@@ -85,7 +85,7 @@ function AssignmentsTab() {
     // 處理作業附件下載（老師上傳的檔案）
     const handleAssignmentDownload = async (attachment) => {
         try {
-            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+            await DownloadAssignment(attachment.url, attachment.filename);
         } catch (error) {
             addAlert(`下載失敗：${attachment.filename}`, "error");
             console.error("下載作業附件錯誤:", error);
@@ -95,7 +95,7 @@ function AssignmentsTab() {
     // 處理學生繳交檔案下載
     const handleSubmittedFileDownload = async (attachment) => {
         try {
-            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+            await DownloadAssignment(attachment.url, attachment.filename);
         } catch (error) {
             addAlert(`下載失敗：${attachment.filename}`, "error");
             console.error("下載學生繳交檔案錯誤:", error);

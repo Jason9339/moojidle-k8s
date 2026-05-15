@@ -36,11 +36,10 @@ async function GetCourseFiles(req, res) {
             return {
                 id: material.m_id,
                 name: material.m_name,
-                url: material.url || material.path_to_file,
+                url: material.url,
                 description: material.description,
                 displayDate: material.display_date || material.create_date,
                 week: week,
-                path_to_file: material.path_to_file,
                 filename: material.filename
             };
         });
@@ -167,8 +166,13 @@ async function UploadCourseMaterialFile(req, res) {
 
         const now = new Date();
         
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material");
+        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material", {
+            contentType: file.mimetype,
+            size: file.size,
+            uploadedByUserId: parseInt(createByUserId),
+            relatedType: "course",
+            relatedId: parseInt(courseId)
+        });
         
         const materialData = {
             in_course_id: parseInt(courseId),
@@ -177,7 +181,7 @@ async function UploadCourseMaterialFile(req, res) {
             description: description || "",
             create_date: now,
             display_date: new Date(displayDate),
-            path_to_file: savedFile.relativeUrl,
+            url: savedFile.relativeUrl,
             filename: savedFile.originalName
         };
 
