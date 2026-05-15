@@ -1,16 +1,11 @@
-import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import { Readable } from "stream";
 import mongoose from "mongoose";
 
-// 計算 uploads 基本目錄
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const backendRoot = path.join(__dirname, "../../../");
 const bucketName = "uploaded_files";
 const gridFsPrefix = "gridfs:";
 
+// 取得目前 MongoDB 連線對應的 GridFS bucket。
 function GetBucket() {
     if (!mongoose.connection.db) {
         throw new Error("Database connection is not ready");
@@ -21,6 +16,7 @@ function GetBucket() {
     });
 }
 
+// 將 gridfs:<ObjectId> 字串解析成 MongoDB ObjectId。
 function ParseGridFsFileId(fileRef) {
     if (!fileRef || typeof fileRef !== "string" || !fileRef.startsWith(gridFsPrefix)) {
         return null;
@@ -34,23 +30,16 @@ function ParseGridFsFileId(fileRef) {
     return new mongoose.Types.ObjectId(rawId);
 }
 
-function BuildLegacyLocalPath(filePath) {
-    const sanitizedPath = filePath.replace(/^\/+/, "");
-    const fullPath = path.resolve(backendRoot, sanitizedPath);
-
-    if (!fullPath.startsWith(path.resolve(backendRoot))) {
-        throw new Error("Invalid file path");
-    }
-
-    return fullPath;
-}
-
+// 將下載檔名轉成 Content-Disposition 可用的安全格式。
+// 將中文或特殊字元的檔名轉換為 RFC 5987 規範的編碼
 function EncodeDownloadName(fileName) {
     const fallbackName = "download";
     const safeName = path.basename(fileName || fallbackName).replace(/"/g, "");
     return encodeURIComponent(safeName);
 }
 
+// 將 readable stream 寫入 writable stream，並以 Promise 等待完成。
+// 等待資料完全傳輸完畢才 resolve，若中間出錯則 reject，確保非同步操作的穩定。
 function PipeReadableToWritable(readable, writable) {
     return new Promise((resolve, reject) => {
         readable.on("error", reject);
@@ -106,21 +95,18 @@ export async function SaveFile(buffer, originalName, category, options = {}) {
 
 /**
  * 刪除指定檔案
- * @param {string} filePath - GridFS ref 或 legacy 本機相對路徑
+ * @param {string} filePath - GridFS ref
  * @returns {Promise<boolean>} 是否成功刪除
  */
 export async function DeleteFile(filePath) {
     try {
         const gridFsFileId = ParseGridFsFileId(filePath);
-        if (gridFsFileId) {
-            const bucket = GetBucket();
-            await bucket.delete(gridFsFileId);
-            return true;
+        if (!gridFsFileId) {
+            return false;
         }
 
-        const fullPath = BuildLegacyLocalPath(filePath);
-        await fs.promises.access(fullPath, fs.constants.F_OK);
-        await fs.promises.unlink(fullPath);
+        const bucket = GetBucket();
+        await bucket.delete(gridFsFileId);
         return true;
     } catch (error) {
         console.error(`刪除檔案失敗: ${filePath}`, error);
@@ -150,7 +136,7 @@ export async function GetFileInfo(filePath) {
 
 /**
  * 將檔案輸出至 Express response
- * @param {string} filePath - GridFS ref 或 legacy 本機相對路徑
+ * @param {string} filePath - GridFS ref
  * @param {object} res - Express response
  * @param {object} options - 下載選項
  * @returns {Promise<void>}
@@ -158,48 +144,35 @@ export async function GetFileInfo(filePath) {
 export async function DownloadFile(filePath, res, options = {}) {
     try {
         const gridFsFileId = ParseGridFsFileId(filePath);
-        if (gridFsFileId) {
-            const bucket = GetBucket();
-            const fileInfo = await GetFileInfo(filePath);
-
-            if (!fileInfo) {
-                return res.status(404).json({ message: "File not found" });
-            }
-
-            const downloadName = options.downloadName || fileInfo.metadata?.originalName || fileInfo.filename;
-            const dispositionType = options.inline ? "inline" : "attachment";
-
-            res.setHeader("Content-Type", fileInfo.contentType || "application/octet-stream");
-            res.setHeader("Content-Length", fileInfo.length);
-            res.setHeader(
-                "Content-Disposition",
-                `${dispositionType}; filename*=UTF-8''${EncodeDownloadName(downloadName)}`
-            );
-
-            return await new Promise((resolve, reject) => {
-                const downloadStream = bucket.openDownloadStream(gridFsFileId);
-                downloadStream.on("error", reject);
-                res.on("error", reject);
-                res.on("finish", resolve);
-                downloadStream.pipe(res);
-            });
+        if (!gridFsFileId) {
+            return res.status(400).json({ message: "Invalid file reference" });
         }
 
-        const fullPath = BuildLegacyLocalPath(filePath);
-        await fs.promises.access(fullPath, fs.constants.F_OK);
+        const bucket = GetBucket();
+        const fileInfo = await GetFileInfo(filePath);
 
-        const downloadName = options.downloadName || path.basename(fullPath);
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename*=UTF-8''${EncodeDownloadName(downloadName)}`
-        );
-
-        return res.download(fullPath, downloadName);
-    } catch (error) {
-        if (error.code === "ENOENT") {
+        if (!fileInfo) {
             return res.status(404).json({ message: "File not found" });
         }
 
+        const downloadName = options.downloadName || fileInfo.metadata?.originalName || fileInfo.filename;
+        const dispositionType = options.inline ? "inline" : "attachment";
+
+        res.setHeader("Content-Type", fileInfo.contentType || "application/octet-stream");
+        res.setHeader("Content-Length", fileInfo.length);
+        res.setHeader(
+            "Content-Disposition",
+            `${dispositionType}; filename*=UTF-8''${EncodeDownloadName(downloadName)}`
+        );
+
+        return await new Promise((resolve, reject) => {
+            const downloadStream = bucket.openDownloadStream(gridFsFileId);
+            downloadStream.on("error", reject);
+            res.on("error", reject);
+            res.on("finish", resolve);
+            downloadStream.pipe(res);
+        });
+    } catch (error) {
         console.error(`[DownloadFile] Error downloading file ${filePath}:`, error);
         return res.status(500).json({ message: "Error downloading file" });
     }

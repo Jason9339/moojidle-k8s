@@ -57,4 +57,10 @@ describe('File Storage Service', () => {
 
         expect(deleted).toBe(false);
     });
+
+    it('should reject non-GridFS file references when deleting', async () => {
+        const deleted = await DeleteFile('/uploads/material/old-file.pdf');
+
+        expect(deleted).toBe(false);
+    });
 });
