@@ -108,6 +108,79 @@ db.uploaded_files.files.find().pretty()
 db.uploaded_files.chunks.countDocuments()
 ```
 
+## 發布到 Docker Hub / 未來 K8s 使用方式
+
+目前的 `docker-compose.yml` 適合本機開發與測試，會幫你在本機 build frontend、backend image，並一起啟動 MongoDB。
+
+Kubernetes 的實際 manifests 與操作方式請看 [`k8s/README.md`](./k8s/README.md)。
+
+如果未來要部署到 Kubernetes，建議不要把整個 MERN 專案、MongoDB、Kafka 全部包成同一個 image。比較合理的方式是：
+
+- frontend 一個 image
+- backend 一個 image
+- MongoDB 使用官方 `mongo` image 或雲端資料庫服務
+- Kafka 使用官方/Bitnami/Confluent image 或雲端 Kafka 服務
+
+也就是說，Docker image 只包「應用程式本身」，資料庫資料、上傳檔案、Kafka topic 資料不會包在 image 裡。這些資料應該由 Kubernetes volume、MongoDB volume、雲端資料庫或備份/還原流程管理。
+
+### Build frontend image
+
+請把 `YOUR_DOCKERHUB_USERNAME` 換成你的 Docker Hub 帳號：
+
+```bash
+docker build -t YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest ./project/frontend
+```
+
+### Build backend image
+
+```bash
+docker build -t YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest ./project/backend
+```
+
+### Push images 到 Docker Hub
+
+先登入 Docker Hub：
+
+```bash
+docker login
+```
+
+推送 frontend：
+
+```bash
+docker push YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest
+```
+
+推送 backend：
+
+```bash
+docker push YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest
+```
+
+之後其他人或 Kubernetes 就可以直接 pull：
+
+```bash
+docker pull YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest
+docker pull YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest
+```
+
+### K8s 需要另外設定的環境變數
+
+backend container 需要：
+
+```text
+PORT=3000
+DATA_BASE_URL=mongodb://<mongo-service-name>:27017/moojidle
+```
+
+frontend container 需要：
+
+```text
+VITE_API_BASE_URL=http://<backend-service-or-ingress-url>
+```
+
+注意：Vite 的 `VITE_API_BASE_URL` 會在前端 dev server 或 build 階段被讀取。正式部署如果使用靜態 build，通常會需要在 build image 時就決定 API URL，或另外設計 runtime config。
+
 ## 常用除錯指令
 
 查看所有服務 log：
