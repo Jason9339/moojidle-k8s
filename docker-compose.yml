@@ -1,0 +1,53 @@
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: moojidle-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./project/backend
+    container_name: moojidle-backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DATA_BASE_URL: mongodb://mongo:27017/moojidle
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./project/backend:/app
+      - backend-node-modules:/app/node_modules
+      - ./project/backend/uploads:/app/uploads
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./project/frontend
+    container_name: moojidle-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./project/frontend:/app
+      - frontend-node-modules:/app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+
+volumes:
+  mongo-data:
+  backend-node-modules:
+  frontend-node-modules:

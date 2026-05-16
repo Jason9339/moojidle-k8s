@@ -58,6 +58,20 @@
 5. `cd frontend`
 6. follow the `README.md`'s instructions
 
+## Docker Compose
+
+You can also run the frontend, backend, and MongoDB together with Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
+- MongoDB container URL: `mongodb://mongo:27017/moojidle`
+
+For more details, see [DOCKER_README.md](./DOCKER_README.md).
+
 ## Brief File Structures
 
 ```
