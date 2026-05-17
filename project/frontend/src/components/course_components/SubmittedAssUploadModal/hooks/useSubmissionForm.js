@@ -66,7 +66,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
     const handleUpdateSubmission = async (formData) => {
         const remainingExistingFiles = existingFiles.filter(
-            (file) => !(deletedFiles.includes(file.path_to_file) || deletedFiles.includes(file.filename))
+            (file) => !(deletedFiles.includes(file.url) || deletedFiles.includes(file.filename))
         );
 
         const isEmptyDescription = !description.trim();
@@ -92,7 +92,7 @@ export function useSubmissionForm({ courseId, assignmentId, existingSubmission, 
 
             if (existingFiles.length > 0) {
                 const keepFilesData = remainingExistingFiles.map(f => ({
-                    path_to_file: f.path_to_file,
+                    url: f.url,
                     filename: f.filename,
                     size: f.size
                 }));

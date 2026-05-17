@@ -6,12 +6,12 @@ export const ExistingFilesList = ({ existingFiles, deletedFiles, onDeleteFile, o
 
     return (
         <div className={`${styles["input-group"]} ${styles["vertical-group"]}`}>
-            <label>已提交的檔案 ({existingFiles.filter(f => !deletedFiles.includes(f.path_to_file)).length} 個)</label>
+            <label>已提交的檔案 ({existingFiles.filter(f => !deletedFiles.includes(f.url)).length} 個)</label>
             <div className={styles["existing-files-list"]}>
                 {existingFiles.map((attachment, index) => {
-                    const fileName = attachment.filename || attachment.path_to_file?.split('/').pop() || `檔案${index + 1}`;
+                    const fileName = attachment.filename || `檔案${index + 1}`;
                     const fileSize = attachment.size ? `(${(attachment.size / 1024).toFixed(1)} KB)` : '';
-                    const fileIdentifier = attachment.path_to_file || attachment.filename;
+                    const fileIdentifier = attachment.url || attachment.filename;
                     const isMarkedForDeletion = deletedFiles.includes(fileIdentifier);
 
                     return (

@@ -1,64 +1,179 @@
-import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-import { randomUUID } from "crypto";
+import { Readable } from "stream";
+import mongoose from "mongoose";
 
-// 計算 uploads 基本目錄
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const basePath = path.join(__dirname, "../../../uploads");
+const bucketName = "uploaded_files";
+const gridFsPrefix = "gridfs:";
+
+// 取得目前 MongoDB 連線對應的 GridFS bucket。
+function GetBucket() {
+    if (!mongoose.connection.db) {
+        throw new Error("Database connection is not ready");
+    }
+
+    return new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName
+    });
+}
+
+// 將 gridfs:<ObjectId> 字串解析成 MongoDB ObjectId。
+function ParseGridFsFileId(fileRef) {
+    if (!fileRef || typeof fileRef !== "string" || !fileRef.startsWith(gridFsPrefix)) {
+        return null;
+    }
+
+    const rawId = fileRef.slice(gridFsPrefix.length);
+    if (!mongoose.Types.ObjectId.isValid(rawId)) {
+        throw new Error(`Invalid GridFS file id: ${rawId}`);
+    }
+
+    return new mongoose.Types.ObjectId(rawId);
+}
+
+// 將下載檔名轉成 Content-Disposition 可用的安全格式。
+// 將中文或特殊字元的檔名轉換為 RFC 5987 規範的編碼
+function EncodeDownloadName(fileName) {
+    const fallbackName = "download";
+    const safeName = path.basename(fileName || fallbackName).replace(/"/g, "");
+    return encodeURIComponent(safeName);
+}
+
+// 將 readable stream 寫入 writable stream，並以 Promise 等待完成。
+// 等待資料完全傳輸完畢才 resolve，若中間出錯則 reject，確保非同步操作的穩定。
+function PipeReadableToWritable(readable, writable) {
+    return new Promise((resolve, reject) => {
+        readable.on("error", reject);
+        writable.on("error", reject);
+        writable.on("finish", resolve);
+        readable.pipe(writable);
+    });
+}
 
 /**
- * 將檔案 buffer 寫入指定子資料夾
+ * 將檔案 buffer 儲存至 MongoDB GridFS
  * @param {Buffer} buffer - 檔案資料
  * @param {string} originalName - 原始檔名（含副檔名）
- * @param {string} subfolder - 要儲存的子資料夾 (e.g., "assignment", "material")
+ * @param {string} category - 檔案分類 (e.g., "assignment", "material")
+ * @param {object} options - 額外 metadata
  * @returns {Promise<object>} 檔案資訊（包含路徑與 id 等）
  */
-export async function SaveFile(buffer, originalName, subfolder) {
+export async function SaveFile(buffer, originalName, category, options = {}) {
     try {
-        const ext = path.extname(originalName);
-        const fileId = randomUUID();
-        const savedFileName = `${fileId}${ext}`;
-        const folderPath = path.join(basePath, subfolder);
+        const bucket = GetBucket();
+        const safeOriginalName = path.basename(originalName || "upload");
+        const contentType = options.contentType || "application/octet-stream";
+        const readable = Readable.from(buffer);
+        const uploadStream = bucket.openUploadStream(safeOriginalName, {
+            contentType,
+            metadata: {
+                originalName: safeOriginalName,
+                category,
+                uploadedByUserId: options.uploadedByUserId,
+                relatedType: options.relatedType,
+                relatedId: options.relatedId,
+                size: options.size ?? buffer.length
+            }
+        });
 
-        await fs.promises.mkdir(folderPath, { recursive: true });
+        await PipeReadableToWritable(readable, uploadStream);
 
-        const fullPath = path.join(folderPath, savedFileName);
-        await fs.promises.writeFile(fullPath, buffer);
+        const fileId = uploadStream.id.toString();
 
         return {
             fileId,
-            savedFileName,
-            fullPath,
-            relativeUrl: `/uploads/${subfolder}/${savedFileName}`,
-            originalName,
+            savedFileName: safeOriginalName,
+            relativeUrl: `${gridFsPrefix}${fileId}`,
+            originalName: safeOriginalName,
+            contentType,
+            size: options.size ?? buffer.length
         };
     } catch (error) {
-        console.error(`[SaveFile] Error saving file ${originalName} to ${subfolder}:`, error);
+        console.error(`[SaveFile] Error saving file ${originalName} to ${category}:`, error);
         throw new Error(`Failed to save file: ${error.message}`);
     }
 }
 
 /**
- * 刪除指定路徑的檔案
- * @param {string} filePath - 檔案的相對路徑 (以 /uploads 開頭的路徑)
+ * 刪除指定檔案
+ * @param {string} filePath - GridFS ref
  * @returns {Promise<boolean>} 是否成功刪除
  */
 export async function DeleteFile(filePath) {
     try {
-        // 移除開頭的斜線並解析完整路徑
-        const sanitizedPath = filePath.replace(/^\/+/, "");
-        const fullPath = path.join(__dirname, "../../../", sanitizedPath);
-        
-        // 檢查檔案是否存在
-        await fs.promises.access(fullPath, fs.constants.F_OK);
-        
-        // 刪除檔案
-        await fs.promises.unlink(fullPath);
+        const gridFsFileId = ParseGridFsFileId(filePath);
+        if (!gridFsFileId) {
+            return false;
+        }
+
+        const bucket = GetBucket();
+        await bucket.delete(gridFsFileId);
         return true;
     } catch (error) {
         console.error(`刪除檔案失敗: ${filePath}`, error);
         return false;
+    }
+}
+
+/**
+ * 取得檔案 metadata
+ * @param {string} filePath - GridFS ref
+ * @returns {Promise<object|null>} 檔案 metadata
+ */
+export async function GetFileInfo(filePath) {
+    const gridFsFileId = ParseGridFsFileId(filePath);
+    if (!gridFsFileId) {
+        return null;
+    }
+
+    const files = await mongoose.connection.db
+        .collection(`${bucketName}.files`)
+        .find({ _id: gridFsFileId })
+        .limit(1)
+        .toArray();
+
+    return files[0] || null;
+}
+
+/**
+ * 將檔案輸出至 Express response
+ * @param {string} filePath - GridFS ref
+ * @param {object} res - Express response
+ * @param {object} options - 下載選項
+ * @returns {Promise<void>}
+ */
+export async function DownloadFile(filePath, res, options = {}) {
+    try {
+        const gridFsFileId = ParseGridFsFileId(filePath);
+        if (!gridFsFileId) {
+            return res.status(400).json({ message: "Invalid file reference" });
+        }
+
+        const bucket = GetBucket();
+        const fileInfo = await GetFileInfo(filePath);
+
+        if (!fileInfo) {
+            return res.status(404).json({ message: "File not found" });
+        }
+
+        const downloadName = options.downloadName || fileInfo.metadata?.originalName || fileInfo.filename;
+        const dispositionType = options.inline ? "inline" : "attachment";
+
+        res.setHeader("Content-Type", fileInfo.contentType || "application/octet-stream");
+        res.setHeader("Content-Length", fileInfo.length);
+        res.setHeader(
+            "Content-Disposition",
+            `${dispositionType}; filename*=UTF-8''${EncodeDownloadName(downloadName)}`
+        );
+
+        return await new Promise((resolve, reject) => {
+            const downloadStream = bucket.openDownloadStream(gridFsFileId);
+            downloadStream.on("error", reject);
+            res.on("error", reject);
+            res.on("finish", resolve);
+            downloadStream.pipe(res);
+        });
+    } catch (error) {
+        console.error(`[DownloadFile] Error downloading file ${filePath}:`, error);
+        return res.status(500).json({ message: "Error downloading file" });
     }
 }

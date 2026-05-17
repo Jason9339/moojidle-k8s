@@ -131,8 +131,7 @@ describe('Submitted Assignments Service Test', () => {
                 attachments: [
                     {
                         filename: "test_submission.pdf",
-                        path_to_file: "/uploads/submitted_assignment/test_submission.pdf",
-                        size: 1024
+                        url: "gridfs:665f1234567890abcdef1234"
                     }
                 ],
                 description: "Test submission for User 1"
@@ -179,8 +178,7 @@ describe('Submitted Assignments Service Test', () => {
             const newAttachments = [
                 {
                     filename: "updated_file.pdf",
-                    path_to_file: "/uploads/submitted_assignment/updated_file.pdf",
-                    size: 2048
+                    url: "gridfs:665f1234567890abcdef5678"
                 }
             ];
             const updateTime = new Date();

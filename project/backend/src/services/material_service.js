@@ -28,9 +28,9 @@ async function DeleteMaterialById(materialId) {
             console.error(`[DeleteMaterialService] 找不到教材，查詢條件:`, query);
             return { deletedCount: 0 };
         }
-        // 如果存在檔案路徑，執行檔案刪除操作
-        if (material.path_to_file) {
-            await DeleteFile(material.path_to_file);
+        // 如果是 GridFS 檔案，執行檔案刪除操作
+        if (material.url?.startsWith("gridfs:")) {
+            await DeleteFile(material.url);
         }
         // 刪除數據庫中的記錄
         const result = await materialsCollection.deleteOne(query);
