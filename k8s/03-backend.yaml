@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: nonohuang0819/moojidle-backend:latest
+          image: ghcr.io/jason9339/moojidle-k8s/backend:main
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

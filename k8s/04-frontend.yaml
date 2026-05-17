@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: nonohuang0819/moojidle-frontend:latest
+          image: ghcr.io/jason9339/moojidle-k8s/frontend:main
           imagePullPolicy: Always
           ports:
             - containerPort: 5173
