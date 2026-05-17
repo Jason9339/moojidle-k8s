@@ -63,7 +63,7 @@ const SubmittedTab = ({ userId, reviewData, setReviewData, reviewingSubmission, 
 
     const handleAttachmentClick = (file, event) => {
         event.stopPropagation();
-        DownloadSubmissions(file.path_to_file, file.filename);
+        DownloadSubmissions(file.url, file.filename);
     };
 
     const handleReviewClick = (submission) => setReviewingSubmission(submission);

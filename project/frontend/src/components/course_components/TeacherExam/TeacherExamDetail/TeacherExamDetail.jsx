@@ -39,7 +39,7 @@ function ExamDetail({ exam }) {
 
     const handleDownload = async (attachment) => {
         try {
-            await DownloadExam(attachment.path_to_file, attachment.filename);
+            await DownloadExam(attachment.url, attachment.filename);
         } catch (error) {
             alert(`下載失敗：${attachment.filename}`);
         }

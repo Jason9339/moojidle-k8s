@@ -1,6 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import { GetCourseExams, UploadExam, DownloadExam } from '#src/controllers/exam_controller.js';
 import { createMockReq, createMockRes } from '../test-utils.js';
+import { DownloadFile } from '#src/services/file_services/file_storage_service.js';
+
+vi.mock('#src/services/file_services/file_storage_service.js', () => ({
+    SaveFile: vi.fn(),
+    DeleteFile: vi.fn(),
+    DownloadFile: vi.fn()
+}));
 
 describe('Exam Controller', () => {
     beforeAll(global.beforeAll);
@@ -76,40 +83,31 @@ describe('Exam Controller', () => {
     });
 
     describe('DownloadExam', () => {
-        it('應該返回 400 當缺少 path 參數', () => {
+        beforeEach(() => {
+            vi.clearAllMocks();
+        });
+
+        it('應該返回 400 當缺少 path 參數', async () => {
             const req = createMockReq({}, {}, { });
             const res = createMockRes();
 
-            DownloadExam(req, res);
+            await DownloadExam(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
             expect(res.json).toHaveBeenCalledWith({ message: "Missing path parameter" });
         });
 
-        it('應該返回 404 當檔案不存在', async () => {
-            const req = createMockReq({}, {}, { path: '/not/exist/file.pdf' });
+        it('應該委派 GridFS 下載給檔案儲存服務', async () => {
+            const req = createMockReq({}, {}, { path: 'gridfs:665f1234567890abcdef1234', filename: 'test.pdf' });
             const res = createMockRes();
 
-            // Mock fs.access to always call callback with error
-            const fs = require('fs');
-            const originalAccess = fs.access;
-            fs.access = (filePath, mode, cb) => cb(new Error('not found'));
+            await DownloadExam(req, res);
 
-            // Use a Promise to wait for the async assertions
-            await new Promise((resolve) => {
-                res.status.mockImplementation((code) => {
-                    expect(code).toBe(404);
-                    return res;
-                });
-                res.json.mockImplementation((obj) => {
-                    expect(obj).toHaveProperty('message', 'File not found');
-                    // Restore fs.access after test
-                    fs.access = originalAccess;
-                    resolve();
-                });
-
-                DownloadExam(req, res);
-            });
+            expect(DownloadFile).toHaveBeenCalledWith(
+                'gridfs:665f1234567890abcdef1234',
+                res,
+                { downloadName: 'test.pdf' }
+            );
         });
     });
 });

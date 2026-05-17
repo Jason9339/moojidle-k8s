@@ -12,18 +12,11 @@ import {
 
 import {
     SaveFile,
-    DeleteFile
+    DeleteFile,
+    DownloadFile
 } from '#src/services/file_services/file_storage_service.js';
 
 import CalculateWeek from '#src/utils/calculate_week.js';
-
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
-
-// 模擬 __dirname，因為使用的是 ES module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // 取得特定課程的檔案
 async function GetCourseFiles(req, res) {
@@ -43,11 +36,10 @@ async function GetCourseFiles(req, res) {
             return {
                 id: material.m_id,
                 name: material.m_name,
-                url: material.url || material.path_to_file,
+                url: material.url,
                 description: material.description,
                 displayDate: material.display_date || material.create_date,
                 week: week,
-                path_to_file: material.path_to_file,
                 filename: material.filename
             };
         });
@@ -174,8 +166,13 @@ async function UploadCourseMaterialFile(req, res) {
 
         const now = new Date();
         
-        // 儲存檔案到硬碟
-        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material");
+        const savedFile = await SaveFile(file.buffer, decodeURIComponent(file.originalname), "material", {
+            contentType: file.mimetype,
+            size: file.size,
+            uploadedByUserId: parseInt(createByUserId),
+            relatedType: "course",
+            relatedId: parseInt(courseId)
+        });
         
         const materialData = {
             in_course_id: parseInt(courseId),
@@ -184,7 +181,7 @@ async function UploadCourseMaterialFile(req, res) {
             description: description || "",
             create_date: now,
             display_date: new Date(displayDate),
-            path_to_file: savedFile.relativeUrl,
+            url: savedFile.relativeUrl,
             filename: savedFile.originalName
         };
 
@@ -254,36 +251,14 @@ async function UploadCourseMaterialLink(req, res) {
 }
 
 // 下載教材檔案
-function DownloadMaterial(req, res) {
-    const { path: filePathParam } = req.query;
+async function DownloadMaterial(req, res) {
+    const { path: filePathParam, filename } = req.query;
 
     if (!filePathParam) {
         return res.status(400).json({ message: "Missing path parameter" });
     }
 
-    const sanitizedPath = filePathParam.replace(/^\/+/, ""); // 去除開頭的 "/"
-    // 從當前控制器目錄往上回到 backend 根目錄，然後加上檔案路徑
-    const filePath = path.join(__dirname, "../../", sanitizedPath);
-    // console.log("Resolved file path:", filePath);
-
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error("❌ 檔案不存在:", filePath);
-            return res.status(404).json({ message: "File not found" });
-        }
-
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${path.basename(filePath)}"`
-        );
-
-        res.download(filePath, (err) => {
-            if (err) {
-                console.error("❌ 下載錯誤:", err);
-                res.status(500).json({ message: "Error downloading file" });
-            }
-        });
-    });
+    return DownloadFile(filePathParam, res, { downloadName: filename });
 }
 
 // 刪除教材檔案

@@ -17,7 +17,8 @@ import { SaveFile, DeleteFile } from '#src/services/file_services/file_storage_s
 // Mock the file storage service
 vi.mock('#src/services/file_services/file_storage_service.js', () => ({
     SaveFile: vi.fn(),
-    DeleteFile: vi.fn()
+    DeleteFile: vi.fn(),
+    DownloadFile: vi.fn()
 }));
 
 // Seed 中只有一筆提交紀錄
@@ -209,13 +210,17 @@ describe('Submitted Assignments Controller Test', () => {
                 {
                     buffer: Buffer.from('test file content'),
                     originalname: 'test.pdf',
+                    mimetype: 'application/pdf',
                     size: 1024
                 }
             ];
 
             SaveFile.mockResolvedValue({
                 originalName: 'test.pdf',
-                relativeUrl: '/uploads/submitted_assignment/test.pdf'
+                relativeUrl: 'gridfs:665f1234567890abcdef1234',
+                fileId: '665f1234567890abcdef1234',
+                contentType: 'application/pdf',
+                size: 1024
             });
 
             const req = createMockReq({
@@ -233,7 +238,14 @@ describe('Submitted Assignments Controller Test', () => {
             expect(SaveFile).toHaveBeenCalledWith(
                 mockFiles[0].buffer,
                 'test.pdf',
-                'submitted_assignment'
+                'submitted_assignment',
+                {
+                    contentType: 'application/pdf',
+                    size: 1024,
+                    uploadedByUserId: 1,
+                    relatedType: 'assignment',
+                    relatedId: 1
+                }
             );
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith("create sub ass successfully");
@@ -290,6 +302,7 @@ describe('Submitted Assignments Controller Test', () => {
                 {
                     buffer: Buffer.from('test file content'),
                     originalname: 'test.pdf',
+                    mimetype: 'application/pdf',
                     size: 1024
                 }
             ];
@@ -327,13 +340,17 @@ describe('Submitted Assignments Controller Test', () => {
                 {
                     buffer: Buffer.from('new file content'),
                     originalname: 'new_test.pdf',
+                    mimetype: 'application/pdf',
                     size: 2048
                 }
             ];
 
             SaveFile.mockResolvedValue({
                 originalName: 'new_test.pdf',
-                relativeUrl: '/uploads/submitted_assignment/new_test.pdf'
+                relativeUrl: 'gridfs:665f1234567890abcdef5678',
+                fileId: '665f1234567890abcdef5678',
+                contentType: 'application/pdf',
+                size: 2048
             });
 
             DeleteFile.mockResolvedValue(true);
@@ -344,8 +361,7 @@ describe('Submitted Assignments Controller Test', () => {
                 keepFiles: JSON.stringify([
                     {
                         filename: 'existing_file.pdf',
-                        path_to_file: '/uploads/submitted_assignment/existing_file.pdf',
-                        size: 1024
+                        url: 'gridfs:665f1234567890abcdef1234'
                     }
                 ])
             }, { 
@@ -359,7 +375,14 @@ describe('Submitted Assignments Controller Test', () => {
             expect(SaveFile).toHaveBeenCalledWith(
                 mockFiles[0].buffer,
                 'new_test.pdf',
-                'submitted_assignment'
+                'submitted_assignment',
+                {
+                    contentType: 'application/pdf',
+                    size: 2048,
+                    uploadedByUserId: 3,
+                    relatedType: 'assignment',
+                    relatedId: 1
+                }
             );
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith("update sub ass successfully");

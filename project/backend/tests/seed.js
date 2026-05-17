@@ -202,7 +202,7 @@ async function AnnouncementSeed() {
         {
             "a_id": 2,
             "create_date": new Date("2025-01-15T00:00:00.000Z"),
-            "announce_date": new Date("2026-01-15T00:00:00.000Z"),
+            "announce_date": new Date("9999-01-15T00:00:00.000Z"),
             "context": "Announcement 2 content.",
             "user_id": 1,
             "course_id": 1

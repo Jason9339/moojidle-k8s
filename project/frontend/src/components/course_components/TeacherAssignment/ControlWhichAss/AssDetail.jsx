@@ -40,7 +40,7 @@ function AssDetail({ assignment }) {
 
     const handleDownload = async (attachment) => {
         try {
-            await DownloadAssignment(attachment.path_to_file, attachment.filename);
+            await DownloadAssignment(attachment.url, attachment.filename);
         } catch (error) {
             addAlert(`下載失敗：${attachment.filename}`);
         }

@@ -13,14 +13,7 @@ import{
     SendNotification, SendNotified
 } from "#src/services/notification_service.js"
 
-import { SaveFile, DeleteFile } from "#src/services/file_services/file_storage_service.js";
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-
-// 獲取當前檔案的目錄
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { SaveFile, DeleteFile, DownloadFile } from "#src/services/file_services/file_storage_service.js";
 
 // Register a new user in the database
 // In Postman send this json format in the body
@@ -284,8 +277,13 @@ async function UpdateUserProfile(req, res) {
                 }
             }
 
-            // 儲存新頭像到 profiles 資料夾
-            const savedFile = await SaveFile(uploadedFile.buffer, decodeURIComponent(uploadedFile.originalname), "profiles");
+            const savedFile = await SaveFile(uploadedFile.buffer, decodeURIComponent(uploadedFile.originalname), "profiles", {
+                contentType: uploadedFile.mimetype,
+                size: uploadedFile.size,
+                uploadedByUserId: parseInt(userId),
+                relatedType: "user",
+                relatedId: parseInt(userId)
+            });
             avatarUrl = savedFile.relativeUrl;
         }
 
@@ -326,32 +324,8 @@ async function GetUserAvatar(req, res) {
         if (!avatarPath || avatarPath === '/user_pfp/default.png' || avatarPath.trim() === '') {
             return res.status(404).send({ message: "頭像路徑無效" });
         }
-        
-        // 從路徑中提取檔案名稱
-        const filename = avatarPath.split('/').pop();
-        if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-            return res.status(400).send({ message: "無效的檔案路徑" });
-        }
-        
-        // 構建安全的檔案路徑
-        const uploadsDir = path.join(__dirname, '../../uploads/profiles');
-        const filePath = path.join(uploadsDir, filename);
-        
-        // 檢查檔案是否存在
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).send({ message: "頭像檔案不存在" });
-        }
-        
-        // 檢查檔案類型
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-        const fileExtension = path.extname(filename).toLowerCase();
-        
-        if (!allowedExtensions.includes(fileExtension)) {
-            return res.status(400).send({ message: "不支援的檔案格式" });
-        }
-        
-        // 發送檔案
-        res.sendFile(filePath);
+
+        return DownloadFile(avatarPath, res, { inline: true });
         
     } catch (err) {
         console.error("獲取頭像檔案錯誤:", err);
@@ -371,5 +345,3 @@ export {
     UpdateUserProfile,
     GetUserAvatar
 }
-
-
