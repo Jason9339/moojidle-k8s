@@ -1,6 +1,14 @@
 node_modules
 npm-debug.log*
 .env
+.env.*
+.git
+.gitignore
 .DS_Store
 coverage
 test-output.json
+tests
+docs
+_archive
+Dockerfile
+.dockerignore
