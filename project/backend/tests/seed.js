@@ -42,7 +42,7 @@ async function UserSeed() {
                     details: "@user49"
                 }
             ],
-            path_to_profile_pic: "/profiles/1.jpg",
+            path_to_profile_pic: null,
             email: "user1@example.com",
             pw: "hashed_password_1",
             create_date: new Date("2025-01-01T00:00:00.000Z")
@@ -64,7 +64,7 @@ async function UserSeed() {
                     details: "user76@example.com"
                 }
             ],
-            path_to_profile_pic: "/profiles/2.jpg",
+            path_to_profile_pic: null,
             email: "user2@example.com",
             pw: "hashed_password_2",
             create_date: new Date("2025-01-01T00:00:00.000Z")
@@ -78,7 +78,7 @@ async function UserSeed() {
                     details: "user76@example.com"
                 }
             ],
-            path_to_profile_pic: "/profiles/3.jpg",
+            path_to_profile_pic: null,
             email: "user3@example.com",
             pw: "hashed_password_3",
             create_date: new Date("2025-01-01T00:00:00.000Z")
@@ -93,7 +93,7 @@ async function UserSeed() {
                     details: "calendaruser@example.com"
                 }
             ],
-            path_to_profile_pic: "/profiles/4.jpg",
+            path_to_profile_pic: null,
             email: "calendaruser@example.com",
             pw: "hashed_password_4",
             create_date: new Date("2025-01-01T00:00:00.000Z")
