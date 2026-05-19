@@ -36,7 +36,7 @@ db.createCollection("user", {
                     }
                 },
                 path_to_profile_pic: {
-                    bsonType: ["string", "null"],
+                    bsonType: "string",
                     description: "User profile picture path"
                 },
                 email: {

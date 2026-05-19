@@ -8,7 +8,6 @@ db.user.insertMany([
         "details": "555-1398"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user1@example.com",
     "pw": "pw_1",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -26,7 +25,6 @@ db.user.insertMany([
         "details": "@user29"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user2@example.com",
     "pw": "pw_2",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -44,7 +42,6 @@ db.user.insertMany([
         "details": "user62@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user3@example.com",
     "pw": "pw_3",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -62,7 +59,6 @@ db.user.insertMany([
         "details": "user50@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user4@example.com",
     "pw": "pw_4",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -76,7 +72,6 @@ db.user.insertMany([
         "details": "user7@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user5@example.com",
     "pw": "pw_5",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -94,7 +89,6 @@ db.user.insertMany([
         "details": "user46@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user6@example.com",
     "pw": "pw_6",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -108,7 +102,6 @@ db.user.insertMany([
         "details": "user40@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user7@example.com",
     "pw": "pw_7",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -126,7 +119,6 @@ db.user.insertMany([
         "details": "555-8394"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user8@example.com",
     "pw": "pw_8",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -144,7 +136,6 @@ db.user.insertMany([
         "details": "555-6028"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user9@example.com",
     "pw": "pw_9",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -162,7 +153,6 @@ db.user.insertMany([
         "details": "555-2318"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user10@example.com",
     "pw": "pw_10",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -184,7 +174,6 @@ db.user.insertMany([
         "details": "user7@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user11@example.com",
     "pw": "pw_11",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -206,7 +195,6 @@ db.user.insertMany([
         "details": "user16@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user12@example.com",
     "pw": "pw_12",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -220,7 +208,6 @@ db.user.insertMany([
         "details": "555-7622"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user13@example.com",
     "pw": "pw_13",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -238,7 +225,6 @@ db.user.insertMany([
         "details": "555-7054"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user14@example.com",
     "pw": "pw_14",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
@@ -256,7 +242,6 @@ db.user.insertMany([
         "details": "user46@example.com"
       }
     ],
-    "path_to_profile_pic": null,
     "email": "user15@example.com",
     "pw": "pw_15",
     "create_date": ISODate("2025-01-01T00:00:00.000Z")
