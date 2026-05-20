@@ -25,30 +25,20 @@ services:
       DATA_BASE_URL: mongodb://mongo:27017/moojidle
     ports:
       - "3000:3000"
-    volumes:
-      - ./project/backend:/app
-      - backend-node-modules:/app/node_modules
-      - ./project/backend/uploads:/app/uploads
     command: npm run dev
 
   frontend:
     build:
       context: ./project/frontend
-      target: dev
+      target: runner
+      args:
+        VITE_API_BASE_URL: /api
     container_name: moojidle-frontend
     restart: unless-stopped
     depends_on:
       - backend
-    environment:
-      VITE_API_BASE_URL: http://localhost:3000
     ports:
-      - "5173:5173"
-    volumes:
-      - ./project/frontend:/app
-      - frontend-node-modules:/app/node_modules
-    command: npm run dev -- --host 0.0.0.0 --port 5173
+      - "8080:80"
 
 volumes:
   mongo-data:
-  backend-node-modules:
-  frontend-node-modules:
