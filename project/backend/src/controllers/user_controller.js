@@ -321,7 +321,8 @@ async function GetUserAvatar(req, res) {
     
     try {
         // 如果沒有提供路徑或為預設路徑，返回 404
-        if (!avatarPath || avatarPath === '/user_pfp/default.png' || avatarPath.trim() === '') {
+        // undefined 前端會擋掉(MainLayout.jsx:21)，這裡是非法路徑檢測
+        if (!avatarPath || avatarPath.trim() === '' || !avatarPath.startsWith('gridfs:')) {
             return res.status(404).send({ message: "頭像路徑無效" });
         }
 
