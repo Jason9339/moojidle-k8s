@@ -8,6 +8,7 @@
 - [Relative Develope Tool](#relative-develope-tool)
 - [Requirement](#requirement)
 - [Instructions](#instructions)
+- [Docker Images](#docker-images)
 - [Brief File Structures](#brief-file-structures)
 
 ## Team Members
@@ -58,17 +59,14 @@
 5. `cd frontend`
 6. follow the `README.md`'s instructions
 
-## Docker Compose
+## Docker Images
 
-You can also run the frontend, backend, and MongoDB together with Docker Compose.
+This project provides Dockerfiles for building the frontend and backend application images.
 
 ```bash
-docker compose up --build
+docker build -t moojidle-frontend:latest ./project/frontend
+docker build -t moojidle-backend:latest ./project/backend
 ```
-
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-- MongoDB container URL: `mongodb://mongo:27017/moojidle`
 
 For more details, see [DOCKER_README.md](./DOCKER_README.md).
 

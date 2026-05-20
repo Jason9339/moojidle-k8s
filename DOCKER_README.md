@@ -1,217 +1,70 @@
-# Docker Compose 使用說明
+# Docker Image 使用說明
 
-這份設定會啟動三個服務：
+這份文件說明如何 build frontend/backend Docker image。`docker-compose.yml` 已移到 [`_archive/docker-compose.yml`](./_archive/docker-compose.yml)，目前不作為主要啟動方式。
 
-- `frontend`: React + Vite，對外 port `5173`
-- `backend`: Express API，對外 port `3000`
-- `mongo`: MongoDB，只提供給 Compose 內的 backend 使用
+## Frontend Image
 
-## 第一次啟動
+frontend image 使用 multi-stage build：
 
-請在專案根目錄執行：
+- `builder`: 執行 Vite production build
+- `runner`: 使用 nginx unprivileged image 提供靜態檔案
 
-```bash
-docker compose up --build
-```
-
-啟動後可以打開：
-
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-- MongoDB container URL: `mongodb://mongo:27017/moojidle`
-
-## 之後啟動
+預設 API base URL 是 `/api`，會在 build time 寫入 Vite bundle：
 
 ```bash
-docker compose up
+docker build \
+  --build-arg VITE_API_BASE_URL=/api \
+  -t moojidle-frontend:latest \
+  ./project/frontend
 ```
 
-如果想讓服務在背景執行：
+如果部署環境需要不同 API base URL，可以調整 build arg：
 
 ```bash
-docker compose up -d
+docker build \
+  --build-arg VITE_API_BASE_URL=https://example.com/api \
+  -t moojidle-frontend:latest \
+  ./project/frontend
 ```
 
-## 停止服務
+frontend container 由 nginx 監聽 container port `80`：
 
 ```bash
-docker compose down
+docker run --rm -p 8080:80 moojidle-frontend:latest
 ```
 
-這個指令會停止並移除 container，但 MongoDB 資料仍會保留在 Docker volume。
+## Backend Image
 
-## 清掉 MongoDB 資料
-
-如果想把 MongoDB volume 一起刪掉，重新建立空資料庫：
+backend image 需要在 runtime 提供連線資訊：
 
 ```bash
-docker compose down -v
+docker build -t moojidle-backend:latest ./project/backend
 ```
-
-## 環境變數
-
-`docker-compose.yml` 已經幫容器設定好需要的環境變數：
-
-- backend:
-  - `PORT=3000`
-  - `DATA_BASE_URL=mongodb://mongo:27017/moojidle`
-- frontend:
-  - `VITE_API_BASE_URL=http://localhost:3000`
-
-因此使用 Docker Compose 時，不需要額外建立 `.env` 才能啟動。
-
-## 上傳檔案存在哪裡
-
-目前後端的上傳流程使用 `multer.memoryStorage()` 先把檔案放在記憶體，再透過 `SaveFile` 存進 MongoDB GridFS。
-
-所以課程教材、作業、考試、學生繳交作業、頭像等上傳檔案，不會直接出現在 `project/backend/uploads` 或 container 的 `/app/uploads` 裡。實際檔案會存在 MongoDB 裡：
-
-- metadata: `uploaded_files.files`
-- binary chunks: `uploaded_files.chunks`
-
-MongoDB 資料本身保存在 Docker volume：
-
-- volume name: `moojidle-k8s_mongo-data`
-- container path: `/data/db`
-
-查看已上傳檔案 metadata：
 
 ```bash
-docker compose exec mongo mongosh moojidle --eval 'db.uploaded_files.files.find({}, {filename: 1, length: 1, contentType: 1, uploadDate: 1, metadata: 1}).pretty()'
+docker run --rm \
+  -e PORT=3000 \
+  -e DATA_BASE_URL=mongodb://<mongo-host>:27017/moojidle \
+  -p 3000:3000 \
+  moojidle-backend:latest
 ```
 
-只看教材檔案：
-
-```bash
-docker compose exec mongo mongosh moojidle --eval 'db.uploaded_files.files.find({"metadata.category": "material"}).pretty()'
-```
-
-常見 category：
-
-- `material`: 課程教材檔案
-- `assignment`: 作業附件
-- `exam`: 考試附件
-- `submitted_assignment`: 學生繳交作業附件
-- `profiles`: 使用者頭像
-
-如果你想進 MongoDB shell 互動查看：
-
-```bash
-docker compose exec mongo mongosh moojidle
-```
-
-進去後可以執行：
-
-```javascript
-show collections
-db.uploaded_files.files.find().pretty()
-db.uploaded_files.chunks.countDocuments()
-```
-
-## 發布到 Docker Hub / 未來 K8s 使用方式
-
-目前的 `docker-compose.yml` 適合本機開發與測試，會幫你在本機 build frontend、backend image，並一起啟動 MongoDB。
-
-Kubernetes 的實際 manifests 與操作方式請看 [`k8s/README.md`](./k8s/README.md)。
-
-如果未來要部署到 Kubernetes，建議不要把整個 MERN 專案、MongoDB、Kafka 全部包成同一個 image。比較合理的方式是：
-
-- frontend 一個 image
-- backend 一個 image
-- MongoDB 使用官方 `mongo` image 或雲端資料庫服務
-- Kafka 使用官方/Bitnami/Confluent image 或雲端 Kafka 服務
-
-也就是說，Docker image 只包「應用程式本身」，資料庫資料、上傳檔案、Kafka topic 資料不會包在 image 裡。這些資料應該由 Kubernetes volume、MongoDB volume、雲端資料庫或備份/還原流程管理。
-
-### Build frontend image
+## Push Images
 
 請把 `YOUR_DOCKERHUB_USERNAME` 換成你的 Docker Hub 帳號：
 
 ```bash
-docker build -t YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest ./project/frontend
-```
+docker tag moojidle-frontend:latest YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest
+docker tag moojidle-backend:latest YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest
 
-### Build backend image
-
-```bash
-docker build -t YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest ./project/backend
-```
-
-### Push images 到 Docker Hub
-
-先登入 Docker Hub：
-
-```bash
-docker login
-```
-
-推送 frontend：
-
-```bash
 docker push YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest
-```
-
-推送 backend：
-
-```bash
 docker push YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest
 ```
 
-之後其他人或 Kubernetes 就可以直接 pull：
+## Notes
 
-```bash
-docker pull YOUR_DOCKERHUB_USERNAME/moojidle-frontend:latest
-docker pull YOUR_DOCKERHUB_USERNAME/moojidle-backend:latest
-```
+Vite 的 `VITE_API_BASE_URL` 會在 build 階段被讀取；正式部署如果使用靜態 build，需要在 build image 時決定 API URL，或另外設計 runtime config。
 
-### K8s 需要另外設定的環境變數
+frontend nginx 只負責提供靜態檔案與 SPA fallback，不在 container 內 proxy API request；API routing 應由部署環境的 ingress、gateway 或外部 proxy 處理。
 
-backend container 需要：
-
-```text
-PORT=3000
-DATA_BASE_URL=mongodb://<mongo-service-name>:27017/moojidle
-```
-
-frontend container 需要：
-
-```text
-VITE_API_BASE_URL=http://<backend-service-or-ingress-url>
-```
-
-注意：Vite 的 `VITE_API_BASE_URL` 會在前端 dev server 或 build 階段被讀取。正式部署如果使用靜態 build，通常會需要在 build image 時就決定 API URL，或另外設計 runtime config。
-
-## 常用除錯指令
-
-查看所有服務 log：
-
-```bash
-docker compose logs -f
-```
-
-只看後端 log：
-
-```bash
-docker compose logs -f backend
-```
-
-只重建前端：
-
-```bash
-docker compose up --build frontend
-```
-
-進入 MongoDB shell：
-
-```bash
-docker compose exec mongo mongosh moojidle
-```
-
-如果你需要從本機工具直接連到 container MongoDB，可以在 `docker-compose.yml` 的 `mongo` 服務加上：
-
-```yaml
-ports:
-  - "27017:27017"
-```
-
-若本機已經有 MongoDB 佔用 `27017`，請改成 `"27018:27017"`，再用 `mongodb://localhost:27018/moojidle` 連線。
+上傳檔案目前透過 backend 存進 MongoDB GridFS，不需要把 `project/backend/uploads` 包進 image 或掛載到 container。

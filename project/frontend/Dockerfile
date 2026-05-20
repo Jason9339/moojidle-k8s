@@ -38,10 +38,6 @@ RUN if [ -f package-lock.json ]; then \
     echo "No lockfile found." && exit 1; \
   fi
 
-EXPOSE 5173
-
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
-
 FROM node:${NODE_VERSION} AS dependencies
 
 # Set the working directory
@@ -77,6 +73,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 ENV NODE_ENV=production
+ARG VITE_API_BASE_URL=/api
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -117,8 +114,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Non-root user for security best practices
 USER nginx
 
-# Expose port 8080 to allow HTTP traffic
-EXPOSE 8080
+# Expose port 80 to allow HTTP traffic
+EXPOSE 80
 
 # Start Nginx directly with custom config
 ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
