@@ -8,7 +8,6 @@
 - [Relative Develope Tool](#relative-develope-tool)
 - [Requirement](#requirement)
 - [Instructions](#instructions)
-- [Docker Images](#docker-images)
 - [Brief File Structures](#brief-file-structures)
 
 ## Team Members
@@ -58,27 +57,6 @@
 4. follow the `README.md`'s instructions
 5. `cd frontend`
 6. follow the `README.md`'s instructions
-
-## Docker Images
-
-This project provides Dockerfiles for building the frontend and backend application images.
-
-```bash
-docker build -t moojidle-frontend:latest ./project/frontend
-docker build -t moojidle-backend:latest ./project/backend
-```
-
-For more details, see [DOCKER_README.md](./DOCKER_README.md).
-
-## Kubernetes
-
-This project can also run on Kubernetes by pulling the MERN application images from Docker Hub.
-
-- Frontend image: `nonohuang0819/moojidle-frontend:latest`
-- Backend image: `nonohuang0819/moojidle-backend:latest`
-- Database image: `mongo:8.0`
-
-The Kubernetes manifests and full operating guide are in [`k8s/`](./k8s). See [`k8s/README.md`](./k8s/README.md) for deployment, port-forwarding, logs, restart commands, and how to stop services while keeping MongoDB data.
 
 ## Brief File Structures
 
