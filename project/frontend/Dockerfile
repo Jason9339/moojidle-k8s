@@ -73,7 +73,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 ENV NODE_ENV=production
-ARG VITE_API_BASE_URL=${VITE_API_BASE_URL:-/api}
+ENV VITE_API_BASE_URL=/api
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
