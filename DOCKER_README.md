@@ -1,6 +1,6 @@
 # Docker Image 使用與發布說明
 
-這份文件說明如何 build frontend/backend Docker image，並發布到 GitHub Container Registry（GHCR）。`docker-compose.yml` 已移到 [`_archive/docker-compose.yml`](./_archive/docker-compose.yml)，目前不作為主要啟動方式。
+這份文件說明如何 build frontend/backend Docker image，並發布到 GitHub Container Registry（GHCR）。**請注意!!!** 由於本專案是一已開發完成的[另一篇 repo](https://gitlab.com/jingxiang0405/moojidle) 之拓展，source code 不會新增任何功能，故 image 只適用於發布，不是作為 local development 用 (換言之無法搭配 docker-compose，因為需使用 k8s Ingress 做前後端疏導)
 
 官方文件：
 
@@ -11,7 +11,7 @@
 
 發布 image 到 `ghcr.io` 前，需要先登入 GitHub Container Registry。
 
-1. 到 GitHub 建立 Personal Access Token（classic）。
+1. 到 GitHub 建立 Personal Access Token (Settings --> Developer Settings --> Tokens (classic))。
 2. Token 至少需要 `write:packages` 權限；如果要讀取 private package，另需 `read:packages`。
 3. 用 GitHub 帳號與 token 登入 `ghcr.io`。
 
@@ -38,57 +38,35 @@ docker push ghcr.io/jason9339/moojidle-k8s/frontend:latest
 
 frontend image 使用 multi-stage build：
 
-- `builder`: 執行 Vite production build
+- `dependencies`: 透過 lockfile (自動偵測 `npm` / `yarn` / `pnpm`) 乾淨安裝專案套件。
+- `builder`: 執行 Production build。此階段已透過 `ENV VITE_API_BASE_URL=/api` 將 API 路徑寫入 Vite bundle。
 - `runner`: 使用 nginx unprivileged image 提供靜態檔案
 
-預設 API base URL 是 `/api`，會在 build time 寫入 Vite bundle：
+預設編譯參數 (Node.js: `25.9-slim`, Nginx: `alpine3.22`):
 
 ```bash
-docker build \
-  --build-arg VITE_API_BASE_URL=/api \
-  -t ghcr.io/jason9339/moojidle-k8s/frontend:latest \
-  ./project/frontend
+docker build -t ghcr.io/jason9339/moojidle-k8s/frontend:latest ./project/frontend
 ```
 
-如果部署環境需要不同 API base URL，可以調整 build arg：
+如果需要因應相容性或資安要求覆蓋 Node.js 或 Nginx 的版本，可以使用 `--build-arg`:
 
 ```bash
 docker build \
-  --build-arg VITE_API_BASE_URL=https://example.com/api \
+  --build-arg NODE_VERSION=24.13.0-slim \
+  --build-arg NGINXINC_IMAGE_TAG=alpine-slim \
   -t ghcr.io/jason9339/moojidle-k8s/frontend:latest \
   ./project/frontend
 ```
 
 ## Backend Image
 
-backend image 需要在 runtime 提供連線資訊：
-
 ```bash
 docker build -t ghcr.io/jason9339/moojidle-k8s/backend:latest ./project/backend
 ```
 
-## Local Run
-
-frontend container 由 nginx 監聽 container port `80`：
-
-```bash
-docker run --rm -p 8080:80 ghcr.io/jason9339/moojidle-k8s/frontend:latest
-```
-
-backend container 需要在 runtime 提供連線資訊：
-
-```bash
-docker run --rm \
-  -e PORT=3000 \
-  -e DATA_BASE_URL=mongodb://<mongo-host>:27017/moojidle \
-  -p 3000:3000 \
-  ghcr.io/jason9339/moojidle-k8s/backend:latest
-```
-
 ## Notes
 
-Vite 的 `VITE_API_BASE_URL` 會在 build 階段被讀取；正式部署如果使用靜態 build，需要在 build image 時決定 API URL，或另外設計 runtime config。
-
-frontend nginx 只負責提供靜態檔案與 SPA fallback，不在 container 內 proxy API request；API routing 應由部署環境的 ingress、gateway 或外部 proxy 處理。
-
-上傳檔案目前透過 backend 存進 MongoDB GridFS，不需要把 `project/backend/uploads` 包進 image 或掛載到 container。
+- **環境變數與安全隔離**：根據 `.dockerignore` 的設定，本地端的 `.env`、`.env.*`、`node_modules`、`dist`、`tests` 在 build image 時都會被排除。這確保了 image 內的環境絕對乾淨，不會意外打包本地的機密資訊或快取。
+- **API Base URL**：目前 Vite 的 `VITE_API_BASE_URL` 是在 `Dockerfile` 內部被 `ENV` 寫死為 `/api` 並於 build 階段寫入 bundle。若部署環境需要使用完全不同的外部 API 網址 (例如 https://example.com/api) ，請直接修改 `Dockerfile` 內的 `ENV`，並重 build frontend image。
+- **Nginx 職責**：Frontend Nginx 只負責提供靜態檔案與 SPA fallback（透過自訂 `nginx.conf`），不在 container 內 proxy API request。API routing 應由 k8s 的 Ingress 處理。
+- 上傳檔案透過 backend 存進 MongoDB GridFS，不需要把 `project/backend/uploads` 包進 image 或掛載到 container。

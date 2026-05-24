@@ -3,40 +3,11 @@
 # ============================================
 
 # IMPORTANT: Node.js and Nginxinc Image Version Maintenance
-# This Dockerfile uses Node.js 24.13.0-slim and Nginxinc image with alpine3.22, which was the latest LTS version at the time of writing.
+# This Dockerfile uses Node.js 25.9-slim and Nginxinc image with alpine3.22, which was the latest LTS version at the time of writing.
 # To ensure security and compatibility, regularly validate and update the NODE_VERSION ARG and NGINXINC_IMAGE_TAG to the latest LTS versions.
 
 ARG NODE_VERSION=25.9-slim
 ARG NGINXINC_IMAGE_TAG=alpine3.22
-
-FROM node:${NODE_VERSION} AS dev
-ARG DEBIAN_FRONTEND=noninteractive
-
-LABEL org.opencontainers.image.source=https://github.com/jason9339/moojidle-k8s
-
-WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    build-essential \
-    git \
-    curl \
-    vim \
-    tmux \
-    htop \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY package.json yarn.lock* package-lock.json* ./
-
-RUN if [ -f package-lock.json ]; then \
-    npm ci --no-audit --no-fund; \
-  elif [ -f yarn.lock ]; then \
-    corepack enable yarn && yarn install --frozen-lockfile --production=false; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm install --frozen-lockfile; \
-  else \
-    echo "No lockfile found." && exit 1; \
-  fi
 
 FROM node:${NODE_VERSION} AS dependencies
 
@@ -44,7 +15,7 @@ FROM node:${NODE_VERSION} AS dependencies
 WORKDIR /app
 
 # Copy package-related files first to leverage Docker's caching mechanism
-COPY package.json yarn.lock* package-lock.json* ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # Install project dependencies with frozen lockfile for reproducible builds
 RUN if [ -f package-lock.json ]; then \
@@ -58,7 +29,7 @@ RUN if [ -f package-lock.json ]; then \
   fi
 
 # ============================================
-# Stage 2: Build Next.js Application
+# Stage 2: Build Vite Application
 # ============================================
 
 FROM node:${NODE_VERSION} AS builder
@@ -75,18 +46,13 @@ COPY . .
 ENV NODE_ENV=production
 ENV VITE_API_BASE_URL=/api
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build Next.js application
+# Build Vite application
 RUN if [ -f package-lock.json ]; then \
     npm run build; \
   elif [ -f yarn.lock ]; then \
-    corepack enable yarn && corepack enable yarn && yarn build; \
+    corepack enable yarn && yarn build; \
   elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && corepack enable pnpm && pnpm build; \
+    corepack enable pnpm && pnpm build; \
   else \
     echo "No lockfile found." && exit 1; \
   fi
@@ -97,13 +63,10 @@ RUN if [ -f package-lock.json ]; then \
 
 FROM nginxinc/nginx-unprivileged:${NGINXINC_IMAGE_TAG} AS runner
 
+LABEL org.opencontainers.image.source=https://github.com/jason9339/moojidle-k8s
+
 # Set the working directory
 WORKDIR /app
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the run time.
-# ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy custom Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -115,7 +78,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 USER nginx
 
 # Expose port 80 to allow HTTP traffic
-EXPOSE 80
+EXPOSE 8080
 
 # Start Nginx directly with custom config
 ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]

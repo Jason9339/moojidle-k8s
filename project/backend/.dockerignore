@@ -12,3 +12,5 @@ docs
 _archive
 Dockerfile
 .dockerignore
+
+uploads
