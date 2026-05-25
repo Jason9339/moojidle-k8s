@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
+      - "hotfix/**"
     tags:
       - "v*"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -35,8 +37,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ env.OWNER }}
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Extract metadata
         id: meta
