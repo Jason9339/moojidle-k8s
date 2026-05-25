@@ -1,14 +1,19 @@
-# Moojidle
+# Moojidle in Kubernetes
 
 ## Table of Content
 
-- [Moojidle](#moojidle)
+- [Credit](#credit)
 - [Table of Content](#table-of-content)
 - [Team Members](#team-members)
-- [Relative Develope Tool](#relative-develope-tool)
-- [Requirement](#requirement)
-- [Instructions](#instructions)
-- [Brief File Structures](#brief-file-structures)
+- [Instructions to Deploy HA K3S cluster on AWS](#instructions-to-deploy-ha-k3s-cluster-on-aws)
+- [Demo Video Link](#demo-video-link)
+- [Final Presentation](#final-presentation)
+
+## Credit
+
+**Important!** This project builds upon an inactive repository ([click me](https://gitlab.com/jingxiang0405/moojidle)) originally developed during the Spring 2025 Software Engineering course. Because that class has concluded, the original GitLab repository is no longer under active development, though it still houses the original CI pipeline, Jira and codebase history, team protocols, and final presentation. The primary objective of this current repository is to scale that initial design by deploying it to Amazon Web Services (AWS) using Kubernetes (K8s)."
+
+This project began during the Spring 2026 term for the Distributed Systems course.
 
 ## Team Members
 
@@ -17,60 +22,26 @@
 
 - 廖經翔
     - student ID: 111703003
-    - PM
 - 游宗諺
     - student ID: 111703040
-    - 組代表
-- 宋孟庭
-    - student ID: 111703021
 - 劉子宏
     - student ID: 111703044
-- 羅偉誠
-    - student ID: 111703026
 - 黃鈺盛
     - student ID: 111703022
-- 葉宇瀚
-    - student ID: 111703016
 - 林子齊
     - student ID: 111703004
-- 徐宏宇
-    - student ID: 110703056
+- 劉宸均
+    - student ID: 112703016
 </details>
 
-## Relative Develope Tool
+## Instructions to Deploy HA K3S cluster on AWS
 
-- [Jira](https://jingxiang0405.atlassian.net/jira/software/projects/MOOJ/summary)
-- [Figma](https://www.figma.com/design/UvvTw9rywMQHDQPJkJ6cKW/Moojidle?node-id=4-7958&t=cq4aI4kPpL3vjyHu-1)
-- Discord
+Before deploying to AWS via K3S, we need to have both the frontend and backend images first (check [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Ffrontend) for frontend, here for [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Fbackend) for backend). If there's no available images on ghcr, refer to `DOCKER_README.md` for instructions about image building steps. The following is the steps to deploy moojidle to AWS via k3s:
 
-## Requirement
+### Manually (For best learning experience)
 
-- nodejs >= v20.17.0
-- npm >= 11.3.0
-- mongoDB >= v8.0.8
-
-## Instructions
-
-1. `cd database`
-2. follow the `README.md`'s instructions
-3. `cd backend`
-4. follow the `README.md`'s instructions
-5. `cd frontend`
-6. follow the `README.md`'s instructions
-
-## Brief File Structures
-
-```
-project-root/
-├── frontend/
-├── backend/
-└── database/
-```
+### Automation via Terraform (The Industry Best Practice)
 
 ## Demo Video Link
 
-https://youtu.be/WaS_Lv9BzrI
-
 ## Final Presentation
-
-https://www.canva.com/design/DAGp2aAGksY/xisw09UxljaqqoSFvZ8nNw/edit
