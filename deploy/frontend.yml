@@ -1,0 +1,81 @@
+# 1. FRONTEND CONFIGMAP (Nginx Configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  labels:
+    tier: frontend
+data:
+  nginx.conf: |
+    worker_processes auto;
+    pid /tmp/nginx.pid;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        server {
+            listen 8080;
+            server_name localhost;
+
+            location / {
+                root /usr/share/nginx/html;
+                index index.html;
+
+                try_files $uri $uri/ /index.html;
+            }
+        }
+    }
+
+---
+# 2. FRONTEND DEPLOYMENT (NginX server with no port forwarding)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deploy
+  labels:
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/jason9339/moojidle-k8s/frontend:latest
+
+        ports:
+        - containerPort: 8080
+
+        # Mount the ConfigMap into the container
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf  # Crucial: ensures we only overwrite the file, not the whole /etc/nginx dir
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: frontend-config
+
+---
+# 3. FRONTEND SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+  - port: 8080
+    targetPort: 8080
