@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+npm-debug.log*
+.env
+.env.*
+.git
+.gitignore
+.DS_Store
+coverage
+tests
+_archive
+Dockerfile
+.dockerignore
