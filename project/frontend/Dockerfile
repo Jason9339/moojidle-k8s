@@ -68,9 +68,6 @@ LABEL org.opencontainers.image.source=https://github.com/jason9339/moojidle-k8s
 # Set the working directory
 WORKDIR /app
 
-# Copy custom Nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
-
 # Copy the static build output from the build stage to Nginx's default HTML serving directory
 COPY --from=builder /app/dist /usr/share/nginx/html
 
