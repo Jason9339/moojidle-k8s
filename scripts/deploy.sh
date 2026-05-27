@@ -7,7 +7,6 @@ TF_DIR="$PROJECT_ROOT/terraform/aws-k3s"
 DEPLOY_DIR="$PROJECT_ROOT/deploy"
 SSH_KEY="$PROJECT_ROOT/Moojidle.pem" # You maybe need to adjust this path if your SSH key is located elsewhere
 KUBECONFIG="$HOME/.kube/moojidle-config"
-NAMESPACE="default"
 
 echo "============================================"
 echo " 1/5 Terraform apply"
