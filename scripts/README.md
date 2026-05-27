@@ -1,6 +1,16 @@
 # Moojidle Deployment Scripts
 
-一鍵部署與清理 Moojidle 到 AWS K3s 叢集。
+Terraform 建 AWS infra + K3s + Atlas 白名單，kubectl 部署應用
+
+## 目錄
+
+- [架構概覽](#架構概覽)
+- [前置準備（第一次執行）](#前置準備第一次執行)
+- [設定檔準備](#設定檔準備)
+- [使用方式](#使用方式)
+- [Terraform 功能概述](#terraform-功能概述)
+- [手動步驟說明（不用 script 時）](#手動步驟說明不用-script-時)
+- [注意事項](#注意事項)
 
 ## 架構概覽
 
@@ -183,6 +193,32 @@ DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mon
 | 3/3 | 刪除本機 `~/.kube/moojidle-config` |
 
 ---
+
+## Terraform 功能概述
+
+`terraform/aws-k3s/` 做的事（對照 [`main.tf`](../terraform/aws-k3s/main.tf)）：
+
+```mermaid
+graph TD
+    subgraph "Terraform aws-k3s 模組"
+        A["data.aws_ami.ubuntu<br/>查最新 Ubuntu 24.04 AMI"] --> C
+        B["data.aws_subnets.selected<br/>查 VPC 下的子網路"] --> C
+        C["Security Groups + Rules<br/>4 組 SG (CP/Worker/NLB/ALB)<br/>+ 17 條 ingress/egress 規則"] --> D
+        D["NLB + ALB<br/>NLB→6443 (kubectl API)<br/>ALB→80 (使用者流量)"] --> E
+        E["EC2 Instances<br/>3 CP → K3s server (embedded etcd)<br/>2 Worker → K3s agent"] --> F
+        F["mongodbatlas_project_ip_access_list<br/>自動將 5 台 EC2 public IP<br/>加入 Atlas 白名單"]
+    end
+```
+
+| 資源 | 檔案行數 | 說明 |
+|---|---|---|
+| Security Groups | `main.tf:45-83` | 4 組 SG：control-plane、worker、nlb、alb |
+| SG 規則 | `main.tf:85-230` | 開放 6443、2379、10250、8472、80、22 port 的限定流量 |
+| NLB (k8s API) | `main.tf:232-266` | 公開 NLB :6443 → CP :6443 |
+| ALB (應用) | `main.tf:268-303` | 公開 ALB :80 → Worker :80 |
+| Control Plane x3 | `main.tf:305-367` | `--cluster-init` 建立 HA etcd 叢集，含 `--tls-san` 讓 NLB 憑證正確 |
+| Worker x2 | `main.tf:369-397` | `K3S_URL=NLB_DNS` 透過 NLB 加入叢集 |
+| Atlas 白名單 | `main.tf:414-430` | 收集所有節點 public IP → `mongodbatlas_project_ip_access_list` |
 
 ## 手動步驟說明（不用 script 時）
 
