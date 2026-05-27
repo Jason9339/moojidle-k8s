@@ -1,0 +1,74 @@
+# 1. BACKEND SECRET (NEW)
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secret
+type: Opaque
+# stringData allows plain text here; k8s will Base64 encode it upon creation.
+stringData:
+  # Remember: This must be manually configured for your own Mongo Atlas cluster (<user_name>, <user_pw>, <DB_name>)
+  DATA_BASE_URL: "mongodb+srv://<user_name>:<user_pw>@cluster0.uyzxe9f.mongodb.net/<DB_name>?appName=Cluster0"
+
+---
+# 2. BACKEND CONFIGURATION
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  PORT: "3000"
+
+---
+# 3. BACKEND DEPLOYMENT (Express Server)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deploy
+  labels:
+    tier: backend
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: ghcr.io/jason9339/moojidle-k8s/backend:latest
+        
+        # Explicitly grabbing individual keys using valueFrom
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: PORT
+        - name: DATA_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATA_BASE_URL
+              
+        ports:
+        # Remember: This must be manually updated if you change the ConfigMap PORT
+        - containerPort: 3000
+
+---
+# 4. BACKEND SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+  - port: 3000
+    # Remember: This must also be manually updated if you change the ConfigMap PORT
+    targetPort: 3000
