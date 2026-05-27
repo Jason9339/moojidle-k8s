@@ -26,3 +26,13 @@ test.py
 
 # for CI/CD
 test-output.json
+
+# for keys
+*.pem
+
+# for Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
