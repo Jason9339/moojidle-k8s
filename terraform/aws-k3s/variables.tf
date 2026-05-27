@@ -90,3 +90,23 @@ variable "root_volume_size" {
   type        = number
   default     = 30
 }
+
+# ─────────────────────────────────────────────
+# MongoDB Atlas
+# ─────────────────────────────────────────────
+variable "mongodbatlas_public_key" {
+  description = "MongoDB Atlas Programmatic API Public Key."
+  type        = string
+  sensitive   = true
+}
+
+variable "mongodbatlas_private_key" {
+  description = "MongoDB Atlas Programmatic API Private Key."
+  type        = string
+  sensitive   = true
+}
+
+variable "mongodbatlas_project_id" {
+  description = "MongoDB Atlas Project ID (Group ID) to whitelist EC2 public IPs."
+  type        = string
+}

@@ -43,10 +43,12 @@ terraform output first_control_plane_ssh
 ```
 
 SSH to the first control plane, copy kubeconfig, and replace the kubeconfig server address with the NLB DNS name:
+server: 127.0.0.1 .... -> https://<nlb-dns>:6443
 
 ```bash
 sudo cat /etc/rancher/k3s/k3s.yaml
 ```
+
 
 On your local machine:
 

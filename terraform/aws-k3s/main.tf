@@ -409,3 +409,22 @@ resource "aws_lb_target_group_attachment" "worker" {
   target_id        = aws_instance.worker[count.index].id
   port             = 80
 }
+
+# ==========================================
+# 6. MongoDB Atlas IP 白名單
+# ==========================================
+
+locals {
+  all_node_public_ips = concat(
+    [aws_instance.control_plane_first.public_ip],
+    aws_instance.control_plane_joiner[*].public_ip,
+    aws_instance.worker[*].public_ip,
+  )
+}
+
+resource "mongodbatlas_project_ip_access_list" "node" {
+  count      = var.control_plane_count + var.worker_count
+  project_id = var.mongodbatlas_project_id
+  ip_address = local.all_node_public_ips[count.index]
+  comment    = "K3s node ${count.index + 1} (Terraform)"
+}
