@@ -1,5 +1,6 @@
 aws_region   = "ap-northeast-1"
-project_name = "moojidle"
+# please xxxx use whatever you want
+project_name = "moojidle-xxxx"
 
 # Create this EC2 key pair in AWS first, or reuse an existing one.
 key_name = "your-ec2-keypair-name"
