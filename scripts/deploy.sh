@@ -88,6 +88,7 @@ fi
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/backend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/frontend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/ingress-rule.yml"
+KUBECONFIG="$KUBECONFIG" kubectl scale deployment -n kube-system traefik --replicas 3
 
 echo ""
 echo "============================================"
@@ -95,6 +96,9 @@ echo " Done"
 echo "============================================"
 echo "Pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -o wide
+echo ""
+echo "Traefik ingress pods:"
+KUBECONFIG="$KUBECONFIG" kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o wide
 
 APP_URL=$(terraform -chdir="$TF_DIR" output -raw application_alb_dns_name 2>/dev/null || echo "")
 if [[ -n "$APP_URL" ]]; then
