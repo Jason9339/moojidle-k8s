@@ -36,3 +36,4 @@ test-output.json
 *.tfstate.backup
 *.tfvars
 *.tfvars.json
+*.terraform.lock.hcl
