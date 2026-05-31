@@ -97,20 +97,42 @@ mv ~/Downloads/Moojidle.pem /path/to/moojidle-k8s/
 chmod 400 Moojidle.pem
 ```
 
-### 4. MongoDB Atlas API Key（用在 `terraform.tfvars`）
+### 4. MongoDB Atlas API Key + API Access List（用在 `terraform.tfvars`）
 
-前往 Atlas → 左側齒輪 **Access Manager** → **API Keys**
+Terraform 會透過 Atlas Admin API 將 EC2 節點 public IP 加入 MongoDB Atlas 的 Database Network Access，因此要先建立 API Key，並允許執行 Terraform 電腦的 public IP 呼叫 Atlas Admin API。
 
-- **Create Application API Key**
-- Permission 選 **Project Owner**（目前只測過這個角色可用）
+**(a) 查詢執行 Terraform 電腦的 public IP**
+
+```bash
+curl ifconfig.me
+```
+
+假設輸出為 `203.0.113.10`，後續要加入的 CIDR 是：
+
+```text
+203.0.113.10/32
+```
+
+**(b) 建立 Atlas API Key**
+
+前往 Atlas 專案 → **Project Identity & Access** → **Applications** → **API Keys** → **Create Application API Key**
+
+- Description 自訂，例如 `terraform-key`
+- Project Permissions 選 **Project Owner**（目前只測過這個角色可用）
 - 記下 **Public Key** 和 **Private Key**
-- 編輯剛建立的 API Key → **API Whitelist** → 加入執行 Terraform 電腦的 public IP
 
-![](https://www.mongodb.com/docs/atlas/images/access-manager/api-key-view.drawio.svg)
+> Private Key 只會完整顯示一次，請妥善保存。Public Key 和 Private Key 之後要填入 `terraform/aws-k3s/terraform.tfvars`。
 
-> 這兩組 key 不會過期，但要自己保存好。
->
-> 可以用 `curl ifconfig.me` 查詢目前的 public IP。API Key 的 whitelist 和 Database Network Access 的 IP Access List 是兩組獨立設定，兩邊都需要正確設定。
+**(c) 將 public IP 加入 API Key 的 Access List**
+
+在 **Applications** → **API Keys** 找到剛建立的 Key，進入編輯頁面：
+
+1. 確認 **API Key Information** 內的 Project Permissions 為 **Project Owner**
+2. 點 **Next**
+3. 在 **Private Key & Access List** 加入步驟 (a) 查到的 public IP CIDR
+4. 儲存設定
+
+> API Key 的 Access List 控制「哪些 IP 可以呼叫 Atlas Admin API」。它和 Database Network Access 的 IP Access List 是兩組獨立設定，不要混淆。
 
 ### 5. MongoDB Database User + 連線字串（用在 `deploy/backend.yml`）
 
@@ -157,7 +179,11 @@ cp terraform/aws-k3s/terraform.tfvars.example terraform/aws-k3s/terraform.tfvars
 填寫以下內容：
 
 ```hcl
-key_name = "Moojidle" # Step 3 key pair name 
+key_name = "Moojidle" # Step 3 key pair name
+
+# 換成執行 Terraform 電腦目前的 public IP CIDR
+ssh_cidr_blocks            = ["203.0.113.10/32"]
+kubernetes_api_cidr_blocks = ["203.0.113.10/32"]
 
 mongodbatlas_public_key  = "你的-public-key"
 mongodbatlas_private_key = "你的-private-key"
@@ -194,7 +220,7 @@ DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mon
 | 2/5 | 取 NLB DNS + Control Plane Public IP | [`terraform/aws-k3s/outputs.tf`](../terraform/aws-k3s/outputs.tf) |
 | 3/5 | SSH 進 CP 拿 kubeconfig，把 server 改為 NLB DNS | 讓 `kubectl` 可從本機透過 NLB 連 API server |
 | 4/5 | 驗證 `kubectl get nodes` 正常 | |
-| 5/5 | `kubectl apply` 部署 backend + frontend + ingress | [`deploy/backend.yml`](../deploy/backend.yml), [`deploy/frontend.yml`](../deploy/frontend.yml), [`deploy/ingress-rule.yml`](../deploy/ingress-rule.yml) |
+| 5/5 | `kubectl apply` 部署 backend + frontend + ingress，並將 Traefik ingress deployment 擴充為 3 個 replicas | [`deploy/backend.yml`](../deploy/backend.yml), [`deploy/frontend.yml`](../deploy/frontend.yml), [`deploy/ingress-rule.yml`](../deploy/ingress-rule.yml) |
 
 執行後會顯示 ALB URL，開瀏覽器即可看到 Moojidle。
 
@@ -266,7 +292,11 @@ KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/ingress-rule.yml
 
 ## 注意事項
 
-- **MongoDB Atlas 白名單**：`terraform apply` 時會自動將所有 EC2 public IP 加入白名單。請確認 Atlas UI 內沒有 `0.0.0.0/0` 規則，否則白名單形同虛設。
-- **Atlas API Key whitelist**：如果 `terraform apply` 出現 `HTTP 403 Forbidden` 和 `ORG_REQUIRES_ACCESS_LIST`，前往 Atlas → **Access Manager** → **API Keys** → 編輯使用中的 Key → **API Whitelist**，加入執行 Terraform 電腦的 public IP。這不是 Database Network Access 的 IP Access List。
+- **兩種 Atlas IP Access List 不同**：
+  - API Key Access List：位於 **Project Identity & Access** → **Applications** → **API Keys** → 編輯 Key → **Next** → **Private Key & Access List**。這會允許本機 Terraform 呼叫 Atlas Admin API。
+  - Database Network Access：位於 **Database & Network Access** → **IP Access List**。`terraform apply` 會自動將 5 台 EC2 節點 public IP 加入這裡，讓 backend Pods 連線 MongoDB。
+- **IP 變動時要同步更新**：如果執行 Terraform 電腦的 public IP 改變，重新執行 `curl ifconfig.me`，將新的 `<public-ip>/32` 更新到 API Key Access List、`terraform.tfvars` 的 `ssh_cidr_blocks` 和 `kubernetes_api_cidr_blocks`。
+- **`ORG_REQUIRES_ACCESS_LIST` 排錯**：如果 `terraform apply` 出現 `HTTP 403 Forbidden` 和 `ORG_REQUIRES_ACCESS_LIST`，代表 API Key Access List 沒有放行目前的 public IP。請勿只更新 Database Network Access。
+- **Database Network Access 安全性**：請確認 Atlas UI 內沒有 `0.0.0.0/0` 規則，否則 Database Network Access 白名單形同虛設。
 - **費用**：3 台 t3.medium + 2 台 t3.small + NLB + ALB，每小時約 $0.5 USD，用完請記得 `./scripts/delete.sh`
 - **SSH Key 路徑**：預設讀取根目錄的 `Moojidle.pem`，如果位置不同請修改 `scripts/deploy.sh` 第 8 行
