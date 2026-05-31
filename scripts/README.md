@@ -57,7 +57,24 @@ Terraform 建 AWS infra + K3s + Atlas 白名單，kubectl 部署應用
 brew install terraform kubectl
 
 # Ubuntu / WSL
-sudo apt update && sudo apt install -y terraform kubectl
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common wget curl
+
+# 加入 HashiCorp 官方 apt repository
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+  gpg --dearmor | \
+  sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+gpg --no-default-keyring \
+  --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+  --fingerprint
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | \
+  sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt-get update && sudo apt-get install -y terraform
+
+# 安裝目前 stable 版 kubectl
+ARCH="$(dpkg --print-architecture)"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
 ```
 
 ### 2. AWS CLI 設定
@@ -87,10 +104,13 @@ chmod 400 Moojidle.pem
 - **Create Application API Key**
 - Permission 選 **Project Owner**（目前只測過這個角色可用）
 - 記下 **Public Key** 和 **Private Key**
+- 編輯剛建立的 API Key → **API Whitelist** → 加入執行 Terraform 電腦的 public IP
 
 ![](https://www.mongodb.com/docs/atlas/images/access-manager/api-key-view.drawio.svg)
 
 > 這兩組 key 不會過期，但要自己保存好。
+>
+> 可以用 `curl ifconfig.me` 查詢目前的 public IP。API Key 的 whitelist 和 Database Network Access 的 IP Access List 是兩組獨立設定，兩邊都需要正確設定。
 
 ### 5. MongoDB Database User + 連線字串（用在 `deploy/backend.yml`）
 
@@ -247,5 +267,6 @@ KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/ingress-rule.yml
 ## 注意事項
 
 - **MongoDB Atlas 白名單**：`terraform apply` 時會自動將所有 EC2 public IP 加入白名單。請確認 Atlas UI 內沒有 `0.0.0.0/0` 規則，否則白名單形同虛設。
+- **Atlas API Key whitelist**：如果 `terraform apply` 出現 `HTTP 403 Forbidden` 和 `ORG_REQUIRES_ACCESS_LIST`，前往 Atlas → **Access Manager** → **API Keys** → 編輯使用中的 Key → **API Whitelist**，加入執行 Terraform 電腦的 public IP。這不是 Database Network Access 的 IP Access List。
 - **費用**：3 台 t3.medium + 2 台 t3.small + NLB + ALB，每小時約 $0.5 USD，用完請記得 `./scripts/delete.sh`
 - **SSH Key 路徑**：預設讀取根目錄的 `Moojidle.pem`，如果位置不同請修改 `scripts/deploy.sh` 第 8 行
