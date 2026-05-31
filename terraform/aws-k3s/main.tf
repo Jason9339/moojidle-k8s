@@ -42,6 +42,10 @@ locals {
   }
 }
 
+data "aws_vpc" "current" {
+  id = local.vpc_id
+}
+
 resource "aws_security_group" "control_plane" {
   name        = "${var.project_name}-control-plane-sg"
   description = "k3s control plane nodes"
@@ -97,6 +101,22 @@ resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_admin" {
   ip_protocol       = "tcp"
   from_port         = 6443
   to_port           = 6443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_control_plane" {
+  security_group_id            = aws_security_group.control_plane.id
+  referenced_security_group_id = aws_security_group.control_plane.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6443
+  to_port                      = 6443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_worker" {
+  security_group_id            = aws_security_group.control_plane.id
+  referenced_security_group_id = aws_security_group.worker.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6443
+  to_port                      = 6443
 }
 
 resource "aws_vpc_security_group_ingress_rule" "control_plane_etcd_self" {
@@ -193,6 +213,22 @@ resource "aws_vpc_security_group_ingress_rule" "nlb_api" {
   for_each          = toset(var.kubernetes_api_cidr_blocks)
   security_group_id = aws_security_group.nlb.id
   cidr_ipv4         = each.value
+  ip_protocol       = "tcp"
+  from_port         = 6443
+  to_port           = 6443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_worker" {
+  security_group_id            = aws_security_group.nlb.id
+  referenced_security_group_id = aws_security_group.worker.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6443
+  to_port                      = 6443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_vpc" {
+  security_group_id = aws_security_group.nlb.id
+  cidr_ipv4         = data.aws_vpc.current.cidr_block
   ip_protocol       = "tcp"
   from_port         = 6443
   to_port           = 6443
@@ -394,6 +430,24 @@ resource "aws_instance" "worker" {
     Name = "${var.project_name}-worker-${count.index + 1}"
     Role = "worker"
   })
+}
+
+resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_worker_public_ips" {
+  count             = var.worker_count
+  security_group_id = aws_security_group.control_plane.id
+  cidr_ipv4         = "${aws_instance.worker[count.index].public_ip}/32"
+  ip_protocol       = "tcp"
+  from_port         = 6443
+  to_port           = 6443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_worker_public_ips" {
+  count             = var.worker_count
+  security_group_id = aws_security_group.nlb.id
+  cidr_ipv4         = "${aws_instance.worker[count.index].public_ip}/32"
+  ip_protocol       = "tcp"
+  from_port         = 6443
+  to_port           = 6443
 }
 
 resource "aws_lb_target_group_attachment" "control_plane" {
