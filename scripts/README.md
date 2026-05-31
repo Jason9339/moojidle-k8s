@@ -218,11 +218,34 @@ DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mon
 |---|---|---|
 | 1/5 | `terraform apply` 建立 AWS infra：VPC、SG、EC2、NLB、ALB | [`terraform/aws-k3s/main.tf`](../terraform/aws-k3s/main.tf) |
 | 2/5 | 取 NLB DNS + Control Plane Public IP | [`terraform/aws-k3s/outputs.tf`](../terraform/aws-k3s/outputs.tf) |
-| 3/5 | SSH 進 CP 拿 kubeconfig，把 server 改為 NLB DNS | 讓 `kubectl` 可從本機透過 NLB 連 API server |
-| 4/5 | 驗證 `kubectl get nodes` 正常 | |
+| 3/5 | 等待 5 台 EC2 的 cloud-init 完成，SSH 進 CP 拿 kubeconfig，把 server 改為 NLB DNS | cloud-init 會自動安裝 K3s；本機 `kubectl` 透過 NLB 連 API server |
+| 4/5 | 驗證所有 K3s nodes 都進入 `Ready` 狀態 | |
 | 5/5 | `kubectl apply` 部署 backend + frontend + ingress，並將 Traefik ingress deployment 擴充為 3 個 replicas | [`deploy/backend.yml`](../deploy/backend.yml), [`deploy/frontend.yml`](../deploy/frontend.yml), [`deploy/ingress-rule.yml`](../deploy/ingress-rule.yml) |
 
 執行後會顯示 ALB URL，開瀏覽器即可看到 Moojidle。
+
+### cloud-init 初始化流程
+
+Terraform 會透過 EC2 `user_data` 傳入初始化腳本，Ubuntu 開機後由 cloud-init 自動執行：
+
+- 第一台 Control Plane：安裝 K3s server，使用 `--cluster-init` 建立 embedded etcd cluster
+- 另外兩台 Control Plane：等待第一台 Control Plane 的 K3s API 可連線，再加入 embedded etcd cluster
+- 兩台 Worker：等待 NLB 的 K3s API 可連線，再安裝 K3s agent 並加入 cluster
+
+`./scripts/deploy.sh` 會依序透過 SSH 執行：
+
+```bash
+sudo cloud-init status --wait
+```
+
+確認 5 台 EC2 都完成初始化後，才會下載 kubeconfig 並部署應用程式。cloud-init 在遠端 EC2 執行，因此取得 kubeconfig 時仍需要 SSH。
+
+如果任一節點初始化失敗或超過 10 分鐘，script 會顯示該節點的 cloud-init log 尾端。也可以手動 SSH 進該節點查看：
+
+```bash
+cloud-init status --long
+sudo tail -n 100 /var/log/cloud-init-output.log
+```
 
 ---
 
