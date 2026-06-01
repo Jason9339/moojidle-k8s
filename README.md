@@ -40,6 +40,8 @@ Before deploying the server, we need to prepare our MongoDB first (we use [Mongo
 
 ### Prepare MongoDB Atlas
 
+First, create a free cluster on [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database). Then migrate the seed data from our local database to Atlas using `mongodump` and `mongorestore`.
+
 **(a) Create a Database User**
 
 Atlas → **Database Access** → **Add New Database User**
@@ -47,35 +49,23 @@ Atlas → **Database Access** → **Add New Database User**
 - Custom username & password
 - Atlas admin permission is sufficient
 
-**(b) Get the connection string**
+**(b) Populate local MongoDB with seed data**
 
-Atlas → **Clusters** → your cluster → **Connect** → **Drivers**
+Follow the instructions in [`project/database/README.md`](project/database/README.md) to set up your local MongoDB and insert the seed data.
 
+```bash
+# Then dump the local database
+mongodump --db moojidle --out ./dump
 ```
-mongodb+srv://<username>:<password>@cluster0.uyzxe9f.mongodb.net/<db-name>?appName=Cluster0
+
+**(c) Restore to Atlas**
+
+Get your Atlas connection string: Atlas → **Clusters** → your cluster → **Connect** → **Drivers**
+
+```bash
+mongorestore --uri="mongodb+srv://<username>:<password>@cluster0.uyzxe9f.mongodb.net/" --db moojidle ./dump
 ```
 
-Replace `<username>`, `<password>`, `<db-name>` with your actual values. This will be used in `deploy/backend.yml` as `DATA_BASE_URL`.
-
-**(c) Create an Atlas API Key (for Terraform)**
-
-Atlas → **Project Identity & Access** → **Applications** → **API Keys** → **Create Application API Key**
-
-- Permission: **Project Owner**
-- Save the **Public Key** and **Private Key** (Private Key is shown only once)
-- Add your local machine's public IP (run `curl ifconfig.me`) to the **API Key Access List**
-
-This API Key allows Terraform to automatically add EC2 public IPs to the Database Network Access whitelist.
-
-> **⚠️ Two different IP access lists:**
-> - **API Key Access List** — controls which IPs can call the Atlas Admin API (needed by Terraform)
-> - **Database Network Access** — controls which IPs can connect to your database (automated by Terraform)
-
-**(d) Get the Project ID**
-
-Atlas → **Project Settings** (gear icon next to project name) → **General** → **Project ID**
-
-Copy the **Project ID** (a 24-character hex string like `6a0c89373e76fb8d784*****`). This will go into `terraform/aws-k3s/terraform.tfvars` as `mongodbatlas_project_id`.
 
 Now let's start deploying to AWS via K3S, we need to have both the frontend and backend images first (check [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Ffrontend) for frontend, here for [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Fbackend) for backend). If there's no available images on ghcr, refer to `DOCKER_README.md` for instructions about image building steps. The following is the steps to deploy moojidle to [AWS](https://aws.amazon.com/console/) via [k3s](https://k3s.io/):
 
