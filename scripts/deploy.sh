@@ -15,6 +15,29 @@ else
   PYTHON_BIN="python"
 fi
 
+confirm_alarm_email() {
+  local tfvars_file="$TF_DIR/terraform.tfvars"
+
+  # Check if alarm_email is already configured in the file
+  if grep -Eq '^[[:space:]]*alarm_email[[:space:]]*=[[:space:]]*".+"' "$tfvars_file"; then
+    return 0
+  fi
+
+  echo "WARNING: CloudWatch Alarm email is missing in terraform.tfvars."
+  read -rp "Please enter the email address for SNS alerts: " ALARM_EMAIL
+  
+  if [[ -z "$ALARM_EMAIL" ]]; then
+    echo "ERROR: Email cannot be empty. Aborted."
+    exit 1
+  fi
+  
+  # Automatically append it to terraform.tfvars
+  echo -e "\n# CloudWatch Alarms Configuration" >> "$tfvars_file"
+  echo "alarm_email = \"$ALARM_EMAIL\"" >> "$tfvars_file"
+  echo "Successfully added alarm_email to terraform.tfvars."
+  echo ""
+}
+
 confirm_domain_config() {
   local tfvars_file="$TF_DIR/terraform.tfvars"
 
@@ -70,6 +93,7 @@ echo "============================================"
 echo " 1/5 Terraform apply"
 echo "============================================"
 confirm_domain_config
+confirm_alarm_email
 terraform -chdir="$TF_DIR" init
 terraform -chdir="$TF_DIR" apply -auto-approve
 

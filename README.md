@@ -196,6 +196,37 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 
 </details>
 
+<details>
+<summary>STAGE 5: Enable SSL Certificate #TODO @劉宸均</summary>
+
+TODO @劉宸均
+
+</details>
+
+<details>
+<summary>STAGE 6: Setup CloudWatch Alarms</summary>
+
+In this section, we create total of 10 _alarms_. 5 for _CPUUtilization_ on each nodes, 3 for _NetworkIn_ on CP, 2 for _NetworkIn_ on worker.
+
+1. For _CPUUtilization_ type _alarms_:
+    - Select EC2 type Metric and locate your target node via ID filtering
+    - _Statistic_: Average, _Period_: 5 min, _Greater_: 70 (this is in percentage)
+    - Then, select _In alarm_ type and Create new _topic_ with your email, say "CPU-ALARM-TOPIC". Select that _topic_ for this _CPUUtilization_ type (Remember to manually click the confirmation link in each email sent by AWS)
+    - Create for each 5 nodes
+2. For _NetworkIn_ type _alarms_:
+    1. For CP (using _t3.Medium_):
+        - Select EC2 type Metric and locate your target node via ID filtering
+        - _Statistic_: Average, _Period_: 5 min, _Greater_: 1000000000 (this is in bytes)
+        - Then, select _In alarm_ type and Create new _topic_ with your email, say "CP-NetworkIn-ALARM-TOPIC". Select that _topic_
+        - Create for each 3 CPs
+    2. For Worker (using _t3.Small_):
+        - Select EC2 type Metric and locate your target node via ID filtering
+        - _Statistic_: Average, _Period_: 5 min, _Greater_: 625000000 (this is in bytes)
+        - Then, select _In alarm_ type and Create new _topic_ with your email, say "Worker-NetworkIn-ALARM-TOPIC". Select that _topic_
+        - Create for each 2 Worker nodes
+
+</details>
+
 ### Automation via Terraform (The Industry Best Practice)
 
 Because we have already understand the process of deploying our HA cluster manually, please refer to the following folders to starightly config the IaC (Infrastructure as Code):

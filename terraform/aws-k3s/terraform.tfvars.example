@@ -23,6 +23,12 @@ control_plane_instance_type = "t3.medium"
 worker_instance_type        = "t3.small"
 root_volume_size            = 30
 
+# CloudWatch Alarms Configuration
+alarm_email                 = "your-email@example.com"
+cpu_alarm_threshold         = 70
+cp_network_in_threshold     = 1000000000
+worker_network_in_threshold = 625000000
+
 # MongoDB Atlas — create a Programmatic API Key in Atlas (Project Access Manager) first.
 mongodbatlas_public_key  = "your-public-key"
 mongodbatlas_private_key = "your-private-key"
