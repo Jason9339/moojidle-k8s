@@ -334,9 +334,27 @@ resource "aws_lb_listener" "app_http" {
   port              = 80
   protocol          = "HTTP"
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.worker.arn
+  dynamic "default_action" {
+    for_each = local.custom_domain_enabled ? [] : [1]
+
+    content {
+      type             = "forward"
+      target_group_arn = aws_lb_target_group.worker.arn
+    }
+  }
+
+  dynamic "default_action" {
+    for_each = local.custom_domain_enabled ? [1] : []
+
+    content {
+      type = "redirect"
+
+      redirect {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
   }
 }
 

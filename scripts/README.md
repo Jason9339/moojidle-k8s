@@ -236,7 +236,7 @@ mongodbatlas_private_key = "你的-private-key"
 mongodbatlas_project_id  = "你的-project-id"
 
 # 可以使用主網域 moojidle-k8s.online 或是使用子網域 [自訂].moojidle-k8s.online
-domain_name          = "你的名字.moojidle-k8s.online"
+domain_name          = "moojidle-k8s.online"
 cloudflare_zone_id   = "你的-cloudflare-zone-id"
 cloudflare_api_token = "你的-cloudflare-api-token"
 ```
