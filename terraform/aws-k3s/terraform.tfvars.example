@@ -1,0 +1,26 @@
+aws_region   = "ap-northeast-1"
+# please xxxx use whatever you want
+project_name = "moojidle-xxxx"
+
+# Create this EC2 key pair in AWS first, or reuse an existing one.
+key_name = "your-ec2-keypair-name"
+
+# Optional: use existing network resources. If omitted, Terraform uses the default VPC and its subnets.
+# vpc_id     = "vpc-xxxxxxxxxxxxxxxxx"
+# subnet_ids = ["subnet-xxxxxxxxxxxxxxxxx", "subnet-yyyyyyyyyyyyyyyyy"]
+
+# Recommended: replace 0.0.0.0/0 with your public IP CIDR, for example ["203.0.113.10/32"].
+ssh_cidr_blocks            = ["0.0.0.0/0"]
+kubernetes_api_cidr_blocks = ["0.0.0.0/0"]
+app_cidr_blocks            = ["0.0.0.0/0"]
+
+control_plane_count         = 3
+worker_count                = 2
+control_plane_instance_type = "t3.medium"
+worker_instance_type        = "t3.small"
+root_volume_size            = 30
+
+# MongoDB Atlas — create a Programmatic API Key in Atlas (Project Access Manager) first.
+mongodbatlas_public_key  = "your-public-key"
+mongodbatlas_private_key = "your-private-key"
+mongodbatlas_project_id  = "your-project-id"
