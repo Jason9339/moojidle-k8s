@@ -85,6 +85,25 @@ variable "app_cidr_blocks" {
   default     = ["0.0.0.0/0"]
 }
 
+variable "domain_name" {
+  description = "Optional custom domain name for the application, for example app.example.com."
+  type        = string
+  default     = null
+}
+
+variable "cloudflare_zone_id" {
+  description = "Optional Cloudflare zone ID for the domain."
+  type        = string
+  default     = null
+}
+
+variable "cloudflare_api_token" {
+  description = "Optional Cloudflare API token with Zone:Read and DNS:Edit permissions for the zone."
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
 variable "root_volume_size" {
   description = "Root EBS volume size in GiB for all nodes."
   type        = number

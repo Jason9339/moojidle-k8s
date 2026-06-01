@@ -14,6 +14,10 @@ terraform {
       source  = "mongodb/mongodbatlas"
       version = "~> 1.15.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.0"
+    }
   }
 }
 
@@ -24,4 +28,8 @@ provider "aws" {
 provider "mongodbatlas" {
   public_key  = var.mongodbatlas_public_key
   private_key = var.mongodbatlas_private_key
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

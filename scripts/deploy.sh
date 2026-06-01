@@ -15,6 +15,20 @@ else
   PYTHON_BIN="python"
 fi
 
+confirm_domain_config() {
+  local tfvars_file="$TF_DIR/terraform.tfvars"
+
+  if [[ -f "$tfvars_file" ]] && grep -Eq '^[[:space:]]*domain_name[[:space:]]*=' "$tfvars_file"; then
+    return 0
+  fi
+
+  read -rp "You have not configured a domain name and Cloudflare. Continue? [y/N] " confirm
+  if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Aborted."
+    exit 1
+  fi
+}
+
 tf_output_ips() {
   terraform -chdir="$TF_DIR" output -json "$1" | "$PYTHON_BIN" -c \
     'import json, sys; print("\n".join(json.load(sys.stdin)))'
@@ -55,6 +69,7 @@ wait_for_cloud_init() {
 echo "============================================"
 echo " 1/5 Terraform apply"
 echo "============================================"
+confirm_domain_config
 terraform -chdir="$TF_DIR" init
 terraform -chdir="$TF_DIR" apply -auto-approve
 
@@ -164,8 +179,12 @@ echo ""
 echo "Traefik ingress pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o wide
 
-APP_URL=$(terraform -chdir="$TF_DIR" output -raw application_alb_dns_name 2>/dev/null || echo "")
+APP_URL=$(terraform -chdir="$TF_DIR" output -raw application_url 2>/dev/null || terraform -chdir="$TF_DIR" output -raw application_alb_dns_name 2>/dev/null || echo "")
 if [[ -n "$APP_URL" ]]; then
   echo ""
-  echo "App URL: http://$APP_URL"
+  if [[ "$APP_URL" == http://* || "$APP_URL" == https://* ]]; then
+    echo "App URL: $APP_URL"
+  else
+    echo "App URL: http://$APP_URL"
+  fi
 fi

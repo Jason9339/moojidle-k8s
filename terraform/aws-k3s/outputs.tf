@@ -8,6 +8,11 @@ output "application_alb_dns_name" {
   value       = aws_lb.app.dns_name
 }
 
+output "application_url" {
+  description = "Application URL. Uses the custom HTTPS domain when configured, otherwise the ALB HTTP URL."
+  value       = local.custom_domain_enabled ? "https://${var.domain_name}" : "http://${aws_lb.app.dns_name}"
+}
+
 output "control_plane_public_ips" {
   description = "Public IPs for SSH access to control plane nodes."
   value       = concat([aws_instance.control_plane_first.public_ip], aws_instance.control_plane_joiner[*].public_ip)

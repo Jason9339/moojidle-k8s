@@ -36,6 +36,8 @@ locals {
   subnet_ids = length(var.subnet_ids) == 0 ? data.aws_subnets.selected.ids : var.subnet_ids
   ami_id     = var.ami_id == null ? data.aws_ami.ubuntu[0].id : var.ami_id
 
+  custom_domain_enabled = var.domain_name != null && var.cloudflare_zone_id != null
+
   common_tags = {
     Project   = var.project_name
     ManagedBy = "terraform"
@@ -336,6 +338,67 @@ resource "aws_lb_listener" "app_http" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.worker.arn
   }
+}
+
+resource "aws_acm_certificate" "app" {
+  count             = local.custom_domain_enabled ? 1 : 0
+  domain_name       = var.domain_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = local.common_tags
+}
+
+resource "cloudflare_dns_record" "app_cert_validation" {
+  for_each = local.custom_domain_enabled ? {
+    for dvo in aws_acm_certificate.app[0].domain_validation_options : dvo.domain_name => {
+      name    = trimsuffix(dvo.resource_record_name, ".")
+      content = trimsuffix(dvo.resource_record_value, ".")
+      type    = dvo.resource_record_type
+    }
+  } : {}
+
+  zone_id = var.cloudflare_zone_id
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.content
+  ttl     = 60
+  proxied = false
+  comment = "ACM DNS validation for ${var.domain_name}"
+}
+
+resource "aws_acm_certificate_validation" "app" {
+  count                   = local.custom_domain_enabled ? 1 : 0
+  certificate_arn         = aws_acm_certificate.app[0].arn
+  validation_record_fqdns = [for record in cloudflare_dns_record.app_cert_validation : record.name]
+}
+
+resource "aws_lb_listener" "app_https" {
+  count             = local.custom_domain_enabled ? 1 : 0
+  load_balancer_arn = aws_lb.app.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = aws_acm_certificate_validation.app[0].certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.worker.arn
+  }
+}
+
+resource "cloudflare_dns_record" "app" {
+  count   = local.custom_domain_enabled ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.domain_name
+  type    = "CNAME"
+  content = aws_lb.app.dns_name
+  ttl     = 1
+  proxied = true
+  comment = "Cloudflare proxied app entry for ${var.project_name}"
 }
 
 resource "aws_instance" "control_plane_first" {
