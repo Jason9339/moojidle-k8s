@@ -9,18 +9,13 @@ key_name = "your-ec2-keypair-name"
 # vpc_id     = "vpc-xxxxxxxxxxxxxxxxx"
 # subnet_ids = ["subnet-xxxxxxxxxxxxxxxxx", "subnet-yyyyyyyyyyyyyyyyy"]
 
-# Recommended: replace 0.0.0.0/0 with your public IP CIDR, for example ["203.0.113.10/32"].
 ssh_cidr_blocks            = ["0.0.0.0/0"]
 kubernetes_api_cidr_blocks = ["0.0.0.0/0"]
 app_cidr_blocks            = ["0.0.0.0/0"]
 
-# Optional custom domain + HTTPS through Cloudflare orange-cloud proxy.
-# Before enabling this, add your domain to Cloudflare and set your registrar
-# nameservers to the Cloudflare nameservers. The API token needs Zone:Read and
-# DNS:Edit permissions for this zone.
-# domain_name          = "app.example.com"
-# cloudflare_zone_id   = "your-cloudflare-zone-id"
-# cloudflare_api_token = "your-cloudflare-api-token"
+domain_name          = "app.example.com"
+cloudflare_zone_id   = "your-cloudflare-zone-id"
+cloudflare_api_token = "your-cloudflare-api-token"
 
 control_plane_count         = 3
 worker_count                = 2
