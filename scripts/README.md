@@ -52,25 +52,48 @@ Terraform 建 AWS infra + K3s + Atlas 白名單，kubectl 部署應用
 
 ### 1. 安裝工具
 
+### macOS
+
 ```bash
 # macOS
 brew install terraform kubectl
+```
 
+#### Ubuntu / WSL
+
+```bash
 # Ubuntu / WSL
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common wget curl
+```
 
+```bash
 # 加入 HashiCorp 官方 apt repository
 wget -O- https://apt.releases.hashicorp.com/gpg | \
   gpg --dearmor | \
   sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+```
+
+```bash
 gpg --no-default-keyring \
   --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
   --fingerprint
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | \
-  sudo tee /etc/apt/sources.list.d/hashicorp.list
+```
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+```
+
+```bash
 sudo apt-get update && sudo apt-get install -y terraform
+```
+
+```bash
+terraform -install-autocomplete
+```
 
 # 安裝目前 stable 版 kubectl
+
+```bash
 ARCH="$(dpkg --print-architecture)"
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -79,9 +102,11 @@ rm kubectl
 
 ### 2. AWS CLI 設定
 
+於 "IAM" --> "IAM user" --> 自己 --> "Security credentials" --> "Access keys"
+
 ```bash
 aws configure --profile DS-Moojidle
-# 填入 AWS Access Key + Secret Key（需要有 EC2 / VPC / ELB 建立權限）
+# 填入 AWS Access Key + Secret Key（需要 Admin 幫你開通 EC2 / VPC / ELB 建立權限）
 ```
 
 ### 3. EC2 Key Pair
@@ -98,6 +123,8 @@ chmod 400 Moojidle.pem
 ```
 
 ### 4. MongoDB Atlas API Key + API Access List（用在 `terraform.tfvars`）
+
+前往 Atlas → 左側 "Project Identity & Acess" → "Applications" → "API Keys"
 
 Terraform 會透過 Atlas Admin API 將 EC2 節點 public IP 加入 MongoDB Atlas 的 Database Network Access，因此要先建立 API Key，並允許執行 Terraform 電腦的 public IP 呼叫 Atlas Admin API。
 
@@ -176,7 +203,7 @@ mongodb+srv://myUser:myPassword@cluster0.uyzxe9f.mongodb.net/moojidle?appName=Cl
 cp terraform/aws-k3s/terraform.tfvars.example terraform/aws-k3s/terraform.tfvars
 ```
 
-填寫以下內容：
+填寫以下內容 (`mongodbatlas_project_id` 在 "Project Settings" 找)：
 
 ```hcl
 key_name = "Moojidle" # Step 3 key pair name
