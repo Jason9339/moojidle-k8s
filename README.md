@@ -40,6 +40,8 @@ Before deploying the server, we need to prepare our MongoDB first (we use [Mongo
 
 First, create a free cluster on [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database). Then migrate the seed data from our local database to Atlas using `mongodump` and `mongorestore`.
 
+### Prepare MongoDB Atlas
+
 <details>
 <summary>(a) Create a Database User</summary>
 
