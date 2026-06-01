@@ -164,6 +164,10 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 
 ### Automation via Terraform (The Industry Best Practice)
 
+Because we have already understand the process of deploying our HA cluster manually, please refer to the following folders to starightly config the IaC (Infrastructure as Code):
+- `terraform/aws-k3s` for IaC itself
+- `scripts` for One-click Deployment (Note: we straightly use bash script to mimic cloud-init funstionalities)
+
 ## Demo Video Link
 
 ## Final Presentation
