@@ -25,9 +25,9 @@ root_volume_size            = 30
 
 # CloudWatch Alarms Configuration
 alarm_email                 = "your-email@example.com"
-cpu_alarm_threshold         = 70
-cp_network_in_threshold     = 1000000000
-worker_network_in_threshold = 625000000
+cpu_alarm_threshold         = 70                    # In percentage
+cp_network_in_threshold     = 1000000000            # In Bytes
+worker_network_in_threshold = 625000000             # In Bytes
 
 # MongoDB Atlas — create a Programmatic API Key in Atlas (Project Access Manager) first.
 mongodbatlas_public_key  = "your-public-key"
