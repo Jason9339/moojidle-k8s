@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 TF_DIR="$PROJECT_ROOT/terraform/aws-k3s"
 DEPLOY_DIR="$PROJECT_ROOT/deploy"
+BACKEND_SECRET="$DEPLOY_DIR/backend-secret.yml"
 SSH_KEY="$PROJECT_ROOT/Moojidle.pem" # You maybe need to adjust this path if your SSH key is located elsewhere
 KUBECONFIG="$HOME/.kube/moojidle-config"
 SSH_OPTIONS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -i "$SSH_KEY")
@@ -149,10 +150,16 @@ echo "============================================"
 echo " 5/5 Deploy application manifests"
 echo "============================================"
 
+if [[ ! -f "$BACKEND_SECRET" ]]; then
+  echo "ERROR: deploy/backend-secret.yml does not exist."
+  echo "Create it from deploy/backend-secret.yml.example and fill in your MongoDB connection string."
+  exit 1
+fi
+
 # 檢查 MongoDB URI 是否仍為 placeholder
-MONGO_URL=$(grep "DATA_BASE_URL" "$DEPLOY_DIR/backend.yml" | sed 's/.*"\(.*\)".*/\1/')
+MONGO_URL=$(grep "DATA_BASE_URL" "$BACKEND_SECRET" | sed 's/.*"\(.*\)".*/\1/')
 if echo "$MONGO_URL" | grep -qE "<.*>"; then
-  echo "ERROR: deploy/backend.yml 的 DATA_BASE_URL 仍包含佔位符 <...>"
+  echo "ERROR: deploy/backend-secret.yml 的 DATA_BASE_URL 仍包含佔位符 <...>"
   echo "請先填入真實的 MongoDB 連線字串後再執行。"
   exit 1
 fi
@@ -164,6 +171,7 @@ if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
   exit 1
 fi
 
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$BACKEND_SECRET"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/backend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/frontend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/ingress-rule.yml"

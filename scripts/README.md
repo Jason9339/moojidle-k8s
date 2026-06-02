@@ -180,7 +180,7 @@ Include → Specific zone → moojidle-k8s.online
 
 > ⚠️ API token 只會完整顯示一次，請勿貼到聊天、README 或 commit 進 git。
 
-### 6. MongoDB Database User + 連線字串（用在 `deploy/backend.yml`）
+### 6. MongoDB Database User + 連線字串（用在 `deploy/backend-secret.yml`）
 
 **(a) 建立 Database User（若還沒有）**
 
@@ -208,7 +208,7 @@ mongodb+srv://myUser:myPassword@cluster0.uyzxe9f.mongodb.net/moojidle?appName=Cl
 
 (如果使用預設的 `test` database，就把 `/moojidle` 改為 `/test`)
 
-這個就是 `deploy/backend.yml` 第 11 行要填的 `DATA_BASE_URL`。
+這個就是 `deploy/backend-secret.yml` 要填的 `DATA_BASE_URL`。
 
 > 你也可以先用 PowerShell / Atlas Compass 測試這個 URI 是否能連線。
 
@@ -243,15 +243,21 @@ cloudflare_api_token = "你的-cloudflare-api-token"
 
 > ⚠️ `terraform.tfvars` 含敏感資訊，**不要 commit 進 git**（已加進 `.gitignore`）
 
-### `deploy/backend.yml`
+### `deploy/backend-secret.yml`
 
-編輯第 11 行，將 MongoDB URI 換成你自己的：
+建立本機 Secret 設定檔：
+
+```bash
+cp deploy/backend-secret.yml.example deploy/backend-secret.yml
+```
+
+編輯 `deploy/backend-secret.yml`，將 MongoDB URI 換成你自己的：
 
 ```yaml
 DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mongodb.net/<DB名稱>?appName=Cluster0"
 ```
 
-> ⚠️ 這份 YAML 含資料庫密碼，commit 前請確認不是用真實密碼。
+> ⚠️ `deploy/backend-secret.yml` 含資料庫密碼，已加入 `.gitignore`，不要 commit。
 
 ---
 

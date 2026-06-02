@@ -14,6 +14,9 @@ if [[ -f "$KUBECONFIG" ]] && KUBECONFIG="$KUBECONFIG" kubectl get nodes &>/dev/n
   KUBECONFIG="$KUBECONFIG" kubectl delete -f "$DEPLOY_DIR/ingress-rule.yml" --ignore-not-found
   KUBECONFIG="$KUBECONFIG" kubectl delete -f "$DEPLOY_DIR/frontend.yml" --ignore-not-found
   KUBECONFIG="$KUBECONFIG" kubectl delete -f "$DEPLOY_DIR/backend.yml" --ignore-not-found
+  if [[ -f "$DEPLOY_DIR/backend-secret.yml" ]]; then
+    KUBECONFIG="$KUBECONFIG" kubectl delete -f "$DEPLOY_DIR/backend-secret.yml" --ignore-not-found
+  fi
   echo "Kubernetes resources deleted."
 else
   echo "Cluster not reachable or no kubeconfig, skip kubectl delete."

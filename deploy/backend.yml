@@ -1,17 +1,4 @@
-# 1. BACKEND SECRET (NEW)
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: backend-secret
-type: Opaque
-# stringData allows plain text here; k8s will Base64 encode it upon creation.
-stringData:
-  # Remember: This must be manually configured for your own Mongo Atlas cluster (<user_name>, <user_pw>, <DB_name>)
-  DATA_BASE_URL: "mongodb+srv://<user_name>:<user_pw>@cluster0.uyzxe9f.mongodb.net/<DB_name>?appName=Cluster0"
-
----
-# 2. BACKEND CONFIGURATION
+# 1. BACKEND CONFIGURATION
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -20,7 +7,7 @@ data:
   PORT: "3000"
 
 ---
-# 3. BACKEND DEPLOYMENT (Express Server)
+# 2. BACKEND DEPLOYMENT (Express Server)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -59,7 +46,7 @@ spec:
         - containerPort: 3000
 
 ---
-# 4. BACKEND SERVICE
+# 3. BACKEND SERVICE
 apiVersion: v1
 kind: Service
 metadata:
