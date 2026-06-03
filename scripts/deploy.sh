@@ -16,6 +16,44 @@ else
   PYTHON_BIN="python"
 fi
 
+check_atlas_api_ip() {
+  echo "Checking MongoDB Atlas API access for your current IP..."
+  local tfvars_file="$TF_DIR/terraform.tfvars"
+
+  # Extract the credentials directly from terraform.tfvars
+  local pub_key=$(grep -E '^[[:space:]]*mongodbatlas_public_key' "$tfvars_file" | sed 's/.*"\(.*\)".*/\1/' || true)
+  local priv_key=$(grep -E '^[[:space:]]*mongodbatlas_private_key' "$tfvars_file" | sed 's/.*"\(.*\)".*/\1/' || true)
+  local project_id=$(grep -E '^[[:space:]]*mongodbatlas_project_id' "$tfvars_file" | sed 's/.*"\(.*\)".*/\1/' || true)
+
+  if [[ -n "$pub_key" && -n "$priv_key" && -n "$project_id" ]]; then
+    # Atlas requires Digest authentication. We ping the groups (projects) endpoint to verify access.
+    local http_status=$(curl -s -o /dev/null -w "%{http_code}" --digest -u "$pub_key:$priv_key" \
+      "https://cloud.mongodb.com/api/atlas/v1.0/groups/$project_id")
+
+    if [[ "$http_status" == "401" || "$http_status" == "403" ]]; then
+      local my_ip=$(curl -s ifconfig.me)
+      echo ""
+      echo "====================================================================="
+      echo " ERROR: MongoDB Atlas API Connection Refused (HTTP $http_status)"
+      echo "====================================================================="
+      echo " Your current public IP ($my_ip) is missing from the"
+      echo " MongoDB Atlas Programmatic API Key Access List."
+      echo " "
+      echo " Please log into Atlas, update your API Key's IP whitelist,"
+      echo " and run this script again."
+      echo " Aborting deployment to prevent orphaned AWS resources."
+      echo "====================================================================="
+      exit 1
+    elif [[ "$http_status" != "200" ]]; then
+      echo "WARNING: MongoDB Atlas API returned HTTP $http_status. Deployment might fail."
+    else
+      echo "MongoDB Atlas API connectivity verified."
+    fi
+  else
+    echo "WARNING: Could not parse MongoDB Atlas credentials from tfvars. Skipping API check."
+  fi
+}
+
 confirm_alarm_email() {
   local tfvars_file="$TF_DIR/terraform.tfvars"
 
@@ -94,6 +132,7 @@ echo "============================================"
 echo " 1/5 Terraform apply"
 echo "============================================"
 confirm_domain_config
+check_atlas_api_ip
 confirm_alarm_email
 terraform -chdir="$TF_DIR" init
 terraform -chdir="$TF_DIR" apply -auto-approve
