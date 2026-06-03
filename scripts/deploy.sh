@@ -119,7 +119,7 @@ wait_for_cloud_init() {
   wait_for_ssh "$ip" "$label"
   echo "Waiting for cloud-init on $label ($ip)..."
   if ! ssh "${SSH_OPTIONS[@]}" "ubuntu@$ip" \
-    "timeout 600 sudo cloud-init status --wait"; then
+    "timeout 600 sudo cloud-init status --wait || sudo cloud-init status --format json | python3 -c 'import json, sys; s=json.load(sys.stdin); sys.exit(0 if s.get(\"status\") == \"done\" and not s.get(\"errors\") else 1)'"; then
     echo "ERROR: cloud-init failed or timed out on $label ($ip)."
     echo "Last cloud-init log lines:"
     ssh "${SSH_OPTIONS[@]}" "ubuntu@$ip" \
