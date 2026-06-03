@@ -2,10 +2,15 @@
 
 The following explains the components used in this project. Follow the [Manual Instructions](https://github.com/Jason9339/moojidle-k8s#manually-for-best-learning-experience) for better learning experience
 
+## backend-secret.yml
+
+This local-only manifest stores the MongoDB Atlas connection string as a Kubernetes Secret. Copy `backend-secret.yml.example` to `backend-secret.yml` and fill in `DATA_BASE_URL` before deployment.
+
+`backend-secret.yml` is ignored by git and must not be committed.
+
 ## backend.yml
 
-First, we introduce the backend of moojidle. There are 4 k8s components in this yaml file:
-- Secret: Storing the **user name**, **password**, **DB name** of the created [Mongo Atlas](https://www.mongodb.com/products/platform/atlas-database) cluster
+First, we introduce the backend of moojidle. There are 3 k8s components in this yaml file:
 - ConfigMap: For the Express server's listening port
 - Deployment: Declaring the replicas and use both _Secret_ and _ConfigMap_ here for best practice
 - Service: The internal LB for all of our backend pods

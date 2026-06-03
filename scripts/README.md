@@ -371,6 +371,7 @@ ssh -i Moojidle.pem ubuntu@<cp-ip> sudo cat /etc/rancher/k3s/k3s.yaml > ~/.kube/
 sed -i '' 's/127.0.0.1/<nlb-dns>/g' ~/.kube/moojidle-config
 
 # 3. 部署應用
+KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/backend-secret.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/backend.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/frontend.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/ingress-rule.yml

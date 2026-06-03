@@ -54,13 +54,14 @@ On your local machine:
 
 ```bash
 kubectl get nodes
+kubectl apply -f ../../deploy/backend-secret.yml
 kubectl apply -f ../../deploy/backend.yml
 kubectl apply -f ../../deploy/frontend.yml
 kubectl apply -f ../../deploy/ingress-rule.yml
 kubectl scale deployment -n kube-system traefik --replicas 3
 ```
 
-Before applying `backend.yml`, replace the placeholder MongoDB Atlas connection string in `../../deploy/backend.yml`.
+Before applying `backend-secret.yml`, copy `../../deploy/backend-secret.yml.example` to `../../deploy/backend-secret.yml` and fill in the MongoDB Atlas connection string.
 
 Open:
 
@@ -76,6 +77,7 @@ Remove the Kubernetes application first if you still have kubeconfig access:
 kubectl delete -f ../../deploy/ingress-rule.yml
 kubectl delete -f ../../deploy/frontend.yml
 kubectl delete -f ../../deploy/backend.yml
+kubectl delete -f ../../deploy/backend-secret.yml
 ```
 
 Then destroy AWS resources:
