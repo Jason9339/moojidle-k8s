@@ -161,7 +161,26 @@ curl ifconfig.me
 
 > API Key 的 Access List 控制「哪些 IP 可以呼叫 Atlas Admin API」。它和 Database Network Access 的 IP Access List 是兩組獨立設定，不要混淆。
 
-### 5. MongoDB Database User + 連線字串（用在 `deploy/backend.yml`）
+### 5. Cloudflare API Token（用在 `terraform.tfvars`）
+
+Cloudflare → My Profile → API Tokens → **Create Token** → 使用 **Edit zone DNS** template。
+
+```text
+Zone → Zone → Read
+Zone → DNS  → Edit
+```
+
+Zone Resources 選：
+
+```text
+Include → Specific zone → moojidle-k8s.online
+```
+
+記下 API token 和 Zone ID，後續要填入 `terraform/aws-k3s/terraform.tfvars`。
+
+> ⚠️ API token 只會完整顯示一次，請勿貼到聊天、README 或 commit 進 git。
+
+### 6. MongoDB Database User + 連線字串（用在 `deploy/backend-secret.yml`）
 
 **(a) 建立 Database User（若還沒有）**
 
@@ -189,7 +208,7 @@ mongodb+srv://myUser:myPassword@cluster0.uyzxe9f.mongodb.net/moojidle?appName=Cl
 
 (如果使用預設的 `test` database，就把 `/moojidle` 改為 `/test`)
 
-這個就是 `deploy/backend.yml` 第 11 行要填的 `DATA_BASE_URL`。
+這個就是 `deploy/backend-secret.yml` 要填的 `DATA_BASE_URL`。
 
 > 你也可以先用 PowerShell / Atlas Compass 測試這個 URI 是否能連線。
 
@@ -215,19 +234,30 @@ kubernetes_api_cidr_blocks = ["203.0.113.10/32"]
 mongodbatlas_public_key  = "你的-public-key"
 mongodbatlas_private_key = "你的-private-key"
 mongodbatlas_project_id  = "你的-project-id"
+
+# 可以使用主網域 moojidle-k8s.online 或是使用子網域 [自訂].moojidle-k8s.online
+domain_name          = "moojidle-k8s.online"
+cloudflare_zone_id   = "你的-cloudflare-zone-id"
+cloudflare_api_token = "你的-cloudflare-api-token"
 ```
 
 > ⚠️ `terraform.tfvars` 含敏感資訊，**不要 commit 進 git**（已加進 `.gitignore`）
 
-### `deploy/backend.yml`
+### `deploy/backend-secret.yml`
 
-編輯第 11 行，將 MongoDB URI 換成你自己的：
+建立本機 Secret 設定檔：
+
+```bash
+cp deploy/backend-secret.yml.example deploy/backend-secret.yml
+```
+
+編輯 `deploy/backend-secret.yml`，將 MongoDB URI 換成你自己的：
 
 ```yaml
 DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mongodb.net/<DB名稱>?appName=Cluster0"
 ```
 
-> ⚠️ 這份 YAML 含資料庫密碼，commit 前請確認不是用真實密碼。
+> ⚠️ `deploy/backend-secret.yml` 含資料庫密碼，已加入 `.gitignore`，不要 commit。
 
 ---
 
@@ -243,13 +273,23 @@ DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mon
 
 | Step | 做的事 | 引用 |
 |---|---|---|
-| 1/5 | `terraform apply` 建立 AWS infra：VPC、SG、EC2、NLB、ALB | [`terraform/aws-k3s/main.tf`](../terraform/aws-k3s/main.tf) |
+| 1/5 | `terraform apply` 建立 AWS infra：VPC、SG、EC2、NLB、ALB、ACM 憑證、Cloudflare DNS records | [`terraform/aws-k3s/main.tf`](../terraform/aws-k3s/main.tf) |
 | 2/5 | 取 NLB DNS + Control Plane Public IP | [`terraform/aws-k3s/outputs.tf`](../terraform/aws-k3s/outputs.tf) |
 | 3/5 | 等待 5 台 EC2 的 cloud-init 完成，SSH 進 CP 拿 kubeconfig，把 server 改為 NLB DNS | cloud-init 會自動安裝 K3s；本機 `kubectl` 透過 NLB 連 API server |
 | 4/5 | 驗證所有 K3s nodes 都進入 `Ready` 狀態 | |
 | 5/5 | `kubectl apply` 部署 backend + frontend + ingress，並將 Traefik ingress deployment 擴充為 3 個 replicas | [`deploy/backend.yml`](../deploy/backend.yml), [`deploy/frontend.yml`](../deploy/frontend.yml), [`deploy/ingress-rule.yml`](../deploy/ingress-rule.yml) |
 
-執行後會顯示 ALB URL，開瀏覽器即可看到 Moojidle。
+如果 `terraform.tfvars` 沒有設定 `domain_name`，script 會先詢問：
+
+```text
+You have not configured a domain name and Cloudflare. Continue? [y/N]
+```
+
+執行後會顯示 App URL。設定 Cloudflare 時會顯示 HTTPS domain，例如：
+
+```text
+App URL: https://你的名字.moojidle-k8s.online
+```
 
 ### cloud-init 初始化流程
 
@@ -331,6 +371,7 @@ ssh -i Moojidle.pem ubuntu@<cp-ip> sudo cat /etc/rancher/k3s/k3s.yaml > ~/.kube/
 sed -i '' 's/127.0.0.1/<nlb-dns>/g' ~/.kube/moojidle-config
 
 # 3. 部署應用
+KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/backend-secret.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/backend.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/frontend.yml
 KUBECONFIG=~/.kube/moojidle-config kubectl apply -f deploy/ingress-rule.yml

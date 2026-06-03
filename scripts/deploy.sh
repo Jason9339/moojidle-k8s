@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 TF_DIR="$PROJECT_ROOT/terraform/aws-k3s"
 DEPLOY_DIR="$PROJECT_ROOT/deploy"
+BACKEND_SECRET="$DEPLOY_DIR/backend-secret.yml"
 SSH_KEY="$PROJECT_ROOT/Moojidle.pem" # You maybe need to adjust this path if your SSH key is located elsewhere
 KUBECONFIG="$HOME/.kube/moojidle-config"
 SSH_OPTIONS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -i "$SSH_KEY")
@@ -14,6 +15,20 @@ if command -v python3 >/dev/null 2>&1; then
 else
   PYTHON_BIN="python"
 fi
+
+confirm_domain_config() {
+  local tfvars_file="$TF_DIR/terraform.tfvars"
+
+  if [[ -f "$tfvars_file" ]] && grep -Eq '^[[:space:]]*domain_name[[:space:]]*=' "$tfvars_file"; then
+    return 0
+  fi
+
+  read -rp "You have not configured a domain name and Cloudflare. Continue? [y/N] " confirm
+  if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Aborted."
+    exit 1
+  fi
+}
 
 tf_output_ips() {
   terraform -chdir="$TF_DIR" output -json "$1" | "$PYTHON_BIN" -c \
@@ -55,6 +70,7 @@ wait_for_cloud_init() {
 echo "============================================"
 echo " 1/5 Terraform apply"
 echo "============================================"
+confirm_domain_config
 terraform -chdir="$TF_DIR" init
 terraform -chdir="$TF_DIR" apply -auto-approve
 
@@ -134,10 +150,16 @@ echo "============================================"
 echo " 5/5 Deploy application manifests"
 echo "============================================"
 
+if [[ ! -f "$BACKEND_SECRET" ]]; then
+  echo "ERROR: deploy/backend-secret.yml does not exist."
+  echo "Create it from deploy/backend-secret.yml.example and fill in your MongoDB connection string."
+  exit 1
+fi
+
 # 檢查 MongoDB URI 是否仍為 placeholder
-MONGO_URL=$(grep "DATA_BASE_URL" "$DEPLOY_DIR/backend.yml" | sed 's/.*"\(.*\)".*/\1/')
+MONGO_URL=$(grep "DATA_BASE_URL" "$BACKEND_SECRET" | sed 's/.*"\(.*\)".*/\1/')
 if echo "$MONGO_URL" | grep -qE "<.*>"; then
-  echo "ERROR: deploy/backend.yml 的 DATA_BASE_URL 仍包含佔位符 <...>"
+  echo "ERROR: deploy/backend-secret.yml 的 DATA_BASE_URL 仍包含佔位符 <...>"
   echo "請先填入真實的 MongoDB 連線字串後再執行。"
   exit 1
 fi
@@ -149,6 +171,7 @@ if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
   exit 1
 fi
 
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$BACKEND_SECRET"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/backend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/frontend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/ingress-rule.yml"
@@ -164,8 +187,12 @@ echo ""
 echo "Traefik ingress pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o wide
 
-APP_URL=$(terraform -chdir="$TF_DIR" output -raw application_alb_dns_name 2>/dev/null || echo "")
+APP_URL=$(terraform -chdir="$TF_DIR" output -raw application_url 2>/dev/null || terraform -chdir="$TF_DIR" output -raw application_alb_dns_name 2>/dev/null || echo "")
 if [[ -n "$APP_URL" ]]; then
   echo ""
-  echo "App URL: http://$APP_URL"
+  if [[ "$APP_URL" == http://* || "$APP_URL" == https://* ]]; then
+    echo "App URL: $APP_URL"
+  else
+    echo "App URL: http://$APP_URL"
+  fi
 fi

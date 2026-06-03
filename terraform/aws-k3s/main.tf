@@ -36,6 +36,8 @@ locals {
   subnet_ids = length(var.subnet_ids) == 0 ? data.aws_subnets.selected.ids : var.subnet_ids
   ami_id     = var.ami_id == null ? data.aws_ami.ubuntu[0].id : var.ami_id
 
+  custom_domain_enabled = var.domain_name != null && var.cloudflare_zone_id != null
+
   common_tags = {
     Project   = var.project_name
     ManagedBy = "terraform"
@@ -92,15 +94,6 @@ resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_nlb" {
   ip_protocol                  = "tcp"
   from_port                    = 6443
   to_port                      = 6443
-}
-
-resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_admin" {
-  for_each          = toset(var.kubernetes_api_cidr_blocks)
-  security_group_id = aws_security_group.control_plane.id
-  cidr_ipv4         = each.value
-  ip_protocol       = "tcp"
-  from_port         = 6443
-  to_port           = 6443
 }
 
 resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_control_plane" {
@@ -226,14 +219,6 @@ resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_worker" {
   to_port                      = 6443
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_vpc" {
-  security_group_id = aws_security_group.nlb.id
-  cidr_ipv4         = data.aws_vpc.current.cidr_block
-  ip_protocol       = "tcp"
-  from_port         = 6443
-  to_port           = 6443
-}
-
 resource "aws_vpc_security_group_ingress_rule" "alb_http" {
   for_each          = toset(var.app_cidr_blocks)
   security_group_id = aws_security_group.alb.id
@@ -332,10 +317,89 @@ resource "aws_lb_listener" "app_http" {
   port              = 80
   protocol          = "HTTP"
 
+  dynamic "default_action" {
+    for_each = local.custom_domain_enabled ? [] : [1]
+
+    content {
+      type             = "forward"
+      target_group_arn = aws_lb_target_group.worker.arn
+    }
+  }
+
+  dynamic "default_action" {
+    for_each = local.custom_domain_enabled ? [1] : []
+
+    content {
+      type = "redirect"
+
+      redirect {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
+  }
+}
+
+resource "aws_acm_certificate" "app" {
+  count             = local.custom_domain_enabled ? 1 : 0
+  domain_name       = var.domain_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = local.common_tags
+}
+
+resource "cloudflare_dns_record" "app_cert_validation" {
+  for_each = local.custom_domain_enabled ? {
+    for dvo in aws_acm_certificate.app[0].domain_validation_options : dvo.domain_name => {
+      name    = trimsuffix(dvo.resource_record_name, ".")
+      content = trimsuffix(dvo.resource_record_value, ".")
+      type    = dvo.resource_record_type
+    }
+  } : {}
+
+  zone_id = var.cloudflare_zone_id
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.content
+  ttl     = 60
+  proxied = false
+  comment = "ACM DNS validation for ${var.domain_name}"
+}
+
+resource "aws_acm_certificate_validation" "app" {
+  count                   = local.custom_domain_enabled ? 1 : 0
+  certificate_arn         = aws_acm_certificate.app[0].arn
+  validation_record_fqdns = [for record in cloudflare_dns_record.app_cert_validation : record.name]
+}
+
+resource "aws_lb_listener" "app_https" {
+  count             = local.custom_domain_enabled ? 1 : 0
+  load_balancer_arn = aws_lb.app.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = aws_acm_certificate_validation.app[0].certificate_arn
+
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.worker.arn
   }
+}
+
+resource "cloudflare_dns_record" "app" {
+  count   = local.custom_domain_enabled ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.domain_name
+  type    = "CNAME"
+  content = aws_lb.app.dns_name
+  ttl     = 1
+  proxied = true
+  comment = "Cloudflare proxied app entry for ${var.project_name}"
 }
 
 resource "aws_instance" "control_plane_first" {
@@ -430,24 +494,6 @@ resource "aws_instance" "worker" {
     Name = "${var.project_name}-worker-${count.index + 1}"
     Role = "worker"
   })
-}
-
-resource "aws_vpc_security_group_ingress_rule" "control_plane_api_from_worker_public_ips" {
-  count             = var.worker_count
-  security_group_id = aws_security_group.control_plane.id
-  cidr_ipv4         = "${aws_instance.worker[count.index].public_ip}/32"
-  ip_protocol       = "tcp"
-  from_port         = 6443
-  to_port           = 6443
-}
-
-resource "aws_vpc_security_group_ingress_rule" "nlb_api_from_worker_public_ips" {
-  count             = var.worker_count
-  security_group_id = aws_security_group.nlb.id
-  cidr_ipv4         = "${aws_instance.worker[count.index].public_ip}/32"
-  ip_protocol       = "tcp"
-  from_port         = 6443
-  to_port           = 6443
 }
 
 resource "aws_lb_target_group_attachment" "control_plane" {
