@@ -30,6 +30,9 @@ test-output.json
 # for keys
 *.pem
 
+# for local Kubernetes secrets
+deploy/backend-secret.yml
+
 # for Terraform
 .terraform/
 *.tfstate
