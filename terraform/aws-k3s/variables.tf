@@ -129,3 +129,29 @@ variable "mongodbatlas_project_id" {
   description = "MongoDB Atlas Project ID (Group ID) to whitelist EC2 public IPs."
   type        = string
 }
+
+# ─────────────────────────────────────────────
+# CloudWatch Alarms
+# ─────────────────────────────────────────────
+variable "alarm_email" {
+  description = "Email address for CloudWatch SNS alarm notifications."
+  type        = string
+}
+
+variable "cpu_alarm_threshold" {
+  description = "CPU utilization threshold percentage to trigger an alarm."
+  type        = number
+  default     = 70
+}
+
+variable "cp_network_in_threshold" {
+  description = "NetworkIn threshold in bytes for control plane nodes."
+  type        = number
+  default     = 1000000000
+}
+
+variable "worker_network_in_threshold" {
+  description = "NetworkIn threshold in bytes for worker nodes."
+  type        = number
+  default     = 625000000
+}

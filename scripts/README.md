@@ -91,9 +91,9 @@ sudo apt-get update && sudo apt-get install -y terraform
 terraform -install-autocomplete
 ```
 
-# 安裝目前 stable 版 kubectl
 
 ```bash
+# 安裝目前 stable 版 kubectl
 ARCH="$(dpkg --print-architecture)"
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -176,7 +176,7 @@ Zone Resources 選：
 Include → Specific zone → moojidle-k8s.online
 ```
 
-記下 API token 和 Zone ID，後續要填入 `terraform/aws-k3s/terraform.tfvars`。
+記下 API token 和 Zone ID，後續要填入 `terraform/aws-k3s/terraform.tfvars`。(Zone ID 可透過: 左側 "Domains" --> "Overview" --> "ur-domain.com" 的 "..." --> "Copied zone ID" 取得)
 
 > ⚠️ API token 只會完整顯示一次，請勿貼到聊天、README 或 commit 進 git。
 
@@ -224,7 +224,7 @@ cp terraform/aws-k3s/terraform.tfvars.example terraform/aws-k3s/terraform.tfvars
 
 填寫以下內容 (`mongodbatlas_project_id` 在 "Project Settings" 找)：
 
-```hcl
+```ini
 key_name = "Moojidle" # Step 3 key pair name
 
 # 換成執行 Terraform 電腦目前的 public IP CIDR
@@ -239,6 +239,12 @@ mongodbatlas_project_id  = "你的-project-id"
 domain_name          = "moojidle-k8s.online"
 cloudflare_zone_id   = "你的-cloudflare-zone-id"
 cloudflare_api_token = "你的-cloudflare-api-token"
+
+# CloudWatch Alarms Configuration
+alarm_email                 = "your-email@.com"
+cpu_alarm_threshold         = 70                    # In percentage
+cp_network_in_threshold     = 1000000000            # In Bytes
+worker_network_in_threshold = 625000000             # In Bytes
 ```
 
 > ⚠️ `terraform.tfvars` 含敏感資訊，**不要 commit 進 git**（已加進 `.gitignore`）
@@ -273,11 +279,18 @@ DATA_BASE_URL: "mongodb+srv://<你的帳號>:<你的密碼>@cluster0.uyzxe9f.mon
 
 | Step | 做的事 | 引用 |
 |---|---|---|
-| 1/5 | `terraform apply` 建立 AWS infra：VPC、SG、EC2、NLB、ALB、ACM 憑證、Cloudflare DNS records | [`terraform/aws-k3s/main.tf`](../terraform/aws-k3s/main.tf) |
+| 1/5 | `terraform apply` 建立 AWS infra：VPC、SG、EC2、NLB、ALB、ACM 憑證、CloudWatch Alarm、Cloudflare DNS records | [`terraform/aws-k3s/main.tf`](../terraform/aws-k3s/main.tf) |
 | 2/5 | 取 NLB DNS + Control Plane Public IP | [`terraform/aws-k3s/outputs.tf`](../terraform/aws-k3s/outputs.tf) |
 | 3/5 | 等待 5 台 EC2 的 cloud-init 完成，SSH 進 CP 拿 kubeconfig，把 server 改為 NLB DNS | cloud-init 會自動安裝 K3s；本機 `kubectl` 透過 NLB 連 API server |
 | 4/5 | 驗證所有 K3s nodes 都進入 `Ready` 狀態 | |
 | 5/5 | `kubectl apply` 部署 backend + frontend + ingress，並將 Traefik ingress deployment 擴充為 3 個 replicas | [`deploy/backend.yml`](../deploy/backend.yml), [`deploy/frontend.yml`](../deploy/frontend.yml), [`deploy/ingress-rule.yml`](../deploy/ingress-rule.yml) |
+
+如果 `terraform.tfvars` 沒有設定 `alarm_email`，script 會警示：
+
+```text
+WARNING: CloudWatch Alarm email is missing in terraform.tfvars.
+Please enter the email address for SNS alerts:
+```
 
 如果 `terraform.tfvars` 沒有設定 `domain_name`，script 會先詢問：
 
@@ -348,13 +361,14 @@ graph TD
 
 | 資源 | 檔案行數 | 說明 |
 |---|---|---|
-| Security Groups | `main.tf:45-83` | 4 組 SG：control-plane、worker、nlb、alb |
-| SG 規則 | `main.tf:85-230` | 開放 6443、2379、10250、8472、80、22 port 的限定流量 |
-| NLB (k8s API) | `main.tf:232-266` | 公開 NLB :6443 → CP :6443 |
-| ALB (應用) | `main.tf:268-303` | 公開 ALB :80 → Worker :80 |
-| Control Plane x3 | `main.tf:305-367` | `--cluster-init` 建立 HA etcd 叢集，含 `--tls-san` 讓 NLB 憑證正確 |
-| Worker x2 | `main.tf:369-397` | `K3S_URL=NLB_DNS` 透過 NLB 加入叢集 |
-| Atlas 白名單 | `main.tf:414-430` | 收集所有節點 public IP → `mongodbatlas_project_ip_access_list` |
+| Security Groups | `main.tf:51-90` | 4 組 SG：control-plane、worker、nlb、alb |
+| SG 規則 | `main.tf:91-251` | SG 規則；開放 6443、2379-2380、10250、8472、80、443、22 port |
+| NLB (k8s API) | `main.tf:253-288` | 公開 NLB :6443 → CP :6443；TCP 健檢 |
+| ALB (應用) | `main.tf:289-403` | 公開 ALB :80 / :443 → Worker :80；含 ACM 憑證、Cloudflare DNS 驗證 |
+| Control Plane x3 | `main.tf:405-468` | `--cluster-init` 建立 HA etcd；`--tls-san` NLB DNS；CP Joiner 等待第一台 CP 就緒 |
+| Worker x2 | `main.tf:469-498` | `K3S_URL=NLB_DNS` 透過 NLB 加入叢集；等待 NLB :6443 連通 |
+| Atlas 白名單 | `main.tf:525-530` | 收集所有節點 public IP → `mongodbatlas_project_ip_access_list` |
+| CloudWatch Alarm | `alarm.tf` | 設置自動監測所部署之機器的效能、網路流量 |
 
 ## 手動步驟說明（不用 script 時）
 

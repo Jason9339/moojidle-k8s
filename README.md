@@ -36,7 +36,7 @@ This project began during the Spring 2026 term for the Distributed Systems cours
 
 ## Instructions to Deploy HA K3S cluster on AWS
 
-Before deploying the server, we need to prepare our MongoDB first (we use [Mongo Atlas](https://www.mongodb.com/products/platform/atlas-database) in this project). The following is the steps:
+Before deploying the server, we need to prepare our MongoDB and Domian Name first (we use [Mongo Atlas](https://www.mongodb.com/products/platform/atlas-database) in this project). The following is the steps:
 
 First, create a free cluster on [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database). Then migrate the seed data from our local database to Atlas using `mongodump` and `mongorestore`.
 
@@ -72,6 +72,11 @@ mongorestore --uri="mongodb+srv://<username>:<password>@cluster0.uyzxe9f.mongodb
 ```
 </details>
 
+Secondly, lets setup our domain name via CloudFlare.... @dddanielliu
+
+### Setup Domain Name
+
+@dddanielliu
 
 Now let's start deploying to AWS via K3S, we need to have both the frontend and backend images first (check [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Ffrontend) for frontend, here for [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Fbackend) for backend). If there's no available images on ghcr, refer to `DOCKER_README.md` for instructions about image building steps. The following is the steps to deploy moojidle to [AWS](https://aws.amazon.com/console/) via [k3s](https://k3s.io/):
 
@@ -195,6 +200,37 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 7. run `kubectl get all` and `kubectl get all -n kube-system` to check if the pods and other components are working
 8. Try running `curl http://<YOUR_APP_LB_DNS_NAME>`. It should be successful!
 9. run `kubectl scale deployment -n kube-system traefik --replicas 3` to make it really HA
+
+</details>
+
+<details>
+<summary>STAGE 5: Enable SSL Certificate #TODO @dddanielliu</summary>
+
+TODO @dddanielliu
+
+</details>
+
+<details>
+<summary>STAGE 6: Setup CloudWatch Alarms</summary>
+
+In this section, we create total of 10 _alarms_. 5 for _CPUUtilization_ on each nodes, 3 for _NetworkIn_ on CP, 2 for _NetworkIn_ on worker.
+
+1. For _CPUUtilization_ type _alarms_:
+    - Select EC2 type Metric and locate your target node via ID filtering
+    - _Statistic_: Average, _Period_: 5 min, _Greater_: 70 (this is in percentage)
+    - Then, select _In alarm_ type and Create new _topic_ with your email, say "CPU-ALARM-TOPIC". Select that _topic_ for this _CPUUtilization_ type (Remember to manually click the confirmation link in each email sent by AWS)
+    - Create for each 5 nodes
+2. For _NetworkIn_ type _alarms_:
+    1. For CP (using _t3.Medium_):
+        - Select EC2 type Metric and locate your target node via ID filtering
+        - _Statistic_: Average, _Period_: 5 min, _Greater_: 1000000000 (this is in bytes)
+        - Then, select _In alarm_ type and Create new _topic_ with your email, say "CP-NetworkIn-ALARM-TOPIC". Select that _topic_
+        - Create for each 3 CPs
+    2. For Worker (using _t3.Small_):
+        - Select EC2 type Metric and locate your target node via ID filtering
+        - _Statistic_: Average, _Period_: 5 min, _Greater_: 625000000 (this is in bytes)
+        - Then, select _In alarm_ type and Create new _topic_ with your email, say "Worker-NetworkIn-ALARM-TOPIC". Select that _topic_
+        - Create for each 2 Worker nodes
 
 </details>
 
