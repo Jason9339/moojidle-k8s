@@ -81,7 +81,7 @@ wait_for_cloud_init() {
   wait_for_ssh "$ip" "$label"
   echo "Waiting for cloud-init on $label ($ip)..."
   if ! ssh "${SSH_OPTIONS[@]}" "ubuntu@$ip" \
-    "timeout 600 sudo cloud-init status --wait"; then
+    "timeout 600 sudo cloud-init status --wait || sudo cloud-init status --long | grep -q '^status: done'"; then
     echo "ERROR: cloud-init failed or timed out on $label ($ip)."
     echo "Last cloud-init log lines:"
     ssh "${SSH_OPTIONS[@]}" "ubuntu@$ip" \
@@ -199,6 +199,7 @@ KUBECONFIG="$KUBECONFIG" kubectl apply -f "$BACKEND_SECRET"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/backend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/frontend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/ingress-rule.yml"
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/hpa.yml"
 KUBECONFIG="$KUBECONFIG" kubectl scale deployment -n kube-system traefik --replicas 3
 
 echo ""
@@ -207,6 +208,9 @@ echo " Done"
 echo "============================================"
 echo "Pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -o wide
+echo ""
+echo "HorizontalPodAutoscalers:"
+KUBECONFIG="$KUBECONFIG" kubectl get hpa
 echo ""
 echo "Traefik ingress pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o wide

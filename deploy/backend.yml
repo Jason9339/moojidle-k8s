@@ -44,6 +44,10 @@ spec:
         ports:
         # Remember: This must be manually updated if you change the ConfigMap PORT
         - containerPort: 3000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
 
 ---
 # 3. BACKEND SERVICE
