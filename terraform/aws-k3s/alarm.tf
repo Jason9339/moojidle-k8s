@@ -17,7 +17,7 @@ locals {
 # ==========================================
 
 resource "aws_sns_topic" "cpu_alarm" {
-  name = "CPU-ALARM"
+  name = "${var.project_name}-CPU-ALARM"
   tags = local.common_tags
 }
 
@@ -28,7 +28,7 @@ resource "aws_sns_topic_subscription" "cpu_alarm_email" {
 }
 
 resource "aws_sns_topic" "cp_network_in" {
-  name = "CP-NetworkIn-ALARM"
+  name = "${var.project_name}-CP-NetworkIn-ALARM"
   tags = local.common_tags
 }
 
@@ -39,7 +39,7 @@ resource "aws_sns_topic_subscription" "cp_network_in_email" {
 }
 
 resource "aws_sns_topic" "worker_network_in" {
-  name = "Worker-NetworkIn-ALARM"
+  name = "${var.project_name}-Worker-NetworkIn-ALARM"
   tags = local.common_tags
 }
 
