@@ -36,7 +36,7 @@ This project began during the Spring 2026 term for the Distributed Systems cours
 
 ## Instructions to Deploy HA K3S cluster on AWS
 
-Before deploying the server, we need to prepare our MongoDB first (we use [Mongo Atlas](https://www.mongodb.com/products/platform/atlas-database) in this project). The following is the steps:
+Before deploying the server, we need to prepare our MongoDB and Domian Name first (we use [Mongo Atlas](https://www.mongodb.com/products/platform/atlas-database) in this project). The following is the steps:
 
 First, create a free cluster on [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database). Then migrate the seed data from our local database to Atlas using `mongodump` and `mongorestore`.
 
@@ -72,6 +72,11 @@ mongorestore --uri="mongodb+srv://<username>:<password>@cluster0.uyzxe9f.mongodb
 ```
 </details>
 
+Secondly, lets setup our domain name via CloudFlare.... @dddanielliu
+
+### Setup Domain Name
+
+@dddanielliu
 
 Now let's start deploying to AWS via K3S, we need to have both the frontend and backend images first (check [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Ffrontend) for frontend, here for [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Fbackend) for backend). If there's no available images on ghcr, refer to `DOCKER_README.md` for instructions about image building steps. The following is the steps to deploy moojidle to [AWS](https://aws.amazon.com/console/) via [k3s](https://k3s.io/):
 
@@ -199,9 +204,9 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 </details>
 
 <details>
-<summary>STAGE 5: Enable SSL Certificate #TODO @劉宸均</summary>
+<summary>STAGE 5: Enable SSL Certificate #TODO @dddanielliu</summary>
 
-TODO @劉宸均
+TODO @dddanielliu
 
 </details>
 
