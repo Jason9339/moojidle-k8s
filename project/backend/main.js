@@ -63,6 +63,36 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send("something is wrong...\n detected in global error handler");
 });
 
+
+// Readiness and liveness probes
+import mongoose from "mongoose";
+
+app.get("/healthz", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        service: "backend"
+    });
+});
+
+app.get("/readyz", (req, res) => {
+    const dbReady = mongoose.connection.readyState === 1;
+
+    if (!dbReady) {
+        return res.status(503).json({
+            status: "not ready",
+            service: "backend",
+            database: "disconnected",
+            readyState: mongoose.connection.readyState
+        });
+    }
+
+    res.status(200).json({
+        status: "ready",
+        service: "backend",
+        database: "connected"
+    });
+});
+
 // Start server
 let server = app.listen(PORT, () => {
     console.log(`Server should be running on http://localhost:${PORT}`);
@@ -75,3 +105,6 @@ server.on('error', (err) => {
         console.error('Server error:', err);
     }
 });
+
+
+
