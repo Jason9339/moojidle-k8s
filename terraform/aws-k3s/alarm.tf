@@ -4,11 +4,11 @@ locals {
     { "cp-1" = aws_instance.control_plane_first.id },
     { for i, instance in aws_instance.control_plane_joiner : "cp-${i + 2}" => instance.id }
   )
-  
-  worker_instances = { 
-    for i, instance in aws_instance.worker : "worker-${i + 1}" => instance.id 
+
+  worker_instances = {
+    for i, instance in aws_instance.worker : "worker-${i + 1}" => instance.id
   }
-  
+
   all_instances = merge(local.cp_instances, local.worker_instances)
 }
 
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   dimensions = {
     InstanceId = each.value
   }
-  
+
   tags = local.common_tags
 }
 
@@ -91,7 +91,7 @@ resource "aws_cloudwatch_metric_alarm" "cp_network_in" {
   dimensions = {
     InstanceId = each.value
   }
-  
+
   tags = local.common_tags
 }
 
@@ -112,6 +112,6 @@ resource "aws_cloudwatch_metric_alarm" "worker_network_in" {
   dimensions = {
     InstanceId = each.value
   }
-  
+
   tags = local.common_tags
 }

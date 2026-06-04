@@ -238,6 +238,7 @@ KUBECONFIG="$KUBECONFIG" kubectl apply -f "$BACKEND_SECRET"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/backend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/frontend.yml"
 KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/ingress-rule.yml"
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$DEPLOY_DIR/hpa.yml"
 KUBECONFIG="$KUBECONFIG" kubectl scale deployment -n kube-system traefik --replicas 3
 
 echo ""
@@ -246,6 +247,9 @@ echo " Done"
 echo "============================================"
 echo "Pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -o wide
+echo ""
+echo "HorizontalPodAutoscalers:"
+KUBECONFIG="$KUBECONFIG" kubectl get hpa
 echo ""
 echo "Traefik ingress pods:"
 KUBECONFIG="$KUBECONFIG" kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik -o wide

@@ -55,6 +55,10 @@ spec:
 
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: 25m
+            memory: 32Mi
 
         # Mount the ConfigMap into the container
         volumeMounts:
