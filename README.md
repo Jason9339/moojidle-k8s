@@ -197,9 +197,10 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 4. `kubectl apply -f backend.yml`
 5. `kubectl apply -f frontend.yml`
 6. `kubectl apply -f ingress-rule.yml`
-7. run `kubectl get all` and `kubectl get all -n kube-system` to check if the pods and other components are working
-8. Try running `curl http://<YOUR_APP_LB_DNS_NAME>`. It should be successful!
-9. run `kubectl scale deployment -n kube-system traefik --replicas 3` to make it really HA
+7. `kubectl apply -f hpa.yml`
+8. run `kubectl get all` and `kubectl get all -n kube-system` to check if the pods and other components are working
+9. Try running `curl http://<YOUR_APP_LB_DNS_NAME>`. It should be successful!
+10. run `kubectl scale deployment -n kube-system traefik --replicas 3` to make it really HA
 
 </details>
 
