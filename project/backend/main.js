@@ -1,4 +1,4 @@
-import express from 'express'; 
+import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -65,6 +65,8 @@ app.use((err, req, res, next) => {
 
 
 // Readiness and liveness probes
+let isShuttingDown = false;
+
 import mongoose from "mongoose";
 
 app.get("/healthz", (req, res) => {
@@ -75,6 +77,13 @@ app.get("/healthz", (req, res) => {
 });
 
 app.get("/readyz", (req, res) => {
+
+    if (isShuttingDown) {
+        return res.status(503).json({
+            status: "shutting down",
+            service: "backend"
+        });
+    }
     const dbReady = mongoose.connection.readyState === 1;
 
     if (!dbReady) {
@@ -93,6 +102,31 @@ app.get("/readyz", (req, res) => {
     });
 });
 
+async function gracefulShutdown(signal) {
+    console.log(`${signal} received, starting graceful shutdown`);
+    isShuttingDown = true;
+
+    server.close(async () => {
+        console.log("HTTP server closed");
+
+        try {
+            await mongoose.connection.close(false);
+            console.log("MongoDB connection closed");
+            process.exit(0);
+        } catch (err) {
+            console.error("Error while closing MongoDB connection:", err);
+            process.exit(1);
+        }
+    });
+
+    setTimeout(() => {
+        console.error("Graceful shutdown timeout, forcing exit");
+        process.exit(1);
+    }, 25000);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 // Start server
 let server = app.listen(PORT, () => {
     console.log(`Server should be running on http://localhost:${PORT}`);
@@ -105,6 +139,3 @@ server.on('error', (err) => {
         console.error('Server error:', err);
     }
 });
-
-
-
