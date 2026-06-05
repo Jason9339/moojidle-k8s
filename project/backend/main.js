@@ -1,4 +1,4 @@
-import express from 'express'; 
+import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -63,6 +63,70 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send("something is wrong...\n detected in global error handler");
 });
 
+
+// Readiness and liveness probes
+let isShuttingDown = false;
+
+import mongoose from "mongoose";
+
+app.get("/healthz", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        service: "backend"
+    });
+});
+
+app.get("/readyz", (req, res) => {
+
+    if (isShuttingDown) {
+        return res.status(503).json({
+            status: "shutting down",
+            service: "backend"
+        });
+    }
+    const dbReady = mongoose.connection.readyState === 1;
+
+    if (!dbReady) {
+        return res.status(503).json({
+            status: "not ready",
+            service: "backend",
+            database: "disconnected",
+            readyState: mongoose.connection.readyState
+        });
+    }
+
+    res.status(200).json({
+        status: "ready",
+        service: "backend",
+        database: "connected"
+    });
+});
+
+async function gracefulShutdown(signal) {
+    console.log(`${signal} received, starting graceful shutdown`);
+    isShuttingDown = true;
+
+    server.close(async () => {
+        console.log("HTTP server closed");
+
+        try {
+            await mongoose.connection.close(false);
+            console.log("MongoDB connection closed");
+            process.exit(0);
+        } catch (err) {
+            console.error("Error while closing MongoDB connection:", err);
+            process.exit(1);
+        }
+    });
+
+    setTimeout(() => {
+        console.error("Graceful shutdown timeout, forcing exit");
+        process.exit(1);
+    }, 25000);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 // Start server
 let server = app.listen(PORT, () => {
     console.log(`Server should be running on http://localhost:${PORT}`);
