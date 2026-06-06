@@ -72,11 +72,15 @@ mongorestore --uri="mongodb+srv://<username>:<password>@cluster0.uyzxe9f.mongodb
 ```
 </details>
 
-Secondly, lets setup our domain name via CloudFlare.... @dddanielliu
+Secondly, lets setup our domain name via CloudFlare.
 
 ### Setup Domain Name
 
-@dddanielliu
+1. Purchase a domain from any domain registrar (e.g. Cloudflare Registrar, Namecheap, GoDaddy)
+2. Let Cloudflare manage your domain: Cloudflare → **Add** → **Connect a domain** → enter `<YOUR_DOMAIN>` (e.g., `example.com`)
+3. Cloudflare will show you a set of nameservers (e.g., `aria.ns.cloudflare.com`). Copy them.
+4. Go to your domain registrar → **Name Servers** → **Custom Name Servers** → paste the Cloudflare nameservers and save
+5. Wait a few minutes for the nameserver change to propagate.
 
 Now let's start deploying to AWS via K3S, we need to have both the frontend and backend images first (check [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Ffrontend) for frontend, here for [here](https://github.com/Jason9339/moojidle-k8s/pkgs/container/moojidle-k8s%2Fbackend) for backend). If there's no available images on ghcr, refer to `DOCKER_README.md` for instructions about image building steps. The following is the steps to deploy moojidle to [AWS](https://aws.amazon.com/console/) via [k3s](https://k3s.io/):
 
