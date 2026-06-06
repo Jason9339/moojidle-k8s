@@ -205,9 +205,27 @@ Now let's start deploying to AWS via K3S, we need to have both the frontend and 
 </details>
 
 <details>
-<summary>STAGE 5: Enable SSL Certificate #TODO @dddanielliu</summary>
+<summary>STAGE 5: Enable SSL Certificate</summary>
 
-TODO @dddanielliu
+1. Request an ACM Certificate: AWS Console → **Certificate Manager** → **Request a certificate** → **Request a public certificate**
+    - Domain names: `<YOUR_DOMAIN>` (e.g., `app.example.com`)
+    - Validation method: _DNS validation_
+    - Key algorithm: _ECDSA P 256_
+    - Click **Request**
+2. Validate the Certificate via Cloudflare: in the **Domains** section of the newly created certificate, copy the **CNAME name** and **CNAME value**
+    - Go to Cloudflare → **DNS** → **Records** → **Add record**
+        - Type: `CNAME`, Name: `<CNAME_NAME>`, Target: `<CNAME_VALUE>`, Proxy status: **OFF**
+    - Go back to ACM and wait **2–5 minutes** until the certificate status changes to **Issued**
+3. Add an HTTPS Listener to the ALB created in Stage 1: AWS Console → **EC2** → **Load Balancers** → select the ALB
+    - **Listeners and routing** → **Add listener**
+        - Protocol/Port: `HTTPS / 443`
+        - Default action: **Forward** to `TG-Workers`
+        - **Default SSL/TLS server certificate** → Certificate source: _From ACM_ → select the certificate issued above
+4. Redirect HTTP to HTTPS: in the same ALB's **Listeners** tab, select the existing `HTTP:80` listener → **Edit**
+    - Change the default action to **Redirect** → Protocol: `HTTPS`, Port: `443`, Status code: `301`
+5. Point your subdomain to the ALB via Cloudflare: copy `<YOUR_ALB_DNS_NAME>` from the Load Balancer details page (e.g., `moojidle-app-123456789.ap-northeast-1.elb.amazonaws.com`)
+    - Go to Cloudflare → **DNS** → **Records** → **Add record**
+        - Type: `CNAME`, Name: `<YOUR_DOMAIN>` (e.g., `app`), Target: `<YOUR_ALB_DNS_NAME>`, Proxy status: **ON**
 
 </details>
 
