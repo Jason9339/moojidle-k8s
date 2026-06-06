@@ -345,6 +345,7 @@ resource "aws_acm_certificate" "app" {
   count             = local.custom_domain_enabled ? 1 : 0
   domain_name       = var.domain_name
   validation_method = "DNS"
+  key_algorithm     = "EC_prime256v1"
 
   lifecycle {
     create_before_destroy = true
