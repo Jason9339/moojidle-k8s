@@ -265,4 +265,9 @@ Because we have already understand the process of deploying our HA cluster manua
 
 ## Demo Video Link
 
+- [Demo Video](https://canva.link/7sl5buuva1qkbld)
+
 ## Final Presentation
+
+- [Canva Presentation](https://canva.link/7sl5buuva1qkbld)
+- [Presentation PDF](final%20presentation.pdf)
